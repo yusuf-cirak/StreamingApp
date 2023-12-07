@@ -1,4 +1,4 @@
-﻿namespace Domain.Streamers;
+﻿namespace Domain.Entities;
 
 public sealed class Streamer : Entity
 {
@@ -7,7 +7,7 @@ public sealed class Streamer : Entity
     public string StreamTitle { get; set; } = string.Empty;
     public string StreamDescription { get; set; } = string.Empty;
 
-    private Streamer(Guid userId,string streamKey)
+    private Streamer(Guid userId, string streamKey)
     {
         UserId = userId;
         StreamKey = streamKey;

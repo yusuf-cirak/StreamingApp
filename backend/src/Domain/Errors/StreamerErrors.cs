@@ -1,4 +1,4 @@
-﻿namespace Domain.Users;
+﻿namespace Domain.Errors;
 
 public static class StreamerErrors
 {
