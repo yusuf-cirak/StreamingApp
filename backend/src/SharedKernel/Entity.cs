@@ -1,25 +1,18 @@
 ﻿using System.Collections.Immutable;
 
 namespace SharedKernel;
-public abstract class Entity<T>
+public abstract class Entity
 {
-    public T Id { get; init; }
+    public Guid Id { get; init; } = Guid.NewGuid().ToShortGuid();
 
     private readonly List<IDomainEvent> _domainEvents = new();
-
 
     protected Entity()
     {
 
     }
 
-    protected Entity(T id)
-    {
-        Id = id;
-    }
-
-
-    public List<IDomainEvent> DomainEvents => _domainEvents.ToList();
+    public IImmutableList<IDomainEvent> DomainEvents => _domainEvents.ToImmutableList();
 
     protected void Raise(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
 
