@@ -3,9 +3,32 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34322.80
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "backend", "backend", "{0FA737DF-6D7C-4A7E-B274-FD8895266285}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4E78F46D-FE3F-4624-AD83-17D2BDCA6C26}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A281885F-6CD1-4A0F-ACBC-094A01FF9AD4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel", "backend\src\SharedKernel\SharedKernel.csproj", "{2FCAD7AB-5614-45DD-AC8C-BA137765A1D9}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2FCAD7AB-5614-45DD-AC8C-BA137765A1D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FCAD7AB-5614-45DD-AC8C-BA137765A1D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FCAD7AB-5614-45DD-AC8C-BA137765A1D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FCAD7AB-5614-45DD-AC8C-BA137765A1D9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4E78F46D-FE3F-4624-AD83-17D2BDCA6C26} = {0FA737DF-6D7C-4A7E-B274-FD8895266285}
+		{A281885F-6CD1-4A0F-ACBC-094A01FF9AD4} = {0FA737DF-6D7C-4A7E-B274-FD8895266285}
+		{2FCAD7AB-5614-45DD-AC8C-BA137765A1D9} = {4E78F46D-FE3F-4624-AD83-17D2BDCA6C26}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E6A6F31D-D34D-419F-A8D9-F395C1409CBE}
