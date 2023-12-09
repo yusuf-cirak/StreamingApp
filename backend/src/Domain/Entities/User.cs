@@ -1,15 +1,17 @@
 ﻿namespace Domain.Entities;
 
-public sealed class User : AuditableEntity
+public class User : AuditableEntity
 {
     public string Username { get; set; }
     public byte[] PasswordHash { get; set; }
     public byte[] PasswordSalt { get; set; }
     public string ProfileImageUrl { get; set; } = string.Empty;
 
-    private User(string userName, byte[] passwordHash, byte[] passwordSalt)
+    public virtual IList<RefreshToken> RefreshTokens { get; set; }
+
+    private User(string username, byte[] passwordHash, byte[] passwordSalt)
     {
-        Username = userName;
+        Username = username;
         PasswordHash = passwordHash;
         PasswordSalt = passwordSalt;
     }
