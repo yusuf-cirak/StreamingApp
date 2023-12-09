@@ -3,7 +3,7 @@
 namespace SharedKernel;
 public abstract class Entity
 {
-    public Guid Id { get; init; } = Guid.NewGuid().ToShortGuid();
+    public Guid Id { get; init; } = Guid.NewGuid();
 
     private readonly List<IBaseDomainEvent> _domainEvents = new();
 
