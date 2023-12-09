@@ -1,0 +1,23 @@
+version: "3.9"
+name: "streming-app"
+
+services:
+  database:
+    image: postgres:latest
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: streaming-app
+    ports:
+      - 5432:5432
+    volumes:
+      - ./database:/var/lib/postgresql/data
+    networks:
+      - streaming-app
+
+networks:
+  streaming-app:
+    driver: bridge
+    name: streaming-app
