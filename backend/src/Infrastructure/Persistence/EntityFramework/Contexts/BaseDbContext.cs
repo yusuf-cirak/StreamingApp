@@ -11,8 +11,8 @@ public class BaseDbContext : DbContext
     private IConfiguration Configuration { get; }
 
     public virtual DbSet<User> Users { get; set; }
-    public virtual DbSet<Streamer> Streamer { get; set; }
-    public virtual DbSet<RefreshToken> RefreshToken { get; set; }
+    public virtual DbSet<Streamer> Streamers { get; set; }
+    public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
 
 
     public BaseDbContext(DbContextOptions options, IConfiguration configuration) : base(options)

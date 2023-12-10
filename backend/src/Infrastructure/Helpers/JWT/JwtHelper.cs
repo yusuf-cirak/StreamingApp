@@ -27,7 +27,7 @@ public sealed class JwtHelper : IJwtHelper
 
     public AccessToken CreateAccessToken(User user)
     {
-        _accessTokenExpiration = DateTime.Now.AddMinutes(_tokenOptions.AccessTokenExpiration);
+        _accessTokenExpiration = DateTime.UtcNow.AddMinutes(_tokenOptions.AccessTokenExpiration);
         SecurityKey securityKey = SecurityKeyHelper.CreateSecurityKey(_tokenOptions.SecurityKey);
         SigningCredentials signingCredentials = SigningCredentialsHelper.CreateSigningCredentials(securityKey);
         JwtSecurityToken jwt = CreateJwtSecurityToken(_tokenOptions, user, signingCredentials);
@@ -43,7 +43,7 @@ public sealed class JwtHelper : IJwtHelper
             tokenOptions.Issuer,
             tokenOptions.Audience,
             expires: _accessTokenExpiration,
-            notBefore: DateTime.Now,
+            notBefore: DateTime.UtcNow,
             signingCredentials: signingCredentials,
             claims: SetClaims(user)
         );
@@ -70,17 +70,6 @@ public sealed class JwtHelper : IJwtHelper
 
         randomNumberGenerator.GetBytes(secureRandomBytes);
 
-        return new RefreshToken
-        {
-            UserId = user.Id,
-            ExpiresAt = _accessTokenExpiration.AddDays(7),
-            Token = Convert.ToBase64String(secureRandomBytes),
-            CreatedByIp = ipAddress
-        };
-    }
-
-    public bool ValidateRefreshToken(string remoteIpAddress, RefreshToken refreshToken)
-    {
-        return false;
+        return RefreshToken.Create(Convert.ToBase64String(secureRandomBytes), user.Id, ipAddress, _accessTokenExpiration.AddDays(7));
     }
 }

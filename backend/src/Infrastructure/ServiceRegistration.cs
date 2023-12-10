@@ -1,7 +1,9 @@
 ﻿using Application.Abstractions.Helpers;
+using Application.Abstractions.Repository;
 using Infrastructure.Helpers.Hashing;
 using Infrastructure.Helpers.JWT;
 using Infrastructure.Persistence.EntityFramework.Contexts;
+using Infrastructure.Persistence.EntityFramework.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +14,8 @@ public static class ServiceRegistration
 {
     public static void AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
+
+        services.AddScoped<IEfRepository,EfRepository>();
 
         services.AddDbContextPool<BaseDbContext>(opt =>
         {
