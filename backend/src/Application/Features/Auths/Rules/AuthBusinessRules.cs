@@ -9,13 +9,13 @@ namespace Application.Features.Auths.Rules;
 
 public sealed class AuthBusinessRules : BaseBusinessRules
 {
-
     // FromServices attribute could be used instead of constructor injection
     private readonly IEfRepository _repository;
     private readonly IHashingHelper _hashingHelper;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public AuthBusinessRules(IEfRepository repository, IHashingHelper hashingHelper, IHttpContextAccessor httpContextAccessor)
+    public AuthBusinessRules(IEfRepository repository, IHashingHelper hashingHelper,
+        IHttpContextAccessor httpContextAccessor)
     {
         _repository = repository;
         _hashingHelper = hashingHelper;
@@ -30,7 +30,6 @@ public sealed class AuthBusinessRules : BaseBusinessRules
         {
             throw new BusinessException("There is already a user with that user name");
         }
-
     }
 
 
@@ -71,10 +70,12 @@ public sealed class AuthBusinessRules : BaseBusinessRules
     {
         var ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
-        var refreshToken = await _repository.RefreshTokens.LastOrDefaultAsync(rt => rt.UserId == userId && rt.CreatedByIp == ipAddress);
+        var refreshToken = await _repository.RefreshTokens.OrderByDescending(rt => rt.ExpiresAt)
+            .FirstOrDefaultAsync(rt => rt.UserId == userId && rt.CreatedByIp == ipAddress);
 
 
-        if (refreshToken is null || refreshToken.Token != refreshTokenFromRequest || refreshToken.ExpiresAt < DateTime.Now)
+        if (refreshToken is null || refreshToken.Token != refreshTokenFromRequest ||
+            refreshToken.ExpiresAt < DateTime.Now)
         {
             throw new BusinessException("Refresh token is not valid");
         }
