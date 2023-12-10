@@ -9,7 +9,7 @@ public class RefreshToken : Entity
 
     public virtual User User { get; set; }
 
-    public RefreshToken()
+    private RefreshToken()
     {
 
     }
