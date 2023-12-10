@@ -4,9 +4,10 @@ namespace Application.Abstractions.Repository;
 
 public interface IEfRepository
 {
-    public DbSet<User> Users { get; set; }
-    public DbSet<Streamer> Streamers { get; set; }
+    DbSet<User> Users { get; }
+    DbSet<Streamer> Streamers { get; }
+    DbSet<RefreshToken> RefreshTokens { get; }
 
-    public DbSet<RefreshToken> RefreshToken { get; set; }
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 
 }

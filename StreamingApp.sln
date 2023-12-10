@@ -18,12 +18,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "backend\src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "backend\src\Infrastructure\Infrastructure.csproj", "{229389F1-20CD-48D0-A887-C0EED384898E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI", "backend\src\WebAPI\WebAPI.csproj", "{7FA72C71-699B-4D91-BE84-413F9EA3474D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAPI", "backend\src\WebAPI\WebAPI.csproj", "{7FA72C71-699B-4D91-BE84-413F9EA3474D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4AB980B5-CB4F-4002-88B1-FB577C95E4C0}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{071A76B3-63B2-4654-B814-60622F012D7E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,6 +64,7 @@ Global
 		{EC1590D2-64FB-4F95-967A-4625C6876C20} = {4E78F46D-FE3F-4624-AD83-17D2BDCA6C26}
 		{229389F1-20CD-48D0-A887-C0EED384898E} = {4E78F46D-FE3F-4624-AD83-17D2BDCA6C26}
 		{7FA72C71-699B-4D91-BE84-413F9EA3474D} = {4E78F46D-FE3F-4624-AD83-17D2BDCA6C26}
+		{071A76B3-63B2-4654-B814-60622F012D7E} = {0FA737DF-6D7C-4A7E-B274-FD8895266285}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E6A6F31D-D34D-419F-A8D9-F395C1409CBE}

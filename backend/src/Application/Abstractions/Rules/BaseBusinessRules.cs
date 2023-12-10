@@ -1,5 +1,5 @@
 ﻿namespace Application.Abstractions;
 
-public interface IBaseBusinessRules
+public abstract class BaseBusinessRules
 {
 }
