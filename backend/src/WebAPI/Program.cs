@@ -1,10 +1,22 @@
 using Application;
+using HealthChecks.UI.Client;
 using Infrastructure;
 using MediatR;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using WebAPI.Endpoints;
+using WebAPI.Extensions;
 using WebAPI.Infrastructure.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Accept anything from header, accept any method. Only on localhost:4200 and http & https protocols.
+
+builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
+    policy.SetIsOriginAllowed(_ => true).AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
+
+builder.Services.AddResponseCompressionServices(); // From WebAPI\Extensions\ResponseCompressionExtensions.cs
+builder.Services.AddHealthCheckServices(builder.Configuration); // From WebAPI\Extensions\HealthCheckExtensions.cs
+builder.Services.AddJwtAuthenticationServices(builder.Configuration); // From WebAPI\Extensions\JwtBearerExtensions.cs
 
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
@@ -16,6 +28,9 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGenServices();
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -27,10 +42,16 @@ if (app.Environment.IsDevelopment())
 }
 
 
-app.UseHttpsRedirection();
+app.UseHealthChecks("/_health", new HealthCheckOptions
+    {
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+    }
+); // RequireAuthorization, RequireCors, RequireHost possible for limiting calls for /_health endpoint.
 
 app.UseExceptionHandler();
 
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapUserEndpoints();
 
