@@ -6,22 +6,20 @@ using Application.Common.Models;
 using Domain.Entities;
 using Infrastructure.Helpers.Security.Encryption;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.Helpers.JWT;
 
 public sealed class JwtHelper : IJwtHelper
 {
-    private IConfiguration Configuration { get; }
-
     private readonly TokenOptions _tokenOptions;
 
     private DateTime _accessTokenExpiration;
 
-    public JwtHelper(IConfiguration configuration)
+    public JwtHelper(IOptions<TokenOptions> tokenOptions)
     {
-        Configuration = configuration;
-        _tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>()!;
+        _tokenOptions = tokenOptions.Value;
     }
 
 
@@ -70,6 +68,7 @@ public sealed class JwtHelper : IJwtHelper
 
         randomNumberGenerator.GetBytes(secureRandomBytes);
 
-        return RefreshToken.Create(Convert.ToBase64String(secureRandomBytes), user.Id, ipAddress, _accessTokenExpiration.AddDays(7));
+        return RefreshToken.Create(Convert.ToBase64String(secureRandomBytes), user.Id, ipAddress,
+            _accessTokenExpiration.AddDays(7));
     }
 }

@@ -7,15 +7,17 @@ public class Streamer : Entity
     public string StreamDescription { get; set; } = string.Empty;
 
     public virtual User User { get; set; }
-    private Streamer(string streamKey)
+
+    private Streamer(Guid userId, string streamKey)
     {
+        Id = userId;
         StreamKey = streamKey;
     }
 
 
-    public static Streamer Create(string streamKey)
+    public static Streamer Create(Guid userId, string streamKey)
     {
-        Streamer streamer = new(streamKey);
+        Streamer streamer = new(userId, streamKey);
 
         streamer.Raise(new StreamerCreatedEvent(streamer));
 

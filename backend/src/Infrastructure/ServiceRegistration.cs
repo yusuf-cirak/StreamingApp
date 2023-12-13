@@ -14,24 +14,18 @@ public static class ServiceRegistration
 {
     public static void AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-
-        services.AddScoped<IEfRepository,EfRepository>();
+        services.AddScoped<IEfRepository, EfRepository>();
 
         services.AddDbContextPool<BaseDbContext>(opt =>
         {
             opt.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 
-            opt.UseNpgsql(configuration.GetConnectionString("Postgres"), sqlOpt =>
-            {
-                sqlOpt.EnableRetryOnFailure(maxRetryCount: 3);
-
-            });
-
+            opt.UseNpgsql(configuration.GetConnectionString("Postgres"),
+                sqlOpt => { sqlOpt.EnableRetryOnFailure(maxRetryCount: 3); });
         }, poolSize: 100);
 
 
         services.AddSingleton<IJwtHelper, JwtHelper>();
         services.AddSingleton<IHashingHelper, HashingHelper>();
-
     }
 }

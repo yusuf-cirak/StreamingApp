@@ -45,21 +45,13 @@ public sealed class RegisterUserCommandHandler : IRequestHandler<RegisterCommand
         _efRepository.Users.Add(newUser);
         _efRepository.RefreshTokens.Add(refreshToken);
 
-        try
+        var saveResult = await _efRepository.SaveChangesAsync(cancellationToken);
+
+        if (saveResult == 0)
         {
-            var saveResult = await _efRepository.SaveChangesAsync(cancellationToken);
-
-            if (saveResult == 0)
-            {
-                throw new DatabaseOperationFailedException("Could not add user to database");
-            }
-
+            throw new DatabaseOperationFailedException("Could not add user to database");
         }
-        catch (Exception e)
-        {
 
-            throw;
-        }
 
 
 

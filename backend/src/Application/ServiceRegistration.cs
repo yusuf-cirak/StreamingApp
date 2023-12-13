@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Application.Abstractions;
 using Application.Common.Behaviors;
+using Application.Services.Streamers;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -36,6 +37,8 @@ public static class ServiceRegistration
 
         AddBusinessRuleServices(services, executingAssembly);
 
+        services.AddSingleton<IStreamerService, StreamerService>();
+
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(executingAssembly));
 
         // FluentValidation dependency injection
@@ -43,8 +46,6 @@ public static class ServiceRegistration
 
         // AuthorizationBehavior dependency injection
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehavior<,>));
-
-
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
     }

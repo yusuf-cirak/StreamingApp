@@ -1,7 +1,8 @@
 using Application;
 using HealthChecks.UI.Client;
 using Infrastructure;
-using MediatR;
+using Infrastructure.Helpers.JWT;
+using Infrastructure.Helpers.Security;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using WebAPI.Endpoints;
 using WebAPI.Extensions;
@@ -9,7 +10,7 @@ using WebAPI.Infrastructure.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Accept anything from header, accept any method. Only on localhost:4200 and http & https protocols.
+builder.Services.Configure<TokenOptions>(builder.Configuration.GetSection("TokenOptions"));
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
     policy.SetIsOriginAllowed(_ => true).AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
