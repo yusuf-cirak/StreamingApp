@@ -14,12 +14,11 @@ namespace Infrastructure.Persistence.EntityFramework.EntityConfigurations
 
             builder.Property(u => u.Username).HasColumnName("Username").IsRequired();
 
-
             builder.Property(u => u.PasswordSalt).HasColumnName("PasswordSalt").IsRequired();
 
             builder.Property(u => u.PasswordHash).HasColumnName("PasswordHash").IsRequired();
 
-            //builder.HasMany(u => u.UserOperationClaims).WithOne(uop => uop.User).HasForeignKey(uop => uop.UserId);
+            builder.HasMany(u => u.UserRoleClaims).WithOne(uop => uop.User).HasForeignKey(uop => uop.RoleId);
 
             builder.HasMany(u => u.RefreshTokens).WithOne(rt => rt.User).HasForeignKey(rt => rt.UserId);
         }

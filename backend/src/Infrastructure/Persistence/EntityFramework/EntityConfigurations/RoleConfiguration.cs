@@ -12,10 +12,6 @@ public sealed class RoleConfiguration : EntityConfiguration<Role>
 
         builder.ToTable("Roles");
 
-        builder.Property(o => o.Id).HasColumnName("Id");
-
-        builder.HasKey(o => o.Id);
-
-        builder.Property(o => o.Name).HasColumnName("Name");
+        builder.Property(o => o.Name).HasColumnName("Name").IsRequired();
     }
 }

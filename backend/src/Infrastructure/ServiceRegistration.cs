@@ -2,6 +2,7 @@
 using Application.Abstractions.Repository;
 using Infrastructure.Helpers.Hashing;
 using Infrastructure.Helpers.JWT;
+using Infrastructure.Helpers.Security.Encryption;
 using Infrastructure.Persistence.EntityFramework.Contexts;
 using Infrastructure.Persistence.EntityFramework.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -27,5 +28,7 @@ public static class ServiceRegistration
 
         services.AddSingleton<IJwtHelper, JwtHelper>();
         services.AddSingleton<IHashingHelper, HashingHelper>();
+        services.AddSingleton<IEncryptionHelper, EncryptionHelper>();
+
     }
 }

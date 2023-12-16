@@ -12,7 +12,7 @@ namespace Infrastructure.Persistence.EntityFramework.EntityConfigurations
 
             builder.HasKey(u => u.Id);
 
-            builder.Property(u=>u.Id).HasColumnName("Id").IsRequired();
+            builder.Property(u => u.Id).HasColumnName("Id").IsRequired();
 
             builder.Property(u => u.StreamKey).HasColumnName("StreamKey").IsRequired();
 
@@ -20,8 +20,7 @@ namespace Infrastructure.Persistence.EntityFramework.EntityConfigurations
 
             builder.Property(u => u.StreamDescription).HasColumnName("StreamDescription").IsRequired(false);
 
-
-            builder.HasOne(u=>u.User).WithOne().HasForeignKey<Streamer>(u=>u.Id);
+            builder.HasOne(u => u.User).WithOne().HasForeignKey<Streamer>(u => u.Id);
         }
     }
 }

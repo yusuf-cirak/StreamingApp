@@ -15,9 +15,15 @@ public sealed class EfRepository : IEfRepository
         Context = context;
     }
 
-    public DbSet<User> Users { get => Context.Users; }
-    public DbSet<Streamer> Streamers { get => Context.Streamers; }
-    public DbSet<RefreshToken> RefreshTokens { get => Context.RefreshTokens; }
+    public DbSet<User> Users => Context.Users;
+    public DbSet<Streamer> Streamers => Context.Streamers;
+    public DbSet<RefreshToken> RefreshTokens => Context.RefreshTokens;
+    public DbSet<OperationClaim> OperationClaims => Context.OperationClaims;
+    public DbSet<RoleOperationClaim> RoleOperationClaims => Context.RoleOperationClaims;
+    public DbSet<UserRoleClaim> UserRoleClaims => Context.UserRoleClaims;
+    
+
+
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
     {

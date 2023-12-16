@@ -5,7 +5,8 @@ using System.Globalization;
 
 namespace Infrastructure.Persistence.EntityFramework.EntityConfigurations
 {
-    public abstract class AuditableEntityConfiguration<T> : EntityConfiguration<T> where T : AuditableEntity
+    public abstract class AuditableEntityConfiguration<T> : EntityConfiguration<T>
+        where T : AuditableEntity
     {
         public override void Configure(EntityTypeBuilder<T> builder)
         {
@@ -13,7 +14,8 @@ namespace Infrastructure.Persistence.EntityFramework.EntityConfigurations
 
             builder.Property(e => e.CreatedDate).HasColumnName("CreatedDate").IsRequired();
 
-            builder.Property(e => e.UpdatedDate).HasColumnName("UpdatedDate").HasDefaultValue(DateTime.MinValue.ToString(CultureInfo.CurrentCulture)).IsRequired();
+            builder.Property(e => e.UpdatedDate).HasColumnName("UpdatedDate")
+                .HasDefaultValue(DateTime.MinValue.ToString(CultureInfo.CurrentCulture)).IsRequired();
         }
     }
 }
