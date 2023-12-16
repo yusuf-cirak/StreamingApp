@@ -2,10 +2,10 @@
 
 public class RefreshToken : Entity
 {
-    public Guid UserId { get; set; }
-    public string CreatedByIp { get; set; }
-    public DateTime ExpiresAt { get; set; }
-    public string Token { get; set; }
+    public Guid UserId { get;  }
+    public string CreatedByIp { get;  }
+    public DateTime ExpiresAt { get;  }
+    public string Token { get;  }
 
     public virtual User User { get; set; }
 

@@ -1,4 +1,4 @@
 ﻿namespace Domain.Events;
 
-public readonly record struct RefreshTokenCreatedEvent(RefreshToken RefreshToken) : IBaseDomainEvent;
+public readonly record struct RefreshTokenCreatedEvent(RefreshToken RefreshToken) : IDomainEvent;
 

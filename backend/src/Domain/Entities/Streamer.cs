@@ -2,22 +2,26 @@
 
 public class Streamer : Entity
 {
-    public string StreamKey { get; set; }
-    public string StreamTitle { get; set; } = string.Empty;
-    public string StreamDescription { get; set; } = string.Empty;
+    public string StreamKey { get; init; }
+    public string StreamTitle { get; init; } = string.Empty;
+    public string StreamDescription { get; init; } = string.Empty;
 
-    public virtual User User { get; set; }
+    public virtual User User { get; init; }
 
-    private Streamer(Guid userId, string streamKey)
+
+    private Streamer()
     {
-        Id = userId;
+    }
+
+    private Streamer(Guid userId, string streamKey, string streamTitle, string streamDescription) : base(userId)
+    {
         StreamKey = streamKey;
     }
 
 
-    public static Streamer Create(Guid userId, string streamKey)
+    public static Streamer Create(Guid userId, string streamKey, string streamTitle, string streamDescription)
     {
-        Streamer streamer = new(userId, streamKey);
+        Streamer streamer = new(userId, streamKey, streamTitle, streamDescription);
 
         streamer.Raise(new StreamerCreatedEvent(streamer));
 

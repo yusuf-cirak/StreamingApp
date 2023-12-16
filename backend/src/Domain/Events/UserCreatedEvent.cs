@@ -1,3 +1,3 @@
 ﻿
 namespace Domain.Events;
-public readonly record struct UserCreatedEvent(User User) : IBaseDomainEvent;
+public readonly record struct UserCreatedEvent(User User) : IDomainEvent;
