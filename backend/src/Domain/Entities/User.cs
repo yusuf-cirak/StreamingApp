@@ -7,9 +7,18 @@ public class User : AuditableEntity
     public byte[] PasswordSalt { get; set; }
     public string ProfileImageUrl { get; set; } = string.Empty;
 
-    public virtual IList<RefreshToken> RefreshTokens { get; set; }
+    public virtual ICollection<RefreshToken> RefreshTokens { get; }
 
-    private User(string username, byte[] passwordHash, byte[] passwordSalt)
+    public virtual ICollection<UserRoleClaim> UserRoleClaims { get; }
+
+
+    public User()
+    {
+        RefreshTokens = new HashSet<RefreshToken>();
+        UserRoleClaims = new HashSet<UserRoleClaim>();
+    }
+
+    private User(string username, byte[] passwordHash, byte[] passwordSalt) : this()
     {
         Username = username;
         PasswordHash = passwordHash;
