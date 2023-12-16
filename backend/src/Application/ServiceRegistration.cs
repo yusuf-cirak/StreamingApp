@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using Application.Abstractions;
 using Application.Common.Behaviors;
-using Application.Services.Streamers;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -36,8 +35,6 @@ public static class ServiceRegistration
         var executingAssembly = Assembly.GetExecutingAssembly();
 
         AddBusinessRuleServices(services, executingAssembly);
-
-        services.AddSingleton<IStreamerService, StreamerService>();
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(executingAssembly));
 
