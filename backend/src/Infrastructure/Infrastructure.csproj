@@ -18,5 +18,8 @@
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Persistence\EntityFramework\Migrations\" />
+    </ItemGroup>
 
 </Project>

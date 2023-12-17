@@ -11,6 +11,6 @@ public abstract class EntityConfiguration<T> : IEntityTypeConfiguration<T> where
     {
         builder.HasKey(e => e.Id);
 
-        builder.Property(e => e.Id).HasColumnName("Id").IsRequired();
+        builder.Property(e => e.Id).HasColumnName("Id");
     }
 }

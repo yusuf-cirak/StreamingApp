@@ -70,24 +70,40 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                     b.ToTable("RefreshTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.RoleOperationClaim", b =>
+            modelBuilder.Entity("Domain.Entities.Role", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("Id");
 
-                    b.Property<Guid>("OperationClaimId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("UserRoleClaimId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("Name");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OperationClaimId");
+                    b.ToTable("Roles", (string)null);
+                });
 
-                    b.HasIndex("UserRoleClaimId");
+            modelBuilder.Entity("Domain.Entities.RoleOperationClaim", b =>
+                {
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("RoleId");
+
+                    b.Property<Guid>("OperationClaimId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("OperationClaimId");
+
+                    b.HasKey("RoleId", "OperationClaimId");
+
+                    b.HasIndex("OperationClaimId")
+                        .IsUnique();
+
+                    b.HasIndex("RoleId")
+                        .IsUnique();
 
                     b.ToTable("RoleOperationClaims", (string)null);
                 });
@@ -153,22 +169,25 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Username")
+                        .IsUnique();
+
                     b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.UserRoleClaim", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("Id");
-
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("UserId");
 
-                    b.HasKey("Id");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("RoleId");
 
-                    b.HasIndex("UserId");
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
 
                     b.ToTable("UserRoleClaims", (string)null);
                 });
@@ -187,16 +206,20 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
             modelBuilder.Entity("Domain.Entities.RoleOperationClaim", b =>
                 {
                     b.HasOne("Domain.Entities.OperationClaim", "OperationClaim")
-                        .WithMany()
-                        .HasForeignKey("OperationClaimId")
+                        .WithOne()
+                        .HasForeignKey("Domain.Entities.RoleOperationClaim", "OperationClaimId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.UserRoleClaim", null)
-                        .WithMany("RoleOperationClaims")
-                        .HasForeignKey("UserRoleClaimId");
+                    b.HasOne("Domain.Entities.Role", "Role")
+                        .WithOne()
+                        .HasForeignKey("Domain.Entities.RoleOperationClaim", "RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("OperationClaim");
+
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("Domain.Entities.Streamer", b =>
@@ -212,11 +235,19 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
 
             modelBuilder.Entity("Domain.Entities.UserRoleClaim", b =>
                 {
+                    b.HasOne("Domain.Entities.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entities.User", "User")
                         .WithMany("UserRoleClaims")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Role");
 
                     b.Navigation("User");
                 });
@@ -226,11 +257,6 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                     b.Navigation("RefreshTokens");
 
                     b.Navigation("UserRoleClaims");
-                });
-
-            modelBuilder.Entity("Domain.Entities.UserRoleClaim", b =>
-                {
-                    b.Navigation("RoleOperationClaims");
                 });
 #pragma warning restore 612, 618
         }

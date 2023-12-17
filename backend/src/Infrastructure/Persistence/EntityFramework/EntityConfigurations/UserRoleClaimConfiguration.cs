@@ -12,11 +12,8 @@ namespace Infrastructure.Persistence.EntityFramework.EntityConfigurations
 
             builder.Property(u => u.RoleId).HasColumnName("RoleId");
             builder.Property(u => u.UserId).HasColumnName("UserId");
-            builder.HasKey(u => new { u.RoleId, u.UserId });
 
-            builder.HasOne(u => u.User).WithOne().HasForeignKey<UserRoleClaim>(u => u.UserId);
-
-            builder.HasOne(u => u.Role).WithOne().HasForeignKey<UserRoleClaim>(u => u.RoleId);
+            builder.HasKey(u => new { u.UserId, u.RoleId });
         }
     }
 }
