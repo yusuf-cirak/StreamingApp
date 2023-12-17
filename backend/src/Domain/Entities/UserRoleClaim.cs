@@ -18,9 +18,9 @@ public class UserRoleClaim : BaseEntity
         RoleId = roleId;
     }
 
-    public static UserRoleClaim Create(Guid id, Guid userId)
+    public static UserRoleClaim Create(Guid userId, Guid roleOperationClaimId)
     {
-        UserRoleClaim userOperationClaim = new(id, userId);
+        UserRoleClaim userOperationClaim = new(userId, roleOperationClaimId);
         // userOperationClaim.Raise(new UserOperationClaimCreatedEvent(userOperationClaim));
         return userOperationClaim;
     }
