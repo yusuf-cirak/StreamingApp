@@ -1,7 +1,9 @@
 ﻿using Application.Abstractions.Repository;
 using Domain.Entities;
 using Infrastructure.Persistence.EntityFramework.Contexts;
+using Infrastructure.Persistence.Outbox;
 using Microsoft.EntityFrameworkCore;
+using Stream = Domain.Entities.Stream;
 
 namespace Infrastructure.Persistence.EntityFramework.Repositories;
 
@@ -16,12 +18,14 @@ public sealed class EfRepository : IEfRepository
     }
 
     public DbSet<User> Users => Context.Users;
+    public DbSet<Stream> Streams => Context.Streams;
     public DbSet<Streamer> Streamers => Context.Streamers;
     public DbSet<RefreshToken> RefreshTokens => Context.RefreshTokens;
     public DbSet<OperationClaim> OperationClaims => Context.OperationClaims;
     public DbSet<RoleOperationClaim> RoleOperationClaims => Context.RoleOperationClaims;
     public DbSet<UserRoleClaim> UserRoleClaims => Context.UserRoleClaims;
-    
+
+    public DbSet<OutboxMessage> OutboxMessages => Context.OutboxMessages;
 
 
 
