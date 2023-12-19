@@ -16,6 +16,8 @@ public class Streamer : Entity
     private Streamer(Guid userId, string streamKey, string streamTitle, string streamDescription) : base(userId)
     {
         StreamKey = streamKey;
+        StreamTitle = streamTitle;
+        StreamDescription = streamDescription;
     }
 
 

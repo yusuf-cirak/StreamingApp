@@ -18,5 +18,7 @@ public abstract class Entity : BaseEntity
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
     protected void Raise(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+    
+    public void ClearDomainEvents() => _domainEvents.Clear();
 
 }

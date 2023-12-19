@@ -14,8 +14,7 @@ namespace Infrastructure.Persistence.EntityFramework.EntityConfigurations
 
             builder.Property(e => e.CreatedDate).HasColumnName("CreatedDate").IsRequired();
 
-            builder.Property(e => e.UpdatedDate).HasColumnName("UpdatedDate")
-                .HasDefaultValue(DateTime.MinValue.ToString(CultureInfo.CurrentCulture)).IsRequired();
+            builder.Property(e => e.UpdatedDate).HasColumnName("UpdatedDate").IsRequired(false);
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence.EntityFramework.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Persistence.EntityFramework.Migrations
 {
     [DbContext(typeof(BaseDbContext))]
-    partial class BaseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231218210056_OutboxMessages")]
+    partial class OutboxMessages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -108,33 +111,6 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                     b.ToTable("RoleOperationClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Stream", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("Id");
-
-                    b.Property<DateTime?>("EndedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("EndedAt");
-
-                    b.Property<DateTime>("StartedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("StartedAt");
-
-                    b.Property<Guid>("StreamerId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("StreamerId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StreamerId")
-                        .IsUnique();
-
-                    b.ToTable("Streams", (string)null);
-                });
-
             modelBuilder.Entity("Domain.Entities.StreamBlockedUser", b =>
                 {
                     b.Property<Guid>("StreamerId")
@@ -150,46 +126,6 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("StreamBlockedUsers", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.Entities.StreamChatMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("Id");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("CreatedAt");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Message");
-
-                    b.Property<Guid>("StreamId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("StreamerId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("StreamerId");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StreamerId")
-                        .IsUnique();
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("StreamChatMessages", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.StreamFollowerUser", b =>
@@ -257,8 +193,10 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                     b.Property<string>("ProfileImageUrl")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("UpdatedDate")
+                    b.Property<DateTime>("UpdatedDate")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
+                        .HasDefaultValue(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified))
                         .HasColumnName("UpdatedDate");
 
                     b.Property<string>("Username")
@@ -347,17 +285,6 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Stream", b =>
-                {
-                    b.HasOne("Domain.Entities.Streamer", "Streamer")
-                        .WithOne()
-                        .HasForeignKey("Domain.Entities.Stream", "StreamerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Streamer");
-                });
-
             modelBuilder.Entity("Domain.Entities.StreamBlockedUser", b =>
                 {
                     b.HasOne("Domain.Entities.Streamer", "Streamer")
@@ -371,33 +298,6 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Streamer");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Domain.Entities.StreamChatMessage", b =>
-                {
-                    b.HasOne("Domain.Entities.Stream", "Stream")
-                        .WithOne()
-                        .HasForeignKey("Domain.Entities.StreamChatMessage", "StreamerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Streamer", "Streamer")
-                        .WithOne()
-                        .HasForeignKey("Domain.Entities.StreamChatMessage", "StreamerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.User", "User")
-                        .WithOne()
-                        .HasForeignKey("Domain.Entities.StreamChatMessage", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Stream");
 
                     b.Navigation("Streamer");
 
