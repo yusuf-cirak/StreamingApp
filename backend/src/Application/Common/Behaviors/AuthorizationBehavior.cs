@@ -1,4 +1,7 @@
-﻿using Application.Abstractions.Security;
+﻿using System.Reflection;
+using Application.Abstractions.Security;
+using Application.Common.Exceptions;
+using Application.Common.Extensions;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Common.Behaviors;
@@ -13,16 +16,33 @@ public sealed class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavi
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken)
     {
-        var userClaimsCount = _httpContextAccessor.HttpContext?.User?.Claims?.Count() ?? 0;
+        HashSet<string> roleClaimsFromToken =
+            (_httpContextAccessor.HttpContext?.User?.ClaimRoles() ?? new()).ToHashSet();
 
-        if (userClaimsCount == 0)
+        if (roleClaimsFromToken.Count == 0)
         {
-            throw new UnauthorizedAccessException("You are not authorized to access this resource.");
+            throw new AuthorizationException("You are not authorized to access this resource.");
         }
 
-        // TODO: Role based authorization
+        HashSet<string> roleClaimsFromAttribute =
+            (request.GetType().GetCustomAttribute<AuthorizationPipelineAttribute>()?.Roles ?? []).ToHashSet();
+
+        if (roleClaimsFromAttribute.Count == 0)
+        {
+            throw new AuthorizationException("You are not authorized to access this resource.");
+        }
+
+        var isNotMatchedARoleClaimWithRequestRoles = roleClaimsFromToken
+            .Except(roleClaimsFromAttribute).Any();
+
+
+        if (isNotMatchedARoleClaimWithRequestRoles)
+        {
+            throw new AuthorizationException("You are not authorized to access this resource.");
+        }
 
         TResponse response = await next();
 

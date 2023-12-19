@@ -1,6 +1,5 @@
 ﻿using Application.Abstractions.Repository;
 using Application.Abstractions.Security;
-using Application.Common.Exceptions;
 using Application.Common.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
