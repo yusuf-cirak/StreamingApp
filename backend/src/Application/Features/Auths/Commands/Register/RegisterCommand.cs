@@ -55,7 +55,7 @@ public sealed class RegisterUserCommandHandler : IRequestHandler<RegisterCommand
         var streamerDescription = $"{newUser.Username}'s stream description";
         
         var streamer = Streamer.Create(newUser.Id, streamerKey, streamerTitle, streamerDescription);
-
+        
         _efRepository.Streamers.Add(streamer);
 
         await _efRepository.SaveChangesAsync(cancellationToken);

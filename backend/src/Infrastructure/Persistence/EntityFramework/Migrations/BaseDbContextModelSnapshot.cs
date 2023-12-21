@@ -115,6 +115,14 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("Id");
 
+                    b.Property<int>("ChatDelaySecond")
+                        .HasColumnType("integer")
+                        .HasColumnName("ChatDelaySecond");
+
+                    b.Property<bool>("ChatDisabled")
+                        .HasColumnType("boolean")
+                        .HasColumnName("ChatDisabled");
+
                     b.Property<DateTime?>("EndedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("EndedAt");
