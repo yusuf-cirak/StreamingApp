@@ -17,6 +17,9 @@ public sealed class StreamConfiguration : EntityConfiguration<Stream>
         builder.Property(u => u.StartedAt).HasColumnName("StartedAt").IsRequired();
         builder.Property(u => u.EndedAt).HasColumnName("EndedAt").IsRequired(false);
 
+        builder.Property(e => e.ChatDisabled).HasColumnName("ChatDisabled").IsRequired();
+        builder.Property(e => e.ChatDelaySecond).HasColumnName("ChatDelaySecond").IsRequired();
+
         builder.HasOne(u => u.Streamer).WithOne().HasForeignKey<Stream>(u => u.StreamerId);
     }
 }
