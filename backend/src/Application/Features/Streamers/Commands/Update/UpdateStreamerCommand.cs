@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 namespace Application.Features.Streamers.Commands.Update;
 
 public readonly record struct UpdateStreamerCommandRequest(string StreamTitle, string StreamDescription)
-    : IRequest<bool>, ISecuredRequest;
+    : IRequest<Result>, ISecuredRequest;
 
-public sealed class UpdateStreamerCommandHandler : IRequestHandler<UpdateStreamerCommandRequest, bool>
+public sealed class UpdateStreamerCommandHandler : IRequestHandler<UpdateStreamerCommandRequest, Result>
 {
     private readonly IEfRepository _efRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
@@ -20,10 +20,9 @@ public sealed class UpdateStreamerCommandHandler : IRequestHandler<UpdateStreame
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<bool> Handle(UpdateStreamerCommandRequest request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdateStreamerCommandRequest request, CancellationToken cancellationToken)
     {
         var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.GetUserId());
-
 
         await _efRepository.Streamers
             .Where(st => st.Id == userId)
@@ -33,6 +32,6 @@ public sealed class UpdateStreamerCommandHandler : IRequestHandler<UpdateStreame
                     .SetProperty(x => x.StreamDescription, x => request.StreamDescription),
                 cancellationToken: cancellationToken);
 
-        return true;
+        return Result.Success();
     }
 }

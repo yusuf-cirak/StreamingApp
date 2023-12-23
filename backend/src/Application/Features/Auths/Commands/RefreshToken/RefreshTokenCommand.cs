@@ -8,9 +8,10 @@ using Microsoft.AspNetCore.Http;
 namespace Application.Features.Auths.Commands.Refresh;
 
 public readonly record struct RefreshTokenCommandRequest(Guid UserId, string RefreshToken)
-    : IRequest<TokenResponseDto>;
+    : IRequest<Result<TokenResponseDto, Error>>;
 
-public sealed class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommandRequest, TokenResponseDto>
+public sealed class
+    RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommandRequest, Result<TokenResponseDto, Error>>
 {
     private readonly IEfRepository _efRepository;
     private readonly IJwtHelper _jwtHelper;
@@ -26,27 +27,37 @@ public sealed class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCom
         _efRepository = efRepository;
     }
 
-    public async Task<TokenResponseDto> Handle(RefreshTokenCommandRequest request, CancellationToken cancellationToken)
+    public async Task<Result<TokenResponseDto, Error>> Handle(RefreshTokenCommandRequest request,
+        CancellationToken cancellationToken)
     {
         var userId = (request.UserId);
 
-        var user = await _authBusinessRules.UserWithIdMustExistBeforeRefreshToken(userId);
+        var userExistResult = await _authBusinessRules.UserWithIdMustExistBeforeRefreshToken(userId);
 
-        await _authBusinessRules.GetAndVerifyUserRefreshToken(userId, request.RefreshToken);
+        if (userExistResult.IsFailure)
+        {
+            return userExistResult.Error;
+        }
 
-        var userIpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+        User user = userExistResult.Value;
+
+        var verifyRefreshTokenResult =
+            await _authBusinessRules.GetAndVerifyUserRefreshToken(userId, request.RefreshToken);
+
+        if (verifyRefreshTokenResult.IsFailure)
+        {
+            return verifyRefreshTokenResult.Error;
+        }
+
+        var userIpAddress = _httpContextAccessor?.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "";
 
         var accessToken = _jwtHelper.CreateAccessToken(user);
         var refreshToken = _jwtHelper.CreateRefreshToken(user, userIpAddress);
 
         _efRepository.RefreshTokens.Add(refreshToken);
 
-        var saveResult = await _efRepository.SaveChangesAsync(cancellationToken);
-        if (saveResult == 0)
-        {
-            throw new DatabaseOperationFailedException("Failed to add refreshed token to database");
-        }
+        await _efRepository.SaveChangesAsync(cancellationToken);
 
-        return new(accessToken.Token, refreshToken.Token);
+        return new TokenResponseDto(accessToken.Token, refreshToken.Token);
     }
 }

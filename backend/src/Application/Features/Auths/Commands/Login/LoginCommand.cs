@@ -1,6 +1,5 @@
 ﻿using Application.Abstractions.Helpers;
 using Application.Abstractions.Repository;
-using Application.Common.Exceptions;
 using Application.Common.Models;
 using Application.Features.Auths.Dtos;
 using Application.Features.Auths.Rules;
@@ -8,9 +7,10 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Auths.Commands.Login;
 
-public readonly record struct LoginCommandRequest(string Username, string Password) : IRequest<TokenResponseDto>;
+public readonly record struct LoginCommandRequest(string Username, string Password)
+    : IRequest<Result<TokenResponseDto, Error>>;
 
-public sealed class LoginCommandHandler : IRequestHandler<LoginCommandRequest, TokenResponseDto>
+public sealed class LoginCommandHandler : IRequestHandler<LoginCommandRequest, Result<TokenResponseDto, Error>>
 {
     private readonly AuthBusinessRules _authBusinessRules;
     private readonly IJwtHelper _jwtHelper;
@@ -26,9 +26,17 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommandRequest, T
         _efRepository = efRepository;
     }
 
-    public async Task<TokenResponseDto> Handle(LoginCommandRequest request, CancellationToken cancellationToken)
+    public async Task<Result<TokenResponseDto, Error>> Handle(LoginCommandRequest request,
+        CancellationToken cancellationToken)
     {
-        User user = await _authBusinessRules.UserNameShouldExistBeforeLogin(request.Username);
+        var result = await _authBusinessRules.UserNameShouldExistBeforeLogin(request.Username);
+
+        if (result.IsFailure)
+        {
+            return result.Error;
+        }
+
+        User user = result.Value;
 
         _authBusinessRules.UserCredentialsMustMatchBeforeLogin(request.Password, user.PasswordHash, user.PasswordSalt);
 
