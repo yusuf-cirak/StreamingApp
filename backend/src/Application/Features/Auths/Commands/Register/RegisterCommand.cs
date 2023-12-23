@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Auths.Commands.Register;
 
-public readonly record struct RegisterCommandRequest(string Username, string Password) : IRequest<TokenResponseDto>;
+public readonly record struct RegisterCommandRequest(string Username, string Password)
+    : IRequest<Result<TokenResponseDto, Error>>;
 
-public sealed class RegisterUserCommandHandler : IRequestHandler<RegisterCommandRequest, TokenResponseDto>
+public sealed class
+    RegisterUserCommandHandler : IRequestHandler<RegisterCommandRequest, Result<TokenResponseDto, Error>>
 {
     private readonly IEfRepository _efRepository;
     private readonly AuthBusinessRules _authBusinessRules;
@@ -32,9 +34,15 @@ public sealed class RegisterUserCommandHandler : IRequestHandler<RegisterCommand
         _encryptionHelper = encryptionHelper;
     }
 
-    public async Task<TokenResponseDto> Handle(RegisterCommandRequest request, CancellationToken cancellationToken)
+    public async Task<Result<TokenResponseDto, Error>> Handle(RegisterCommandRequest request,
+        CancellationToken cancellationToken)
     {
-        await _authBusinessRules.UserNameCannotBeDuplicatedBeforeRegistered(request.Username);
+        var result = await _authBusinessRules.UserNameCannotBeDuplicatedBeforeRegistered(request.Username);
+
+        if (result.IsFailure)
+        {
+            return result.Error;
+        }
 
         _hashingHelper.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
@@ -53,9 +61,9 @@ public sealed class RegisterUserCommandHandler : IRequestHandler<RegisterCommand
         var streamerKey = _encryptionHelper.Encrypt(newUser.Username);
         var streamerTitle = $"{newUser.Username}'s stream";
         var streamerDescription = $"{newUser.Username}'s stream description";
-        
+
         var streamer = Streamer.Create(newUser.Id, streamerKey, streamerTitle, streamerDescription);
-        
+
         _efRepository.Streamers.Add(streamer);
 
         await _efRepository.SaveChangesAsync(cancellationToken);
