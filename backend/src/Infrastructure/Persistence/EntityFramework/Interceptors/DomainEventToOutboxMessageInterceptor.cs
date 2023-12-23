@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using Application.Common.Exceptions;
-using Infrastructure.Persistence.Outbox;
+using Application.Common.Models;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Newtonsoft.Json;
 using SharedKernel;
