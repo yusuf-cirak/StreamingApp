@@ -25,9 +25,9 @@ public sealed class OperationClaimBusinessRules : BaseBusinessRules
         return Result.Success();
     }
 
-    public async Task<Result<OperationClaim, Error>> OperationClaimMustExistBeforeUpdated(Guid requestId)
+    public async Task<Result<OperationClaim, Error>> OperationClaimMustExistBeforeUpdated(Guid operationClaimId)
     {
-        var operationClaim = await _efRepository.OperationClaims.SingleOrDefaultAsync(oc => oc.Id == requestId);
+        var operationClaim = await _efRepository.OperationClaims.SingleOrDefaultAsync(oc => oc.Id == operationClaimId);
 
         if (operationClaim is null)
         {

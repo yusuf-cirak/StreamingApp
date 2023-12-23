@@ -1,15 +1,16 @@
 ﻿using Application.Abstractions.Security;
 using Application.Features.RoleOperationClaims.Rules;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.RoleOperationClaims.Commands.Delete;
 
 [AuthorizationPipeline(Roles = ["Admin"])]
 public readonly record struct DeleteRoleOperationClaimCommandRequest(Guid RoleId, Guid OperationClaimId)
-    : IRequest<Result<bool, Error>>, ISecuredRequest;
+    : IRequest<HttpResult<bool, Error>>, ISecuredRequest;
 
 public sealed class
     DeleteRoleOperationClaimCommandHandler : IRequestHandler<DeleteRoleOperationClaimCommandRequest,
-    Result<bool, Error>>
+    HttpResult<bool, Error>>
 {
     private readonly IEfRepository _efRepository;
     private readonly RoleOperationClaimBusinessRules _roleOperationClaimBusinessRules;
@@ -21,7 +22,7 @@ public sealed class
         _efRepository = efRepository;
     }
 
-    public async Task<Result<bool, Error>> Handle(DeleteRoleOperationClaimCommandRequest request,
+    public async Task<HttpResult<bool, Error>> Handle(DeleteRoleOperationClaimCommandRequest request,
         CancellationToken cancellationToken)
     {
         var existResult =
@@ -34,11 +35,11 @@ public sealed class
             return existResult.Error;
         }
 
-        var deleteResult = await _efRepository.RoleOperationClaims
+        await _efRepository.RoleOperationClaims
             .Where(roc => roc.OperationClaimId == request.OperationClaimId &&
                           roc.RoleId == request.RoleId)
             .ExecuteDeleteAsync(cancellationToken);
 
-        return deleteResult > 0;
+        return HttpResult<bool, Error>.Success(true, StatusCodes.Status204NoContent);
     }
 }

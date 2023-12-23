@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.Http;
 namespace Application.Features.Auths.Commands.Register;
 
 public readonly record struct RegisterCommandRequest(string Username, string Password)
-    : IRequest<Result<TokenResponseDto, Error>>;
+    : IRequest<HttpResult<TokenResponseDto, Error>>;
 
 public sealed class
-    RegisterUserCommandHandler : IRequestHandler<RegisterCommandRequest, Result<TokenResponseDto, Error>>
+    RegisterUserCommandHandler : IRequestHandler<RegisterCommandRequest, HttpResult<TokenResponseDto, Error>>
 {
     private readonly IEfRepository _efRepository;
     private readonly AuthBusinessRules _authBusinessRules;
@@ -34,7 +34,7 @@ public sealed class
         _encryptionHelper = encryptionHelper;
     }
 
-    public async Task<Result<TokenResponseDto, Error>> Handle(RegisterCommandRequest request,
+    public async Task<HttpResult<TokenResponseDto, Error>> Handle(RegisterCommandRequest request,
         CancellationToken cancellationToken)
     {
         var result = await _authBusinessRules.UserNameCannotBeDuplicatedBeforeRegistered(request.Username);
@@ -68,6 +68,9 @@ public sealed class
 
         await _efRepository.SaveChangesAsync(cancellationToken);
 
-        return new TokenResponseDto(accessToken.Token, refreshToken.Token);
+        var tokenResponseDto = new TokenResponseDto(accessToken.Token, refreshToken.Token);
+
+        return HttpResult<TokenResponseDto, Error>.Success(tokenResponseDto,
+            StatusCodes.Status201Created);
     }
 }

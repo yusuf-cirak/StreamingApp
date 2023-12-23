@@ -2,7 +2,6 @@
 using Application.Common.Mapping;
 using Application.Features.OperationClaims.Dtos;
 using Application.Features.OperationClaims.Rules;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.OperationClaims.Commands.Update;
 
@@ -48,7 +47,7 @@ public sealed class
         _efRepository.OperationClaims.Update(operationClaim);
 
         await _efRepository.SaveChangesAsync(cancellationToken);
-
+        
         return operationClaim.ToDto();
     }
 }

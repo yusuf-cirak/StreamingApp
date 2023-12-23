@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Http;
 namespace Application.Features.Auths.Commands.Login;
 
 public readonly record struct LoginCommandRequest(string Username, string Password)
-    : IRequest<Result<TokenResponseDto, Error>>;
+    : IRequest<HttpResult<TokenResponseDto, Error>>;
 
-public sealed class LoginCommandHandler : IRequestHandler<LoginCommandRequest, Result<TokenResponseDto, Error>>
+public sealed class LoginCommandHandler : IRequestHandler<LoginCommandRequest, HttpResult<TokenResponseDto, Error>>
 {
     private readonly AuthBusinessRules _authBusinessRules;
     private readonly IJwtHelper _jwtHelper;
@@ -26,7 +26,7 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommandRequest, R
         _efRepository = efRepository;
     }
 
-    public async Task<Result<TokenResponseDto, Error>> Handle(LoginCommandRequest request,
+    public async Task<HttpResult<TokenResponseDto, Error>> Handle(LoginCommandRequest request,
         CancellationToken cancellationToken)
     {
         var result = await _authBusinessRules.UserNameShouldExistBeforeLogin(request.Username);

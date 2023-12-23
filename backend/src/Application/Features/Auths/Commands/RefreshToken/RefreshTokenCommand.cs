@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.Http;
 namespace Application.Features.Auths.Commands.Refresh;
 
 public readonly record struct RefreshTokenCommandRequest(Guid UserId, string RefreshToken)
-    : IRequest<Result<TokenResponseDto, Error>>;
+    : IRequest<HttpResult<TokenResponseDto, Error>>;
 
 public sealed class
-    RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommandRequest, Result<TokenResponseDto, Error>>
+    RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommandRequest, HttpResult<TokenResponseDto, Error>>
 {
     private readonly IEfRepository _efRepository;
     private readonly IJwtHelper _jwtHelper;
@@ -27,7 +27,7 @@ public sealed class
         _efRepository = efRepository;
     }
 
-    public async Task<Result<TokenResponseDto, Error>> Handle(RefreshTokenCommandRequest request,
+    public async Task<HttpResult<TokenResponseDto, Error>> Handle(RefreshTokenCommandRequest request,
         CancellationToken cancellationToken)
     {
         var userId = (request.UserId);

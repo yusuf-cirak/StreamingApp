@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <Folder Include="Features\RoleOperationClaims\Dtos\" />
-    <Folder Include="Features\Roles\" />
+    <Folder Include="Features\StreamBlockedUsers\Dtos\" />
     <Folder Include="Features\Streamers\Dtos\" />
     <Folder Include="Features\Streamers\Events\" />
     <Folder Include="Services\" />
