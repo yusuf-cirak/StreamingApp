@@ -26,6 +26,9 @@ public sealed class EfRepository : IEfRepository
     public DbSet<StreamChatMessage> StreamChatMessages => Context.StreamChatMessages;
 
     public DbSet<OutboxMessage> OutboxMessages => Context.OutboxMessages;
+    
+    public DbSet<Role> Roles => Context.Roles;
+
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
     {
