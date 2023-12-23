@@ -22,14 +22,17 @@ public sealed class AuthBusinessRules : BaseBusinessRules
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task UserNameCannotBeDuplicatedBeforeRegistered(string username)
+    public async Task<Result> UserNameCannotBeDuplicatedBeforeRegistered(string username)
     {
         User? user = await _repository.Users.SingleOrDefaultAsync(user => user.Username == username);
 
         if (user is not null)
         {
-            throw new BusinessException("There is already a user with that user name");
+            return Result.Failure(UserErrors.NameCannotBeDuplicated);
         }
+
+        return Result.Success();
+
     }
 
 
@@ -41,43 +44,54 @@ public sealed class AuthBusinessRules : BaseBusinessRules
         }
     }
 
-    public async Task<User> UserNameShouldExistBeforeLogin(string username)
+    public async Task<Result<User,Error>> UserNameShouldExistBeforeLogin(string username)
     {
         User? user = await _repository.Users.SingleOrDefaultAsync(user => user.Username == username);
 
         if (user is null)
         {
-            throw new BusinessException("There is no user with that user name");
+            return UserErrors.NotFound;
         }
 
         return user;
     }
 
-    public async Task<User> UserWithIdMustExistBeforeRefreshToken(Guid userId)
+    public async Task<Result<User,Error>> UserWithIdMustExistBeforeRefreshToken(Guid userId)
     {
         User? user = await _repository.Users.SingleOrDefaultAsync(user => user.Id == userId);
 
 
         if (user is null)
         {
-            throw new BusinessException("There is no user with that user id");
+            return UserErrors.NotFound;
         }
 
         return user;
     }
 
-    public async Task GetAndVerifyUserRefreshToken(Guid userId, string refreshTokenFromRequest)
+    public async Task<Result> GetAndVerifyUserRefreshToken(Guid userId, string refreshTokenFromRequest)
     {
-        var ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+        var ipAddress = _httpContextAccessor?.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "";
 
         var refreshToken = await _repository.RefreshTokens.OrderByDescending(rt => rt.ExpiresAt)
             .FirstOrDefaultAsync(rt => rt.UserId == userId && rt.CreatedByIp == ipAddress);
 
-
-        if (refreshToken is null || refreshToken.Token != refreshTokenFromRequest ||
-            refreshToken.ExpiresAt < DateTime.Now)
+        if (refreshToken is null)
         {
-            throw new BusinessException("Refresh token is not valid");
+            return Result.Failure(RefreshTokenErrors.TokenNotFound);
         }
+        
+        if (refreshToken.Token != refreshTokenFromRequest)
+        {
+            return Result.Failure(RefreshTokenErrors.TokenIsNotValid);
+        }
+        
+        if (refreshToken.ExpiresAt < DateTime.Now)
+        {
+            return Result.Failure(RefreshTokenErrors.TokenIsExpired);
+        }
+        
+        return Result.Success();
+
     }
 }

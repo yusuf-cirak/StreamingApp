@@ -1,7 +1,6 @@
 ﻿using Application.Abstractions.Repository;
-using Domain.Entities;
+using Application.Common.Models;
 using Infrastructure.Persistence.EntityFramework.Contexts;
-using Infrastructure.Persistence.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Stream = Domain.Entities.Stream;
 
@@ -24,10 +23,9 @@ public sealed class EfRepository : IEfRepository
     public DbSet<OperationClaim> OperationClaims => Context.OperationClaims;
     public DbSet<RoleOperationClaim> RoleOperationClaims => Context.RoleOperationClaims;
     public DbSet<UserRoleClaim> UserRoleClaims => Context.UserRoleClaims;
+    public DbSet<StreamChatMessage> StreamChatMessages => Context.StreamChatMessages;
 
     public DbSet<OutboxMessage> OutboxMessages => Context.OutboxMessages;
-
-
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
     {

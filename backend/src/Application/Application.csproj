@@ -12,6 +12,7 @@
     <PackageReference Include="MediatR" Version="12.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.0" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="7.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,6 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Features\RoleOperationClaims\Dtos\" />
+    <Folder Include="Features\Roles\" />
     <Folder Include="Features\Streamers\Dtos\" />
     <Folder Include="Features\Streamers\Events\" />
     <Folder Include="Services\" />
