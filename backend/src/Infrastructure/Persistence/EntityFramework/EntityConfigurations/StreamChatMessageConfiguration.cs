@@ -1,7 +1,5 @@
-﻿using Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Stream = Domain.Entities.Stream;
 
 namespace Infrastructure.Persistence.EntityFramework.EntityConfigurations;
 

@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
-using SharedKernel;
 
-namespace Infrastructure.Persistence.Outbox;
+namespace Application.Common.Models;
 
 public sealed class OutboxMessage
 {

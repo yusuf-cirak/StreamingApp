@@ -2,6 +2,7 @@
 using Application.Features.Auths.Commands.Refresh;
 using Application.Features.Auths.Commands.Register;
 using MediatR;
+using SharedKernel;
 
 namespace WebAPI.Endpoints;
 
@@ -15,7 +16,7 @@ public static class UserEndpoints
         groupBuilder.MapPost("/register",
                 async (RegisterCommandRequest registerCommandRequest, IMediator mediator) =>
                 {
-                    return await mediator.Send(registerCommandRequest);
+                    return (await mediator.Send(registerCommandRequest)).ToHttpResponse();
                 })
             .WithTags("Users");
 
@@ -23,14 +24,14 @@ public static class UserEndpoints
         groupBuilder.MapPost("/login",
                 async (LoginCommandRequest loginCommandRequest, IMediator mediator) =>
                 {
-                    return await mediator.Send(loginCommandRequest);
+                    return (await mediator.Send(loginCommandRequest)).ToHttpResponse();
                 })
             .WithTags("Users");
 
         groupBuilder.MapPost("/refresh",
                 async (RefreshTokenCommandRequest refreshTokenCommandRequest, IMediator mediator) =>
                 {
-                    return await mediator.Send(refreshTokenCommandRequest);
+                    return (await mediator.Send(refreshTokenCommandRequest)).ToHttpResponse();
                 })
             .WithTags("Users");
     }

@@ -2,7 +2,7 @@
 
 public class OperationClaim : Entity
 {
-    public string Name { get; }
+    public string Name { get; set; }
 
     private OperationClaim()
     {
