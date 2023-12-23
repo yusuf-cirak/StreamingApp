@@ -1,10 +1,9 @@
-﻿using Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Persistence.EntityFramework.EntityConfigurations
 {
-    public sealed class StreamerConfiguration : EntityConfiguration<Streamer>, IEntityTypeConfiguration<Streamer>
+    public sealed class StreamerConfiguration : EntityConfiguration<Streamer>
     {
         public override void Configure(EntityTypeBuilder<Streamer> builder)
         {
