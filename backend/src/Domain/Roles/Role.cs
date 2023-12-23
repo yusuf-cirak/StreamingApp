@@ -8,14 +8,14 @@ public class Role : Entity
     {
     }
 
-    private Role(Guid id, string name) : base(id)
+    private Role(string name)
     {
         Name = name;
     }
 
-    public static Role Create(Guid id, string name)
+    public static Role Create(string name)
     {
-        var userRole = new Role(id, name);
+        var userRole = new Role(name);
         //userRole.Raise(new UserRoleCreatedEvent(userRole));
         return userRole;
     }

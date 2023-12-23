@@ -10,6 +10,9 @@ public readonly record struct RoleErrors
     public static Error RoleCannotBeDeleted(string roleName) =>
         Error.Create("Role.CannotBeDeleted", $"Role {roleName} cannot be deleted");
 
+    public static Error RoleCannotBeDeleted(Guid id) =>
+        Error.Create("Role.CannotBeDeleted", $"Role with {id} cannot be deleted because it does not exist");
+
     public static Error RoleCannotBeUpdated(string roleName) =>
         Error.Create("Role.CannotBeUpdated", $"Role {roleName} cannot be updated");
 
