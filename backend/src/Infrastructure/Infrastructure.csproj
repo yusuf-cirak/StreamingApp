@@ -23,6 +23,7 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Persistence\EntityFramework\Migrations\" />
+      <Folder Include="Persistence\Outbox\" />
       <Folder Include="Services\" />
     </ItemGroup>
 
