@@ -5,7 +5,7 @@ namespace SharedKernel;
 public static class HttpResultExtensions
 {
     public static IResult ToHttpResponse<TValue, TError>(this HttpResult<TValue, TError> httpResult)
-        where TError : IErrorResponse
+        where TError : IError
     {
         return httpResult.Match(
             (success, statusCode) => statusCode switch
@@ -44,7 +44,7 @@ public static class HttpResultExtensions
                 403 => Results.Forbid(),
                 404 => Results.NotFound(failure),
                 409 => Results.Conflict(failure),
-                500 => Results.Problem((failure as IErrorResponse).ToProblemDetails()),
+                500 => Results.Problem((failure as IError).ToProblemDetails()),
                 _ => Results.BadRequest(failure)
             });
     }
