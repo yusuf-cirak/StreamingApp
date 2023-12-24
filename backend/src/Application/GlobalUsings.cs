@@ -5,5 +5,5 @@ global using Domain.Errors;
 global using Application.Abstractions.Repository;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.AspNetCore.Http;
-
-
+global using Application.Abstractions.Helpers;
+global using Application.Abstractions.Security;

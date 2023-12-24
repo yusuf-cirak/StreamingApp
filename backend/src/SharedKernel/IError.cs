@@ -2,7 +2,7 @@
 
 namespace SharedKernel;
 
-public interface IErrorResponse
+public interface IError
 {
     int StatusCode { get; }
 

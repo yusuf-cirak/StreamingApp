@@ -2,7 +2,7 @@
 
 namespace SharedKernel;
 
-public readonly record struct Error : IErrorResponse
+public readonly record struct Error : IError
 {
     public string Code { get; }
     public string Message { get; }

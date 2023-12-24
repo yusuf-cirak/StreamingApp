@@ -1,14 +1,12 @@
-﻿using Application.Abstractions.Helpers;
-using Application.Abstractions.Repository;
+﻿
 using Application.Common.Models;
 using Application.Features.Auths.Dtos;
 using Application.Features.Auths.Rules;
-using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Auths.Commands.Register;
 
 public readonly record struct RegisterCommandRequest(string Username, string Password)
-    : IRequest<HttpResult<TokenResponseDto, Error>>;
+    : IRequest<HttpResult<TokenResponseDto, Error>> , ISecuredRequest;
 
 public sealed class
     RegisterUserCommandHandler : IRequestHandler<RegisterCommandRequest, HttpResult<TokenResponseDto, Error>>
