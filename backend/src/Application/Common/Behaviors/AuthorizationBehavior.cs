@@ -6,7 +6,6 @@ namespace Application.Common.Behaviors;
 
 public sealed class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>, ISecuredRequest
-    where TResponse : IHttpResult<TResponse>, new()
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -23,9 +22,7 @@ public sealed class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavi
 
         if (roleClaimsFromToken.Count == 0)
         {
-            var res = new TResponse().CreateWith(Error.None, 401);
-
-            return (TResponse)res;
+            throw new AuthorizationException("You are not authorized to access this resource.");
         }
 
         HashSet<string> roleClaimsFromAttribute =
