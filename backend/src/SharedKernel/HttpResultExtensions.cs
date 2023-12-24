@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace SharedKernel;
 
@@ -12,7 +11,7 @@ public static class HttpResultExtensions
             (success, statusCode) => statusCode switch
             {
                 200 => Results.Ok(success),
-                201 => Results.Created(string.Empty,success),
+                201 => Results.Created(string.Empty, success),
                 204 => Results.NoContent(),
                 _ => Results.StatusCode(statusCode)
             },
