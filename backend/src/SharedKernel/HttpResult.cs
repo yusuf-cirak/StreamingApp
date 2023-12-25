@@ -1,6 +1,6 @@
 ﻿namespace SharedKernel;
 
-public readonly record struct HttpResult
+public readonly record struct HttpResult : IHttpResult
 {
     public Error Error { get; } = Error.None;
 
@@ -10,10 +10,11 @@ public readonly record struct HttpResult
 
     public int StatusCode { get; }
 
-    private HttpResult(Error error)
+    private HttpResult(Error error, int statusCode)
     {
         Error = error;
         IsSuccess = false;
+        StatusCode = statusCode;
     }
 
     private HttpResult(bool isSuccess)
@@ -24,7 +25,7 @@ public readonly record struct HttpResult
 
     public static HttpResult Success() => new(true);
 
-    public static HttpResult Failure(Error error) => new(error);
+    public static HttpResult Failure(Error error, int statusCode = 400) => new(error, statusCode);
 
 
     public static HttpResult Failure() => new(false);
@@ -33,44 +34,28 @@ public readonly record struct HttpResult
 
     public TResult Match<TResult>(Func<TResult> success, Func<Error, TResult> failure)
         => IsSuccess ? success() : failure(Error);
-}
 
-public readonly record struct HttpResult<TValue>
-{
-    public TValue Value { get; }
-
-    public bool IsSuccess { get; }
-
-    public bool IsFailure => !IsSuccess;
-
-    public int StatusCode { get; }
-
-    private HttpResult(TValue value, bool isSuccess, int statusCode)
+    public IHttpResult CreateWith(Error error, int statusCode)
     {
-        Value = value;
-        IsSuccess = isSuccess;
-        StatusCode = statusCode;
+        return Failure(error, statusCode);
     }
-
-    public static HttpResult<TValue> Success(TValue value, int statusCode = 200) => new(value, true, statusCode);
-
-    public static HttpResult<TValue> Failure(TValue error, int statusCode = 400) => new(error, false, statusCode);
-
-    public TResult Match<TResult>(Func<TValue, int, TResult> success, Func<TValue, int, TResult> failure)
-        => IsSuccess ? success(Value, StatusCode) : failure(Value, StatusCode);
 }
 
-public readonly record struct HttpResult<TValue, TError>
+public readonly record struct HttpResult<TValue> : IHttpResult
 {
     public TValue Value { get; }
 
-    public TError Error { get; }
+    public Error Error { get;  }
 
     public bool IsSuccess { get; }
 
     public bool IsFailure => !IsSuccess;
 
-    public int StatusCode { get; }
+    public int StatusCode { get; init; }
+
+    public HttpResult()
+    {
+    }
 
     private HttpResult(TValue value, int statusCode)
     {
@@ -80,7 +65,7 @@ public readonly record struct HttpResult<TValue, TError>
         StatusCode = statusCode;
     }
 
-    private HttpResult(TError error, int statusCode)
+    private HttpResult(Error error, int statusCode)
     {
         Value = default;
         Error = error;
@@ -89,15 +74,20 @@ public readonly record struct HttpResult<TValue, TError>
     }
 
 
-    public static HttpResult<TValue, TError> Success(TValue value, int statusCode = 200) => new(value, statusCode);
+    public static HttpResult<TValue> Success(TValue value, int statusCode = 200) => new(value, statusCode);
 
-    public static HttpResult<TValue, TError> Failure(TError error, int statusCode = 400) =>
+    public static HttpResult<TValue> Failure(Error error, int statusCode = 400) =>
         new(error, statusCode);
 
-    public static implicit operator HttpResult<TValue, TError>(TValue value) => Success(value);
+    public static implicit operator HttpResult<TValue>(TValue value) => Success(value);
 
-    public static implicit operator HttpResult<TValue, TError>(TError error) => Failure(error);
+    public static implicit operator HttpResult<TValue>(Error error) => Failure(error);
 
-    public TResult Match<TResult>(Func<TValue, int, TResult> success, Func<TError, int, TResult> failure)
+    public TResult Match<TResult>(Func<TValue, int, TResult> success, Func<Error, int, TResult> failure)
         => IsSuccess ? success(Value, StatusCode) : failure(Error, StatusCode);
+
+    public IHttpResult CreateWith(Error error, int statusCode)
+    {
+        return Failure(error, statusCode);
+    }
 }

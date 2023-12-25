@@ -4,7 +4,7 @@ namespace SharedKernel;
 
 public static class HttpResultExtensions
 {
-    public static IResult ToHttpResponse<TValue, TError>(this HttpResult<TValue, TError> httpResult)
+    public static IResult ToHttpResponse<TValue, TError>(this HttpResult<TValue> httpResult)
         where TError : IError
     {
         return httpResult.Match(
