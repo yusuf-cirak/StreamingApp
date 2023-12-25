@@ -1,11 +1,12 @@
 ﻿using System.Reflection;
-using Application.Common.Exceptions;
+using Application.Common.Errors;
 using Application.Common.Extensions;
 
 namespace Application.Common.Behaviors;
 
 public sealed class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>, ISecuredRequest
+    where TResponse : IHttpResult, new()
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -22,7 +23,10 @@ public sealed class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavi
 
         if (roleClaimsFromToken.Count == 0)
         {
-            throw new AuthorizationException("You are not authorized to access this resource.");
+            var response =
+                new TResponse().CreateWith(AuthorizationErrors.Unauthorized, StatusCodes.Status401Unauthorized);
+
+            return (TResponse)response;
         }
 
         HashSet<string> roleClaimsFromAttribute =
@@ -30,7 +34,10 @@ public sealed class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavi
 
         if (roleClaimsFromAttribute.Count == 0)
         {
-            throw new AuthorizationException("You are not authorized to access this resource.");
+            var response =
+                new TResponse().CreateWith(AuthorizationErrors.Unauthorized, StatusCodes.Status401Unauthorized);
+
+            return (TResponse)response;
         }
 
         var isNotMatchedARoleClaimWithRequestRoles = roleClaimsFromToken
@@ -39,11 +46,12 @@ public sealed class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavi
 
         if (isNotMatchedARoleClaimWithRequestRoles)
         {
-            throw new AuthorizationException("You are not authorized to access this resource.");
+            var response =
+                new TResponse().CreateWith(AuthorizationErrors.Unauthorized, StatusCodes.Status401Unauthorized);
+
+            return (TResponse)response;
         }
 
-        TResponse response = await next();
-
-        return response;
+        return await next();
     }
 }
