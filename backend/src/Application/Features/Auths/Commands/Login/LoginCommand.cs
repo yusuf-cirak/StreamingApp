@@ -1,16 +1,13 @@
-﻿using Application.Abstractions.Helpers;
-using Application.Abstractions.Repository;
-using Application.Common.Models;
+﻿using Application.Common.Models;
 using Application.Features.Auths.Dtos;
 using Application.Features.Auths.Rules;
-using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Auths.Commands.Login;
 
 public readonly record struct LoginCommandRequest(string Username, string Password)
-    : IRequest<HttpResult<TokenResponseDto, Error>>;
+    : IRequest<HttpResult<TokenResponseDto>>;
 
-public sealed class LoginCommandHandler : IRequestHandler<LoginCommandRequest, HttpResult<TokenResponseDto, Error>>
+public sealed class LoginCommandHandler : IRequestHandler<LoginCommandRequest, HttpResult<TokenResponseDto>>
 {
     private readonly AuthBusinessRules _authBusinessRules;
     private readonly IJwtHelper _jwtHelper;
@@ -26,7 +23,7 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommandRequest, H
         _efRepository = efRepository;
     }
 
-    public async Task<HttpResult<TokenResponseDto, Error>> Handle(LoginCommandRequest request,
+    public async Task<HttpResult<TokenResponseDto>> Handle(LoginCommandRequest request,
         CancellationToken cancellationToken)
     {
         var result = await _authBusinessRules.UserNameShouldExistBeforeLogin(request.Username);

@@ -5,9 +5,9 @@ using Application.Features.Roles.Rules;
 namespace Application.Features.Roles.Commands.Create;
 
 public readonly record struct CreateRoleCommandRequest(string Name)
-    : IRequest<HttpResult<GetRoleDto, Error>>;
+    : IRequest<HttpResult<GetRoleDto>>;
 
-public sealed class CreateRoleCommandHandler : IRequestHandler<CreateRoleCommandRequest, HttpResult<GetRoleDto, Error>>
+public sealed class CreateRoleCommandHandler : IRequestHandler<CreateRoleCommandRequest, HttpResult<GetRoleDto>>
 {
     private readonly IEfRepository _efRepository;
     private readonly RoleBusinessRules _roleBusinessRules;
@@ -18,7 +18,7 @@ public sealed class CreateRoleCommandHandler : IRequestHandler<CreateRoleCommand
         _roleBusinessRules = roleBusinessRules;
     }
 
-    public async Task<HttpResult<GetRoleDto, Error>> Handle(CreateRoleCommandRequest request,
+    public async Task<HttpResult<GetRoleDto>> Handle(CreateRoleCommandRequest request,
         CancellationToken cancellationToken)
     {
         var uniqueRoleNameResult = await _roleBusinessRules.RoleNameMustBeUnique(request.Name, cancellationToken);
@@ -36,6 +36,6 @@ public sealed class CreateRoleCommandHandler : IRequestHandler<CreateRoleCommand
 
         var roleDto = role.ToDto();
 
-        return HttpResult<GetRoleDto, Error>.Success(roleDto, StatusCodes.Status201Created);
+        return HttpResult<GetRoleDto>.Success(roleDto, StatusCodes.Status201Created);
     }
 }

@@ -1,15 +1,14 @@
-﻿
-using Application.Common.Models;
+﻿using Application.Common.Models;
 using Application.Features.Auths.Dtos;
 using Application.Features.Auths.Rules;
 
 namespace Application.Features.Auths.Commands.Register;
 
 public readonly record struct RegisterCommandRequest(string Username, string Password)
-    : IRequest<HttpResult<TokenResponseDto, Error>> , ISecuredRequest;
+    : IRequest<HttpResult<TokenResponseDto>>;
 
 public sealed class
-    RegisterUserCommandHandler : IRequestHandler<RegisterCommandRequest, HttpResult<TokenResponseDto, Error>>
+    RegisterUserCommandHandler : IRequestHandler<RegisterCommandRequest, HttpResult<TokenResponseDto>>
 {
     private readonly IEfRepository _efRepository;
     private readonly AuthBusinessRules _authBusinessRules;
@@ -32,14 +31,14 @@ public sealed class
         _encryptionHelper = encryptionHelper;
     }
 
-    public async Task<HttpResult<TokenResponseDto, Error>> Handle(RegisterCommandRequest request,
+    public async Task<HttpResult<TokenResponseDto>> Handle(RegisterCommandRequest request,
         CancellationToken cancellationToken)
     {
         var result = await _authBusinessRules.UserNameCannotBeDuplicatedBeforeRegistered(request.Username);
 
         if (result.IsFailure)
         {
-            return result.Error;
+            // return result.Error;
         }
 
         _hashingHelper.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
@@ -68,7 +67,7 @@ public sealed class
 
         var tokenResponseDto = new TokenResponseDto(accessToken.Token, refreshToken.Token);
 
-        return HttpResult<TokenResponseDto, Error>.Success(tokenResponseDto,
+        return HttpResult<TokenResponseDto>.Success(tokenResponseDto,
             StatusCodes.Status201Created);
     }
 }

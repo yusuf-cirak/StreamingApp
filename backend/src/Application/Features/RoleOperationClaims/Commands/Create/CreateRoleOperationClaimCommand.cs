@@ -4,11 +4,11 @@ using Application.Features.RoleOperationClaims.Rules;
 namespace Application.Features.RoleOperationClaims.Commands.Create;
 
 public readonly record struct CreateRoleOperationClaimCommandRequest(Guid RoleId, Guid OperationClaimId)
-    : IRequest<HttpResult<bool, Error>>, ISecuredRequest;
+    : IRequest<HttpResult<bool>>, ISecuredRequest;
 
 public sealed class
     CreateRoleOperationClaimCommandHandler : IRequestHandler<CreateRoleOperationClaimCommandRequest,
-    HttpResult<bool, Error>>
+    HttpResult<bool>>
 {
     private readonly IEfRepository _efRepository;
     private readonly RoleOperationClaimBusinessRules _roleOperationClaimBusinessRules;
@@ -20,7 +20,7 @@ public sealed class
         _efRepository = efRepository;
     }
 
-    public async Task<HttpResult<bool, Error>> Handle(CreateRoleOperationClaimCommandRequest request,
+    public async Task<HttpResult<bool>> Handle(CreateRoleOperationClaimCommandRequest request,
         CancellationToken cancellationToken)
     {
         var duplicateResult =
@@ -38,6 +38,6 @@ public sealed class
 
         await _efRepository.SaveChangesAsync(cancellationToken);
 
-        return HttpResult<bool, Error>.Success(true, StatusCodes.Status201Created);
+        return HttpResult<bool>.Success(true, StatusCodes.Status201Created);
     }
 }

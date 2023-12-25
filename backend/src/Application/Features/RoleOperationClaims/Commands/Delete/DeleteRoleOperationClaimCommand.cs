@@ -6,11 +6,11 @@ namespace Application.Features.RoleOperationClaims.Commands.Delete;
 
 [AuthorizationPipeline(Roles = ["Admin"])]
 public readonly record struct DeleteRoleOperationClaimCommandRequest(Guid RoleId, Guid OperationClaimId)
-    : IRequest<HttpResult<bool, Error>>, ISecuredRequest;
+    : IRequest<HttpResult<bool>>, ISecuredRequest;
 
 public sealed class
     DeleteRoleOperationClaimCommandHandler : IRequestHandler<DeleteRoleOperationClaimCommandRequest,
-    HttpResult<bool, Error>>
+    HttpResult<bool>>
 {
     private readonly IEfRepository _efRepository;
     private readonly RoleOperationClaimBusinessRules _roleOperationClaimBusinessRules;
@@ -22,7 +22,7 @@ public sealed class
         _efRepository = efRepository;
     }
 
-    public async Task<HttpResult<bool, Error>> Handle(DeleteRoleOperationClaimCommandRequest request,
+    public async Task<HttpResult<bool>> Handle(DeleteRoleOperationClaimCommandRequest request,
         CancellationToken cancellationToken)
     {
         var existResult =
@@ -40,6 +40,6 @@ public sealed class
                           roc.RoleId == request.RoleId)
             .ExecuteDeleteAsync(cancellationToken);
 
-        return HttpResult<bool, Error>.Success(true, StatusCodes.Status204NoContent);
+        return HttpResult<bool>.Success(true, StatusCodes.Status204NoContent);
     }
 }

@@ -7,11 +7,11 @@ namespace Application.Features.OperationClaims.Commands.Create;
 
 [AuthorizationPipeline(Roles = ["Admin"])]
 public readonly record struct CreateOperationClaimCommandRequest(string Name)
-    : IRequest<HttpResult<GetOperationClaimDto, Error>>, ISecuredRequest;
+    : IRequest<HttpResult<GetOperationClaimDto>>, ISecuredRequest;
 
 public sealed class
     CreateOperationClaimCommandHandler : IRequestHandler<CreateOperationClaimCommandRequest,
-    HttpResult<GetOperationClaimDto, Error>>
+    HttpResult<GetOperationClaimDto>>
 {
     private readonly IEfRepository _efRepository;
     private readonly OperationClaimBusinessRules _operationClaimBusinessRules;
@@ -23,7 +23,7 @@ public sealed class
         _efRepository = efRepository;
     }
 
-    public async Task<HttpResult<GetOperationClaimDto, Error>> Handle(CreateOperationClaimCommandRequest request,
+    public async Task<HttpResult<GetOperationClaimDto>> Handle(CreateOperationClaimCommandRequest request,
         CancellationToken cancellationToken)
     {
         var duplicateResult = await _operationClaimBusinessRules.OperationClaimNameCannotBeDuplicatedBeforeRegistered(
@@ -42,6 +42,6 @@ public sealed class
 
         var operationClaimDto = operationClaim.ToDto();
 
-        return HttpResult<GetOperationClaimDto, Error>.Success(operationClaimDto, StatusCodes.Status201Created);
+        return HttpResult<GetOperationClaimDto>.Success(operationClaimDto, StatusCodes.Status201Created);
     }
 }
