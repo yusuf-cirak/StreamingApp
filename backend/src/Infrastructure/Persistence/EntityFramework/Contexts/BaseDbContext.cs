@@ -19,12 +19,17 @@ public class BaseDbContext : DbContext
     public virtual DbSet<OperationClaim> OperationClaims { get; set; }
 
     public virtual DbSet<UserRoleClaim> UserRoleClaims { get; set; }
+    
+    public virtual DbSet<UserOperationClaim> UserOperationClaims { get; set; }
 
     public virtual DbSet<RoleOperationClaim> RoleOperationClaims { get; set; }
     
     public virtual DbSet<OutboxMessage> OutboxMessages { get; set; }
     
     public virtual DbSet<Role> Roles { get; set; }
+    
+    public virtual DbSet<StreamModerator> StreamModerators { get; set; }
+
 
 
     public BaseDbContext(DbContextOptions options, IConfiguration configuration) : base(options)

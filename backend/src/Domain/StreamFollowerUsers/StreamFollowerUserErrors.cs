@@ -1,6 +1,6 @@
 ﻿namespace Domain.Errors;
 
-public readonly record struct StreamFollowerUsers
+public readonly record struct StreamFollowerUserErrors
 {
     public static readonly Error StreamIdCannotBeEmpty =
         Error.Create("StreamFollowerUsers.StreamIdCannotBeEmpty", "Stream follower users stream id cannot be empty");

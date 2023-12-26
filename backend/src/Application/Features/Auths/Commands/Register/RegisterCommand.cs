@@ -38,7 +38,7 @@ public sealed class
 
         if (result.IsFailure)
         {
-            // return result.Error;
+            return result.Error;
         }
 
         _hashingHelper.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);

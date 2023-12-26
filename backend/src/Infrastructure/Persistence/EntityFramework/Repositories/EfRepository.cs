@@ -28,6 +28,11 @@ public sealed class EfRepository : IEfRepository
     public DbSet<OutboxMessage> OutboxMessages => Context.OutboxMessages;
     
     public DbSet<Role> Roles => Context.Roles;
+    
+    public DbSet<StreamModerator> StreamModerators => Context.StreamModerators;
+    
+    public DbSet<UserOperationClaim> UserOperationClaims => Context.UserOperationClaims;
+
 
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)

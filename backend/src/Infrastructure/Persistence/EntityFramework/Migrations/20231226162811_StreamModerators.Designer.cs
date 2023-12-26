@@ -3,17 +3,20 @@ using System;
 using Infrastructure.Persistence.EntityFramework.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Infrastructure.Persistence.EntityFramework.Migrations
+namespace Infrastructure.Migrations
 {
     [DbContext(typeof(BaseDbContext))]
-    partial class BaseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231226162811_StreamModerators")]
+    partial class StreamModerators
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -325,23 +328,6 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserOperationClaim", b =>
-                {
-                    b.Property<Guid>("OperationClaimId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("OperationClaimId");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("UserId");
-
-                    b.HasKey("OperationClaimId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserOperationClaims", (string)null);
-                });
-
             modelBuilder.Entity("Domain.Entities.UserRoleClaim", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -491,25 +477,6 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                         .HasForeignKey("Domain.Entities.Streamer", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Domain.Entities.UserOperationClaim", b =>
-                {
-                    b.HasOne("Domain.Entities.OperationClaim", "OperationClaim")
-                        .WithMany()
-                        .HasForeignKey("OperationClaimId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OperationClaim");
 
                     b.Navigation("User");
                 });

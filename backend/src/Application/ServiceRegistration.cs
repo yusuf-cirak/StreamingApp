@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Application.Abstractions;
 using Application.Common.Behaviors;
+using Application.Services;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,11 +9,11 @@ namespace Application;
 
 public static class ServiceRegistration
 {
-    private static void AddBusinessRuleServices(this IServiceCollection services, Assembly assembly,
+    private static void AddRuleServices(this IServiceCollection services, Type type, Assembly assembly,
         Func<IServiceCollection, Type, IServiceCollection>? addWithLifeCycle = null)
     {
-        var typeOfBusinessRules = typeof(BaseBusinessRules);
-        var types = assembly.GetTypes().Where(t => t.IsSubclassOf(typeOfBusinessRules) && typeOfBusinessRules != t);
+        var typeOfRules = type;
+        var types = assembly.GetTypes().Where(t => t.IsSubclassOf(typeOfRules) && typeOfRules != t);
 
         if (addWithLifeCycle is null)
         {
@@ -34,7 +35,9 @@ public static class ServiceRegistration
     {
         var executingAssembly = Assembly.GetExecutingAssembly();
 
-        AddBusinessRuleServices(services, executingAssembly);
+        AddRuleServices(services, typeof(BaseBusinessRules), executingAssembly);
+
+        services.AddSingleton<AuthManager>();
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(executingAssembly));
 

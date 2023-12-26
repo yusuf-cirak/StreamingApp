@@ -32,19 +32,20 @@ public sealed class AuthBusinessRules : BaseBusinessRules
         }
 
         return Result.Success();
-
     }
 
 
-    public void UserCredentialsMustMatchBeforeLogin(string password, byte[] passwordHash, byte[] passwordSalt)
+    public Result UserCredentialsMustMatchBeforeLogin(string password, byte[] passwordHash, byte[] passwordSalt)
     {
         if (!_hashingHelper.VerifyPasswordHash(password, passwordHash, passwordSalt))
         {
-            throw new BusinessException("Wrong credentials");
+            return Result.Failure(UserErrors.WrongCredentials);
         }
+
+        return Result.Success();
     }
 
-    public async Task<Result<User,Error>> UserNameShouldExistBeforeLogin(string username)
+    public async Task<Result<User, Error>> UserNameShouldExistBeforeLogin(string username)
     {
         User? user = await _repository.Users.SingleOrDefaultAsync(user => user.Username == username);
 
@@ -56,7 +57,7 @@ public sealed class AuthBusinessRules : BaseBusinessRules
         return user;
     }
 
-    public async Task<Result<User,Error>> UserWithIdMustExistBeforeRefreshToken(Guid userId)
+    public async Task<Result<User, Error>> UserWithIdMustExistBeforeRefreshToken(Guid userId)
     {
         User? user = await _repository.Users.SingleOrDefaultAsync(user => user.Id == userId);
 
@@ -80,18 +81,17 @@ public sealed class AuthBusinessRules : BaseBusinessRules
         {
             return Result.Failure(RefreshTokenErrors.TokenNotFound);
         }
-        
+
         if (refreshToken.Token != refreshTokenFromRequest)
         {
             return Result.Failure(RefreshTokenErrors.TokenIsNotValid);
         }
-        
+
         if (refreshToken.ExpiresAt < DateTime.Now)
         {
             return Result.Failure(RefreshTokenErrors.TokenIsExpired);
         }
-        
-        return Result.Success();
 
+        return Result.Success();
     }
 }

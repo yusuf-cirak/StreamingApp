@@ -35,7 +35,14 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommandRequest, H
 
         User user = result.Value;
 
-        _authBusinessRules.UserCredentialsMustMatchBeforeLogin(request.Password, user.PasswordHash, user.PasswordSalt);
+        var verifyCredentialsResult =
+            _authBusinessRules.UserCredentialsMustMatchBeforeLogin(request.Password, user.PasswordHash,
+                user.PasswordSalt);
+
+        if (verifyCredentialsResult.IsFailure)
+        {
+            return verifyCredentialsResult.Error;
+        }
 
         var userIpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
