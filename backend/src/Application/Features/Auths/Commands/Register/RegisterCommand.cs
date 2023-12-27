@@ -48,7 +48,7 @@ public sealed class
 
         var userIpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
-        AccessToken accessToken = _jwtHelper.CreateAccessToken(newUser);
+        AccessToken accessToken = _jwtHelper.CreateAccessToken(newUser, new());
         RefreshToken refreshToken = _jwtHelper.CreateRefreshToken(newUser, userIpAddress);
 
         _efRepository.Users.Add(newUser);

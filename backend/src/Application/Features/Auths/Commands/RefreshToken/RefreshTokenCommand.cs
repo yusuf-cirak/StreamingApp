@@ -3,6 +3,7 @@ using Application.Abstractions.Repository;
 using Application.Common.Exceptions;
 using Application.Features.Auths.Dtos;
 using Application.Features.Auths.Rules;
+using Application.Services;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Auths.Commands.Refresh;
@@ -17,14 +18,16 @@ public sealed class
     private readonly IJwtHelper _jwtHelper;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly AuthBusinessRules _authBusinessRules;
+    private readonly AuthManager _authManager;
 
     public RefreshTokenCommandHandler(IJwtHelper jwtHelper, IHttpContextAccessor httpContextAccessor,
-        AuthBusinessRules authBusinessRules, IEfRepository efRepository)
+        AuthBusinessRules authBusinessRules, IEfRepository efRepository, AuthManager authManager)
     {
         _jwtHelper = jwtHelper;
         _httpContextAccessor = httpContextAccessor;
         _authBusinessRules = authBusinessRules;
         _efRepository = efRepository;
+        _authManager = authManager;
     }
 
     public async Task<HttpResult<TokenResponseDto>> Handle(RefreshTokenCommandRequest request,
@@ -51,7 +54,16 @@ public sealed class
 
         var userIpAddress = _httpContextAccessor?.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "";
 
-        var accessToken = _jwtHelper.CreateAccessToken(user);
+        var userRolesAndOperationClaims =
+            await _authManager.GetUserRolesAndOperationClaimsAsync(user.Id, cancellationToken);
+
+        var claimsDictionary = new Dictionary<string, dynamic>
+        {
+            { "Roles", userRolesAndOperationClaims.Roles },
+            { "OperationClaims", userRolesAndOperationClaims.OperationClaims }
+        };
+
+        var accessToken = _jwtHelper.CreateAccessToken(user, claimsDictionary);
         var refreshToken = _jwtHelper.CreateRefreshToken(user, userIpAddress);
 
         _efRepository.RefreshTokens.Add(refreshToken);

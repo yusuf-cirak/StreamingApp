@@ -37,7 +37,7 @@ public static class ServiceRegistration
 
         AddRuleServices(services, typeof(BaseBusinessRules), executingAssembly);
 
-        services.AddSingleton<AuthManager>();
+        services.AddScoped<AuthManager>();
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(executingAssembly));
 

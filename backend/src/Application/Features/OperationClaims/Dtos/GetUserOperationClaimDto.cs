@@ -1,6 +1,3 @@
 ﻿namespace Application.Features.OperationClaims.Dtos;
 
-public struct GetUserOperationClaimDto
-{
-    
-}
+public readonly record struct GetUserOperationClaimDto(GetOperationClaimDto OperationClaim, string Value);

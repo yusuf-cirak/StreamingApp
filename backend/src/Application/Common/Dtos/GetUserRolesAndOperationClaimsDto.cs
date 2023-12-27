@@ -1,6 +1,10 @@
-﻿namespace Application.Common.Dtos;
+﻿using Application.Features.OperationClaims.Dtos;
+using Application.Features.Roles.Dtos;
 
-public struct GetUserRolesAndOperationClaimsDto
-{
-    
-}
+namespace Application.Common.Dtos;
+
+public readonly record struct GetUserRolesAndOperationClaimsDto(
+    Guid UserId,
+    IEnumerable<GetUserRoleDto> Roles,
+    IEnumerable<GetUserOperationClaimDto> OperationClaims
+);

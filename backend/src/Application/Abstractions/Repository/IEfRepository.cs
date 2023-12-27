@@ -23,15 +23,10 @@ public interface IEfRepository
     DbSet<Stream> Streams { get; }
     DbSet<Streamer> Streamers { get; }
 
+    DbSet<StreamBlockedUser> StreamBlockedUsers { get; }
     DbSet<StreamChatMessage> StreamChatMessages { get; }
-
-
-
+    
     DbSet<OutboxMessage> OutboxMessages { get; }
-    
-    DbSet<StreamModerator> StreamModerators { get; }
-    
-
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

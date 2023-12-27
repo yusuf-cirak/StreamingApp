@@ -21,10 +21,11 @@
 
   <ItemGroup>
     <Folder Include="Features\RoleOperationClaims\Dtos\" />
+    <Folder Include="Features\StreamBlockedUsers\Commands\Delete\" />
     <Folder Include="Features\StreamBlockedUsers\Dtos\" />
     <Folder Include="Features\Streamers\Dtos\" />
     <Folder Include="Features\Streamers\Events\" />
-    <Folder Include="Services\" />
+    <Folder Include="Features\UserRolesOperationClaims\Dtos\" />
   </ItemGroup>
 
 </Project>

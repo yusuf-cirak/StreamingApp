@@ -1,6 +1,3 @@
 ﻿namespace Application.Features.Roles.Dtos;
 
-public class GetUserRoleDto
-{
-    
-}
+public readonly record struct GetUserRoleDto(GetRoleDto Role, string Value);
