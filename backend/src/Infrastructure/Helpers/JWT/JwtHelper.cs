@@ -6,6 +6,7 @@ using Application.Common.Models;
 using Infrastructure.Helpers.Security.Encryption;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace Infrastructure.Helpers.JWT;
 
@@ -21,19 +22,19 @@ public sealed class JwtHelper : IJwtHelper
     }
 
 
-    public AccessToken CreateAccessToken(User user)
+    public AccessToken CreateAccessToken(User user, Dictionary<string, object> claimsDictionary)
     {
         _accessTokenExpiration = DateTime.UtcNow.AddMinutes(_tokenOptions.AccessTokenExpiration);
         SecurityKey securityKey = SecurityKeyHelper.CreateSecurityKey(_tokenOptions.SecurityKey);
         SigningCredentials signingCredentials = SigningCredentialsHelper.CreateSigningCredentials(securityKey);
-        JwtSecurityToken jwt = CreateJwtSecurityToken(_tokenOptions, user, signingCredentials);
+        JwtSecurityToken jwt = CreateJwtSecurityToken(_tokenOptions, user, signingCredentials, claimsDictionary);
         JwtSecurityTokenHandler jwtSecurityTokenHandler = new();
-        string? token = jwtSecurityTokenHandler.WriteToken(jwt);
+        string token = jwtSecurityTokenHandler.WriteToken(jwt);
         return new AccessToken(token, _accessTokenExpiration);
     }
 
     private JwtSecurityToken CreateJwtSecurityToken(TokenOptions tokenOptions, User user,
-        SigningCredentials signingCredentials)
+        SigningCredentials signingCredentials, Dictionary<string, object> claimsDictionary)
     {
         JwtSecurityToken jwt = new(
             tokenOptions.Issuer,
@@ -41,12 +42,12 @@ public sealed class JwtHelper : IJwtHelper
             expires: _accessTokenExpiration,
             notBefore: DateTime.UtcNow,
             signingCredentials: signingCredentials,
-            claims: SetClaims(user)
+            claims: SetClaims(user, claimsDictionary)
         );
         return jwt;
     }
 
-    private IEnumerable<Claim> SetClaims(User user)
+    private IEnumerable<Claim> SetClaims(User user, Dictionary<string, object> claimsDictionary)
     {
         List<Claim> claims = new(3)
         {
@@ -54,6 +55,12 @@ public sealed class JwtHelper : IJwtHelper
             new Claim(ClaimTypes.Name, user.Username),
             new Claim("ProfileImageUrl", user.ProfileImageUrl),
         };
+
+        foreach (var (key, value) in claimsDictionary)
+        {
+            string serializedValue = JsonConvert.SerializeObject(value, Formatting.None);
+            claims.Add(new Claim(key, serializedValue));
+        }
 
         return claims;
     }

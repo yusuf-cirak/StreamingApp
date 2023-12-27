@@ -21,4 +21,7 @@ public readonly record struct StreamErrors
 
     public static readonly Error NameCannotBeDuplicated = Error.Create("Stream.NameCannotBeDuplicated",
         "Stream name cannot be duplicated");
+
+    public static readonly Error UserIsNotModeratorOfStream = Error.Create("Stream.UserIsNotModeratorOfStream",
+        "User is not moderator of the stream");
 }
