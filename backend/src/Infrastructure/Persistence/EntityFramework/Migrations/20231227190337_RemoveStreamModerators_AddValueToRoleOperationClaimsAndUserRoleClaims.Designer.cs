@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence.EntityFramework.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Persistence.EntityFramework.Migrations
 {
     [DbContext(typeof(BaseDbContext))]
-    partial class BaseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231227190337_RemoveStreamModerators_AddValueToRoleOperationClaimsAndUserRoleClaims")]
+    partial class RemoveStreamModerators_AddValueToRoleOperationClaimsAndUserRoleClaims
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -140,9 +143,7 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                     b.HasIndex("OperationClaimId")
                         .IsUnique();
 
-                    b.HasIndex("RoleId");
-
-                    b.HasIndex("RoleId", "OperationClaimId")
+                    b.HasIndex("RoleId")
                         .IsUnique();
 
                     b.ToTable("RoleOperationClaims", (string)null);
@@ -199,9 +200,6 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                     b.HasKey("StreamerId", "UserId");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("StreamerId", "UserId")
-                        .IsUnique();
 
                     b.ToTable("StreamBlockedUsers", (string)null);
                 });
@@ -261,12 +259,7 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
 
                     b.HasKey("StreamerId", "UserId");
 
-                    b.HasIndex("StreamerId");
-
                     b.HasIndex("UserId");
-
-                    b.HasIndex("StreamerId", "UserId")
-                        .IsUnique();
 
                     b.ToTable("StreamFollowerUsers", (string)null);
                 });
@@ -358,9 +351,7 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                     b.HasIndex("OperationClaimId")
                         .IsUnique();
 
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("OperationClaimId", "UserId", "Value")
+                    b.HasIndex("UserId")
                         .IsUnique();
 
                     b.ToTable("UserOperationClaims", (string)null);
@@ -382,13 +373,7 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
 
                     b.HasKey("UserId", "RoleId", "Value");
 
-                    b.HasIndex("RoleId")
-                        .IsUnique();
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("UserId", "RoleId", "Value")
-                        .IsUnique();
+                    b.HasIndex("RoleId");
 
                     b.ToTable("UserRoleClaims", (string)null);
                 });
@@ -519,8 +504,8 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.User", "User")
-                        .WithMany("UserOperationClaims")
-                        .HasForeignKey("UserId")
+                        .WithOne()
+                        .HasForeignKey("Domain.Entities.UserOperationClaim", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -532,8 +517,8 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
             modelBuilder.Entity("Domain.Entities.UserRoleClaim", b =>
                 {
                     b.HasOne("Domain.Entities.Role", "Role")
-                        .WithOne()
-                        .HasForeignKey("Domain.Entities.UserRoleClaim", "RoleId")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -551,8 +536,6 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Navigation("RefreshTokens");
-
-                    b.Navigation("UserOperationClaims");
 
                     b.Navigation("UserRoleClaims");
                 });

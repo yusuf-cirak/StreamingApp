@@ -12,7 +12,7 @@ namespace Infrastructure.Persistence.EntityFramework.EntityConfigurations
             builder.HasKey(u => u.Id);
 
             builder.Property(u => u.Id).HasColumnName("Id").IsRequired();
-
+            
             builder.Property(u => u.StreamKey).HasColumnName("StreamKey").IsRequired();
 
             builder.Property(u => u.StreamTitle).HasColumnName("StreamTitle").IsRequired(false);

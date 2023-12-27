@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence.EntityFramework.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Persistence.EntityFramework.Migrations
 {
     [DbContext(typeof(BaseDbContext))]
-    partial class BaseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231227125615_UserOperationClaim_RoleOperationClaim_Value")]
+    partial class UserOperationClaim_RoleOperationClaim_Value
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,9 +64,6 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id")
-                        .IsUnique();
-
                     b.ToTable("OperationClaims", (string)null);
                 });
 
@@ -94,9 +94,6 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id")
-                        .IsUnique();
-
                     b.HasIndex("UserId");
 
                     b.ToTable("RefreshTokens", (string)null);
@@ -116,12 +113,6 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
                     b.ToTable("Roles", (string)null);
                 });
 
@@ -140,9 +131,7 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                     b.HasIndex("OperationClaimId")
                         .IsUnique();
 
-                    b.HasIndex("RoleId");
-
-                    b.HasIndex("RoleId", "OperationClaimId")
+                    b.HasIndex("RoleId")
                         .IsUnique();
 
                     b.ToTable("RoleOperationClaims", (string)null);
@@ -177,9 +166,6 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id")
-                        .IsUnique();
-
                     b.HasIndex("StreamerId")
                         .IsUnique();
 
@@ -199,9 +185,6 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                     b.HasKey("StreamerId", "UserId");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("StreamerId", "UserId")
-                        .IsUnique();
 
                     b.ToTable("StreamBlockedUsers", (string)null);
                 });
@@ -237,9 +220,6 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id")
-                        .IsUnique();
-
                     b.HasIndex("StreamerId")
                         .IsUnique();
 
@@ -261,14 +241,30 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
 
                     b.HasKey("StreamerId", "UserId");
 
-                    b.HasIndex("StreamerId");
-
                     b.HasIndex("UserId");
 
-                    b.HasIndex("StreamerId", "UserId")
+                    b.ToTable("StreamFollowerUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.StreamModerator", b =>
+                {
+                    b.Property<Guid>("StreamerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("StreamerId");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("UserId");
+
+                    b.HasKey("StreamerId", "UserId");
+
+                    b.HasIndex("StreamerId")
                         .IsUnique();
 
-                    b.ToTable("StreamFollowerUsers", (string)null);
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("StreamModerators", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Streamer", b =>
@@ -330,9 +326,6 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id")
-                        .IsUnique();
-
                     b.HasIndex("Username")
                         .IsUnique();
 
@@ -358,9 +351,7 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                     b.HasIndex("OperationClaimId")
                         .IsUnique();
 
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("OperationClaimId", "UserId", "Value")
+                    b.HasIndex("UserId")
                         .IsUnique();
 
                     b.ToTable("UserOperationClaims", (string)null);
@@ -382,13 +373,7 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
 
                     b.HasKey("UserId", "RoleId", "Value");
 
-                    b.HasIndex("RoleId")
-                        .IsUnique();
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("UserId", "RoleId", "Value")
-                        .IsUnique();
+                    b.HasIndex("RoleId");
 
                     b.ToTable("UserRoleClaims", (string)null);
                 });
@@ -499,6 +484,25 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Domain.Entities.StreamModerator", b =>
+                {
+                    b.HasOne("Domain.Entities.Streamer", "Streamer")
+                        .WithOne()
+                        .HasForeignKey("Domain.Entities.StreamModerator", "StreamerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithOne()
+                        .HasForeignKey("Domain.Entities.StreamModerator", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Streamer");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Domain.Entities.Streamer", b =>
                 {
                     b.HasOne("Domain.Entities.User", "User")
@@ -519,8 +523,8 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.User", "User")
-                        .WithMany("UserOperationClaims")
-                        .HasForeignKey("UserId")
+                        .WithOne()
+                        .HasForeignKey("Domain.Entities.UserOperationClaim", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -532,8 +536,8 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
             modelBuilder.Entity("Domain.Entities.UserRoleClaim", b =>
                 {
                     b.HasOne("Domain.Entities.Role", "Role")
-                        .WithOne()
-                        .HasForeignKey("Domain.Entities.UserRoleClaim", "RoleId")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -551,8 +555,6 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Navigation("RefreshTokens");
-
-                    b.Navigation("UserOperationClaims");
 
                     b.Navigation("UserRoleClaims");
                 });

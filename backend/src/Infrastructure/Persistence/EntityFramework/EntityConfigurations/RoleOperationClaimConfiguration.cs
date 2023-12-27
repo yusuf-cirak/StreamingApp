@@ -13,6 +13,8 @@ public sealed class RoleOperationClaimConfiguration : IEntityTypeConfiguration<R
         builder.Property(r => r.OperationClaimId).HasColumnName("OperationClaimId");
 
         builder.HasKey(r => new { r.RoleId, r.OperationClaimId });
+        builder.HasIndex(r => r.RoleId).IsUnique(false);
+        builder.HasIndex(r => new { r.RoleId, r.OperationClaimId }).IsUnique();
 
         builder.HasOne(u => u.OperationClaim).WithOne().HasForeignKey<RoleOperationClaim>(u => u.OperationClaimId);
 

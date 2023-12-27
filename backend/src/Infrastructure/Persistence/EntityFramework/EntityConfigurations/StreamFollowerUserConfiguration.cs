@@ -13,5 +13,9 @@ public sealed class StreamFollowerUserConfiguration : IEntityTypeConfiguration<S
         builder.Property(u => u.UserId).HasColumnName("UserId");
 
         builder.HasKey(u => new { u.StreamerId, u.UserId });
+        
+        builder.HasIndex(r => r.StreamerId).IsUnique(false);
+        
+        builder.HasIndex(r => new { r.StreamerId, r.UserId }).IsUnique();
     }
 }

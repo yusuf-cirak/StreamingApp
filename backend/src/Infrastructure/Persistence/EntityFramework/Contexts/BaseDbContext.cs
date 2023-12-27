@@ -14,6 +14,7 @@ public class BaseDbContext : DbContext
     public virtual DbSet<Streamer> Streamers { get; set; }
     
     public virtual DbSet<StreamChatMessage> StreamChatMessages { get; set; }
+    public virtual DbSet<StreamBlockedUser> StreamBlockedUsers { get; set; }
     public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
 
     public virtual DbSet<OperationClaim> OperationClaims { get; set; }
@@ -27,10 +28,6 @@ public class BaseDbContext : DbContext
     public virtual DbSet<OutboxMessage> OutboxMessages { get; set; }
     
     public virtual DbSet<Role> Roles { get; set; }
-    
-    public virtual DbSet<StreamModerator> StreamModerators { get; set; }
-
-
 
     public BaseDbContext(DbContextOptions options, IConfiguration configuration) : base(options)
     {

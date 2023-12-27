@@ -24,12 +24,11 @@ public sealed class EfRepository : IEfRepository
     public DbSet<RoleOperationClaim> RoleOperationClaims => Context.RoleOperationClaims;
     public DbSet<UserRoleClaim> UserRoleClaims => Context.UserRoleClaims;
     public DbSet<StreamChatMessage> StreamChatMessages => Context.StreamChatMessages;
+    public DbSet<StreamBlockedUser> StreamBlockedUsers => Context.StreamBlockedUsers;
 
     public DbSet<OutboxMessage> OutboxMessages => Context.OutboxMessages;
     
     public DbSet<Role> Roles => Context.Roles;
-    
-    public DbSet<StreamModerator> StreamModerators => Context.StreamModerators;
     
     public DbSet<UserOperationClaim> UserOperationClaims => Context.UserOperationClaims;
 

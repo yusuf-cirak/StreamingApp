@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SharedKernel;
-using System.Globalization;
 
 namespace Infrastructure.Persistence.EntityFramework.EntityConfigurations
 {

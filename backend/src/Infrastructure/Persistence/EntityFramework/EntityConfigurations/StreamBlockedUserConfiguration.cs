@@ -13,5 +13,7 @@ public sealed class StreamBlockedUserConfiguration : IEntityTypeConfiguration<St
         builder.Property(u => u.UserId).HasColumnName("UserId");
 
         builder.HasKey(u => new { u.StreamerId, u.UserId });
+        builder.HasIndex(r => new { r.StreamerId, r.UserId }).IsUnique();
+
     }
 }

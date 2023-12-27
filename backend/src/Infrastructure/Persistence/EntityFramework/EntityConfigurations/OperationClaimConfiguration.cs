@@ -11,10 +11,6 @@ namespace Infrastructure.Persistence.EntityFramework.EntityConfigurations
 
             builder.ToTable("OperationClaims");
 
-            builder.Property(o => o.Id).HasColumnName("Id");
-
-            builder.HasKey(o => o.Id);
-
             builder.Property(o => o.Name).HasColumnName("Name");
         }
     }

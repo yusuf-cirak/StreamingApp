@@ -12,5 +12,7 @@ public sealed class RoleConfiguration : EntityConfiguration<Role>
         builder.ToTable("Roles");
 
         builder.Property(o => o.Name).HasColumnName("Name").IsRequired();
+
+        builder.HasIndex(o => o.Name).IsUnique();
     }
 }
