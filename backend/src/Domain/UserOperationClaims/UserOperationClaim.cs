@@ -17,7 +17,7 @@ public class UserOperationClaim : BaseEntity
         Value = value;
     }
 
-    private UserOperationClaim()
+    public UserOperationClaim()
     {
     }
 

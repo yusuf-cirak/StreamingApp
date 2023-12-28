@@ -17,6 +17,9 @@ public sealed class UserOperationClaimConfiguration : IEntityTypeConfiguration<U
         builder.HasKey(u => new { u.OperationClaimId, u.UserId, u.Value });
 
         builder.HasIndex(r => r.UserId).IsUnique(false);
+        
+        builder.HasIndex(r => r.OperationClaimId).IsUnique(false);
+
 
         builder.HasIndex(r => new { r.OperationClaimId, r.UserId, r.Value }).IsUnique();
 

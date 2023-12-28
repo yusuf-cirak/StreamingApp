@@ -3,6 +3,7 @@ using HealthChecks.UI.Client;
 using Infrastructure;
 using Infrastructure.Helpers.JWT;
 using Infrastructure.Helpers.Security;
+using Infrastructure.Persistence.EntityFramework;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using WebAPI.Endpoints;
 using WebAPI.Extensions;
@@ -40,6 +41,8 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.ApplyPendingMigrations();
+    app.GenerateSeedDataAndPersist();
 }
 
 

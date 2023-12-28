@@ -9,7 +9,7 @@ public class UserRoleClaim : BaseEntity
     public virtual User User { get; set; }
     public virtual Role Role { get; set; }
 
-    private UserRoleClaim()
+    public UserRoleClaim()
     {
     }
 

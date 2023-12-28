@@ -6,10 +6,10 @@ public class Streamer : Entity
     public string StreamTitle { get; init; } = string.Empty;
     public string StreamDescription { get; init; } = string.Empty;
 
-    public virtual User User { get; init; }
+    public virtual User User { get; }
 
 
-    private Streamer()
+    public Streamer()
     {
     }
 
