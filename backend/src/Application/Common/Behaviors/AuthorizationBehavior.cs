@@ -1,6 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Text;
 using Application.Common.Errors;
-using Application.Common.Extensions;
 
 namespace Application.Common.Behaviors;
 
@@ -18,36 +17,29 @@ public sealed class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavi
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
-        HashSet<string> roleClaimsFromToken =
-            (_httpContextAccessor.HttpContext?.User?.ClaimRoles() ?? new()).ToHashSet();
+        var claims = _httpContextAccessor.HttpContext?.User.Claims.ToList();
 
-        if (roleClaimsFromToken.Count == 0)
+        if (claims is null or { Count: 0 })
         {
-            var response =
-                new TResponse().CreateWith(AuthorizationErrors.Unauthorized, StatusCodes.Status401Unauthorized);
+            var response = new TResponse().CreateWith(AuthorizationErrors.Unauthorized(),
+                StatusCodes.Status401Unauthorized);
 
             return (TResponse)response;
         }
 
-        HashSet<string> roleClaimsFromAttribute =
-            (request.GetType().GetCustomAttribute<AuthorizationPipelineAttribute>()?.Roles ?? []).ToHashSet();
+        var authorizationFailureResults = request.AuthorizationRules
+            .Select(rule => rule(claims, request))
+            .Where(result => result.IsFailure)
+            .ToList();
 
-        if (roleClaimsFromAttribute.Count == 0)
+        if (authorizationFailureResults.Count > 0)
         {
-            var response =
-                new TResponse().CreateWith(AuthorizationErrors.Unauthorized, StatusCodes.Status401Unauthorized);
+            StringBuilder sb = new();
 
-            return (TResponse)response;
-        }
+            authorizationFailureResults.ForEach(result => sb.AppendLine(result.Error.Message));
 
-        var isNotMatchedARoleClaimWithRequestRoles = roleClaimsFromToken
-            .Except(roleClaimsFromAttribute).Any();
-
-
-        if (isNotMatchedARoleClaimWithRequestRoles)
-        {
-            var response =
-                new TResponse().CreateWith(AuthorizationErrors.Unauthorized, StatusCodes.Status401Unauthorized);
+            var response = new TResponse().CreateWith(AuthorizationErrors.Unauthorized(sb.ToString()),
+                StatusCodes.Status401Unauthorized);
 
             return (TResponse)response;
         }

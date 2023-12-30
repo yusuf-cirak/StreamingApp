@@ -38,28 +38,4 @@ public class BaseDbContext : DbContext
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
-
-    // public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    // {
-    //     var auditableEntities = ChangeTracker.Entries<AuditableEntity>();
-    //
-    //     foreach (var data in auditableEntities)
-    //     {
-    //         _ = data.State switch
-    //         {
-    //             EntityState.Added => data.Entity.CreatedDate = DateTime.UtcNow,
-    //             EntityState.Modified => data.Entity.CreatedDate = DateTime.UtcNow,
-    //             _ => DateTime.UtcNow
-    //         };
-    //     }
-    //
-    //     var saveResult = await base.SaveChangesAsync(cancellationToken);
-    //
-    //     if (saveResult is 0)
-    //     {
-    //         throw new DatabaseOperationFailedException("Could not save changes to database");
-    //     }
-    //
-    //     return saveResult;
-    // }
 }

@@ -31,8 +31,8 @@ public static class ServiceRegistration
             opt.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 
             opt.UseNpgsql(configuration.GetConnectionString("Postgres"),
-                    sqlOpt => { sqlOpt.EnableRetryOnFailure(maxRetryCount: 3); })
-                .AddInterceptors(auditableEntityDateInterceptor, domainEventToOutboxMessageInterceptor);
+                sqlOpt => { sqlOpt.EnableRetryOnFailure(maxRetryCount: 3); })
+            .AddInterceptors(auditableEntityDateInterceptor, domainEventToOutboxMessageInterceptor);
         }, poolSize: 100);
 
 
