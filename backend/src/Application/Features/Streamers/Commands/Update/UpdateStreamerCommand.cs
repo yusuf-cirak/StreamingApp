@@ -1,13 +1,33 @@
-﻿using Application.Abstractions.Repository;
-using Application.Abstractions.Security;
+﻿using System.Security.Claims;
 using Application.Common.Extensions;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
+using Application.Features.Streamers.Abstractions;
+using Application.Features.Streamers.Rules;
 
 namespace Application.Features.Streamers.Commands.Update;
 
-public readonly record struct UpdateStreamerCommandRequest(string StreamTitle, string StreamDescription)
-    : IRequest<Result>, ISecuredRequest;
+public readonly record struct UpdateStreamerCommandRequest
+    : IStreamerCommandRequest, IRequest<Result>, ISecuredRequest
+{
+    public Guid StreamerId { get; init; }
+    public string StreamTitle { get; init; }
+    public string StreamDescription { get; init; }
+    public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
+
+    public UpdateStreamerCommandRequest()
+    {
+        AuthorizationRules = new List<Func<ICollection<Claim>, object, Result>>
+        {
+            StreamerAuthorizationRules.CanUserUpdateStreamer
+        };
+    }
+
+    public UpdateStreamerCommandRequest(Guid streamerId, string streamTitle, string streamDescription) : this()
+    {
+        StreamerId = streamerId;
+        StreamTitle = streamTitle;
+        StreamDescription = streamDescription;
+    }
+}
 
 public sealed class UpdateStreamerCommandHandler : IRequestHandler<UpdateStreamerCommandRequest, Result>
 {

@@ -3,6 +3,8 @@
 public readonly record struct RoleErrors
 {
     public static Error RoleNotFound(string roleName) => Error.Create("Role.NotFound", $"Role {roleName} not found");
+    
+    public static Error DoesNotExist => Error.Create("Role.DoesNotExist", $"User does not have any role");
 
     public static Error RoleAlreadyExists(string roleName) =>
         Error.Create("Role.AlreadyExists", $"Role {roleName} already exists");

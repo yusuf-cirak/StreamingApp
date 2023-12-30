@@ -1,10 +1,25 @@
-﻿using Application.Features.Roles.Rules;
+﻿using System.Security.Claims;
+using Application.Common.Rules;
+using Application.Features.Roles.Rules;
 
 namespace Application.Features.Roles.Commands.Delete;
 
-[AuthorizationPipeline(Roles = ["Admin"])]
-public readonly record struct DeleteRoleCommandRequest(Guid Id)
-    : IRequest<HttpResult<bool>>;
+public readonly record struct DeleteRoleCommandRequest
+    : IRequest<HttpResult<bool>>, ISecuredRequest
+{
+    public Guid Id { get; init; }
+    public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; } = new();
+
+    public DeleteRoleCommandRequest()
+    {
+        AuthorizationRules = [CommonAuthorizationRules.UserMustBeAdmin];
+    }
+
+    public DeleteRoleCommandRequest(Guid id) : this()
+    {
+        Id = id;
+    }
+}
 
 public sealed class DeleteRoleCommandHandler : IRequestHandler<DeleteRoleCommandRequest, HttpResult<bool>>
 {

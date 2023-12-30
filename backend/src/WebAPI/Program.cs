@@ -58,5 +58,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapUserEndpoints();
+app.MapOperationClaimEndpoints();
+app.MapStreamBlockedUserEndpoints();
 
 app.Run();

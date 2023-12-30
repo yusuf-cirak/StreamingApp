@@ -1,16 +1,33 @@
-﻿using Application.Abstractions.Security;
+﻿using System.Security.Claims;
 using Application.Common.Mapping;
+using Application.Common.Rules;
 using Application.Features.OperationClaims.Dtos;
 using Application.Features.OperationClaims.Rules;
 
 namespace Application.Features.OperationClaims.Commands.Update;
 
-public readonly record struct UpdateOperationClaimCommandRequest(Guid Id, string Name)
-    : IRequest<Result<GetOperationClaimDto, Error>>, ISecuredRequest;
+public readonly record struct UpdateOperationClaimCommandRequest
+    : IRequest<HttpResult<GetOperationClaimDto>>, ISecuredRequest
+{
+    public Guid Id { get; init; }
+    public string Name { get; init; }
+    public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
+
+    public UpdateOperationClaimCommandRequest()
+    {
+        AuthorizationRules = [CommonAuthorizationRules.UserMustBeAdmin];
+    }
+
+    public UpdateOperationClaimCommandRequest(Guid id, string name) : this()
+    {
+        Id = id;
+        Name = name;
+    }
+}
 
 public sealed class
     UpdateOperationClaimCommandHandler : IRequestHandler<UpdateOperationClaimCommandRequest,
-    Result<GetOperationClaimDto, Error>>
+    HttpResult<GetOperationClaimDto>>
 {
     private readonly IEfRepository _efRepository;
     private readonly OperationClaimBusinessRules _operationClaimBusinessRules;
@@ -22,7 +39,7 @@ public sealed class
         _efRepository = efRepository;
     }
 
-    public async Task<Result<GetOperationClaimDto, Error>> Handle(UpdateOperationClaimCommandRequest request,
+    public async Task<HttpResult<GetOperationClaimDto>> Handle(UpdateOperationClaimCommandRequest request,
         CancellationToken cancellationToken)
     {
         var operationClaimResult = await _operationClaimBusinessRules.OperationClaimMustExistBeforeUpdated(request.Id);
@@ -43,11 +60,11 @@ public sealed class
         }
 
         operationClaim.Name = request.Name;
-        
+
         _efRepository.OperationClaims.Update(operationClaim);
 
         await _efRepository.SaveChangesAsync(cancellationToken);
-        
+
         return operationClaim.ToDto();
     }
 }

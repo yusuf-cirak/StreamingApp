@@ -18,12 +18,10 @@ public sealed class AuthManager
     public async Task<GetUserRolesAndOperationClaimsDto> GetUserRolesAndOperationClaimsAsync(Guid userId,
         CancellationToken cancellationToken = default)
     {
-        var userRoles = GetUserRolesAsync(userId, cancellationToken);
-        var userOperationClaims = GetUserOperationClaimsAsync(userId, cancellationToken);
+        var userRoles = await GetUserRolesAsync(userId, cancellationToken);
+        var userOperationClaims = await GetUserOperationClaimsAsync(userId, cancellationToken);
 
-        await Task.WhenAll(new List<Task>(2) { userRoles, userOperationClaims });
-
-        return new GetUserRolesAndOperationClaimsDto(userId, userRoles.Result, userOperationClaims.Result);
+        return new GetUserRolesAndOperationClaimsDto(userId, userRoles, userOperationClaims);
     }
 
     public async Task<List<GetUserRoleDto>> GetUserRolesAsync(Guid userId,
@@ -58,31 +56,5 @@ public sealed class AuthManager
             .ToListAsync(cancellationToken);
 
         return userOperationClaims;
-    }
-
-
-    public bool IsAdmin(Guid userId, List<GetRoleDto> userRoles)
-    {
-        return userRoles.Exists(ur => ur.Name == "Admin");
-    }
-
-    public bool IsModerator(Guid userId, List<GetRoleDto> userRoles)
-    {
-        return userRoles.Exists(ur => ur.Name == "Moderator");
-    }
-
-    public bool IsStreamer(Guid userId, List<GetRoleDto> userRoles)
-    {
-        return userRoles.Exists(ur => ur.Name == "Streamer");
-    }
-
-    public bool IsUser(Guid userId, List<GetRoleDto> userRoles)
-    {
-        return userRoles.Exists(ur => ur.Name == "User");
-    }
-
-    public bool IsBlockedFromStream(Guid userId, List<GetRoleDto> userRoles)
-    {
-        return userRoles.Exists(ur => ur.Name == "Blocked");
     }
 }

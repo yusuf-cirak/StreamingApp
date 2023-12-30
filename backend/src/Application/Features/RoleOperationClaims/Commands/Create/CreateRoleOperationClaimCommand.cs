@@ -1,10 +1,28 @@
-﻿using Application.Abstractions.Security;
+﻿using System.Security.Claims;
+using Application.Common.Rules;
 using Application.Features.RoleOperationClaims.Rules;
 
 namespace Application.Features.RoleOperationClaims.Commands.Create;
 
-public readonly record struct CreateRoleOperationClaimCommandRequest(Guid RoleId, Guid OperationClaimId)
-    : IRequest<HttpResult<bool>>, ISecuredRequest;
+public readonly record struct CreateRoleOperationClaimCommandRequest
+    : IRequest<HttpResult<bool>>, ISecuredRequest
+{
+    public Guid RoleId { get; init; }
+    public Guid OperationClaimId { get; init; }
+    public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
+    
+    public CreateRoleOperationClaimCommandRequest()
+    {
+        AuthorizationRules = [CommonAuthorizationRules.UserMustBeAdmin];
+    }
+    
+    public CreateRoleOperationClaimCommandRequest(Guid roleId, Guid operationClaimId) : this()
+    {
+        RoleId = roleId;
+        OperationClaimId = operationClaimId;
+    }
+    
+}
 
 public sealed class
     CreateRoleOperationClaimCommandHandler : IRequestHandler<CreateRoleOperationClaimCommandRequest,

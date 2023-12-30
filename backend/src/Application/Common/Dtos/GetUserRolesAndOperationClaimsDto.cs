@@ -3,7 +3,7 @@ using Application.Features.Roles.Dtos;
 
 namespace Application.Common.Dtos;
 
-public readonly record struct GetUserRolesAndOperationClaimsDto(
+public record GetUserRolesAndOperationClaimsDto(
     Guid UserId,
     IEnumerable<GetUserRoleDto> Roles,
     IEnumerable<GetUserOperationClaimDto> OperationClaims

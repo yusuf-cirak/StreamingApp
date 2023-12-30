@@ -1,15 +1,17 @@
-﻿using Application.Abstractions.Helpers;
-using Application.Abstractions.Repository;
-using Application.Common.Exceptions;
+﻿using System.Security.Claims;
+using Application.Common.Rules;
 using Application.Features.Auths.Dtos;
 using Application.Features.Auths.Rules;
 using Application.Services;
-using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Auths.Commands.Refresh;
 
-public readonly record struct RefreshTokenCommandRequest(Guid UserId, string RefreshToken)
-    : IRequest<HttpResult<TokenResponseDto>>;
+public readonly record struct RefreshTokenCommandRequest
+    : IRequest<HttpResult<TokenResponseDto>>
+{
+    public Guid UserId { get; init; }
+    public string RefreshToken { get; init; }
+}
 
 public sealed class
     RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommandRequest, HttpResult<TokenResponseDto>>
@@ -57,7 +59,7 @@ public sealed class
         var userRolesAndOperationClaims =
             await _authManager.GetUserRolesAndOperationClaimsAsync(user.Id, cancellationToken);
 
-        var claimsDictionary = new Dictionary<string, dynamic>
+        var claimsDictionary = new Dictionary<string, object>
         {
             { "Roles", userRolesAndOperationClaims.Roles },
             { "OperationClaims", userRolesAndOperationClaims.OperationClaims }

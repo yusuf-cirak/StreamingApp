@@ -2,6 +2,7 @@
 using Application.Features.Auths.Commands.Refresh;
 using Application.Features.Auths.Commands.Register;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using SharedKernel;
 
 namespace WebAPI.Endpoints;
@@ -29,7 +30,7 @@ public static class UserEndpoints
             .WithTags("Users");
 
         groupBuilder.MapPost("/refresh",
-                async (RefreshTokenCommandRequest refreshTokenCommandRequest, IMediator mediator) =>
+                async ([FromBody] RefreshTokenCommandRequest refreshTokenCommandRequest, IMediator mediator) =>
                 {
                     return (await mediator.Send(refreshTokenCommandRequest)).ToHttpResponse();
                 })

@@ -1,13 +1,27 @@
-﻿using Application.Abstractions.Security;
+﻿using System.Security.Claims;
 using Application.Common.Mapping;
+using Application.Common.Rules;
 using Application.Features.OperationClaims.Dtos;
 using Application.Features.OperationClaims.Rules;
 
 namespace Application.Features.OperationClaims.Commands.Create;
 
-[AuthorizationPipeline(Roles = ["Admin"])]
-public readonly record struct CreateOperationClaimCommandRequest(string Name)
-    : IRequest<HttpResult<GetOperationClaimDto>>, ISecuredRequest;
+public readonly record struct CreateOperationClaimCommandRequest : IRequest<HttpResult<GetOperationClaimDto>>,
+    ISecuredRequest
+{
+    public string Name { get; init; }
+    public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
+
+    public CreateOperationClaimCommandRequest()
+    {
+        AuthorizationRules = [CommonAuthorizationRules.UserMustBeAdmin];
+    }
+
+    public CreateOperationClaimCommandRequest(string name) : this()
+    {
+        Name = name;
+    }
+}
 
 public sealed class
     CreateOperationClaimCommandHandler : IRequestHandler<CreateOperationClaimCommandRequest,

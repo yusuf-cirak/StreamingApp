@@ -1,10 +1,28 @@
-﻿using Application.Features.StreamBlockedUsers.Rules;
+﻿using System.Security.Claims;
+using Application.Features.StreamBlockedUsers.Abstractions;
+using Application.Features.StreamBlockedUsers.Rules;
 
 namespace Application.Features.StreamBlockedUsers.Commands.Create;
 
-[AuthorizationPipeline(Roles = ["Admin", "Streamer", "Moderator"])]
-public readonly record struct StreamBlockedUserCreateCommandRequest(Guid StreamerId, Guid BlockedUserId)
-    : IRequest<HttpResult>, ISecuredRequest;
+public readonly record struct StreamBlockedUserCreateCommandRequest
+    : IStreamBlockedUserRequest, IRequest<HttpResult>, ISecuredRequest
+{
+    public Guid StreamerId { get; init; }
+
+    public Guid BlockedUserId { get; init; }
+    public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
+
+    public StreamBlockedUserCreateCommandRequest()
+    {
+        AuthorizationRules = [StreamBlockedUserAuthorizationRules.CanUserBlockAUserFromStream];
+    }
+
+    public StreamBlockedUserCreateCommandRequest(Guid streamerId, Guid blockedUserId) : this()
+    {
+        StreamerId = streamerId;
+        BlockedUserId = blockedUserId;
+    }
+}
 
 public sealed class StreamBlockedUserCreateHandler : IRequestHandler<StreamBlockedUserCreateCommandRequest, HttpResult>
 {
@@ -33,7 +51,7 @@ public sealed class StreamBlockedUserCreateHandler : IRequestHandler<StreamBlock
         _efRepository.StreamBlockedUsers.Add(streamBlockedUser);
 
         await _efRepository.SaveChangesAsync(cancellationToken);
-        
+
         return HttpResult.Success();
     }
 }

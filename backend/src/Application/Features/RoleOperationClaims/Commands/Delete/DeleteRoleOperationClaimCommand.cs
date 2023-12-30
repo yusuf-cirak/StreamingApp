@@ -1,12 +1,27 @@
-﻿using Application.Abstractions.Security;
+﻿using System.Security.Claims;
+using Application.Common.Rules;
 using Application.Features.RoleOperationClaims.Rules;
-using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.RoleOperationClaims.Commands.Delete;
 
-[AuthorizationPipeline(Roles = ["Admin"])]
-public readonly record struct DeleteRoleOperationClaimCommandRequest(Guid RoleId, Guid OperationClaimId)
-    : IRequest<HttpResult<bool>>, ISecuredRequest;
+public readonly record struct DeleteRoleOperationClaimCommandRequest
+    : IRequest<HttpResult<bool>>, ISecuredRequest
+{
+    public Guid RoleId { get; init; }
+    public Guid OperationClaimId { get; init; }
+    public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
+    
+    public DeleteRoleOperationClaimCommandRequest()
+    {
+        AuthorizationRules = [CommonAuthorizationRules.UserMustBeAdmin];
+    }
+    
+    public DeleteRoleOperationClaimCommandRequest(Guid roleId, Guid operationClaimId) : this()
+    {
+        RoleId = roleId;
+        OperationClaimId = operationClaimId;
+    }
+}
 
 public sealed class
     DeleteRoleOperationClaimCommandHandler : IRequestHandler<DeleteRoleOperationClaimCommandRequest,
