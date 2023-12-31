@@ -6,7 +6,7 @@ using SharedKernel;
 
 namespace WebAPI.Endpoints;
 
-public static class StreamBlockedUserEndpoints
+public static class StreamBlockedUsersEndpoints
 {
     public static void MapStreamBlockedUserEndpoints(this IEndpointRouteBuilder builder)
     {
@@ -14,17 +14,17 @@ public static class StreamBlockedUserEndpoints
 
 
         groupBuilder.MapPost("/",
-                async ([FromBody] StreamBlockedUserCreateCommandRequest createBlockedUserCreateCommandRequest,
+                async (
+                    [FromBody] CreateStreamBlockedUserCreateCommandRequest createStreamBlockedUserCreateCommandRequest,
                     IMediator mediator) =>
                 {
-                    return (await mediator.Send(createBlockedUserCreateCommandRequest)).ToHttpResponse();
+                    return (await mediator.Send(createStreamBlockedUserCreateCommandRequest)).ToHttpResponse();
                 })
             .WithTags("StreamBlockedUsers");
 
 
         groupBuilder.MapDelete("/",
-                async (
-                    [FromBody] StreamBlockedUserDeleteCommandRequest streamBlockedUserDeleteCommandRequest,
+                async ([FromBody] StreamBlockedUserDeleteCommandRequest streamBlockedUserDeleteCommandRequest,
                     IMediator mediator) =>
                 {
                     return (await mediator.Send(streamBlockedUserDeleteCommandRequest)).ToHttpResponse();
