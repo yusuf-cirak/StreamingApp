@@ -23,6 +23,7 @@ public sealed class EfRepository : IEfRepository
     public DbSet<OperationClaim> OperationClaims => Context.OperationClaims;
     public DbSet<RoleOperationClaim> RoleOperationClaims => Context.RoleOperationClaims;
     public DbSet<UserRoleClaim> UserRoleClaims => Context.UserRoleClaims;
+    public DbSet<StreamFollowerUser> StreamFollowerUsers => Context.StreamFollowerUsers;
     public DbSet<StreamChatMessage> StreamChatMessages => Context.StreamChatMessages;
     public DbSet<StreamBlockedUser> StreamBlockedUsers => Context.StreamBlockedUsers;
 

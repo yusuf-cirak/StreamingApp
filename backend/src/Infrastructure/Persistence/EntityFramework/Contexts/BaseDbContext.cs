@@ -13,6 +13,7 @@ public class BaseDbContext : DbContext
     public virtual DbSet<Stream> Streams { get; set; }
     public virtual DbSet<Streamer> Streamers { get; set; }
     
+    public virtual DbSet<StreamFollowerUser> StreamFollowerUsers { get; set; }
     public virtual DbSet<StreamChatMessage> StreamChatMessages { get; set; }
     public virtual DbSet<StreamBlockedUser> StreamBlockedUsers { get; set; }
     public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
