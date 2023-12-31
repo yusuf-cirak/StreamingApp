@@ -5,6 +5,9 @@ public readonly record struct StreamFollowerUserErrors
     public static readonly Error StreamIdCannotBeEmpty =
         Error.Create("StreamFollowerUsers.StreamIdCannotBeEmpty", "Stream follower users stream id cannot be empty");
 
+    public static readonly Error FailedToFollowStreamer =
+        Error.Create("StreamFollowerUsers.FailedToFollowerStreamer", "Failed to follow streamer");
+
     public static readonly Error StreamIdCannotBeLongerThan100Characters = Error.Create(
         "StreamFollowerUsers.StreamIdCannotBeLongerThan100Characters",
         "Stream follower users stream id cannot be longer than 100 characters");
@@ -44,6 +47,7 @@ public readonly record struct StreamFollowerUserErrors
         "StreamFollowerUsers.UserIdCannotContainSpecialCharacters",
         "Stream follower users user id cannot contain special characters");
 
-    public static readonly Error UserIdCannotBeDuplicated = Error.Create("StreamFollowerUsers.UserIdCannotBeDuplicated",
-        "Stream follower users user id cannot be duplicated");
+    public static readonly Error FailedToRemoveFollowerUserFromStream = Error.Create(
+        "StreamFollowerUsers.FailedToRemoveFollowerUserFromStream",
+        "Failed to remove follower user from the stream");
 }

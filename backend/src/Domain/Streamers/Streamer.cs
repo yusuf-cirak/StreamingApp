@@ -6,7 +6,13 @@ public class Streamer : Entity
     public string StreamTitle { get; init; } = string.Empty;
     public string StreamDescription { get; init; } = string.Empty;
 
+    public bool ChatDisabled { get; set; } = false;
+
+    public int ChatDelaySecond { get; set; } = 0;
+
     public virtual User User { get; }
+
+    public virtual ICollection<Stream> Streams { get; }
 
 
     public Streamer()
@@ -18,6 +24,8 @@ public class Streamer : Entity
         StreamKey = streamKey;
         StreamTitle = streamTitle;
         StreamDescription = streamDescription;
+        
+        Streams = new HashSet<Stream>();
     }
 
 

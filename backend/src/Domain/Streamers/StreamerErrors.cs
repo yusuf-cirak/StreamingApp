@@ -21,4 +21,7 @@ public readonly record struct StreamerErrors
 
     public static readonly Error NameCannotBeDuplicated = Error.Create("Streamer.NameCannotBeDuplicated",
         "Streamer name cannot be duplicated");
+
+    public static readonly Error StreamerCannotBeUpdated = Error.Create("Streamer.StreamerCannotBeUpdated",
+        "Streamer cannot be updated");
 }

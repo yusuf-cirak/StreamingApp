@@ -5,6 +5,9 @@ public readonly record struct OperationClaimErrors
     public static readonly Error NameCannotBeEmpty =
         Error.Create("OperationClaim.NameCannotBeEmpty", "Operation claim name cannot be empty");
 
+    public static readonly Error FailedToUpdate =
+        Error.Create("OperationClaim.FailedToUpdate", "Operation claim failed to update");
+
     public static readonly Error NameCannotBeLongerThan50Characters = Error.Create(
         "OperationClaim.NameCannotBeLongerThan50Characters",
         "Operation claim name cannot be longer than 50 characters");
@@ -21,7 +24,7 @@ public readonly record struct OperationClaimErrors
 
     public static readonly Error NameCannotBeDuplicated = Error.Create("OperationClaim.NameCannotBeDuplicated",
         "Operation claim name cannot be duplicated");
-    
+
     public static readonly Error NotFound = Error.Create("OperationClaim.NotFound",
         "Operation claim not found");
 }

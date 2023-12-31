@@ -48,4 +48,12 @@ public readonly record struct RoleOperationClaimErrors
     public static readonly Error OperationClaimDoesNotExist = Error.Create(
         "RoleOperationClaim.OperationClaimDoesNotExist",
         "Operation claim id does not exist");
+
+    public static readonly Error CouldNotBeAdded = Error.Create(
+        "RoleOperationClaim.CouldNotBeAdded",
+        "Could not add role operation claim");
+
+    public static readonly Error CouldNotBeDeleted = Error.Create(
+        "RoleOperationClaim.CouldNotBeDeleted",
+        "Could not delete role operation claim");
 }
