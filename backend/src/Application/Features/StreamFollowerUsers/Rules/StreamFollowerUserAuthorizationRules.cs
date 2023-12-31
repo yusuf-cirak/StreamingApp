@@ -1,6 +1,27 @@
-﻿namespace Application.Features.StreamFollowerUsers.Rules;
+﻿using System.Security.Claims;
+using Application.Common.Errors;
+using Application.Features.StreamFollowerUsers.Abstractions;
 
-public class StreamFollowerUserAuthorizationRules
+namespace Application.Features.StreamFollowerUsers.Rules;
+
+public static class StreamFollowerUserAuthorizationRules
 {
-    
+    public static Result CanUserFollowStreamer(ICollection<Claim> claims, object request)
+    {
+        var userId = Guid.Parse(claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty);
+
+        if (userId == Guid.Empty)
+        {
+            return Result.Failure(AuthorizationErrors.Unauthorized());
+        }
+
+        var userIdFromRequest = ((IStreamFollowerUserCommandRequest)request).UserId;
+
+        if (userId != userIdFromRequest)
+        {
+            return Result.Failure(AuthorizationErrors.Unauthorized());
+        }
+
+        return Result.Success();
+    }
 }

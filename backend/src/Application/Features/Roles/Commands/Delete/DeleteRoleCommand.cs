@@ -5,7 +5,7 @@ using Application.Features.Roles.Rules;
 namespace Application.Features.Roles.Commands.Delete;
 
 public readonly record struct DeleteRoleCommandRequest
-    : IRequest<HttpResult<bool>>, ISecuredRequest
+    : IRequest<HttpResult>, ISecuredRequest
 {
     public Guid Id { get; init; }
     public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; } = new();
@@ -21,7 +21,7 @@ public readonly record struct DeleteRoleCommandRequest
     }
 }
 
-public sealed class DeleteRoleCommandHandler : IRequestHandler<DeleteRoleCommandRequest, HttpResult<bool>>
+public sealed class DeleteRoleCommandHandler : IRequestHandler<DeleteRoleCommandRequest, HttpResult>
 {
     private readonly IEfRepository _efRepository;
     private readonly RoleBusinessRules _roleBusinessRules;
@@ -32,7 +32,7 @@ public sealed class DeleteRoleCommandHandler : IRequestHandler<DeleteRoleCommand
         _roleBusinessRules = roleBusinessRules;
     }
 
-    public async Task<HttpResult<bool>> Handle(DeleteRoleCommandRequest request,
+    public async Task<HttpResult> Handle(DeleteRoleCommandRequest request,
         CancellationToken cancellationToken)
     {
         var roleExistResult = await _roleBusinessRules.RoleMustExistBeforeDeleted(request.Id, cancellationToken);
@@ -42,8 +42,11 @@ public sealed class DeleteRoleCommandHandler : IRequestHandler<DeleteRoleCommand
             return roleExistResult.Error;
         }
 
-        await _efRepository.Roles.Where(r => r.Id == request.Id).ExecuteDeleteAsync(cancellationToken);
+        var result = await _efRepository.Roles.Where(r => r.Id == request.Id).ExecuteDeleteAsync(cancellationToken);
 
-        return HttpResult<bool>.Success(true, StatusCodes.Status204NoContent);
+
+        return result > 0
+            ? HttpResult.Success(StatusCodes.Status204NoContent)
+            : RoleErrors.FailedToDelete;
     }
 }

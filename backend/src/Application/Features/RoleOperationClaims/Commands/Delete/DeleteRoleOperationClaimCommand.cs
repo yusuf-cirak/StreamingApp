@@ -5,17 +5,17 @@ using Application.Features.RoleOperationClaims.Rules;
 namespace Application.Features.RoleOperationClaims.Commands.Delete;
 
 public readonly record struct DeleteRoleOperationClaimCommandRequest
-    : IRequest<HttpResult<bool>>, ISecuredRequest
+    : IRequest<HttpResult>, ISecuredRequest
 {
     public Guid RoleId { get; init; }
     public Guid OperationClaimId { get; init; }
     public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
-    
+
     public DeleteRoleOperationClaimCommandRequest()
     {
         AuthorizationRules = [CommonAuthorizationRules.UserMustBeAdmin];
     }
-    
+
     public DeleteRoleOperationClaimCommandRequest(Guid roleId, Guid operationClaimId) : this()
     {
         RoleId = roleId;
@@ -25,7 +25,7 @@ public readonly record struct DeleteRoleOperationClaimCommandRequest
 
 public sealed class
     DeleteRoleOperationClaimCommandHandler : IRequestHandler<DeleteRoleOperationClaimCommandRequest,
-    HttpResult<bool>>
+    HttpResult>
 {
     private readonly IEfRepository _efRepository;
     private readonly RoleOperationClaimBusinessRules _roleOperationClaimBusinessRules;
@@ -37,7 +37,7 @@ public sealed class
         _efRepository = efRepository;
     }
 
-    public async Task<HttpResult<bool>> Handle(DeleteRoleOperationClaimCommandRequest request,
+    public async Task<HttpResult> Handle(DeleteRoleOperationClaimCommandRequest request,
         CancellationToken cancellationToken)
     {
         var existResult =
@@ -50,11 +50,13 @@ public sealed class
             return existResult.Error;
         }
 
-        await _efRepository.RoleOperationClaims
+        var result = await _efRepository.RoleOperationClaims
             .Where(roc => roc.OperationClaimId == request.OperationClaimId &&
                           roc.RoleId == request.RoleId)
             .ExecuteDeleteAsync(cancellationToken);
 
-        return HttpResult<bool>.Success(true, StatusCodes.Status204NoContent);
+        return result > 0
+            ? HttpResult.Success(StatusCodes.Status204NoContent)
+            : RoleOperationClaimErrors.CouldNotBeDeleted;
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-using Application.Common.Rules;
-using Application.Features.Auths.Dtos;
+﻿using Application.Features.Auths.Dtos;
 using Application.Features.Auths.Rules;
 using Application.Services;
 

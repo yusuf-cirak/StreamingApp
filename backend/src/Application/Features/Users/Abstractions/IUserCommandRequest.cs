@@ -2,5 +2,5 @@
 
 public interface IUserCommandRequest
 {
-    
+    public Guid UserId { get; init; }
 }

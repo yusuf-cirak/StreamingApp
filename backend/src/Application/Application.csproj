@@ -20,10 +20,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\RoleOperationClaims\Dtos\" />
     <Folder Include="Features\StreamBlockedUsers\Dtos\" />
     <Folder Include="Features\Streamers\Dtos\" />
     <Folder Include="Features\Streamers\Events\" />
+    <Folder Include="Features\StreamFollowerUsers\Dtos\" />
+    <Folder Include="Features\Streams\Dtos\" />
+    <Folder Include="Features\UserOperationClaims\Dtos\" />
+    <Folder Include="Features\Users\Dtos\" />
   </ItemGroup>
 
 </Project>

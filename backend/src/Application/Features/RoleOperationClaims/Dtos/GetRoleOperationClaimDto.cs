@@ -1,6 +1,3 @@
 ﻿namespace Application.Features.RoleOperationClaims.Dtos;
 
-public struct GetRoleOperationClaimDto
-{
-    
-}
+public readonly record struct GetRoleOperationClaimDto(Guid RoleId, Guid OperationClaimId);

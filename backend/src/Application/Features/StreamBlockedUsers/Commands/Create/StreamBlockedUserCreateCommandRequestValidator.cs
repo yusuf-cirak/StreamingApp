@@ -3,7 +3,7 @@
 namespace Application.Features.StreamBlockedUsers.Commands.Create;
 
 public sealed class
-    StreamBlockedUserCreateCommandRequestValidator : AbstractValidator<StreamBlockedUserCreateCommandRequest>
+    StreamBlockedUserCreateCommandRequestValidator : AbstractValidator<CreateStreamBlockedUserCreateCommandRequest>
 {
     public StreamBlockedUserCreateCommandRequestValidator()
     {

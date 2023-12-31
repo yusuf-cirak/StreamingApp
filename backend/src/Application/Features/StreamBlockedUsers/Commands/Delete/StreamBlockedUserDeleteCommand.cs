@@ -14,7 +14,7 @@ public readonly record struct StreamBlockedUserDeleteCommandRequest
 
     public StreamBlockedUserDeleteCommandRequest()
     {
-        AuthorizationRules = [StreamBlockedUserAuthorizationRules.CanUserBlockAUserFromStream];
+        AuthorizationRules = [StreamBlockedUserAuthorizationRules.CanUserBlockOrUnblockAUserFromStream];
     }
 
     public StreamBlockedUserDeleteCommandRequest(Guid streamerId, Guid blockedUserId) : this()
@@ -34,8 +34,16 @@ public sealed class
         _efRepository = efRepository;
     }
 
-    public Task<HttpResult> Handle(StreamBlockedUserDeleteCommandRequest request, CancellationToken cancellationToken)
+    public async Task<HttpResult> Handle(StreamBlockedUserDeleteCommandRequest request,
+        CancellationToken cancellationToken)
     {
-        throw new System.NotImplementedException();
+        var result = await _efRepository
+            .StreamBlockedUsers
+            .Where(sbu => sbu.UserId == request.BlockedUserId && sbu.StreamerId == request.StreamerId)
+            .ExecuteDeleteAsync(cancellationToken);
+
+        return result > 0
+            ? HttpResult.Success(StatusCodes.Status204NoContent)
+            : StreamBlockedUserErrors.FailedToUnblockUser;
     }
 }

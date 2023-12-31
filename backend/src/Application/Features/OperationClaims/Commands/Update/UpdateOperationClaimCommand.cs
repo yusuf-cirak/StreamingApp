@@ -7,7 +7,7 @@ using Application.Features.OperationClaims.Rules;
 namespace Application.Features.OperationClaims.Commands.Update;
 
 public readonly record struct UpdateOperationClaimCommandRequest
-    : IRequest<HttpResult<GetOperationClaimDto>>, ISecuredRequest
+    : IRequest<HttpResult>, ISecuredRequest
 {
     public Guid Id { get; init; }
     public string Name { get; init; }
@@ -27,7 +27,7 @@ public readonly record struct UpdateOperationClaimCommandRequest
 
 public sealed class
     UpdateOperationClaimCommandHandler : IRequestHandler<UpdateOperationClaimCommandRequest,
-    HttpResult<GetOperationClaimDto>>
+    HttpResult>
 {
     private readonly IEfRepository _efRepository;
     private readonly OperationClaimBusinessRules _operationClaimBusinessRules;
@@ -39,7 +39,7 @@ public sealed class
         _efRepository = efRepository;
     }
 
-    public async Task<HttpResult<GetOperationClaimDto>> Handle(UpdateOperationClaimCommandRequest request,
+    public async Task<HttpResult> Handle(UpdateOperationClaimCommandRequest request,
         CancellationToken cancellationToken)
     {
         var operationClaimResult = await _operationClaimBusinessRules.OperationClaimMustExistBeforeUpdated(request.Id);
@@ -63,8 +63,10 @@ public sealed class
 
         _efRepository.OperationClaims.Update(operationClaim);
 
-        await _efRepository.SaveChangesAsync(cancellationToken);
+        var result = await _efRepository.SaveChangesAsync(cancellationToken);
 
-        return operationClaim.ToDto();
+        return result > 0
+            ? HttpResult.Success(StatusCodes.Status204NoContent)
+            : HttpResult.Failure(OperationClaimErrors.FailedToUpdate);
     }
 }

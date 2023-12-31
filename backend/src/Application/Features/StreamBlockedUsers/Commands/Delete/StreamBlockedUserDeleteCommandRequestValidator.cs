@@ -4,7 +4,7 @@ using FluentValidation;
 namespace Application.Features.StreamBlockedUsers.Commands.Delete;
 
 public sealed class
-    StreamBlockedUserDeleteCommandRequestValidator : AbstractValidator<StreamBlockedUserCreateCommandRequest>
+    StreamBlockedUserDeleteCommandRequestValidator : AbstractValidator<CreateStreamBlockedUserCreateCommandRequest>
 {
     public StreamBlockedUserDeleteCommandRequestValidator()
     {

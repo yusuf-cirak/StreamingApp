@@ -1,32 +1,33 @@
 ﻿using System.Security.Claims;
+using Application.Common.Mapping;
 using Application.Common.Rules;
+using Application.Features.RoleOperationClaims.Dtos;
 using Application.Features.RoleOperationClaims.Rules;
 
 namespace Application.Features.RoleOperationClaims.Commands.Create;
 
 public readonly record struct CreateRoleOperationClaimCommandRequest
-    : IRequest<HttpResult<bool>>, ISecuredRequest
+    : IRequest<HttpResult<GetRoleOperationClaimDto>>, ISecuredRequest
 {
     public Guid RoleId { get; init; }
     public Guid OperationClaimId { get; init; }
     public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
-    
+
     public CreateRoleOperationClaimCommandRequest()
     {
         AuthorizationRules = [CommonAuthorizationRules.UserMustBeAdmin];
     }
-    
+
     public CreateRoleOperationClaimCommandRequest(Guid roleId, Guid operationClaimId) : this()
     {
         RoleId = roleId;
         OperationClaimId = operationClaimId;
     }
-    
 }
 
 public sealed class
     CreateRoleOperationClaimCommandHandler : IRequestHandler<CreateRoleOperationClaimCommandRequest,
-    HttpResult<bool>>
+    HttpResult<GetRoleOperationClaimDto>>
 {
     private readonly IEfRepository _efRepository;
     private readonly RoleOperationClaimBusinessRules _roleOperationClaimBusinessRules;
@@ -38,7 +39,7 @@ public sealed class
         _efRepository = efRepository;
     }
 
-    public async Task<HttpResult<bool>> Handle(CreateRoleOperationClaimCommandRequest request,
+    public async Task<HttpResult<GetRoleOperationClaimDto>> Handle(CreateRoleOperationClaimCommandRequest request,
         CancellationToken cancellationToken)
     {
         var duplicateResult =
@@ -54,8 +55,10 @@ public sealed class
 
         _efRepository.RoleOperationClaims.Add(newRoleOperationClaim);
 
-        await _efRepository.SaveChangesAsync(cancellationToken);
+        var result = await _efRepository.SaveChangesAsync(cancellationToken);
 
-        return HttpResult<bool>.Success(true, StatusCodes.Status201Created);
+        return result > 0
+            ? HttpResult<GetRoleOperationClaimDto>.Success(newRoleOperationClaim.ToDto(), StatusCodes.Status201Created)
+            : RoleOperationClaimErrors.CouldNotBeAdded;
     }
 }

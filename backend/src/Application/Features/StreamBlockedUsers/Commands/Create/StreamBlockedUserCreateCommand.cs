@@ -1,10 +1,9 @@
-﻿using System.Security.Claims;
-using Application.Features.StreamBlockedUsers.Abstractions;
+﻿using Application.Features.StreamBlockedUsers.Abstractions;
 using Application.Features.StreamBlockedUsers.Rules;
 
 namespace Application.Features.StreamBlockedUsers.Commands.Create;
 
-public readonly record struct StreamBlockedUserCreateCommandRequest
+public readonly record struct CreateStreamBlockedUserCreateCommandRequest
     : IStreamBlockedUserRequest, IRequest<HttpResult>, ISecuredRequest
 {
     public Guid StreamerId { get; init; }
@@ -12,46 +11,51 @@ public readonly record struct StreamBlockedUserCreateCommandRequest
     public Guid BlockedUserId { get; init; }
     public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
 
-    public StreamBlockedUserCreateCommandRequest()
+    public CreateStreamBlockedUserCreateCommandRequest()
     {
-        AuthorizationRules = [StreamBlockedUserAuthorizationRules.CanUserBlockAUserFromStream];
+        AuthorizationRules = [StreamBlockedUserAuthorizationRules.CanUserBlockOrUnblockAUserFromStream];
     }
 
-    public StreamBlockedUserCreateCommandRequest(Guid streamerId, Guid blockedUserId) : this()
+    public CreateStreamBlockedUserCreateCommandRequest(Guid streamerId, Guid blockedUserId) : this()
     {
         StreamerId = streamerId;
         BlockedUserId = blockedUserId;
     }
 }
 
-public sealed class StreamBlockedUserCreateHandler : IRequestHandler<StreamBlockedUserCreateCommandRequest, HttpResult>
+public sealed class
+    CreateStreamBlockedUserCreateHandler : IRequestHandler<CreateStreamBlockedUserCreateCommandRequest, HttpResult>
 {
     private readonly IEfRepository _efRepository;
-    private readonly StreamBlockedUserBusinessRules _businessRules;
+    private readonly StreamBlockedUserBusinessRules _streamBlockedUserBusinessRules;
 
-    public StreamBlockedUserCreateHandler(IEfRepository efRepository, StreamBlockedUserBusinessRules businessRules)
+    public CreateStreamBlockedUserCreateHandler(IEfRepository efRepository,
+        StreamBlockedUserBusinessRules streamBlockedUserBusinessRules)
     {
         _efRepository = efRepository;
-        _businessRules = businessRules;
+        _streamBlockedUserBusinessRules = streamBlockedUserBusinessRules;
     }
 
-    public async Task<HttpResult> Handle(StreamBlockedUserCreateCommandRequest request,
+    public async Task<HttpResult> Handle(CreateStreamBlockedUserCreateCommandRequest request,
         CancellationToken cancellationToken)
     {
-        var verifyBlockerUser =
-            await _businessRules.BlockerUserShouldBeAdminOrModerator(request.StreamerId, request.StreamerId);
+        var streamBlockedUserExistResult =
+            await _streamBlockedUserBusinessRules.BlockedUserIsNotAlreadyBlocked(request.StreamerId,
+                request.BlockedUserId, cancellationToken);
 
-        if (verifyBlockerUser.IsFailure)
+        if (streamBlockedUserExistResult.IsFailure)
         {
-            return HttpResult.Failure(verifyBlockerUser.Error);
+            return streamBlockedUserExistResult.Error;
         }
 
         var streamBlockedUser = StreamBlockedUser.Create(request.StreamerId, request.BlockedUserId);
 
         _efRepository.StreamBlockedUsers.Add(streamBlockedUser);
 
-        await _efRepository.SaveChangesAsync(cancellationToken);
+        var result = await _efRepository.SaveChangesAsync(cancellationToken);
 
-        return HttpResult.Success();
+        return result > 0
+            ? HttpResult.Success(StatusCodes.Status201Created)
+            : StreamBlockedUserErrors.FailedToBlockUser;
     }
 }

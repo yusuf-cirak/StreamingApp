@@ -48,10 +48,10 @@ public sealed class CreateRoleCommandHandler : IRequestHandler<CreateRoleCommand
 
         _efRepository.Roles.Add(role);
 
-        await _efRepository.SaveChangesAsync(cancellationToken);
+        var result = await _efRepository.SaveChangesAsync(cancellationToken);
 
-        var roleDto = role.ToDto();
-
-        return HttpResult<GetRoleDto>.Success(roleDto, StatusCodes.Status201Created);
+        return result > 0
+            ? HttpResult<GetRoleDto>.Success(role.ToDto(), StatusCodes.Status201Created)
+            : RoleErrors.FailedToCreate;
     }
 }
