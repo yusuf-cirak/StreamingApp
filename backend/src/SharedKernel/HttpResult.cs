@@ -23,17 +23,28 @@ public readonly record struct HttpResult : IHttpResult
         IsSuccess = isSuccess;
     }
 
+    private HttpResult(bool isSuccess, int statusCode)
+    {
+        Error = default;
+        IsSuccess = isSuccess;
+        StatusCode = statusCode;
+    }
+
     public static HttpResult Success() => new(true);
+
+    public static HttpResult Success(int statusCode) => new(true, statusCode);
 
     public static HttpResult Failure(Error error, int statusCode = 400) => new(error, statusCode);
 
-
     public static HttpResult Failure() => new(false);
+
+    public static HttpResult Failure(int statusCode) => new(false, statusCode);
+
 
     public static implicit operator HttpResult(Error error) => Failure(error);
 
-    public TResult Match<TResult>(Func<TResult> success, Func<Error, TResult> failure)
-        => IsSuccess ? success() : failure(Error);
+    public TResult Match<TResult>(Func<int, TResult> success, Func<Error, int, TResult> failure)
+        => IsSuccess ? success(StatusCode) : failure(Error, StatusCode);
 
     public IHttpResult CreateWith(Error error, int statusCode)
     {
@@ -41,17 +52,17 @@ public readonly record struct HttpResult : IHttpResult
     }
 }
 
-public readonly record struct HttpResult<TValue> : IHttpResult
+public record HttpResult<TValue> : IHttpResult
 {
-    public TValue Value { get; }
+    private TValue Value { get; }
 
-    public Error Error { get;  }
+    private Error Error { get; }
 
-    public bool IsSuccess { get; }
+    private bool IsSuccess { get; }
 
     public bool IsFailure => !IsSuccess;
 
-    public int StatusCode { get; init; }
+    private int StatusCode { get; init; }
 
     public HttpResult()
     {
