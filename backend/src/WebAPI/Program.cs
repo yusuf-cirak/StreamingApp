@@ -57,8 +57,6 @@ app.UseExceptionHandler();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapUserEndpoints();
-app.MapOperationClaimEndpoints();
-app.MapStreamBlockedUserEndpoints();
+app.MapApiEndpoints(); // From WebAPI\Extensions\EndpointExtensions.cs
 
 app.Run();

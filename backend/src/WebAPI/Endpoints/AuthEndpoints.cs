@@ -19,7 +19,7 @@ public static class AuthEndpoints
                 {
                     return (await mediator.Send(registerCommandRequest)).ToHttpResponse();
                 })
-            .WithTags("Users");
+            .WithTags("Auths");
 
 
         groupBuilder.MapPost("/login",
@@ -27,13 +27,13 @@ public static class AuthEndpoints
                 {
                     return (await mediator.Send(loginCommandRequest)).ToHttpResponse();
                 })
-            .WithTags("Users");
+            .WithTags("Auths");
 
         groupBuilder.MapPost("/refresh",
                 async ([FromBody] RefreshTokenCommandRequest refreshTokenCommandRequest, IMediator mediator) =>
                 {
                     return (await mediator.Send(refreshTokenCommandRequest)).ToHttpResponse();
                 })
-            .WithTags("Users");
+            .WithTags("Auths");
     }
 }

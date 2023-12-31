@@ -6,7 +6,7 @@ using SharedKernel;
 
 namespace WebAPI.Endpoints;
 
-public static class StreamBlockedUsersEndpoints
+public static class StreamBlockedUserEndpoints
 {
     public static void MapStreamBlockedUserEndpoints(this IEndpointRouteBuilder builder)
     {

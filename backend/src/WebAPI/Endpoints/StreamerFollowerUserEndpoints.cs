@@ -8,7 +8,7 @@ namespace WebAPI.Endpoints;
 
 public static class StreamerFollowerUserEndpoints
 {
-    public static void MapStreamerEndpoints(this IEndpointRouteBuilder builder)
+    public static void MapStreamerFollowerUserEndpoints(this IEndpointRouteBuilder builder)
     {
         var groupBuilder = builder.MapGroup("api/stream-follower-users");
 

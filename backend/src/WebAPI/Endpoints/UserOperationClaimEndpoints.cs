@@ -8,7 +8,7 @@ namespace WebAPI.Endpoints;
 
 public static class UserOperationClaimEndpoints
 {
-    public static void MapStreamEndpoints(this IEndpointRouteBuilder builder)
+    public static void MapUserOperationClaimEndpoints(this IEndpointRouteBuilder builder)
     {
         var groupBuilder = builder.MapGroup("api/user-operation-claims");
 

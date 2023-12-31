@@ -18,6 +18,6 @@ public static class StreamEndpoints
                 {
                     return (await mediator.Send(createStreamCommandRequest)).ToHttpResponse();
                 })
-            .WithTags("Streamers");
+            .WithTags("Streams");
     }
 }

@@ -12,7 +12,7 @@ public static class StreamerEndpoints
         var groupBuilder = builder.MapGroup("api/streamers");
 
 
-        groupBuilder.MapPut("/",
+        groupBuilder.MapPatch("/",
                 async ([FromBody] UpdateStreamerCommandRequest updateStreamerCommandRequest,
                     IMediator mediator) =>
                 {
