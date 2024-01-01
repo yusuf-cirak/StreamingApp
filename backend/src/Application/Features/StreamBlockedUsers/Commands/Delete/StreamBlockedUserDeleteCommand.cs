@@ -10,11 +10,11 @@ public readonly record struct StreamBlockedUserDeleteCommandRequest
     public Guid StreamerId { get; init; }
 
     public Guid BlockedUserId { get; init; }
-    public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
+    public AuthorizationFunctions AuthorizationFunctions { get; }
 
     public StreamBlockedUserDeleteCommandRequest()
     {
-        AuthorizationRules = [StreamBlockedUserAuthorizationRules.CanUserBlockOrUnblockAUserFromStream];
+        AuthorizationFunctions = [StreamBlockedUserAuthorizationRules.CanUserBlockOrUnblockAUserFromStream];
     }
 
     public StreamBlockedUserDeleteCommandRequest(Guid streamerId, Guid blockedUserId) : this()

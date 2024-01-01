@@ -1,6 +1,6 @@
 ﻿using Application.Features.Auths.Dtos;
 using Application.Features.Auths.Rules;
-using Application.Services;
+using Application.Features.Auths.Services;
 
 namespace Application.Features.Auths.Commands.Refresh;
 
@@ -18,16 +18,16 @@ public sealed class
     private readonly IJwtHelper _jwtHelper;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly AuthBusinessRules _authBusinessRules;
-    private readonly AuthManager _authManager;
+    private readonly IAuthService _authService;
 
     public RefreshTokenCommandHandler(IJwtHelper jwtHelper, IHttpContextAccessor httpContextAccessor,
-        AuthBusinessRules authBusinessRules, IEfRepository efRepository, AuthManager authManager)
+        AuthBusinessRules authBusinessRules, IEfRepository efRepository, IAuthService authService)
     {
         _jwtHelper = jwtHelper;
         _httpContextAccessor = httpContextAccessor;
         _authBusinessRules = authBusinessRules;
         _efRepository = efRepository;
-        _authManager = authManager;
+        _authService = authService;
     }
 
     public async Task<HttpResult<TokenResponseDto>> Handle(RefreshTokenCommandRequest request,
@@ -55,7 +55,7 @@ public sealed class
         var userIpAddress = _httpContextAccessor?.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "";
 
         var userRolesAndOperationClaims =
-            await _authManager.GetUserRolesAndOperationClaimsAsync(user.Id, cancellationToken);
+            await _authService.GetUserRolesAndOperationClaimsAsync(user.Id, cancellationToken);
 
         var claimsDictionary = new Dictionary<string, object>
         {

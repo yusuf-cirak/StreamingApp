@@ -8,7 +8,8 @@ namespace Application.Features.StreamBlockedUsers.Rules;
 
 public static class StreamBlockedUserAuthorizationRules
 {
-    public static Result CanUserBlockOrUnblockAUserFromStream(ICollection<Claim> claims, object request)
+    public static Result CanUserBlockOrUnblockAUserFromStream(HttpContext context, ICollection<Claim> claims,
+        object request)
     {
         // Check if user is the streamer
         if (IsUserStreamer(claims, request))

@@ -27,6 +27,7 @@
     <Folder Include="Features\Streams\Dtos\" />
     <Folder Include="Features\UserOperationClaims\Dtos\" />
     <Folder Include="Features\Users\Dtos\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

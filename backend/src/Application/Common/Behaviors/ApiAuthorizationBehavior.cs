@@ -3,13 +3,13 @@ using Application.Common.Errors;
 
 namespace Application.Common.Behaviors;
 
-public sealed class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>, ISecuredRequest
+public sealed class ApiAuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>, IApiSecuredRequest
     where TResponse : IHttpResult, new()
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public AuthorizationBehavior(IHttpContextAccessor httpContextAccessor)
+    public ApiAuthorizationBehavior(IHttpContextAccessor httpContextAccessor)
     {
         _httpContextAccessor = httpContextAccessor;
     }
@@ -17,20 +17,10 @@ public sealed class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavi
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
-        var claims = _httpContextAccessor.HttpContext?.User.Claims.ToList();
-
-        if (claims is null or { Count: 0 })
-        {
-            var response = new TResponse().CreateWith(AuthorizationErrors.Unauthorized(),
-                StatusCodes.Status401Unauthorized);
-
-            return (TResponse)response;
-        }
-
         var httpContext = _httpContextAccessor.HttpContext;
 
         var authorizationFailureResults = request.AuthorizationFunctions
-            .Select(rule => rule(httpContext, claims, request))
+            .Select(rule => rule(httpContext, ArraySegment<Claim>.Empty, request))
             .Where(result => result.IsFailure)
             .ToList();
 

@@ -9,11 +9,11 @@ public readonly record struct DeleteRoleOperationClaimCommandRequest
 {
     public Guid RoleId { get; init; }
     public Guid OperationClaimId { get; init; }
-    public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
+    public AuthorizationFunctions AuthorizationFunctions { get; }
 
     public DeleteRoleOperationClaimCommandRequest()
     {
-        AuthorizationRules = [CommonAuthorizationRules.UserMustBeAdmin];
+        AuthorizationFunctions = [CommonAuthorizationRules.UserMustBeAdmin];
     }
 
     public DeleteRoleOperationClaimCommandRequest(Guid roleId, Guid operationClaimId) : this()

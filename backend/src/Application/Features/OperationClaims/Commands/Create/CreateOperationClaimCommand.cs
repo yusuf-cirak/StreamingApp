@@ -10,17 +10,19 @@ public readonly record struct CreateOperationClaimCommandRequest : IRequest<Http
     ISecuredRequest
 {
     public string Name { get; init; }
-    public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
+    
+    public AuthorizationFunctions AuthorizationFunctions { get; }
 
     public CreateOperationClaimCommandRequest()
     {
-        AuthorizationRules = [CommonAuthorizationRules.UserMustBeAdmin];
+        AuthorizationFunctions = [CommonAuthorizationRules.UserMustBeAdmin];
     }
 
     public CreateOperationClaimCommandRequest(string name) : this()
     {
         Name = name;
     }
+
 }
 
 public sealed class

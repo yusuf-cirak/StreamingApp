@@ -55,7 +55,8 @@ public sealed class
         _efRepository.RefreshTokens.Add(refreshToken);
 
         // All users are also streamers, so we create a streamer for the user
-        var streamerKey = _encryptionHelper.Encrypt(newUser.Username);
+        // TODO: Handle this with events
+        var streamerKey = _encryptionHelper.Encrypt(newUser.Id.ToString());
         var streamerTitle = $"{newUser.Username}'s stream";
         var streamerDescription = $"{newUser.Username}'s stream description";
 

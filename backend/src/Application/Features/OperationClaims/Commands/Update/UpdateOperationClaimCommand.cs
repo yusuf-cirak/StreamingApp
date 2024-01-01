@@ -11,11 +11,11 @@ public readonly record struct UpdateOperationClaimCommandRequest
 {
     public Guid Id { get; init; }
     public string Name { get; init; }
-    public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
+    public AuthorizationFunctions AuthorizationFunctions { get; }
 
     public UpdateOperationClaimCommandRequest()
     {
-        AuthorizationRules = [CommonAuthorizationRules.UserMustBeAdmin];
+        AuthorizationFunctions = [CommonAuthorizationRules.UserMustBeAdmin];
     }
 
     public UpdateOperationClaimCommandRequest(Guid id, string name) : this()

@@ -7,7 +7,8 @@ namespace Application.Features.UserRoleClaims.Rules;
 
 public static class UserRoleClaimAuthorizationRules
 {
-    public static Result CanUserCreateOrDeleteUserRoleClaim(ICollection<Claim> claims, object request)
+    public static Result CanUserCreateOrDeleteUserRoleClaim(HttpContext context, ICollection<Claim> claims,
+        object request)
     {
         if (IsUserAdmin(claims))
         {

@@ -2,14 +2,14 @@
 using Application.Features.OperationClaims.Dtos;
 using Application.Features.Roles.Dtos;
 
-namespace Application.Services;
+namespace Application.Features.Auths.Services;
 
-public sealed class AuthManager
+public sealed class AuthService : IAuthService
 {
     private readonly IEfRepository _efRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public AuthManager(IEfRepository efRepository, IHttpContextAccessor httpContextAccessor)
+    public AuthService(IEfRepository efRepository, IHttpContextAccessor httpContextAccessor)
     {
         _efRepository = efRepository;
         _httpContextAccessor = httpContextAccessor;

@@ -11,14 +11,12 @@ public readonly record struct UpdateStreamerCommandRequest
     public Guid StreamerId { get; init; }
     public string StreamTitle { get; init; }
     public string StreamDescription { get; init; }
-    public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
+    public AuthorizationFunctions AuthorizationFunctions { get; }
 
     public UpdateStreamerCommandRequest()
     {
-        AuthorizationRules = new List<Func<ICollection<Claim>, object, Result>>
-        {
-            StreamerAuthorizationRules.CanUserUpdateStreamer
-        };
+        AuthorizationFunctions =
+            [StreamerAuthorizationRules.CanUserUpdateStreamer];
     }
 
     public UpdateStreamerCommandRequest(Guid streamerId, string streamTitle, string streamDescription) : this()

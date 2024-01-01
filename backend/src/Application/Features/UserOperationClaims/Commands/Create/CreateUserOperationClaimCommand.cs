@@ -10,11 +10,11 @@ public readonly record struct CreateUserOperationClaimCommandRequest : IUserOper
     public Guid OperationClaimId { get; init; }
     public string Value { get; init; }
 
-    public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
+    public AuthorizationFunctions AuthorizationFunctions { get; }
 
     public CreateUserOperationClaimCommandRequest()
     {
-        AuthorizationRules = [UserOperationClaimAuthorizationRules.CanUserCreateOrDeleteUserOperationClaim];
+        AuthorizationFunctions = [UserOperationClaimAuthorizationRules.CanUserCreateOrDeleteUserOperationClaim];
     }
 
     public CreateUserOperationClaimCommandRequest(Guid userId, Guid operationClaimId, string value)

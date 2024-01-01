@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Application.Abstractions;
 using Application.Common.Behaviors;
-using Application.Services;
+using Application.Features.Auths.Services;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,11 +9,10 @@ namespace Application;
 
 public static class ServiceRegistration
 {
-    private static void AddRuleServices(this IServiceCollection services, Type type, Assembly assembly,
+    private static void RegisterTypedServices(this IServiceCollection services, Type type, Assembly assembly,
         Func<IServiceCollection, Type, IServiceCollection>? addWithLifeCycle = null)
     {
-        var typeOfRules = type;
-        var types = assembly.GetTypes().Where(t => t.IsSubclassOf(typeOfRules) && typeOfRules != t);
+        var types = assembly.GetTypes().Where(t => t.IsSubclassOf(type) && type != t);
 
         if (addWithLifeCycle is null)
         {
@@ -31,13 +30,40 @@ public static class ServiceRegistration
         }
     }
 
+    private static void RegisterInterfaceServices(this IServiceCollection services, Assembly assembly, Type type,
+        ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+    {
+        var types = assembly.GetTypes().Where(t =>
+            t.GetInterfaces().Any(i =>
+                i.IsGenericType &&
+                i.GetGenericTypeDefinition() == type &&
+                !t.IsInterface));
+
+        foreach (Type implementationType in types)
+        {
+            var interfaceType = implementationType
+                .GetInterfaces()
+                .FirstOrDefault(@interface =>
+                    @interface != type
+                    && @interface.GetInterfaces()
+                        .Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == type));
+
+            if (interfaceType != null)
+            {
+                services.Add(new ServiceDescriptor(interfaceType, implementationType, serviceLifetime));
+            }
+        }
+    }
+
     public static void AddApplicationServices(this IServiceCollection services)
     {
         var executingAssembly = Assembly.GetExecutingAssembly();
 
-        AddRuleServices(services, typeof(BaseBusinessRules), executingAssembly);
+        RegisterTypedServices(services, typeof(BaseBusinessRules), executingAssembly);
 
-        services.AddScoped<AuthManager>();
+        RegisterInterfaceServices(services, executingAssembly, typeof(IDomainService<>));
+
+        services.AddScoped<AuthService>();
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(executingAssembly));
 
@@ -46,6 +72,8 @@ public static class ServiceRegistration
 
         // AuthorizationBehavior dependency injection
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehavior<,>));
+
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ApiAuthorizationBehavior<,>));
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
     }

@@ -1,42 +1,51 @@
-﻿using Application.Features.Streamers.Abstractions;
+﻿using Application.Features.Streams.Abstractions;
 using Application.Features.Streams.Rules;
+using Application.Features.Streams.Services;
 using Stream = Domain.Entities.Stream;
 
 namespace Application.Features.Streams.Commands.Create;
 
-public readonly record struct CreateStreamCommandRequest : IStreamerCommandRequest, IRequest<HttpResult<Guid>>,
-    ISecuredRequest
+public readonly record struct CreateStreamCommandRequest : IStreamCommandRequest, IRequest<HttpResult<Guid>>,
+    IApiSecuredRequest
 {
-    public Guid StreamerId { get; init; }
+    public string StreamKey { get; init; }
 
-    public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
+    public AuthorizationFunctions AuthorizationFunctions { get; }
 
     public CreateStreamCommandRequest()
     {
         // TODO: Add authorization with API key and Stream Key
-        AuthorizationRules = [];
+        AuthorizationFunctions = [StreamAuthorizationRules.RequesterMustHaveValidApiKey];
     }
 }
 
 public sealed class CreateStreamCommandHandler : IRequestHandler<CreateStreamCommandRequest, HttpResult<Guid>>
 {
     private readonly IEfRepository _efRepository;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IStreamService _streamService;
 
-    public CreateStreamCommandHandler(IEfRepository efRepository, IHttpContextAccessor httpContextAccessor)
+    public CreateStreamCommandHandler(IEfRepository efRepository, IStreamService streamService)
     {
         _efRepository = efRepository;
-        _httpContextAccessor = httpContextAccessor;
+        _streamService = streamService;
     }
 
     public async Task<HttpResult<Guid>> Handle(CreateStreamCommandRequest request, CancellationToken cancellationToken)
     {
-        var stream = Stream.Create(request.StreamerId);
+        var streamerId = _streamService.GetUserIdFromStreamKey(request.StreamKey);
 
-        _efRepository.Streams.Add(stream);
+        bool streamerExists = await _streamService.StreamerExistsAsync(streamerId, cancellationToken);
 
-        var result = await _efRepository.SaveChangesAsync(cancellationToken);
-        return result > 0
+        if (!streamerExists)
+        {
+            return StreamErrors.StreamerNotExists;
+        }
+
+        var stream = Stream.Create(streamerId);
+
+        var streamStartResult = await _streamService.StartNewStreamAsync(stream, cancellationToken);
+
+        return streamStartResult > 0
             ? HttpResult<Guid>.Success(stream.Id, StatusCodes.Status201Created)
             : StreamErrors.FailedToCreateStream;
     }

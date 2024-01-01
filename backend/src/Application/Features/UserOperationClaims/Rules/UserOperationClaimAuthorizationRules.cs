@@ -7,7 +7,8 @@ namespace Application.Features.UserOperationClaims.Rules;
 
 public static class UserOperationClaimAuthorizationRules
 {
-    public static Result CanUserCreateOrDeleteUserOperationClaim(ICollection<Claim> claims, object request)
+    public static Result CanUserCreateOrDeleteUserOperationClaim(HttpContext context, ICollection<Claim> claims,
+        object request)
     {
         if (IsUserAdmin(claims))
         {

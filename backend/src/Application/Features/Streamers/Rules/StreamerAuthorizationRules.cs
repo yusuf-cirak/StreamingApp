@@ -9,7 +9,7 @@ namespace Application.Features.Streamers.Rules;
 
 public static class StreamerAuthorizationRules
 {
-    public static Result CanUserUpdateStreamer(ICollection<Claim> claims, object request)
+    public static Result CanUserUpdateStreamer(HttpContext context, ICollection<Claim> claims, object request)
     {
         // Check if user is the streamer
         if (IsUserStreamer(claims, request))

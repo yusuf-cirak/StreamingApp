@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Application.Common.Errors;
 using Application.Features.Roles.Dtos;
 
@@ -7,7 +6,7 @@ namespace Application.Common.Rules;
 
 public static class CommonAuthorizationRules
 {
-    public static Result UserMustBeAdmin(ICollection<Claim> claims, object request)
+    public static Result UserMustBeAdmin(HttpContext context, ICollection<Claim> claims, object request)
     {
         var rolesString = claims.FirstOrDefault(claim => claim.Type == "Roles")?.Value ?? String.Empty;
 
@@ -22,7 +21,6 @@ public static class CommonAuthorizationRules
         {
             return Result.Failure(AuthorizationErrors.Unauthorized());
         }
-
 
         return Result.Success();
     }

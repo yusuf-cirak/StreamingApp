@@ -11,11 +11,11 @@ public readonly record struct UpdateUserCommandRequest : IUserCommandRequest, IR
     public string OldPassword { get; init; } = string.Empty;
     public string NewPassword { get; init; } = string.Empty;
 
-    public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
+    public AuthorizationFunctions AuthorizationFunctions { get; }
 
     public UpdateUserCommandRequest()
     {
-        AuthorizationRules = [UserAuthorizationRules.CanUpdateUser];
+        AuthorizationFunctions = [UserAuthorizationRules.CanUpdateUser];
     }
 }
 

@@ -8,11 +8,11 @@ public readonly record struct DeleteRoleCommandRequest
     : IRequest<HttpResult>, ISecuredRequest
 {
     public Guid Id { get; init; }
-    public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; } = new();
+    public AuthorizationFunctions AuthorizationFunctions { get; }
 
     public DeleteRoleCommandRequest()
     {
-        AuthorizationRules = [CommonAuthorizationRules.UserMustBeAdmin];
+        AuthorizationFunctions = [CommonAuthorizationRules.UserMustBeAdmin];
     }
 
     public DeleteRoleCommandRequest(Guid id) : this()

@@ -9,11 +9,11 @@ public readonly record struct DeleteStreamFollowerUserCommandRequest : IStreamFo
     public Guid StreamerId { get; init; }
     public Guid UserId { get; init; }
 
-    public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
+    public AuthorizationFunctions AuthorizationFunctions { get; }
 
     public DeleteStreamFollowerUserCommandRequest()
     {
-        AuthorizationRules = [StreamFollowerUserAuthorizationRules.CanUserFollowStreamer];
+        AuthorizationFunctions = [StreamFollowerUserAuthorizationRules.CanUserFollowStreamer];
     }
 
     public DeleteStreamFollowerUserCommandRequest(Guid streamerId, Guid userId) : this()

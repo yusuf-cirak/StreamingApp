@@ -11,11 +11,11 @@ public readonly record struct CreateRoleOperationClaimCommandRequest
 {
     public Guid RoleId { get; init; }
     public Guid OperationClaimId { get; init; }
-    public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
+    public AuthorizationFunctions AuthorizationFunctions { get; }
 
     public CreateRoleOperationClaimCommandRequest()
     {
-        AuthorizationRules = [CommonAuthorizationRules.UserMustBeAdmin];
+        AuthorizationFunctions = [CommonAuthorizationRules.UserMustBeAdmin];
     }
 
     public CreateRoleOperationClaimCommandRequest(Guid roleId, Guid operationClaimId) : this()

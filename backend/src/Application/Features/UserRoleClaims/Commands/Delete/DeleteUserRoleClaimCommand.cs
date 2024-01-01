@@ -10,11 +10,11 @@ public readonly record struct DeleteUserRoleClaimCommandRequest : IUserRoleClaim
     public Guid RoleId { get; init; }
     public string Value { get; init; }
 
-    public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
+    public AuthorizationFunctions AuthorizationFunctions { get; }
 
     public DeleteUserRoleClaimCommandRequest()
     {
-        AuthorizationRules = [UserRoleClaimAuthorizationRules.CanUserCreateOrDeleteUserRoleClaim];
+        AuthorizationFunctions = [UserRoleClaimAuthorizationRules.CanUserCreateOrDeleteUserRoleClaim];
     }
 
 

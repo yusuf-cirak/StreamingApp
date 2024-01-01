@@ -10,11 +10,11 @@ public readonly record struct CreateRoleCommandRequest
     : IRequest<HttpResult<GetRoleDto>>, ISecuredRequest
 {
     public string Name { get; init; }
-    public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
+    public AuthorizationFunctions AuthorizationFunctions { get; }
 
     public CreateRoleCommandRequest()
     {
-        AuthorizationRules = [CommonAuthorizationRules.UserMustBeAdmin];
+        AuthorizationFunctions = [CommonAuthorizationRules.UserMustBeAdmin];
     }
 
     public CreateRoleCommandRequest(string name) : this()

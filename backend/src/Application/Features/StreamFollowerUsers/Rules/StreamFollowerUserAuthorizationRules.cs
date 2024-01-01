@@ -6,7 +6,7 @@ namespace Application.Features.StreamFollowerUsers.Rules;
 
 public static class StreamFollowerUserAuthorizationRules
 {
-    public static Result CanUserFollowStreamer(ICollection<Claim> claims, object request)
+    public static Result CanUserFollowStreamer(HttpContext context, ICollection<Claim> claims, object request)
     {
         var userId = Guid.Parse(claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty);
 

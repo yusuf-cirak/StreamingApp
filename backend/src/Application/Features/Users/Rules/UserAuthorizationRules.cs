@@ -7,7 +7,7 @@ namespace Application.Features.Users.Rules;
 
 public static class UserAuthorizationRules
 {
-    public static Result CanUpdateUser(ICollection<Claim> claims, object request)
+    public static Result CanUpdateUser(HttpContext context, ICollection<Claim> claims, object request)
     {
         if (IsAdmin(claims, request) || IsOwner(claims, request))
         {

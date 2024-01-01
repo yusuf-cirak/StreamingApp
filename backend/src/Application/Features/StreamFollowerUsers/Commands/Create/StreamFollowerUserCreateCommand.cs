@@ -11,11 +11,11 @@ public readonly record struct StreamFollowerUserCreateCommandRequest : IStreamFo
 {
     public Guid StreamerId { get; init; }
     public Guid UserId { get; init; }
-    public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
+    public AuthorizationFunctions AuthorizationFunctions { get; }
 
     public StreamFollowerUserCreateCommandRequest()
     {
-        AuthorizationRules = [StreamFollowerUserAuthorizationRules.CanUserFollowStreamer];
+        AuthorizationFunctions = [StreamFollowerUserAuthorizationRules.CanUserFollowStreamer];
     }
 
     public StreamFollowerUserCreateCommandRequest(Guid streamerId, Guid userId) : this()

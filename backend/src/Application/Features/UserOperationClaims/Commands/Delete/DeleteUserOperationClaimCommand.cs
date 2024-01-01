@@ -10,11 +10,11 @@ public readonly record struct DeleteUserOperationClaimCommandRequest : IUserOper
     public Guid OperationClaimId { get; init; }
     public string Value { get; init; }
 
-    public List<Func<ICollection<Claim>, object, Result>> AuthorizationRules { get; }
+    public AuthorizationFunctions AuthorizationFunctions { get; }
 
     public DeleteUserOperationClaimCommandRequest()
     {
-        AuthorizationRules = [UserOperationClaimAuthorizationRules.CanUserCreateOrDeleteUserOperationClaim];
+        AuthorizationFunctions = [UserOperationClaimAuthorizationRules.CanUserCreateOrDeleteUserOperationClaim];
     }
 
     public DeleteUserOperationClaimCommandRequest(Guid userId, Guid operationClaimId, string value)

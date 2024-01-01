@@ -1,56 +1,46 @@
-﻿using System.Text.Json;
-using Application.Features.OperationClaims.Dtos;
-using Application.Features.Roles.Dtos;
-using Application.Features.StreamBlockedUsers.Abstractions;
-using Application.Features.Streamers.Abstractions;
+﻿using Application.Common.Errors;
+using Microsoft.Extensions.Configuration;
 
 namespace Application.Features.Streams.Rules;
 
 public static class StreamAuthorizationRules
 {
-    public static Result CanRequestorCreateOrUpdateStream(ICollection<Claim> claims, object request)
+    public const string HeaderApiKey = "X-Api-Key";
+
+    public static Result RequesterMustHaveValidApiKey(HttpContext context, ICollection<Claim> claims, object request)
     {
-        // Check if user is the streamer
-        if (IsUserStreamer(claims, request))
+        var apiKeyResult = GetApiKeyFromRequest(context);
+
+        if (apiKeyResult.IsFailure)
         {
-            return Result.Success();
+            Result.Failure(apiKeyResult.Error);
         }
 
-        return Result.Failure(StreamErrors.UserIsNotStreamer);
+
+        IConfiguration configuration = context.RequestServices.GetService(typeof(IConfiguration)) as IConfiguration;
+
+
+        return IsRequesterAuthorized(configuration, apiKeyResult.Value);
     }
 
-    private static bool IsUserStreamer(ICollection<Claim> claims, object request)
+    private static Result<string, Error> GetApiKeyFromRequest(HttpContext context)
     {
-        Guid userId = Guid.Parse(claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value ??
-                                 string.Empty);
+        var apiKey = context.Request.Headers[HeaderApiKey].FirstOrDefault();
 
-        Guid streamerId = ((IStreamerCommandRequest)request).StreamerId;
+        if (string.IsNullOrEmpty(apiKey))
+        {
+            return (AuthorizationErrors.Unauthorized());
+        }
 
-        return userId == streamerId;
+        return apiKey;
     }
 
-    private static bool IsUserModeratorOfStreamByRole(ICollection<Claim> claims, object request)
+    private static Result IsRequesterAuthorized(IConfiguration configuration, string apiKey)
     {
-        string streamerIdString = ((IStreamerCommandRequest)request).StreamerId.ToString();
+        var isAuthorized = configuration.GetValue<string>("ApiKey").Equals(apiKey);
 
-        string rolesString = claims.First(c => c.Type == "Roles").Value;
-        List<GetUserRoleDto> roleClaims = JsonSerializer.Deserialize<List<GetUserRoleDto>>(rolesString);
-
-        return roleClaims.Exists(rc =>
-            rc.Role.Name == RoleConstants.StreamSuperModerator && rc.Value == streamerIdString);
-    }
-
-    private static bool IsUserModeratorOfStreamByOperationClaim(ICollection<Claim> claims, object request)
-    {
-        string streamerIdString = ((IStreamBlockedUserRequest)request).StreamerId.ToString();
-
-        string operationClaimsString = claims.First(c => c.Type == "OperationClaims").Value;
-
-        List<GetUserOperationClaimDto> operationClaims =
-            JsonSerializer.Deserialize<List<GetUserOperationClaimDto>>(operationClaimsString);
-
-        return operationClaims.Exists(oc =>
-            oc.Value == streamerIdString &&
-            oc.OperationClaim.Name == OperationClaimConstants.StreamBlockUserFromChat);
+        return !isAuthorized
+            ? Result.Failure(AuthorizationErrors.Unauthorized())
+            : Result.Success();
     }
 }

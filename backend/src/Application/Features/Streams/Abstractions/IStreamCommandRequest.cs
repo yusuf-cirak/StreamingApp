@@ -2,5 +2,5 @@
 
 public interface IStreamCommandRequest
 {
-    public Guid StreamerId { get; init; }
+    public string StreamKey { get; init; }
 }
