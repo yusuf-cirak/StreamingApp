@@ -43,9 +43,11 @@ public sealed class CreateStreamCommandHandler : IRequestHandler<CreateStreamCom
 
         var stream = Stream.Create(streamerId);
 
-        var streamStartResult = await _streamService.StartNewStreamAsync(stream, cancellationToken);
+        var isStreamStarted = await _streamService.StartNewStreamAsync(stream, cancellationToken);
+        
+        //TODO: Add event to notify users that stream has started
 
-        return streamStartResult > 0
+        return isStreamStarted
             ? HttpResult<Guid>.Success(stream.Id, StatusCodes.Status201Created)
             : StreamErrors.FailedToCreateStream;
     }

@@ -13,7 +13,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.0" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="7.0.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="StackExchange.Redis" Version="2.7.10" />
+    <PackageReference Include="StackExchange.Redis.Extensions.Core" Version="10.0.2" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,5 +1,4 @@
-﻿using Application.Abstractions.Cache;
-using StackExchange.Redis.Extensions.Core;
+﻿using StackExchange.Redis.Extensions.Core;
 using StackExchange.Redis.Extensions.Core.Configuration;
 using StackExchange.Redis.Extensions.Core.Abstractions;
 using StackExchange.Redis.Extensions.Core.Implementations;
@@ -20,7 +19,7 @@ public static class CacheExtensions
         services.AddSingleton<IRedisConnectionPoolManager, RedisConnectionPoolManager>();
         services.AddSingleton<ISerializer, MsgPackObjectSerializer>();
 
-        services.AddSingleton<IRedisCacheService>((provider) =>
-            (provider.GetRequiredService<IRedisClient>().GetDefaultDatabase().Database as IRedisCacheService)!);
+        services.AddSingleton<IRedisDatabase>((provider) =>
+            (provider.GetRequiredService<IRedisClient>().GetDefaultDatabase()));
     }
 }

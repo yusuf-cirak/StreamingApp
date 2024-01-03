@@ -1,4 +1,6 @@
-﻿using Stream = Domain.Entities.Stream;
+﻿using Application.Common.Constants;
+using StackExchange.Redis.Extensions.Core.Abstractions;
+using Stream = Domain.Entities.Stream;
 
 namespace Application.Features.Streams.Services;
 
@@ -6,11 +8,14 @@ public sealed class StreamService : IStreamService
 {
     private readonly IEncryptionHelper _encryptionHelper;
     private readonly IEfRepository _efRepository;
+    private readonly IRedisDatabase _redisDatabase;
 
-    public StreamService(IEncryptionHelper encryptionHelper, IEfRepository efRepository)
+    public StreamService(IEncryptionHelper encryptionHelper, IEfRepository efRepository,
+        IRedisDatabase redisDatabase)
     {
         _encryptionHelper = encryptionHelper;
         _efRepository = efRepository;
+        _redisDatabase = redisDatabase;
     }
 
 
@@ -27,21 +32,22 @@ public sealed class StreamService : IStreamService
     }
 
 
-    public async Task<int> StartNewStreamAsync(Stream stream, CancellationToken cancellationToken = default)
+    public async Task<bool> StartNewStreamAsync(Stream stream, CancellationToken cancellationToken = default)
     {
         _efRepository.Streams.Add(stream);
-
 
         var insertResult = await _efRepository.SaveChangesAsync(cancellationToken);
 
         if (insertResult == 0)
         {
-            return 0;
+            return false;
         }
 
-        // TODO: Add started stream to Redis cache
+        var serializedStream = _redisDatabase.Serializer.Serialize(stream);
 
-        return insertResult;
+        var index = await _redisDatabase.Database.ListRightPushAsync(RedisConstant.Key.LiveStreamers, serializedStream);
+
+        return insertResult > 0 && index > 0;
     }
 
     private string GetStreamKeyFromUserId(Guid userId)
