@@ -63,8 +63,6 @@ public static class ServiceRegistration
 
         RegisterInterfaceServices(services, executingAssembly, typeof(IDomainService<>));
 
-        services.AddScoped<AuthService>();
-
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(executingAssembly));
 
         // FluentValidation dependency injection

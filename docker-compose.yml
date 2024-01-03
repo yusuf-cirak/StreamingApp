@@ -16,6 +16,15 @@ services:
       - ./database:/var/lib/postgresql/data
     networks:
       - streaming-app
+    
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    networks:
+      - streaming-app
 
 networks:
   streaming-app:

@@ -5,6 +5,7 @@ using Infrastructure.Helpers.JWT;
 using Infrastructure.Helpers.Security;
 using Infrastructure.Persistence.EntityFramework;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using StackExchange.Redis.Extensions.Core.Configuration;
 using WebAPI.Endpoints;
 using WebAPI.Extensions;
 using WebAPI.Infrastructure.Middlewares;
@@ -33,6 +34,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerGenServices();
 
 builder.Services.AddAuthorization();
+
+builder.Services.AddStackExchangeRedis(builder.Configuration);
 
 var app = builder.Build();
 

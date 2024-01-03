@@ -13,6 +13,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.0" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="7.0.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="StackExchange.Redis" Version="2.7.10" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,7 +28,6 @@
     <Folder Include="Features\Streams\Dtos\" />
     <Folder Include="Features\UserOperationClaims\Dtos\" />
     <Folder Include="Features\Users\Dtos\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
