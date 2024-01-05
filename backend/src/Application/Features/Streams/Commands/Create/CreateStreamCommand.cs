@@ -34,17 +34,26 @@ public sealed class CreateStreamCommandHandler : IRequestHandler<CreateStreamCom
     {
         var streamerId = _streamService.GetUserIdFromStreamKey(request.StreamKey);
 
-        bool streamerExists = await _streamService.StreamerExistsAsync(streamerId, cancellationToken);
+        var streamerResult = await _streamService.StreamerExistsAsync(streamerId, cancellationToken);
 
-        if (!streamerExists)
+        if (streamerResult.IsFailure)
         {
-            return StreamErrors.StreamerNotExists;
+            return streamerResult.Error;
+        }
+
+        var isStreamerLiveResult = await _streamService.IsStreamerLiveAsync(streamerId, cancellationToken);
+
+        if (isStreamerLiveResult.IsFailure)
+        {
+            return isStreamerLiveResult.Error;
         }
 
         var stream = Stream.Create(streamerId);
 
-        var isStreamStarted = await _streamService.StartNewStreamAsync(stream, cancellationToken);
-        
+        var streamer = streamerResult.Value;
+
+        var isStreamStarted = await _streamService.StartNewStreamAsync(streamer, stream, cancellationToken);
+
         //TODO: Add event to notify users that stream has started
 
         return isStreamStarted

@@ -9,12 +9,20 @@ public class Stream : Entity
 
     private Stream()
     {
+        StartedAt = DateTime.UtcNow;
     }
 
-    private Stream(Guid streamerId)
+    private Stream(Guid streamerId) : this()
     {
         StreamerId = streamerId;
     }
+    
+    private Stream(Guid streamerId, DateTime startedAt)
+    {
+        StreamerId = streamerId;
+        StartedAt = startedAt;
+    }
 
     public static Stream Create(Guid streamerId) => new(streamerId);
+    public static Stream Create(Guid streamerId, DateTime startedAt) => new(streamerId, startedAt);
 }

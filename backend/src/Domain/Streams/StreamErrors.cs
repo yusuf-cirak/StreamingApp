@@ -30,7 +30,16 @@ public readonly record struct StreamErrors
 
     public static readonly Error UserIsNotStreamer = Error.Create("Stream.UserIsNotStreamer",
         "User is not the streamer");
-    
+
     public static readonly Error StreamerNotExists = Error.Create("Stream.StreamerNotExists",
         "Streamer does not exist");
+    
+    public static readonly Error StreamIsLive = Error.Create("Stream.StreamIsLive",
+        "Streamer is live");
+
+    public static readonly Error StreamIsNotLive = Error.Create("Stream.StreamIsNotLive",
+        "Streamer is not live");
+
+    public static readonly Error FailedToEndStream = Error.Create("Stream.FailedToEndStream",
+        "Failed to end stream");
 }

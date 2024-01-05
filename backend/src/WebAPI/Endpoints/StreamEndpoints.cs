@@ -1,4 +1,6 @@
 ﻿using Application.Features.Streams.Commands.Create;
+using Application.Features.Streams.Commands.Update;
+using Application.Features.Streams.Queries.GetAll;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel;
@@ -11,12 +13,27 @@ public static class StreamEndpoints
     {
         var groupBuilder = builder.MapGroup("api/streams");
 
+        groupBuilder.MapGet("/",
+                async (IMediator mediator) =>
+                {
+                    return (await mediator.Send(new GetAllLiveStreamsQueryRequest())).ToHttpResponse();
+                })
+            .WithTags("Streams");
 
         groupBuilder.MapPost("/",
                 async ([FromBody] CreateStreamCommandRequest createStreamCommandRequest,
                     IMediator mediator) =>
                 {
                     return (await mediator.Send(createStreamCommandRequest)).ToHttpResponse();
+                })
+            .WithTags("Streams");
+
+
+        groupBuilder.MapPatch("/",
+                async ([FromBody] UpdateStreamCommandRequest updateStreamCommandRequest,
+                    IMediator mediator) =>
+                {
+                    return (await mediator.Send(updateStreamCommandRequest)).ToHttpResponse();
                 })
             .WithTags("Streams");
     }

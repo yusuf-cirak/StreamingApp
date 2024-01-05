@@ -24,4 +24,6 @@ public readonly record struct StreamerErrors
 
     public static readonly Error StreamerCannotBeUpdated = Error.Create("Streamer.StreamerCannotBeUpdated",
         "Streamer cannot be updated");
+    public static readonly Error StreamerDoesNotExist = Error.Create("Streamer.StreamerDoesNotExist",
+        "Streamer does not exist");
 }
