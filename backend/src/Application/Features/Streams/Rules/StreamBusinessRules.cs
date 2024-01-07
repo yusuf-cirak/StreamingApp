@@ -16,4 +16,16 @@ public sealed class StreamBusinessRules : BaseBusinessRules
 
         return stream;
     }
+    
+    public Result<GetStreamDto, Error> IsStreamLive(List<GetStreamDto> streams, string username)
+    {
+        var stream = streams.SingleOrDefault(ls => ls.User.Username == username);
+        if (stream is null)
+        {
+            return (StreamErrors.StreamIsNotLive);
+        }
+
+        return stream;
+    }
+    
 }

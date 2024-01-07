@@ -5,7 +5,7 @@ using Stream = Domain.Entities.Stream;
 
 namespace Application.Features.Streams.Commands.Create;
 
-public readonly record struct CreateStreamCommandRequest : IStreamCommandRequest, IRequest<HttpResult<Guid>>,
+public readonly record struct CreateStreamCommandRequest : IStreamCommandRequest, IRequest<HttpResult<string>>,
     IApiSecuredRequest
 {
     public string StreamKey { get; init; }
@@ -19,7 +19,7 @@ public readonly record struct CreateStreamCommandRequest : IStreamCommandRequest
     }
 }
 
-public sealed class CreateStreamCommandHandler : IRequestHandler<CreateStreamCommandRequest, HttpResult<Guid>>
+public sealed class CreateStreamCommandHandler : IRequestHandler<CreateStreamCommandRequest, HttpResult<string>>
 {
     private readonly IEfRepository _efRepository;
     private readonly IStreamService _streamService;
@@ -30,9 +30,16 @@ public sealed class CreateStreamCommandHandler : IRequestHandler<CreateStreamCom
         _streamService = streamService;
     }
 
-    public async Task<HttpResult<Guid>> Handle(CreateStreamCommandRequest request, CancellationToken cancellationToken)
+    public async Task<HttpResult<string>> Handle(CreateStreamCommandRequest request, CancellationToken cancellationToken)
     {
-        var streamerId = _streamService.GetUserIdFromStreamKey(request.StreamKey);
+        var streamerIdResult = _streamService.GetUserIdFromStreamKey(request.StreamKey);
+        
+        if (streamerIdResult.IsFailure)
+        {
+            return streamerIdResult.Error;
+        }
+        
+        var streamerId = streamerIdResult.Value;
 
         var streamerResult = await _streamService.StreamerExistsAsync(streamerId, cancellationToken);
 
@@ -57,7 +64,7 @@ public sealed class CreateStreamCommandHandler : IRequestHandler<CreateStreamCom
         //TODO: Add event to notify users that stream has started
 
         return isStreamStarted
-            ? HttpResult<Guid>.Success(stream.Id, StatusCodes.Status201Created)
+            ? HttpResult<string>.Success(streamer.User.Username)
             : StreamErrors.FailedToCreateStream;
     }
 }

@@ -1,5 +1,5 @@
 version: "3.9"
-name: "streming-app"
+name: "streaming-app"
 
 services:
   database:
@@ -11,7 +11,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: streaming-app
     ports:
-      - 5432:5432
+      - "5432:5432"
     volumes:
       - ./database:/var/lib/postgresql/data
     networks:
@@ -22,8 +22,17 @@ services:
     container_name: redis
     restart: unless-stopped
     ports:
-      - 6379:6379
+      - "6379:6379"
     networks:
+      - streaming-app
+  
+  media-server:
+    container_name: media-server
+    restart: unless-stopped
+    build: ./media-server
+    ports:
+      - "1935:1935"
+    networks: 
       - streaming-app
 
 networks:

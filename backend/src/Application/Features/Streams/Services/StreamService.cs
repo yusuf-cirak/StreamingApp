@@ -57,9 +57,16 @@ public sealed class StreamService : IStreamService
         return liveStreams;
     }
 
-    public Guid GetUserIdFromStreamKey(string streamKey)
+    public Result<Guid,Error> GetUserIdFromStreamKey(string streamKey)
     {
-        return Guid.Parse(_encryptionHelper.Decrypt(streamKey));
+        Guid.TryParse(_encryptionHelper.Decrypt(streamKey), out var userId);
+
+        if (userId == Guid.Empty)
+        {
+            return Error.Create("Guid.Empty", "Failed to parse stream key");
+        }
+        
+        return userId;
     }
 
 

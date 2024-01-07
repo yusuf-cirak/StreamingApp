@@ -5,7 +5,7 @@ namespace Application.Features.Streams.Services;
 
 public interface IStreamService : IDomainService<Stream>
 {
-    Guid GetUserIdFromStreamKey(string streamKey);
+    Result<Guid,Error> GetUserIdFromStreamKey(string streamKey);
     Task<Result<Streamer, Error>> StreamerExistsAsync(Guid streamerId, CancellationToken cancellationToken);
     Task<Result> IsStreamerLiveAsync(Guid streamerId, CancellationToken cancellationToken);
 

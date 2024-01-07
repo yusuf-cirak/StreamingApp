@@ -2,5 +2,4 @@
 
 public interface IStreamCommandRequest
 {
-    public string StreamKey { get; init; }
 }

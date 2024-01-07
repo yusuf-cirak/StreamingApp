@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  media-server:
+    container_name: media-server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 1935:1935
+    networks:
+      - media-server
+
+networks:
+  media-server:
+    driver: bridge
+    name: media-server
