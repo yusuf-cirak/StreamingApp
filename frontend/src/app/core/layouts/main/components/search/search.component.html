@@ -1,0 +1,19 @@
+<form class="w-96 flex flex-row items-center justify-start gap-3">
+  <input
+    type="text"
+    hlmInput
+    placeholder="Search"
+    class="w-[90%] bg-gray-700 border-none rounded-md rounded-r-none focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0 text-white px-4 py-2"
+    (input)="setSearch($any($event.target).value)"
+    [value]="search()"
+  />
+  @if (this.search()) {
+  <i
+    class="pi pi-times text-muted-foreground absolute right-16 hover:cursor-pointer hover:opacity-50 transition"
+    (click)="clearSearch()"
+  ></i>
+  }
+  <i
+    class="pi pi-search w-5 h-5 hover:cursor-pointer text-primary-foreground"
+  ></i>
+</form>
