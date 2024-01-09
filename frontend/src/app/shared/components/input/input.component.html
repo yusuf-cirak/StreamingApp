@@ -1,0 +1,47 @@
+<div class="flex flex-col items-center py-4 px-4">
+  <div class="flex flex-col">
+    <label
+      [for]="label"
+      class="text-gray-800 dark:text-gray-800 text-sm font-bold leading-tight tracking-normal mb-2"
+      >{{ label }}</label
+    >
+    <div class="relative">
+      <div
+        class="absolute text-gray-600 dark:text-gray-400 flex items-center pl-4 h-full"
+      >
+        <ng-content [select]="icon"></ng-content>
+      </div>
+      <ng-container *ngIf="control; else default">
+        <input
+          #inputElementRef
+          [type]="inputType"
+          class="text-gray-600 dark:text-gray-900 focus:outline-none focus:border bg-white font-normal w-64 h-10 flex items-center pl-12 text-sm border-gray-300 rounded border shadow disabled:opacity-40 border-transparent"
+          [formControl]="control"
+          [placeholder]="placeholder || ''"
+          [disabled]="disabled"
+        />
+        <ng-container
+          *ngIf="
+            control.errors &&
+            (control.touched || control.dirty || !control.pristine)
+          "
+        >
+          <span
+            *ngFor="let error of control.errors | keyvalue"
+            class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-3 ml-1 max-w-[16rem] h-0 pt-1 max-h-fit"
+          >
+            {{ error.value }}
+          </span>
+        </ng-container>
+      </ng-container>
+      <ng-template #default>
+        <input
+          #inputElementRef
+          class="text-black focus:outline-none focus:border bg-white font-normal w-64 h-10 flex items-center pl-12 text-sm border-gray-300 rounded border shadow disabled:opacity-40"
+          [placeholder]="placeholder || ''"
+          [disabled]="disabled"
+        />
+      </ng-template>
+    </div>
+  </div>
+</div>

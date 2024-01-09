@@ -1,6 +1,15 @@
 <nav
-  class="fixed top-0 w-full h-20 z-40 bg-[#202431] px-2 lg:px-4 flex justify-between items-center shadow-sm"
+  class="fixed top-0 w-full h-20 z-40 bg-background px-2 lg:px-4 flex justify-between items-center shadow-sm"
 >
   <app-logo></app-logo>
-  <app-search></app-search>
+  <app-search class="w-[60%] lg:w-[30%] min-w-[30%]"></app-search>
+  <button
+    hlmBtn
+    variant="link"
+    class="hover:opacity-75 text hover:no-underline"
+    [routerLink]="['/dashboard']"
+  >
+    <app-clapper-board-icon></app-clapper-board-icon>
+    <span class="hidden lg:block">Dashboard</span>
+  </button>
 </nav>

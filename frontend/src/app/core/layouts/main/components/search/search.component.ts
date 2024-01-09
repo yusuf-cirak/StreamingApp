@@ -1,4 +1,10 @@
-import { Component, inject, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  ViewChild,
+  inject,
+  signal,
+} from '@angular/core';
 import { HlmInputDirective } from '../../../../../../../libs/spartan/ui-input-helm/src/lib/hlm-input.directive';
 import { Router } from '@angular/router';
 
@@ -9,6 +15,8 @@ import { Router } from '@angular/router';
   templateUrl: './search.component.html',
 })
 export class SearchComponent {
+  @ViewChild('searchInput') searchInput!: ElementRef;
+
   readonly #router = inject(Router);
   #search = signal<string>('');
 
@@ -16,15 +24,11 @@ export class SearchComponent {
 
   setSearch(value: string) {
     this.#search.set(value);
-
+    this.searchInput.nativeElement.focus();
     this.setQueryParameter(value);
   }
 
-  clearSearch() {
-    this.#search.set('');
-  }
-
-  setQueryParameter(value: string) {
+  private setQueryParameter(value: string) {
     const queryParams = value ? { q: value } : {};
     this.#router.navigate([], { queryParams });
   }
