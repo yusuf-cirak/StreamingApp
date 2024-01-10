@@ -9,17 +9,17 @@ import { RouterLink } from '@angular/router';
   encapsulation: ViewEncapsulation.None,
   template: `
     <div
-      class="hidden lg:flex items-start gap-x-4 hover:opacity-75 transition hover:cursor-pointer"
+      class="flex items-start gap-x-4 hover:opacity-75 transition hover:cursor-pointer"
       [routerLink]="['/']"
     >
-      <div class="bg-white rounded-full p-1">
+      <div class="bg-white rounded-full p-1 lg:mr-0 lg:shrink shrink-0">
         <img
           ngSrc="../../../../../../assets/spooky.svg"
           [width]="32"
           [height]="32"
         />
       </div>
-      <div class="flex flex-col items-start">
+      <div class="hidden lg:block flex-col items-start">
         <p class="text-lg text-white font-semibold">Streaming App</p>
         <p class="text-sm text-muted-foreground">Let&apos;s play</p>
       </div>

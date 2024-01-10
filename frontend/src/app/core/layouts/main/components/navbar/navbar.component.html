@@ -1,15 +1,26 @@
 <nav
-  class="fixed top-0 w-full h-20 z-40 bg-background px-2 lg:px-4 flex justify-between items-center shadow-sm"
+  class="fixed top-0 w-full h-20 z-40 bg-gray-800 px-2 lg:px-4 flex justify-between items-center shadow-sm"
 >
   <app-logo></app-logo>
-  <app-search class="w-[60%] lg:w-[30%] min-w-[30%]"></app-search>
-  <button
-    hlmBtn
-    variant="link"
-    class="hover:opacity-75 text hover:no-underline"
-    [routerLink]="['/dashboard']"
-  >
-    <app-clapper-board-icon></app-clapper-board-icon>
-    <span class="hidden lg:block">Dashboard</span>
-  </button>
+  <app-search class="sm:min-w-[40%]"></app-search>
+  <div class="flex flex-row gap-3 sm:pr-5 items-center justify-center">
+    <button
+      hlmBtn
+      variant="link"
+      class="hover:opacity-75 text hover:no-underline"
+      [routerLink]="['/dashboard']"
+    >
+      <app-clapper-board-icon></app-clapper-board-icon>
+      <span class="hidden lg:block">Dashboard</span>
+    </button>
+    <!-- <button
+      hlmBtn
+      variant="secondary"
+      size="sm"
+      class="bg-white text-muted-foreground"
+    >
+      Login
+    </button> -->
+    <app-profilebar></app-profilebar>
+  </div>
 </nav>

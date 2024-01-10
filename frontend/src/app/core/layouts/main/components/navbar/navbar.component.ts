@@ -4,6 +4,7 @@ import { SearchComponent } from '../search/search.component';
 import { HlmButtonDirective } from '../../../../../../../libs/spartan/ui-button-helm/src/lib/hlm-button.directive';
 import { ClapperBoardIcon } from '../../../../../shared/icons/clapper-board/clapper-board.icon';
 import { RouterLink } from '@angular/router';
+import { ProfilebarComponent } from '../profilebar/profilebar.component';
 
 @Component({
   selector: 'app-navbar',
@@ -15,6 +16,7 @@ import { RouterLink } from '@angular/router';
     HlmButtonDirective,
     ClapperBoardIcon,
     RouterLink,
+    ProfilebarComponent,
   ],
 })
 export class NavbarComponent {}
