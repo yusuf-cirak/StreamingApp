@@ -3,7 +3,9 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-not-found',
   standalone: true,
-  template: `<div class="flex justify-center items-center h-screen bg-gray-200">
+  template: `<div
+    class="flex justify-center items-center w-screen h-screen bg-gray-200"
+  >
     <div class="text-center">
       <h1 class="text-4xl font-medium">404</h1>
       <p class="text-xl font-medium m-6">

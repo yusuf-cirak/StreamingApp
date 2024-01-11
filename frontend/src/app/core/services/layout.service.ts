@@ -72,6 +72,6 @@ export class LayoutService {
   }
 
   private getUserSystemThemePreference() {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return window?.matchMedia('(prefers-color-scheme: dark)').matches;
   }
 }
