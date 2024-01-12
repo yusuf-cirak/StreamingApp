@@ -58,3 +58,49 @@ body {
   min-height: 100vh;
   height: 100vh;
 }
+
+.sidebar-closed {
+  span {
+    display: none;
+  }
+
+  .expand-right-icon {
+    display: block;
+  }
+
+  .collapse-left-icon {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 640px) {
+  aside {
+    span {
+      display: block;
+    }
+
+    .expand-right-icon {
+      display: none;
+    }
+
+    .collapse-left-icon {
+      display: block;
+    }
+  }
+}
+
+@media screen and (max-width: 640px) {
+  aside {
+    span {
+      display: none;
+    }
+
+    .expand-right-icon {
+      display: block;
+    }
+
+    .collapse-left-icon {
+      display: none;
+    }
+  }
+}

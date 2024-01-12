@@ -1,8 +1,17 @@
 import { NgClass } from '@angular/common';
-import { Component, HostListener, inject } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  ViewChild,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { CollapseLeftIcon } from '../../../../../shared/icons/collapse-left';
 import { ExpandRightIcon } from '../../../../../shared/icons/expand-right';
 import { expandCollapseAnimation } from '../../../../../shared/animations/expand-collapse-animation';
+import { LayoutService } from '@streaming-app/core';
 
 @Component({
   selector: 'app-sidebar',
@@ -13,21 +22,32 @@ import { expandCollapseAnimation } from '../../../../../shared/animations/expand
   animations: [expandCollapseAnimation],
 })
 export class SidebarComponent {
-  isList: number = 0;
-  isMenu: boolean = false;
-  isMenuBtn() {
-    this.isMenu = !this.isMenu;
+  readonly layoutService = inject(LayoutService);
+
+  readonly #sidebarOpen = signal(true);
+  readonly sidebarOpen = this.#sidebarOpen.asReadonly();
+
+  @ViewChild('sidebarRef') sidebarRef: ElementRef | undefined;
+
+  constructor() {
+    effect(() => {
+      const sidebar = this.sidebarRef?.nativeElement;
+
+      if (this.sidebarOpen()) {
+        sidebar?.classList.remove('sidebar-closed');
+      } else {
+        sidebar?.classList.add('sidebar-closed');
+      }
+    });
   }
-  isSearch: boolean = false;
-  constructor() {}
-  ngOnInit(): void {}
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
-    if (event.target.innerWidth <= 640) {
-      this.isMenu = true;
-    } else {
-      this.isMenu = false;
-    }
+    this.#sidebarOpen.set(event.target.innerWidth > 640);
+  }
+
+  toggleSidebar() {
+    const value = this.sidebarOpen();
+    this.#sidebarOpen.set(!value);
   }
 }

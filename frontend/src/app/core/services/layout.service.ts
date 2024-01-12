@@ -4,7 +4,7 @@ import { Injectable, signal } from '@angular/core';
   providedIn: 'root',
 })
 export class LayoutService {
-  readonly #isSideMenuOpen = signal(false);
+  readonly #isSideMenuOpen = signal(true);
   get isSideMenuOpen() {
     return this.#isSideMenuOpen.asReadonly();
   }
@@ -51,6 +51,10 @@ export class LayoutService {
 
   closeSideMenu() {
     this.#isSideMenuOpen.set(false);
+  }
+
+  openSideMenu() {
+    this.#isSideMenuOpen.set(true);
   }
 
   closeProfileMenu() {

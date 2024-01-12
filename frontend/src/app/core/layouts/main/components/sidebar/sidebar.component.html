@@ -1,27 +1,20 @@
 <aside
-  class="fixed left-0 h-full mt-20 pt-4 bg-gray-800 transition duration-150 ease-in-out overflow-y-auto sidebar"
-  [ngClass]="
-    layoutService.isSideMenuOpen() ? 'transform w-60' : 'transform w-20'
-  "
+  #sidebarRef
+  class="fixed left-0 h-full mt-20 pt-4 bg-gray-800 transition duration-150 ease-in-out overflow-y-auto"
+  [ngClass]="sidebarOpen() ? 'transform w-60' : 'transform w-20'"
 >
   <div
     class="h-10 w-full flex items-center justify-between shadow rounded-tr rounded-br cursor-pointer p-4 text-white"
-    (click)="layoutService.toggleSideMenu()"
+    (click)="toggleSidebar()"
   >
-    @if (layoutService.isSideMenuOpen()) {
     <span class="font-semibold">For you</span>
 
-    <app-collapse-left-icon></app-collapse-left-icon>
-
-    } @else {
-    <app-expand-right-icon></app-expand-right-icon>
-
-    }
+    <app-collapse-left-icon class="collapse-left-icon"></app-collapse-left-icon>
+    <app-expand-right-icon class="expand-right-icon"></app-expand-right-icon>
   </div>
+
   <div class="pt-6">
-    @if (layoutService.isSideMenuOpen()) {
     <span class="text-muted-foreground font-semibold px-4">Recommended</span>
-    }
     <ul class="px-4 pt-8">
       <li
         class="flex w-full justify-between text-gray-300 hover:text-gray-500 cursor-pointer items-center mb-6"
@@ -45,9 +38,7 @@
             <rect x="4" y="14" width="6" height="6" rx="1"></rect>
             <rect x="14" y="14" width="6" height="6" rx="1"></rect>
           </svg>
-          @if (layoutService.isSideMenuOpen()) {
           <span class="text-sm ml-2">Dashboard</span>
-          }
         </div>
         <!-- <div
           class="py-1 px-3 bg-gray-700 rounded text-gray-500 flex items-center justify-center text-xs"
@@ -76,9 +67,7 @@
               d="M4 7h3a1 1 0 0 0 1 -1v-1a2 2 0 0 1 4 0v1a1 1 0 0 0 1 1h3a1 1 0 0 1 1 1v3a1 1 0 0 0 1 1h1a2 2 0 0 1 0 4h-1a1 1 0 0 0 -1 1v3a1 1 0 0 1 -1 1h-3a1 1 0 0 1 -1 -1v-1a2 2 0 0 0 -4 0v1a1 1 0 0 1 -1 1h-3a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h1a2 2 0 0 0 0 -4h-1a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1"
             ></path>
           </svg>
-          @if (layoutService.isSideMenuOpen()) {
           <span class="text-sm ml-2">Products</span>
-          }
         </div>
       </li>
       <li
@@ -101,9 +90,7 @@
             <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
             <circle cx="12" cy="12" r="9"></circle>
           </svg>
-          @if (layoutService.isSideMenuOpen()) {
           <span class="text-sm ml-2">Performance</span>
-          }
         </div>
       </li>
       <li
@@ -127,9 +114,7 @@
             <polyline points="17 8 21 12 17 16"></polyline>
             <line x1="14" y1="4" x2="10" y2="20"></line>
           </svg>
-          @if (layoutService.isSideMenuOpen()) {
           <span class="text-sm ml-2">Deliverables</span>
-          }
         </div>
       </li>
       <li
@@ -153,9 +138,7 @@
               d="M4 7h3a1 1 0 0 0 1 -1v-1a2 2 0 0 1 4 0v1a1 1 0 0 0 1 1h3a1 1 0 0 1 1 1v3a1 1 0 0 0 1 1h1a2 2 0 0 1 0 4h-1a1 1 0 0 0 -1 1v3a1 1 0 0 1 -1 1h-3a1 1 0 0 1 -1 -1v-1a2 2 0 0 0 -4 0v1a1 1 0 0 1 -1 1h-3a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h1a2 2 0 0 0 0 -4h-1a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1"
             ></path>
           </svg>
-          @if (layoutService.isSideMenuOpen()) {
           <span class="text-sm ml-2">Invoices</span>
-          }
         </div>
       </li>
       <li
@@ -179,9 +162,7 @@
             <polyline points="4 12 12 16 20 12" />
             <polyline points="4 16 12 20 20 16" />
           </svg>
-          @if (layoutService.isSideMenuOpen()) {
           <span class="text-sm ml-2">Inventory</span>
-          }
         </div>
       </li>
       <li
@@ -206,9 +187,7 @@
             />
             <circle cx="12" cy="12" r="3" />
           </svg>
-          @if (layoutService.isSideMenuOpen()) {
           <span class="text-sm ml-2">Settings</span>
-          }
         </div>
       </li>
     </ul>

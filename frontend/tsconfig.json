@@ -18,11 +18,10 @@
     "target": "ES2022",
     "module": "ES2022",
     "useDefineForClassFields": false,
-    "lib": [
-      "ES2022",
-      "dom"
-    ],
+    "lib": ["ES2022", "dom"],
     "paths": {
+      "@streaming-app/layouts/main": ["./src/app/core/layouts/main/index.ts"],
+      "@streaming-app/core": ["./src/app/core/index.ts"],
       "@spartan-ng/ui-accordion-helm": [
         ".\\libs/spartan/ui-accordion-helm/src/index.ts"
       ],
@@ -44,27 +43,21 @@
       "@spartan-ng/ui-button-helm": [
         ".\\libs/spartan/ui-button-helm/src/index.ts"
       ],
-      "@spartan-ng/ui-card-helm": [
-        ".\\libs/spartan/ui-card-helm/src/index.ts"
-      ],
+      "@spartan-ng/ui-card-helm": [".\\libs/spartan/ui-card-helm/src/index.ts"],
       "@spartan-ng/ui-command-helm": [
         ".\\libs/spartan/ui-command-helm/src/index.ts"
       ],
       "@spartan-ng/ui-dialog-helm": [
         ".\\libs/spartan/ui-dialog-helm/src/index.ts"
       ],
-      "@spartan-ng/ui-icon-helm": [
-        ".\\libs/spartan/ui-icon-helm/src/index.ts"
-      ],
+      "@spartan-ng/ui-icon-helm": [".\\libs/spartan/ui-icon-helm/src/index.ts"],
       "@spartan-ng/ui-input-helm": [
         ".\\libs/spartan/ui-input-helm/src/index.ts"
       ],
       "@spartan-ng/ui-label-helm": [
         ".\\libs/spartan/ui-label-helm/src/index.ts"
       ],
-      "@spartan-ng/ui-menu-helm": [
-        ".\\libs/spartan/ui-menu-helm/src/index.ts"
-      ],
+      "@spartan-ng/ui-menu-helm": [".\\libs/spartan/ui-menu-helm/src/index.ts"],
       "@spartan-ng/ui-popover-helm": [
         ".\\libs/spartan/ui-popover-helm/src/index.ts"
       ],
@@ -92,9 +85,7 @@
       "@spartan-ng/ui-switch-helm": [
         ".\\libs/spartan/ui-switch-helm/src/index.ts"
       ],
-      "@spartan-ng/ui-tabs-helm": [
-        ".\\libs/spartan/ui-tabs-helm/src/index.ts"
-      ],
+      "@spartan-ng/ui-tabs-helm": [".\\libs/spartan/ui-tabs-helm/src/index.ts"],
       "@spartan-ng/ui-toggle-helm": [
         ".\\libs/spartan/ui-toggle-helm/src/index.ts"
       ],
