@@ -7,7 +7,7 @@ import { RouterLink } from '@angular/router';
 import { ProfilebarComponent } from '../profilebar/profilebar.component';
 
 @Component({
-  selector: 'app-navbar',
+  selector: 'app-main-navbar',
   standalone: true,
   templateUrl: './navbar.component.html',
   imports: [

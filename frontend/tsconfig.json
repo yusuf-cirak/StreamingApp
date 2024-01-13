@@ -21,6 +21,9 @@
     "lib": ["ES2022", "dom"],
     "paths": {
       "@streaming-app/layouts/main": ["./src/app/core/layouts/main/index.ts"],
+      "@streaming-app/layouts/creator": [
+        "./src/app/core/layouts/creator/index.ts"
+      ],
       "@streaming-app/core": ["./src/app/core/index.ts"],
       "@spartan-ng/ui-accordion-helm": [
         ".\\libs/spartan/ui-accordion-helm/src/index.ts"

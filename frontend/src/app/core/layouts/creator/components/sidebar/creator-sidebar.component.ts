@@ -1,4 +1,3 @@
-import { Streamer } from './../../../../modules/streamers/models/streamer';
 import { NgClass } from '@angular/common';
 import {
   Component,
@@ -16,14 +15,13 @@ import { LayoutService } from '@streaming-app/core';
 import { StreamersComponent } from '../../../../modules/streamers/components/streamers.component';
 
 @Component({
-  selector: 'app-main-sidebar',
+  selector: 'app-creator-sidebar',
   standalone: true,
   imports: [NgClass, CollapseLeftIcon, ExpandRightIcon, StreamersComponent],
-  templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.scss',
+  templateUrl: './creator-sidebar.component.html',
   animations: [expandCollapseAnimation],
 })
-export class SidebarComponent {
+export class CreatorSidebarComponent {
   readonly layoutService = inject(LayoutService);
 
   readonly #sidebarOpen = signal(true);
@@ -33,7 +31,13 @@ export class SidebarComponent {
 
   constructor() {
     effect(() => {
-      this.setSidebarClosed(this.#sidebarOpen());
+      const sidebar = this.sidebarRef?.nativeElement;
+
+      if (this.sidebarOpen()) {
+        sidebar?.classList.remove('sidebar-closed');
+      } else {
+        sidebar?.classList.add('sidebar-closed');
+      }
     });
   }
 
@@ -43,19 +47,7 @@ export class SidebarComponent {
   }
 
   toggleSidebar() {
-    const value = !this.sidebarOpen();
-    this.#sidebarOpen.set(value);
-
-    this.setSidebarClosed(value);
-  }
-
-  setSidebarClosed(value: boolean) {
-    const sidebar = this.sidebarRef?.nativeElement;
-
-    if (value) {
-      sidebar?.classList.remove('sidebar-closed');
-    } else {
-      sidebar?.classList.add('sidebar-closed');
-    }
+    const value = this.sidebarOpen();
+    this.#sidebarOpen.set(!value);
   }
 }

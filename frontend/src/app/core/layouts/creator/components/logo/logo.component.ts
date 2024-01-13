@@ -3,7 +3,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-main-logo',
+  selector: 'app-creator-logo',
   standalone: true,
   imports: [NgOptimizedImage, RouterLink],
   encapsulation: ViewEncapsulation.None,
@@ -21,9 +21,9 @@ import { RouterLink } from '@angular/router';
       </div>
       <div class="hidden lg:block flex-col items-start">
         <p class="text-lg text-white font-semibold">Streaming App</p>
-        <p class="text-sm text-muted-foreground">Let&apos;s play</p>
+        <p class="text-sm text-muted-foreground">Creator Dashboard</p>
       </div>
     </div>
   `,
 })
-export class LogoComponent {}
+export class CreatorLogoComponent {}

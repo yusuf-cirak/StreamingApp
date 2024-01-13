@@ -1,7 +1,5 @@
 @defer (when !!streamerFacade.streamers()) {
-<app-streamer-list
-  [streamers]="streamerFacade.streamers()!"
-></app-streamer-list>
+<app-streamer-list [streamers]="streamerFacade.streamers()!" />
 } @placeholder {
-<app-streamer-skeleton></app-streamer-skeleton>
+<app-streamer-skeleton />
 }

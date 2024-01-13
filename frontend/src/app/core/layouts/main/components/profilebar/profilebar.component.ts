@@ -9,7 +9,7 @@ import { fadeAnimation } from '../../../../../shared/animations/fade-animation';
 import { LayoutService } from '../../../../services/layout.service';
 
 @Component({
-  selector: 'app-profilebar',
+  selector: 'app-main-profilebar',
   standalone: true,
   imports: [],
   templateUrl: './profilebar.component.html',
