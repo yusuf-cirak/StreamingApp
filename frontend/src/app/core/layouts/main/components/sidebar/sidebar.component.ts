@@ -1,3 +1,4 @@
+import { Streamer } from './../../../../modules/streamers/models/streamer';
 import { NgClass } from '@angular/common';
 import {
   Component,
@@ -12,11 +13,12 @@ import { CollapseLeftIcon } from '../../../../../shared/icons/collapse-left';
 import { ExpandRightIcon } from '../../../../../shared/icons/expand-right';
 import { expandCollapseAnimation } from '../../../../../shared/animations/expand-collapse-animation';
 import { LayoutService } from '@streaming-app/core';
+import { StreamersComponent } from '../../../../modules/streamers/components/streamers.component';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [NgClass, CollapseLeftIcon, ExpandRightIcon],
+  imports: [NgClass, CollapseLeftIcon, ExpandRightIcon, StreamersComponent],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
   animations: [expandCollapseAnimation],

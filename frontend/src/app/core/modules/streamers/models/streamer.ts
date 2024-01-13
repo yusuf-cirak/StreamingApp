@@ -4,4 +4,5 @@ export interface Streamer extends Entity {
   streamId: string;
   username: string;
   imageUrl: string;
+  isLive: boolean;
 }
