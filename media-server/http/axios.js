@@ -1,16 +1,13 @@
-const axiosLib = require("axios");
+import axios from "axios";
+import settings from "../settings/app-settings.json" assert { type: "json" };
+import secrets from "../settings/secrets.json" assert { type: "json" };
 
-const streamingApiUrl =
-  require("../settings/app-settings.json").streamingApiUrl;
-
-const apiKey = require("../settings/secrets.json").apiKey;
-
-const axiosInstance = axiosLib.create({
-  baseURL: streamingApiUrl,
-  headers: { "x-api-key": apiKey },
+const axiosInstance = axios.create({
+  baseURL: settings.streamingApiUrl,
+  headers: { "x-api-key": secrets.apiKey },
   validateStatus: function (status) {
     return true;
   },
 });
 
-module.exports = axiosInstance;
+export default axiosInstance;

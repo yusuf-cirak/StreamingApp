@@ -25,10 +25,10 @@ const transformationConfig = {
   MediaRoot: "./media",
 };
 
-const config = {
+export const config = {
   http: httpConfig,
   rtmp: rtmpConfig,
   trans: transformationConfig,
 };
 
-module.exports = config;
+// export default config;

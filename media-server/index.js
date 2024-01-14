@@ -1,8 +1,6 @@
-const config = require("./config.js");
-
-const streamService = require("./services/stream/stream-service.js");
-
-const NodeMediaServer = require("node-media-server");
+import NodeMediaServer from "node-media-server";
+import { config } from "./config.js";
+import streamService from "./services/stream/stream-service.js";
 
 const nms = new NodeMediaServer(config);
 

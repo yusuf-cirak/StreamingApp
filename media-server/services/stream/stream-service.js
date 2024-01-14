@@ -1,7 +1,4 @@
-const streamProxyService = require("./stream-proxy-service.js");
-
-const publishers = require("node-media-server/src/node_core_ctx.js").publishers;
-const sessions = require("node-media-server/src/node_core_ctx.js").sessions;
+import streamProxyService from "./stream-proxy-service.js";
 
 const usernameSessions = new Map();
 
@@ -38,7 +35,7 @@ function isStreamPathBlocked(streamPath) {
   return blockedStreamPaths.has(streamPath);
 }
 
-module.exports = {
+export default {
   getUsernameAsync,
   stopStreamAsync,
   setNameSession,
