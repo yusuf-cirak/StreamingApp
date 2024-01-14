@@ -2,9 +2,9 @@
   <img
     src="https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=Yusuf+Cirak"
     class="w-10 h-10 rounded-full cursor-pointer"
-    (click)="layoutService.toggleProfileMenu()"
+    (click)="toggleProfileMenu()"
   />
-  @if(layoutService.isProfileMenuOpen()) {
+  @if(isProfileMenuOpen()) {
   <ul
     [@fadeAnimation]
     class="absolute right-5 w-56 p-2 mt-2 space-y-2 text-gray-600 bg-white border border-gray-100 rounded-md shadow-md dark:border-gray-700 dark:text-gray-300 dark:bg-gray-700"

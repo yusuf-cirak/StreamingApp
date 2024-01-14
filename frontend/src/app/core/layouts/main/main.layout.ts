@@ -2,7 +2,6 @@ import { Component, inject } from '@angular/core';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { NgIf, NgStyle } from '@angular/common';
-import { LayoutService } from '../../services/layout.service';
 
 @Component({
   selector: 'app-main',
@@ -10,6 +9,4 @@ import { LayoutService } from '../../services/layout.service';
   imports: [NavbarComponent, SidebarComponent, NgStyle, NgIf],
   templateUrl: './main.layout.html',
 })
-export class MainLayout {
-  readonly layoutService = inject(LayoutService);
-}
+export class MainLayout {}

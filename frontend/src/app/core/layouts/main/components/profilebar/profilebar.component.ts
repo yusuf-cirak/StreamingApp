@@ -3,10 +3,10 @@ import {
   ElementRef,
   HostListener,
   ViewChild,
-  inject,
+  computed,
+  signal,
 } from '@angular/core';
 import { fadeAnimation } from '../../../../../shared/animations/fade-animation';
-import { LayoutService } from '../../../../services/layout.service';
 
 @Component({
   selector: 'app-main-profilebar',
@@ -16,21 +16,34 @@ import { LayoutService } from '../../../../services/layout.service';
   animations: [fadeAnimation],
 })
 export class ProfilebarComponent {
-  readonly layoutService = inject(LayoutService);
+  #profileMenuOpen = signal(false);
+
+  readonly profileMenuOpen = this.#profileMenuOpen.asReadonly();
+
+  readonly isProfileMenuOpen = computed(() => this.profileMenuOpen());
+
+  closeProfileMenu() {
+    this.#profileMenuOpen.set(false);
+  }
+
+  toggleProfileMenu() {
+    const value = this.profileMenuOpen();
+    this.#profileMenuOpen.set(!value);
+  }
 
   @ViewChild('profileMenuWrapperRef') profileMenuWrapperRef!: ElementRef;
 
   @HostListener('document:click', ['$event'])
   click(event: Event) {
     if (!this.profileMenuWrapperRef?.nativeElement?.contains(event.target)) {
-      this.layoutService.closeProfileMenu();
+      this.closeProfileMenu();
     }
   }
 
   @HostListener('document:keydown.escape', ['$event'])
   onEscape(event: Event) {
     if (!this.profileMenuWrapperRef?.nativeElement?.contains(event.target)) {
-      this.layoutService.closeProfileMenu();
+      this.closeProfileMenu();
     }
   }
   logout() {}

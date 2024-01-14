@@ -4,23 +4,28 @@
   <app-main-logo></app-main-logo>
   <app-search class="w-[30%] sm:min-w-[40%]"></app-search>
   <div class="flex flex-row gap-3 sm:pr-5 items-center justify-center">
+    @if (authService.isAuthenticated()) {
     <button
       hlmBtn
       variant="link"
       class="hover:opacity-75 text hover:no-underline"
-      [routerLink]="['/dashboard']"
+      [routerLink]="['/creator']"
     >
       <app-clapper-board-icon></app-clapper-board-icon>
       <span class="hidden lg:block">Dashboard</span>
     </button>
-    <!-- <button
+
+    <app-main-profilebar></app-main-profilebar>
+
+    } @else {
+    <button
       hlmBtn
       variant="secondary"
       size="sm"
       class="bg-white text-muted-foreground"
     >
-      Login
-    </button> -->
-    <app-main-profilebar></app-main-profilebar>
+      Sign in
+    </button>
+    }
   </div>
 </nav>

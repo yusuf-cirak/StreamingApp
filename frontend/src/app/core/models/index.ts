@@ -1,2 +1,2 @@
 export * from './entity';
-export * from './render-function';
+export * from './user';

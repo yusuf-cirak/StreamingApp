@@ -17,7 +17,7 @@ import { BrnTooltipContentDirective } from '@spartan-ng/ui-tooltip-brain';
         aria-describedby="collapse-tooltip"
         hlmTooltipTrigger
         fill="currentColor"
-        class="w-6 h-6"
+        class="w-8 h-8"
         viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg"
       >

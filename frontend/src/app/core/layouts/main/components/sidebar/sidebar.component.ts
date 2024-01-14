@@ -12,7 +12,6 @@ import {
 import { CollapseLeftIcon } from '../../../../../shared/icons/collapse-left';
 import { ExpandRightIcon } from '../../../../../shared/icons/expand-right';
 import { expandCollapseAnimation } from '../../../../../shared/animations/expand-collapse-animation';
-import { LayoutService } from '@streaming-app/core';
 import { StreamersComponent } from '../../../../modules/streamers/components/streamers.component';
 
 @Component({
@@ -24,8 +23,6 @@ import { StreamersComponent } from '../../../../modules/streamers/components/str
   animations: [expandCollapseAnimation],
 })
 export class SidebarComponent {
-  readonly layoutService = inject(LayoutService);
-
   readonly #sidebarOpen = signal(true);
   readonly sidebarOpen = this.#sidebarOpen.asReadonly();
 
