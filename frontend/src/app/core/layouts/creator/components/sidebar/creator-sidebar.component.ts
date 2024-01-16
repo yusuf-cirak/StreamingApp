@@ -5,6 +5,7 @@ import {
   HostListener,
   ViewChild,
   effect,
+  inject,
   signal,
 } from '@angular/core';
 import { CollapseLeftIcon } from '../../../../../shared/icons/collapse-left';
@@ -15,6 +16,7 @@ import { ChatIconComponent } from '../../../../../shared/icons/chat-icon';
 import { KeyIconComponent } from '../../../../../shared/icons/key-icon';
 import { CommunityIconComponent } from '../../../../../shared/icons/community-icon';
 import { RouterLink } from '@angular/router';
+import { LayoutService } from '../../../../services/layout.service';
 
 @Component({
   selector: 'app-creator-sidebar',
@@ -33,30 +35,5 @@ import { RouterLink } from '@angular/router';
   animations: [expandCollapseAnimation],
 })
 export class CreatorSidebarComponent {
-  readonly #sidebarOpen = signal(true);
-  readonly sidebarOpen = this.#sidebarOpen.asReadonly();
-
-  @ViewChild('sidebarRef') sidebarRef: ElementRef | undefined;
-
-  constructor() {
-    effect(() => {
-      const sidebar = this.sidebarRef?.nativeElement;
-
-      if (this.sidebarOpen()) {
-        sidebar?.classList.remove('sidebar-closed');
-      } else {
-        sidebar?.classList.add('sidebar-closed');
-      }
-    });
-  }
-
-  @HostListener('window:resize', ['$event'])
-  onResize(event: any) {
-    this.#sidebarOpen.set(event.target.innerWidth > 640);
-  }
-
-  toggleSidebar() {
-    const value = this.sidebarOpen();
-    this.#sidebarOpen.set(!value);
-  }
+  readonly layoutService = inject(LayoutService);
 }

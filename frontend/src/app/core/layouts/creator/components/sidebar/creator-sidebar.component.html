@@ -1,11 +1,11 @@
 <aside
   #sidebarRef
   class="fixed left-0 h-full pt-4 bg-gray-800 transition duration-150 ease-in-out overflow-y-auto"
-  [ngClass]="sidebarOpen() ? 'transform w-60' : 'transform w-20'"
+  [ngClass]="layoutService.sidebarOpen() ? 'transform w-60' : 'transform w-20'"
 >
   <div
     class="h-20 w-full flex items-center justify-between shadow rounded-tr rounded-br p-4 text-white cursor-pointer"
-    (click)="toggleSidebar()"
+    (click)="layoutService.toggleSidebar()"
   >
     <span class="font-semibold">Dashboard</span>
 
