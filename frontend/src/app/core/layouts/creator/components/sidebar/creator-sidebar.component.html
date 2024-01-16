@@ -1,6 +1,6 @@
 <aside
   #sidebarRef
-  class="fixed left-0 h-full pt-4 bg-gray-800 transition duration-150 ease-in-out overflow-y-auto"
+  class="fixed left-0 h-full pt-4 bg-gray-800 transition duration-150 ease-in-out overflow-y-auto w-20"
   [ngClass]="layoutService.sidebarOpen() ? 'transform w-60' : 'transform w-20'"
 >
   <div
@@ -32,6 +32,7 @@
     </div>
     <div
       class="flex flex-row w-full pl-4 justify-start items-center gap-3 cursor-pointer hover:bg-muted-foreground h-12 icon-container"
+      [routerLink]="['chat-settings']"
     >
       <app-chat-icon />
       <span>Chat</span>

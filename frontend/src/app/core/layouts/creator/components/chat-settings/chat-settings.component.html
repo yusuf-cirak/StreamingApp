@@ -1,0 +1,54 @@
+<div class="chat-settings p-6 text-white w-full flex flex-col">
+  <div class="mb-4">
+    <h1 class="text-2xl font-bold">Chat Settings</h1>
+  </div>
+  <div class="space-y-4 px-10 sm:w-[50%] gap-5 flex flex-col">
+    <div class="flex items-center space-x-4 rounded-md p-4 bg-gray-600">
+      <div class="flex-1 space-y-1">
+        <p class="text-sm font-medium leading-none">Enable Chat</p>
+      </div>
+      <brn-switch
+        aria-label="Enable chat"
+        hlm
+        [disabled]="!chatEnabled()"
+        (changed)="setChatEnabled($event)"
+        class="data-[state=checked]:bg-green-500"
+      >
+        <brn-switch-thumb hlm />
+      </brn-switch>
+    </div>
+
+    <div class="flex items-center space-x-4 rounded-md p-4 bg-gray-600">
+      <div class="flex-1 space-y-1">
+        <p class="text-sm font-medium leading-none">Must be a follower</p>
+      </div>
+      <brn-switch
+        aria-label="Must be a follower"
+        hlm
+        [disabled]="!chatEnabled()"
+        (changed)="setChatEnabled($event)"
+        class="data-[state=checked]:bg-green-500"
+      >
+        <brn-switch-thumb hlm />
+      </brn-switch>
+    </div>
+
+    <div class="flex items-center space-x-4 rounded-md p-4 bg-gray-600">
+      <div class="flex-1 space-y-1">
+        <p class="text-sm font-medium leading-none">Delay Chat</p>
+      </div>
+
+      <input type="number" hlmInput />
+
+      <brn-switch
+        aria-label="Delay chat"
+        hlm
+        [disabled]="!chatEnabled()"
+        (changed)="setChatEnabled($event)"
+        class="data-[state=checked]:bg-green-500"
+      >
+        <brn-switch-thumb hlm />
+      </brn-switch>
+    </div>
+  </div>
+</div>

@@ -12,14 +12,10 @@ export const routes: Routes = [
       import('@streaming-app/layouts/creator').then((m) => m.creatorRoutes),
   },
   {
-    path: 'not-found',
+    path: '**',
     loadComponent: () =>
       import('./core/components/not-found/not-found.component').then(
         (m) => m.NotFoundComponent
       ),
-  },
-  {
-    path: '**',
-    redirectTo: 'not-found',
   },
 ];

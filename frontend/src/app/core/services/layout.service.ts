@@ -11,10 +11,10 @@ import { DOCUMENT } from '@angular/common';
   providedIn: 'root',
 })
 export class LayoutService {
+  readonly #document = inject(DOCUMENT);
+
   readonly #sidebarOpen = signal(true);
   readonly sidebarOpen = computed(() => this.#sidebarOpen());
-
-  readonly document = inject(DOCUMENT);
 
   constructor() {
     effect(() => {
@@ -33,7 +33,7 @@ export class LayoutService {
   }
 
   setSidebarClosed(value: boolean) {
-    const body = this.document.body;
+    const body = this.#document.body;
 
     if (value) {
       body?.classList.remove('sidebar-closed');
