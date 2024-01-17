@@ -5,14 +5,13 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { HlmInputDirective } from '../../../../../../../libs/spartan/ui-input-helm/src/lib/hlm-input.directive';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-search',
   standalone: true,
-  imports: [HlmInputDirective],
   templateUrl: './search.component.html',
+  imports: [],
 })
 export class SearchComponent {
   @ViewChild('searchInput') searchInput!: ElementRef;

@@ -1,35 +1,30 @@
-import { Component, computed, signal } from '@angular/core';
-import {
-  BrnSwitchComponent,
-  BrnSwitchThumbComponent,
-} from '@spartan-ng/ui-switch-brain';
-import {
-  HlmSwitchDirective,
-  HlmSwitchThumbDirective,
-} from '@spartan-ng/ui-switch-helm';
-
-import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
+import { Component, computed, inject, signal } from '@angular/core';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { NonNullableFormBuilder } from '@angular/forms';
+import { min, max } from '../../../../validators';
+import { RippleModule } from 'primeng/ripple';
+import { ButtonModule } from 'primeng/button';
 @Component({
   standalone: true,
   selector: 'app-chat-settings',
   templateUrl: './chat-settings.component.html',
-  imports: [
-    HlmSwitchDirective,
-    BrnSwitchComponent,
-    BrnSwitchThumbComponent,
-    HlmSwitchThumbDirective,
-    HlmInputDirective,
-  ],
+  imports: [InputSwitchModule, InputNumberModule, RippleModule, ButtonModule],
 })
 export class ChatSettingsComponent {
-  #chatEnabled = signal<boolean | undefined>(undefined);
-  chatEnabled = this.#chatEnabled.asReadonly();
+  readonly fb = inject(NonNullableFormBuilder);
 
-  ngOnInit() {
-    this.#chatEnabled.set(true);
-  }
+  readonly form = this.fb.group({
+    chatEnabled: [true, []],
+    mustBeFollower: [false, []],
+    chatDelaySeconds: [
+      0,
+      [
+        min(0, 'Chat delay must be greater than 0'),
+        max(60, 'Chat delay must be less than 60'),
+      ],
+    ],
+  });
 
-  setChatEnabled(value: boolean) {
-    this.#chatEnabled.set(value);
-  }
+  //TODO: Update form values
 }

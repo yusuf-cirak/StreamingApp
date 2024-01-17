@@ -1,13 +1,12 @@
 <div class="w-full flex flex-row items-center gap-3">
   <form
-    class="w-full flex flex-row items-center justify-evenly bg-gray-700 text-white rounded-lg"
+    class="w-full flex flex-row items-center justify-evenly text-white rounded-lg bg-gray-500"
   >
     <input
       #searchInput
       type="text"
-      hlmInput
       placeholder="Search"
-      class="w-full border-none rounded-md rounded-r-none focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0 text-white px-4 py-2"
+      class="w-full border-none rounded-md text-white px-4 py-2 bg-gray-500"
       (input)="setSearch($any($event.target).value)"
       [value]="search()"
       [autofocus]="true"

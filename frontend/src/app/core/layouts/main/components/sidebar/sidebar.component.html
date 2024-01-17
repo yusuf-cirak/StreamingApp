@@ -7,7 +7,7 @@
     class="h-20 w-full flex items-center justify-between shadow rounded-tr rounded-br cursor-pointer p-4 text-white"
     (click)="layoutService.toggleSidebar()"
   >
-    <span class="font-semibold">For you</span>
+    <span class="hideable font-semibold">For you</span>
 
     <app-collapse-left-icon class="collapse-left-icon"></app-collapse-left-icon>
     <app-expand-right-icon
@@ -16,7 +16,9 @@
   </div>
 
   <div class="h-2">
-    <span class="text-muted-foreground font-semibold px-4">Recommended</span>
+    <span class="hideable text-muted-foreground font-semibold px-4"
+      >Recommended</span
+    >
   </div>
 
   <div class="pt-6 mt-auto">

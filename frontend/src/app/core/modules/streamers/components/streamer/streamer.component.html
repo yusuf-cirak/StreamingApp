@@ -10,12 +10,12 @@
       'ring-2 ring-rose-500 border border-background': streamer()?.isLive
     }"
   />
-  <span class="text-white font-semibold px-5 truncate">
-    {{ streamer()?.username }}asdasdasdasdasdasdasdasdasdas
+  <span class="hideable text-white font-semibold px-5 truncate">
+    {{ streamer()?.username }}
   </span>
 
   <span
-    class="text-white bg-rose-500 text-center p-0.5 px-1.5 rounded-md text-[10px] border border-background font-semibold tracking-wide w-10 ml-auto"
+    class="hideable text-white bg-rose-500 text-center p-0.5 px-1.5 rounded-md text-[10px] border border-background font-semibold tracking-wide w-10 ml-auto"
     [ngClass]="{
     'hidden': !streamer()?.isLive,
   }"

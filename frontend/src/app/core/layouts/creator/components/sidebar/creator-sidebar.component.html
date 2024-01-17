@@ -7,7 +7,7 @@
     class="h-20 w-full flex items-center justify-between shadow rounded-tr rounded-br p-4 text-white cursor-pointer"
     (click)="layoutService.toggleSidebar()"
   >
-    <span class="font-semibold">Dashboard</span>
+    <span class="hideable font-semibold">Dashboard</span>
 
     <app-collapse-left-icon class="collapse-left-icon"></app-collapse-left-icon>
     <app-expand-right-icon
@@ -19,29 +19,29 @@
     class="pt-6 px-2 text-primary font-semibold flex flex-col gap-5 items-center"
   >
     <div
-      class="flex flex-row w-full pl-4 justify-start items-center gap-3 cursor-pointer hover:bg-muted-foreground h-12 icon-container"
+      class="flex flex-row w-full pl-4 justify-start items-center gap-3 cursor-pointer hover:bg-muted-foreground h-12 icon-container hover:bg-gray-500"
     >
       <app-stream-icon />
-      <span>Stream</span>
+      <span class="hideable">Stream</span>
     </div>
     <div
-      class="flex flex-row w-full pl-4 justify-start items-center gap-3 cursor-pointer hover:bg-muted-foreground h-12 icon-container"
+      class="flex flex-row w-full pl-4 justify-start items-center gap-3 cursor-pointer hover:bg-muted-foreground h-12 icon-container hover:bg-gray-500"
     >
       <app-key-icon />
-      <span>Keys</span>
+      <span class="hideable">Keys</span>
     </div>
     <div
-      class="flex flex-row w-full pl-4 justify-start items-center gap-3 cursor-pointer hover:bg-muted-foreground h-12 icon-container"
+      class="flex flex-row w-full pl-4 justify-start items-center gap-3 cursor-pointer hover:bg-muted-foreground h-12 icon-container hover:bg-gray-500 active:bg-gray-500"
       [routerLink]="['chat-settings']"
     >
       <app-chat-icon />
-      <span>Chat</span>
+      <span class="hideable">Chat</span>
     </div>
     <div
-      class="flex flex-row w-full pl-4 justify-start items-center gap-3 cursor-pointer hover:bg-muted-foreground h-12 icon-container"
+      class="flex flex-row w-full pl-4 justify-start items-center gap-3 cursor-pointer hover:bg-muted-foreground h-12 icon-container hover:bg-gray-500"
     >
       <app-community-icon />
-      <span>Community</span>
+      <span class="hideable">Community</span>
     </div>
   </div>
 </aside>

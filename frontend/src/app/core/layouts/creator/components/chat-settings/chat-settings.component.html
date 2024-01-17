@@ -1,54 +1,62 @@
-<div class="chat-settings p-6 text-white w-full flex flex-col">
+<div
+  class="chat-settings p-6 text-white w-full flex flex-col items-center justify-center"
+>
   <div class="mb-4">
     <h1 class="text-2xl font-bold">Chat Settings</h1>
   </div>
   <div class="space-y-4 px-10 sm:w-[50%] gap-5 flex flex-col">
-    <div class="flex items-center space-x-4 rounded-md p-4 bg-gray-600">
+    <div
+      class="flex flex-col gap-2 w-full sm:flex-row items-center space-x-4 rounded-md p-4 bg-gray-600"
+    >
       <div class="flex-1 space-y-1">
         <p class="text-sm font-medium leading-none">Enable Chat</p>
       </div>
-      <brn-switch
-        aria-label="Enable chat"
-        hlm
-        [disabled]="!chatEnabled()"
-        (changed)="setChatEnabled($event)"
-        class="data-[state=checked]:bg-green-500"
-      >
-        <brn-switch-thumb hlm />
-      </brn-switch>
+      <p-inputSwitch
+        [disabled]="form.disabled"
+        formControlName=""
+      ></p-inputSwitch>
     </div>
 
-    <div class="flex items-center space-x-4 rounded-md p-4 bg-gray-600">
+    <div
+      class="flex flex-col gap-2 w-full sm:flex-row items-center space-x-4 rounded-md p-4 bg-gray-600"
+    >
       <div class="flex-1 space-y-1">
         <p class="text-sm font-medium leading-none">Must be a follower</p>
       </div>
-      <brn-switch
-        aria-label="Must be a follower"
-        hlm
-        [disabled]="!chatEnabled()"
-        (changed)="setChatEnabled($event)"
-        class="data-[state=checked]:bg-green-500"
-      >
-        <brn-switch-thumb hlm />
-      </brn-switch>
+      <p-inputSwitch [disabled]="form.disabled"></p-inputSwitch>
     </div>
 
-    <div class="flex items-center space-x-4 rounded-md p-4 bg-gray-600">
+    <div
+      class="flex flex-col gap-2 w-full sm:flex-row items-center rounded-md p-4 bg-gray-600"
+    >
       <div class="flex-1 space-y-1">
-        <p class="text-sm font-medium leading-none">Delay Chat</p>
+        <p class="text-sm font-medium leading-none">Delay second</p>
       </div>
-
-      <input type="number" hlmInput />
-
-      <brn-switch
-        aria-label="Delay chat"
-        hlm
-        [disabled]="!chatEnabled()"
-        (changed)="setChatEnabled($event)"
-        class="data-[state=checked]:bg-green-500"
-      >
-        <brn-switch-thumb hlm />
-      </brn-switch>
+      <p-inputNumber
+        [showButtons]="true"
+        buttonLayout="vertical"
+        spinnerMode="vertical"
+        decrementButtonClass="p-button-secondary"
+        incrementButtonClass="p-button-secondary"
+        incrementButtonIcon="pi pi-plus"
+        decrementButtonIcon="pi pi-minus"
+        suffix=" seconds"
+        [min]="0"
+        [max]="60"
+        class="pl-0 ml-0"
+        inputStyleClass="bg-gray-800 text-white h-10 rounded-md disabled:cursor-not-allowed w-24 sm:w-36 "
+      ></p-inputNumber>
     </div>
+    <button
+      pRipple
+      class="w-full sm:w-[30%] h-10 rounded-lg bg-slate-600 outline-none flex self-center text-center justify-center items-center"
+    >
+      @if (form.disabled) {
+      <i class="pi pi-spin pi-spinner" style="font-size: 1rem"></i>
+      } @else {
+      <span>Save changes</span>
+
+      }
+    </button>
   </div>
 </div>

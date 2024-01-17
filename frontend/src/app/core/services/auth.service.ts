@@ -9,5 +9,5 @@ export class AuthService {
 
   readonly user = this.#user.asReadonly();
 
-  readonly isAuthenticated = computed(() => !!this.user());
+  readonly isAuthenticated = computed(() => !!!this.user());
 }

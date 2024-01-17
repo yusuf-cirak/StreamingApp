@@ -1,12 +1,13 @@
 import {
   HostListener,
   Injectable,
-  computed,
   effect,
   inject,
   signal,
 } from '@angular/core';
+
 import { DOCUMENT } from '@angular/common';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -14,7 +15,7 @@ export class LayoutService {
   readonly #document = inject(DOCUMENT);
 
   readonly #sidebarOpen = signal(true);
-  readonly sidebarOpen = computed(() => this.#sidebarOpen());
+  readonly sidebarOpen = this.#sidebarOpen.asReadonly();
 
   constructor() {
     effect(() => {

@@ -6,7 +6,6 @@
   <div class="flex flex-row gap-3 sm:pr-5 items-center justify-center">
     @if (authService.isAuthenticated()) {
     <button
-      hlmBtn
       variant="link"
       class="hover:opacity-75 text hover:no-underline"
       [routerLink]="['/creator']"
@@ -18,13 +17,8 @@
     <app-main-profilebar></app-main-profilebar>
 
     } @else {
-    <button
-      hlmBtn
-      variant="secondary"
-      size="sm"
-      class="bg-white text-muted-foreground"
-    >
-      Sign in
+    <button pRipple class="w-20 h-10 rounded-lg bg-slate-600 outline-none">
+      Login
     </button>
     }
   </div>
