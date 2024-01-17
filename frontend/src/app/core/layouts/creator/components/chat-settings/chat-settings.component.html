@@ -1,3 +1,4 @@
+@defer ( when loaded()) {
 <div
   class="chat-settings p-6 text-white w-full flex flex-col items-center justify-center"
 >
@@ -65,3 +66,7 @@
     </button>
   </form>
 </div>
+
+} @placeholder {
+<app-chat-settings-skeleton></app-chat-settings-skeleton>
+}
