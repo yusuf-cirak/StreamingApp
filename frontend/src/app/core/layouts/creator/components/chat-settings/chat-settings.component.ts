@@ -1,17 +1,25 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { NonNullableFormBuilder } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { min, max } from '../../../../validators';
 import { RippleModule } from 'primeng/ripple';
 import { ButtonModule } from 'primeng/button';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
   standalone: true,
   selector: 'app-chat-settings',
   templateUrl: './chat-settings.component.html',
-  imports: [InputSwitchModule, InputNumberModule, RippleModule, ButtonModule],
+  imports: [
+    InputSwitchModule,
+    InputNumberModule,
+    RippleModule,
+    ButtonModule,
+    ReactiveFormsModule,
+  ],
 })
 export class ChatSettingsComponent {
+  readonly destroyRef = inject(DestroyRef);
   readonly fb = inject(NonNullableFormBuilder);
 
   readonly form = this.fb.group({
@@ -25,6 +33,28 @@ export class ChatSettingsComponent {
       ],
     ],
   });
+
+  ngOnInit() {
+    this.form.controls.chatEnabled.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value: boolean) => {
+        const chatDelaySecondsControl = this.form.controls.chatDelaySeconds;
+        if (value) {
+          chatDelaySecondsControl.enable();
+        } else {
+          chatDelaySecondsControl.setValue(0);
+          chatDelaySecondsControl.disable();
+        }
+      });
+  }
+
+  updateChatSettings(valid: boolean, value: typeof this.form.value) {
+    if (!valid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    this.form.disable();
+  }
 
   //TODO: Update form values
 }
