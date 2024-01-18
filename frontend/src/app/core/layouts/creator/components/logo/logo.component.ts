@@ -10,7 +10,7 @@ import { RouterLink } from '@angular/router';
   template: `
     <div
       class="flex items-start gap-x-4 hover:opacity-75 transition hover:cursor-pointer"
-      [routerLink]="['/']"
+      [routerLink]="['/', 'creator']"
     >
       <div class="bg-white rounded-full p-1 lg:mr-0 lg:shrink shrink-0">
         <img
