@@ -1,0 +1,47 @@
+@defer ( when !loaded()) {
+<div
+  class="key p-6 text-white w-full flex flex-col items-center justify-center"
+>
+  <div class="mb-4">
+    <h1 class="text-2xl font-bold">Key & URL</h1>
+  </div>
+  <div class="space-y-4 px-10 sm:w-[50%] gap-5 flex flex-col">
+    <div
+      class="flex flex-col gap-2 w-full sm:flex-row items-center space-x-4 rounded-md p-4 bg-gray-600"
+    >
+      <div class="flex-1 space-y-1">
+        <p class="text-sm font-medium leading-none">Server URL</p>
+      </div>
+      <input
+        type="text"
+        [readOnly]="true"
+        placeholder="rtmp://139.144.76.14/live"
+        class="read-only:bg-white text-center w-[50%] rounded-md h-8 text-ellipsis"
+      />
+      <app-copy-clipboard
+        [copyText]="'rtmp://139.144.76.14/live'"
+      ></app-copy-clipboard>
+    </div>
+
+    <div
+      class="flex flex-col gap-2 w-full sm:flex-row items-center space-x-4 rounded-md p-4 bg-gray-600"
+    >
+      <div class="flex-1 space-y-1">
+        <p class="text-sm font-medium leading-none">Stream Key</p>
+      </div>
+      <input
+        type="text"
+        [readOnly]="true"
+        placeholder="your_stream_key"
+        class="read-only:bg-white text-center w-[50%] rounded-md h-8 text-ellipsis"
+      />
+      <app-copy-clipboard
+        [copyText]="'rtmp://139.144.76.14/live'"
+      ></app-copy-clipboard>
+    </div>
+  </div>
+</div>
+
+} @placeholder {
+<app-key-skeleton></app-key-skeleton>
+}

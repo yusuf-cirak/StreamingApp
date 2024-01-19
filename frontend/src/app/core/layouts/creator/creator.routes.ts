@@ -17,6 +17,13 @@ export const creatorRoutes: Route[] = [
             (c) => c.ChatSettingsComponent
           ),
       },
+      {
+        path: 'key',
+        pathMatch: 'full',
+        canActivate: [],
+        loadComponent: () =>
+          import('./components/key/key.component').then((c) => c.KeyComponent),
+      },
     ],
   },
 ];
