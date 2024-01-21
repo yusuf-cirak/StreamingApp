@@ -11,8 +11,11 @@
       />
     </div>
 
-    <div class="main w-full h-full ml-60 overflow-y-auto">
-      <router-outlet></router-outlet>
+    <div class="main w-[50%] h-[50%] ml-60 overflow-y-auto">
+      <!-- <router-outlet></router-outlet> -->
+      @if (streamer) {
+      <app-stream></app-stream>
+      }@else {}
     </div>
   </div>
 </main>

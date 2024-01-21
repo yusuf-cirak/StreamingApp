@@ -8,4 +8,11 @@ export const mainRoutes: Route[] = [
     loadComponent: () =>
       import('@streaming-app/layouts/main').then((m) => m.MainLayout),
   },
+  {
+    path: ':streamer',
+    pathMatch: 'full',
+    canActivate: [],
+    loadComponent: () =>
+      import('@streaming-app/layouts/main').then((m) => m.MainLayout),
+  },
 ];

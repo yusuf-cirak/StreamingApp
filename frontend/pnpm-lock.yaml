@@ -38,9 +38,15 @@ dependencies:
   '@angular/ssr':
     specifier: ^17.0.10
     version: 17.0.10(@angular/common@17.0.9)(@angular/core@17.0.9)
+  '@videogular/ngx-videogular':
+    specifier: ^8.0.0
+    version: 8.0.0(@angular/common@17.0.9)(@angular/core@17.0.9)(@angular/platform-browser-dynamic@17.0.9)(core-js@3.35.0)(rxjs@7.8.1)(zone.js@0.14.3)
   express:
     specifier: ^4.18.2
     version: 4.18.2
+  hls.js:
+    specifier: ^1.5.1
+    version: 1.5.1
   primeicons:
     specifier: ^6.0.1
     version: 6.0.1
@@ -67,6 +73,9 @@ devDependencies:
   '@angular/compiler-cli':
     specifier: ^17.0.9
     version: 17.0.9(@angular/compiler@17.0.9)(typescript@5.2.2)
+  '@types/core-js':
+    specifier: ^2.5.8
+    version: 2.5.8
   '@types/express':
     specifier: ^4.17.21
     version: 4.17.21
@@ -2433,6 +2442,10 @@ packages:
     resolution: {integrity: sha512-XW/Aa8APYr6jSVVA1y/DEIZX0/GMKLEVekNG727R8cs56ahETkRAy/3DR7+fJyh7oUgGwNQaRfXCun0+KbWY7Q==}
     dev: true
 
+  /@types/core-js@2.5.8:
+    resolution: {integrity: sha512-VgnAj6tIAhJhZdJ8/IpxdatM8G4OD3VWGlp6xIxUGENZlpbob9Ty4VVdC1FIEp0aK6DBscDDjyzy5FB60TuNqg==}
+    dev: true
+
   /@types/cors@2.8.17:
     resolution: {integrity: sha512-8CGDvrBj1zgo2qE+oS3pOCyYNqCPryMWY2bGfwA0dcfopWGgxs+78df0Rs3rc9THP4JkOhLsAa+15VdpAqkcUA==}
     dependencies:
@@ -2557,6 +2570,25 @@ packages:
     dependencies:
       '@types/node': 18.19.8
     dev: true
+
+  /@videogular/ngx-videogular@8.0.0(@angular/common@17.0.9)(@angular/core@17.0.9)(@angular/platform-browser-dynamic@17.0.9)(core-js@3.35.0)(rxjs@7.8.1)(zone.js@0.14.3):
+    resolution: {integrity: sha512-yezpRzDzbKhXsfQE2iJuDsix6IJTV7dQcThq1NBsXBbjRss8DzpM9txDk59Q94nH+i1i1OkwnOOzK32bk2VLZw==}
+    peerDependencies:
+      '@angular/common': '>=8.0.0'
+      '@angular/core': '>=8.0.0'
+      '@angular/platform-browser-dynamic': '>=8.0.0'
+      core-js: '>=2.5.4'
+      rxjs: '>=6.5.4'
+      zone.js: '>=0.10.2'
+    dependencies:
+      '@angular/common': 17.0.9(@angular/core@17.0.9)(rxjs@7.8.1)
+      '@angular/core': 17.0.9(rxjs@7.8.1)(zone.js@0.14.3)
+      '@angular/platform-browser-dynamic': 17.0.9(@angular/common@17.0.9)(@angular/compiler@17.0.9)(@angular/core@17.0.9)(@angular/platform-browser@17.0.9)
+      core-js: 3.35.0
+      rxjs: 7.8.1
+      tslib: 2.6.2
+      zone.js: 0.14.3
+    dev: false
 
   /@vitejs/plugin-basic-ssl@1.0.1(vite@4.5.1):
     resolution: {integrity: sha512-pcub+YbFtFhaGRTo1832FQHQSHvMrlb43974e2eS8EKleR3p1cDdkJFPci1UhwkEf1J9Bz+wKBSzqpKp7nNj2A==}
@@ -3484,6 +3516,11 @@ packages:
     dependencies:
       browserslist: 4.22.2
     dev: true
+
+  /core-js@3.35.0:
+    resolution: {integrity: sha512-ntakECeqg81KqMueeGJ79Q5ZgQNR+6eaE8sxGCx62zMbAIj65q+uYvatToew3m6eAGdU4gNZwpZ34NMe4GYswg==}
+    requiresBuild: true
+    dev: false
 
   /core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
@@ -4417,6 +4454,10 @@ packages:
   /hdr-histogram-percentiles-obj@3.0.0:
     resolution: {integrity: sha512-7kIufnBqdsBGcSZLPJwqHT3yhk1QTsSlFsVD3kx5ixH/AlgBs9yM1q6DPhXZ8f8gtdqgh7N7/5btRLpQsS2gHw==}
     dev: true
+
+  /hls.js@1.5.1:
+    resolution: {integrity: sha512-SsUSlpyjOGnwBhVrVEG6vRFPU2SAJ0gUqrFdGeo7YPbOC0vuWK0TDMyp7n3QiaBC/Wkic771uqPnnVdT8/x+3Q==}
+    dev: false
 
   /hosted-git-info@7.0.1:
     resolution: {integrity: sha512-+K84LB1DYwMHoHSgaOY/Jfhw3ucPmSET5v98Ke/HdNSw4a0UktWzyW1mjhjpuxxTqOOsfWT/7iVshHmVZ4IpOA==}

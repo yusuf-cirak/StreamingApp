@@ -20,6 +20,7 @@ COPY . .
 
 # Exposing ports
 EXPOSE 1935
+EXPOSE 8000
 
 # Running the app
 CMD ["node", "index.js"]
