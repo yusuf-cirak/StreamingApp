@@ -1,0 +1,36 @@
+@if (visible()) {
+<app-modal
+  modalHeaderTitle="Login"
+  [modalBodyTemplate]="loginForm"
+  (closeModalClicked)="emitCloseModalClicked()"
+></app-modal>
+<ng-template #loginForm>
+  <form class="w-full" [formGroup]="form" (ngSubmit)="login()">
+    <app-input
+      [control]="form.controls.username"
+      inputType="text"
+      label="Username"
+      class="w-full"
+    ></app-input>
+
+    <app-input
+      [control]="form.controls.password"
+      inputType="password"
+      label="Password"
+      class="w-full"
+    ></app-input>
+
+    <button
+      pRipple
+      [disabled]="form.disabled"
+      class="focus:outline-none rounded text-white bg-wp-green hover:opacity-90 w-full h-10 bg-slate-600 disabled:opacity-40"
+    >
+      <span class="flex items-center justify-center w-full h-full">
+        @if (form.disabled) {
+        <app-loading-icon></app-loading-icon>
+        }@else { Login }
+      </span>
+    </button>
+  </form>
+</ng-template>
+}
