@@ -1,6 +1,6 @@
 ﻿namespace Domain.Errors;
 
-public readonly record struct StreamerErrors
+public readonly record struct StreamOptionErrors
 {
     public static readonly Error NameCannotBeEmpty =
         Error.Create("Streamer.NameCannotBeEmpty", "Streamer name cannot be empty");
@@ -22,7 +22,7 @@ public readonly record struct StreamerErrors
     public static readonly Error NameCannotBeDuplicated = Error.Create("Streamer.NameCannotBeDuplicated",
         "Streamer name cannot be duplicated");
 
-    public static readonly Error StreamerCannotBeUpdated = Error.Create("Streamer.StreamerCannotBeUpdated",
+    public static readonly Error CannotBeUpdated = Error.Create("Streamer.StreamerCannotBeUpdated",
         "Streamer cannot be updated");
     public static readonly Error StreamerDoesNotExist = Error.Create("Streamer.StreamerDoesNotExist",
         "Streamer does not exist");

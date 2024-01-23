@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Persistence.EntityFramework.EntityConfigurations
 {
-    public sealed class StreamerConfiguration : EntityConfiguration<Streamer>
+    public sealed class StreamOptionConfiguration : EntityConfiguration<StreamOption>
     {
-        public override void Configure(EntityTypeBuilder<Streamer> builder)
+        public override void Configure(EntityTypeBuilder<StreamOption> builder)
         {
-            builder.ToTable("Streamers");
+            builder.ToTable("StreamOptions");
 
             builder.HasKey(u => u.Id);
 
@@ -23,7 +23,7 @@ namespace Infrastructure.Persistence.EntityFramework.EntityConfigurations
 
             builder.Property(u => u.ChatDelaySecond).HasColumnName("ChatDelaySecond").IsRequired().HasDefaultValue(0);
 
-            builder.HasOne(u => u.User).WithOne().HasForeignKey<Streamer>(u => u.Id);
+            builder.HasOne(u => u.Streamer).WithOne().HasForeignKey<StreamOption>(u => u.Id);
         }
     }
 }

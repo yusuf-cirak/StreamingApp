@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 
-namespace Application.Features.Streamers.Commands.Update;
+namespace Application.Features.StreamOptions.Commands.Update;
 
-public sealed class UpdateStreamerCommandValidator : AbstractValidator<UpdateStreamerCommandRequest>
+public sealed class UpdateStreamOptionCommandValidator : AbstractValidator<UpdateStreamOptionCommandRequest>
 {
-    public UpdateStreamerCommandValidator()
+    public UpdateStreamOptionCommandValidator()
     {
         RuleFor(u => u.StreamTitle).NotEmpty().NotNull().MinimumLength(1)
             .WithMessage("{PropertyName} should at least be {MinLength} characters long");

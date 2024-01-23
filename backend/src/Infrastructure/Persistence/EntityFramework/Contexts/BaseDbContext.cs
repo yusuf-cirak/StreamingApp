@@ -11,7 +11,7 @@ public class BaseDbContext : DbContext
     protected IConfiguration Configuration { get; }
     public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<Stream> Streams { get; set; }
-    public virtual DbSet<Streamer> Streamers { get; set; }
+    public virtual DbSet<StreamOption> StreamOptions { get; set; }
     
     public virtual DbSet<StreamFollowerUser> StreamFollowerUsers { get; set; }
     public virtual DbSet<StreamChatMessage> StreamChatMessages { get; set; }

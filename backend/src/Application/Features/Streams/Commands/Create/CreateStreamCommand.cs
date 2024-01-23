@@ -64,7 +64,7 @@ public sealed class CreateStreamCommandHandler : IRequestHandler<CreateStreamCom
         //TODO: Add event to notify users that stream has started
 
         return isStreamStarted
-            ? HttpResult<string>.Success(streamer.User.Username)
+            ? HttpResult<string>.Success(streamer.Streamer.Username)
             : StreamErrors.FailedToCreateStream;
     }
 }

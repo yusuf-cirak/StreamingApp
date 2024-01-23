@@ -12,13 +12,16 @@ public class User : AuditableEntity
     public virtual ICollection<UserRoleClaim> UserRoleClaims { get; }
 
     public virtual ICollection<UserOperationClaim> UserOperationClaims { get; }
-
+    
+    public virtual ICollection<Stream> Streams { get; }
+    
 
     public User()
     {
         RefreshTokens = new HashSet<RefreshToken>();
         UserRoleClaims = new HashSet<UserRoleClaim>();
         UserOperationClaims = new HashSet<UserOperationClaim>();
+        Streams = new HashSet<Stream>();
     }
 
     private User(string username, byte[] passwordHash, byte[] passwordSalt) : this()

@@ -1,6 +1,5 @@
 ﻿using Application.Common.Constants;
 using Application.Common.Mapping;
-using Application.Features.Streamers.Dtos;
 using Application.Features.Streams.Dtos;
 using StackExchange.Redis.Extensions.Core.Abstractions;
 using Stream = Domain.Entities.Stream;
@@ -22,18 +21,18 @@ public sealed class StreamService : IStreamService
     }
 
 
-    public async Task<Result<Streamer, Error>> StreamerExistsAsync(Guid userId,
+    public async Task<Result<StreamOption, Error>> StreamerExistsAsync(Guid userId,
         CancellationToken cancellationToken = default)
     {
         var streamer = await _efRepository
-            .Streamers
-            .Include(s => s.User)
+            .StreamOptions
+            .Include(s => s.Streamer)
             .Where(s => s.Id == userId)
             .SingleOrDefaultAsync(cancellationToken: cancellationToken);
 
         if (streamer is null)
         {
-            return StreamerErrors.StreamerDoesNotExist;
+            return StreamOptionErrors.StreamerDoesNotExist;
         }
 
         return streamer;
@@ -70,7 +69,7 @@ public sealed class StreamService : IStreamService
     }
 
 
-    public async Task<bool> StartNewStreamAsync(Streamer streamer, Stream stream,
+    public async Task<bool> StartNewStreamAsync(StreamOption streamOption, Stream stream,
         CancellationToken cancellationToken = default)
     {
         _efRepository.Streams.Add(stream);
@@ -82,7 +81,7 @@ public sealed class StreamService : IStreamService
             return false;
         }
 
-        var getStreamDto = stream.ToDto(streamer.User.ToDto(), streamer.ToDto());
+        var getStreamDto = stream.ToDto(streamOption.Streamer.ToDto(), streamOption.ToDto());
 
         var serializedStream = _redisDatabase.Serializer.Serialize(getStreamDto);
 

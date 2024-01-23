@@ -6,8 +6,8 @@ public class StreamChatMessage : AuditableEntity
     public Guid UserId { get; set; }
     public Guid StreamerId { get; set; }
     public string Message { get; set; } = string.Empty;
+    public virtual User Streamer { get; set; }
     public virtual User User { get; set; }
-    public virtual Streamer Streamer { get; set; }
     public virtual Stream Stream { get; set; }
 
     private StreamChatMessage()

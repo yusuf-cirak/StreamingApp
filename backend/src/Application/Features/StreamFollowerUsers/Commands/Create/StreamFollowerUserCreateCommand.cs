@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-using Application.Features.Streamers.Abstractions;
-using Application.Features.StreamFollowerUsers.Abstractions;
+﻿using Application.Features.StreamFollowerUsers.Abstractions;
 using Application.Features.StreamFollowerUsers.Rules;
 
 namespace Application.Features.StreamFollowerUsers.Commands.Create;

@@ -1,25 +1,25 @@
 ﻿using Application.Common.Extensions;
-using Application.Features.Streamers.Abstractions;
-using Application.Features.Streamers.Rules;
+using Application.Features.StreamOptions.Abstractions;
+using Application.Features.StreamOptions.Rules;
 
-namespace Application.Features.Streamers.Commands.Update;
+namespace Application.Features.StreamOptions.Commands.Update;
 
 // TODO: Update chat disabled, delay
-public readonly record struct UpdateStreamerCommandRequest
-    : IStreamerCommandRequest, IRequest<HttpResult>, ISecuredRequest
+public readonly record struct UpdateStreamOptionCommandRequest
+    : IStreamOptionCommandRequest, IRequest<HttpResult>, ISecuredRequest
 {
     public Guid StreamerId { get; init; }
     public string StreamTitle { get; init; }
     public string StreamDescription { get; init; }
     public AuthorizationFunctions AuthorizationFunctions { get; }
 
-    public UpdateStreamerCommandRequest()
+    public UpdateStreamOptionCommandRequest()
     {
         AuthorizationFunctions =
-            [StreamerAuthorizationRules.CanUserUpdateStreamer];
+            [StreamOptionAuthorizationRules.CanUserUpdateStreamer];
     }
 
-    public UpdateStreamerCommandRequest(Guid streamerId, string streamTitle, string streamDescription) : this()
+    public UpdateStreamOptionCommandRequest(Guid streamerId, string streamTitle, string streamDescription) : this()
     {
         StreamerId = streamerId;
         StreamTitle = streamTitle;
@@ -27,22 +27,22 @@ public readonly record struct UpdateStreamerCommandRequest
     }
 }
 
-public sealed class UpdateStreamerCommandHandler : IRequestHandler<UpdateStreamerCommandRequest, HttpResult>
+public sealed class UpdateStreamOptionCommandHandler : IRequestHandler<UpdateStreamOptionCommandRequest, HttpResult>
 {
     private readonly IEfRepository _efRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public UpdateStreamerCommandHandler(IEfRepository efRepository, IHttpContextAccessor httpContextAccessor)
+    public UpdateStreamOptionCommandHandler(IEfRepository efRepository, IHttpContextAccessor httpContextAccessor)
     {
         _efRepository = efRepository;
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<HttpResult> Handle(UpdateStreamerCommandRequest request, CancellationToken cancellationToken)
+    public async Task<HttpResult> Handle(UpdateStreamOptionCommandRequest request, CancellationToken cancellationToken)
     {
         var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.GetUserId());
 
-        var result = await _efRepository.Streamers
+        var result = await _efRepository.StreamOptions
             .Where(st => st.Id == userId)
             .ExecuteUpdateAsync(
                 streamer => streamer
@@ -52,6 +52,6 @@ public sealed class UpdateStreamerCommandHandler : IRequestHandler<UpdateStreame
 
         return result > 0
             ? HttpResult.Success(StatusCodes.Status204NoContent)
-            : HttpResult.Failure(StreamerErrors.StreamerCannotBeUpdated);
+            : HttpResult.Failure(StreamOptionErrors.CannotBeUpdated);
     }
 }

@@ -5,8 +5,9 @@ public class Stream : Entity
     public Guid StreamerId { get; set; }
     public DateTime StartedAt { get; set; }
     public DateTime? EndedAt { get; set; }
-    public virtual Streamer Streamer { get; set; }
-
+    
+    public virtual User Streamer { get; }
+    
     private Stream()
     {
         StartedAt = DateTime.UtcNow;

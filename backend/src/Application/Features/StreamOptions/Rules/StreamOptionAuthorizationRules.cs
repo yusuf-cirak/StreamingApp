@@ -1,13 +1,12 @@
-﻿using System.Security.Claims;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Application.Common.Errors;
 using Application.Features.OperationClaims.Dtos;
 using Application.Features.Roles.Dtos;
-using Application.Features.Streamers.Abstractions;
+using Application.Features.StreamOptions.Abstractions;
 
-namespace Application.Features.Streamers.Rules;
+namespace Application.Features.StreamOptions.Rules;
 
-public static class StreamerAuthorizationRules
+public static class StreamOptionAuthorizationRules
 {
     public static Result CanUserUpdateStreamer(HttpContext context, ICollection<Claim> claims, object request)
     {
@@ -39,14 +38,14 @@ public static class StreamerAuthorizationRules
         Guid userId = Guid.Parse(claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value ??
                                  string.Empty);
 
-        Guid streamerId = ((IStreamerCommandRequest)request).StreamerId;
+        Guid streamerId = ((IStreamOptionCommandRequest)request).StreamerId;
 
         return userId == streamerId;
     }
 
     private static bool IsUserModeratorOfStreamByRole(ICollection<Claim> claims, object request)
     {
-        string streamerIdString = ((IStreamerCommandRequest)request).StreamerId.ToString();
+        string streamerIdString = ((IStreamOptionCommandRequest)request).StreamerId.ToString();
 
         string rolesString = claims.First(c => c.Type == "Roles").Value;
         List<GetUserRoleDto> roleClaims = JsonSerializer.Deserialize<List<GetUserRoleDto>>(rolesString);
@@ -57,7 +56,7 @@ public static class StreamerAuthorizationRules
 
     private static bool IsUserModeratorOfStreamByOperationClaim(ICollection<Claim> claims, object request)
     {
-        string streamerIdString = ((IStreamerCommandRequest)request).StreamerId.ToString();
+        string streamerIdString = ((IStreamOptionCommandRequest)request).StreamerId.ToString();
 
         string operationClaimsString = claims.First(c => c.Type == "OperationClaims").Value;
 

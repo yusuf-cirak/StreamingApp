@@ -18,7 +18,7 @@ public sealed class EfRepository : IEfRepository
 
     public DbSet<User> Users => Context.Users;
     public DbSet<Stream> Streams => Context.Streams;
-    public DbSet<Streamer> Streamers => Context.Streamers;
+    public DbSet<StreamOption> StreamOptions => Context.StreamOptions;
     public DbSet<RefreshToken> RefreshTokens => Context.RefreshTokens;
     public DbSet<OperationClaim> OperationClaims => Context.OperationClaims;
     public DbSet<RoleOperationClaim> RoleOperationClaims => Context.RoleOperationClaims;

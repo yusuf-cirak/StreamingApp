@@ -1,4 +1,4 @@
-﻿using Application.Features.Streamers.Commands.Update;
+﻿using Application.Features.StreamOptions.Commands.Update;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel;
@@ -13,10 +13,10 @@ public static class StreamerEndpoints
 
 
         groupBuilder.MapPatch("/",
-                async ([FromBody] UpdateStreamerCommandRequest updateStreamerCommandRequest,
+                async ([FromBody] UpdateStreamOptionCommandRequest updateStreamOptionCommandRequest,
                     IMediator mediator) =>
                 {
-                    return (await mediator.Send(updateStreamerCommandRequest)).ToHttpResponse();
+                    return (await mediator.Send(updateStreamOptionCommandRequest)).ToHttpResponse();
                 })
             .WithTags("Streamers");
     }

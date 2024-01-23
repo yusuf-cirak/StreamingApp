@@ -26,20 +26,20 @@ public class SeedDataGenerator
             .Generate(count);
     }
 
-    private List<Streamer> GenerateStreamers(List<User> users, IEncryptionHelper encryptionHelper)
+    private List<StreamOption> GenerateStreamOptions(List<User> users, IEncryptionHelper encryptionHelper)
     {
-        var streamers = new List<Streamer>();
+        var streamOptions = new List<StreamOption>();
         users.ForEach(user =>
         {
-            var streamer = new Faker<Streamer>()
+            var streamer = new Faker<StreamOption>()
                 .RuleFor(s => s.Id, user.Id)
                 .RuleFor(s => s.StreamKey, f => encryptionHelper.Encrypt(user.Username))
                 .RuleFor(s => s.StreamTitle, f => f.Random.Words(5))
                 .RuleFor(s => s.StreamDescription, f => f.Random.Words(10));
 
-            streamers.Add(streamer);
+            streamOptions.Add(streamer);
         });
-        return streamers;
+        return streamOptions;
     }
 
     private List<OperationClaim> GenerateOperationClaims()
@@ -122,7 +122,7 @@ public class SeedDataGenerator
         }
 
         var users = GenerateUsers();
-        var streamers = GenerateStreamers(users, encryptionHelper);
+        var streamOptions = GenerateStreamOptions(users, encryptionHelper);
 
         var operationClaims = GenerateOperationClaims();
         var roles = GenerateRoles();
@@ -133,7 +133,7 @@ public class SeedDataGenerator
         var userOperationClaims = GenerateUserOperationClaims(users, operationClaims);
 
         context.Users.AddRange(users);
-        context.Streamers.AddRange(streamers);
+        context.StreamOptions.AddRange(streamOptions);
         context.OperationClaims.AddRange(operationClaims);
         context.Roles.AddRange(roles);
         context.RoleOperationClaims.AddRange(roleOperationClaims);

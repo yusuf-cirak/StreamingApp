@@ -4,7 +4,7 @@ public class StreamFollowerUser : BaseEntity
 {
     public Guid StreamerId { get; set; }
     public Guid UserId { get; set; }
-    public virtual Streamer Streamer { get; set; }
+    public virtual User Streamer { get; set; }
     public virtual User User { get; set; }
     
     private StreamFollowerUser()

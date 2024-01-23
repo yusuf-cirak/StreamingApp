@@ -60,9 +60,9 @@ public sealed class
         var streamerTitle = $"{newUser.Username}'s stream";
         var streamerDescription = $"{newUser.Username}'s stream description";
 
-        var streamer = Streamer.Create(newUser.Id, streamerKey, streamerTitle, streamerDescription);
+        var streamer = StreamOption.Create(newUser.Id, streamerKey, streamerTitle, streamerDescription);
 
-        _efRepository.Streamers.Add(streamer);
+        _efRepository.StreamOptions.Add(streamer);
 
         await _efRepository.SaveChangesAsync(cancellationToken);
 
