@@ -1,4 +1,9 @@
-import { Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
 import { LogoComponent } from '../logo/logo.component';
 import { SearchComponent } from '../search/search.component';
 import { ClapperBoardIcon } from '../../../../../shared/icons/clapper-board.icon';
@@ -7,6 +12,7 @@ import { ProfilebarComponent } from '../profilebar/profilebar.component';
 import { AuthService } from '../../../../services/auth.service';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
+import { AuthComponent } from '../../../../modules/auths/auth.component';
 @Component({
   selector: 'app-main-navbar',
   standalone: true,
@@ -19,8 +25,21 @@ import { RippleModule } from 'primeng/ripple';
     ProfilebarComponent,
     RippleModule,
     ButtonModule,
+    AuthComponent,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent {
   readonly authService = inject(AuthService);
+
+  #authModalVisible = signal(false);
+  readonly authModalVisible = this.#authModalVisible.asReadonly();
+
+  openAuthModal() {
+    this.#authModalVisible.set(true);
+  }
+
+  closeAuthModal() {
+    this.#authModalVisible.set(false);
+  }
 }
