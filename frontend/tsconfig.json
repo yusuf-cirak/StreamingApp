@@ -19,8 +19,11 @@
     "module": "ES2022",
     "useDefineForClassFields": false,
     "lib": ["ES2022", "dom"],
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
     "paths": {
       "@streaming-app/shared/icons": ["./src/app/shared/icons/index.ts"],
+      "@streaming-app/shared/services": ["./src/app/shared/services/index.ts"],
       "@streaming-app/shared/animations": [
         "./src/app/shared/animations/index.ts"
       ],

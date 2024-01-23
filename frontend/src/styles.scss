@@ -6,6 +6,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary-text: #1a202c;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -66,4 +70,134 @@ input:focus-visible {
 input:enabled:focus-visible {
   outline: none;
   box-shadow: none;
+}
+
+.modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(#000, 0.25);
+}
+
+.modal-container {
+  max-height: 90vh;
+  max-width: 27rem;
+  z-index: 10000;
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 15px 30px 0 rgba(#000, 0.25);
+  @media (max-width: 600px) {
+    width: 90%;
+  }
+}
+
+.modal-container-header {
+  padding: 16px 32px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-container-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1;
+  font-weight: 700;
+  font-size: 1.125;
+  svg {
+    width: 32px;
+    height: 32px;
+    color: #750550;
+  }
+}
+
+.modal-container-body {
+  padding: 24px 32px 51px;
+  overflow-y: auto;
+}
+
+.rtf {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 700;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    line-height: 1.125;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+    line-height: 1.25;
+  }
+
+  h3 {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  & > * + * {
+    margin-top: 1em;
+  }
+
+  & > * + :is(h1, h2, h3) {
+    margin-top: 2em;
+  }
+
+  & > :is(h1, h2, h3) + * {
+    margin-top: 0.75em;
+  }
+
+  ul,
+  ol {
+    margin-left: 20px;
+    list-style-position: inside;
+  }
+
+  ol {
+    list-style: numeric;
+  }
+
+  ul {
+    list-style: disc;
+  }
+}
+
+.modal-container-footer {
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  border-top: 1px solid #ddd;
+  gap: 12px;
+  position: relative;
+  &:after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: -51px;
+    left: 24px;
+    right: 24px;
+    height: 50px;
+    flex-shrink: 0;
+    background-image: linear-gradient(to top, rgba(#fff, 0.75), transparent);
+    pointer-events: none;
+  }
 }

@@ -6,3 +6,6 @@ export * from './expand-right';
 export * from './key-icon';
 export * from './stream-icon';
 export * from './clapper-board.icon';
+export * from './offline-streamer-icon';
+export * from './spooky-icon';
+export * from './loading-icon';

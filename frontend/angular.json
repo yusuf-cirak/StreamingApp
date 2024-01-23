@@ -59,8 +59,14 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,
-              "ssr": true,
-              "prerender": true
+              "ssr": false,
+              "prerender": false,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
