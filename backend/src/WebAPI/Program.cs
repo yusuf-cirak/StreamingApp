@@ -48,6 +48,7 @@ if (app.Environment.IsDevelopment())
     app.GenerateSeedDataAndPersist();
 }
 
+app.UseCors();
 
 app.UseHealthChecks("/_health", new HealthCheckOptions
     {

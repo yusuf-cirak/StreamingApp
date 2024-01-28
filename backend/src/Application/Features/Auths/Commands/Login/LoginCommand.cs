@@ -6,9 +6,9 @@ using Application.Features.Auths.Services;
 namespace Application.Features.Auths.Commands.Login;
 
 public readonly record struct LoginCommandRequest(string Username, string Password)
-    : IRequest<HttpResult<TokenResponseDto>>;
+    : IRequest<HttpResult<AuthResponseDto>>;
 
-public sealed class LoginCommandHandler : IRequestHandler<LoginCommandRequest, HttpResult<TokenResponseDto>>
+public sealed class LoginCommandHandler : IRequestHandler<LoginCommandRequest, HttpResult<AuthResponseDto>>
 {
     private readonly IAuthService _authService;
     private readonly AuthBusinessRules _authBusinessRules;
@@ -26,7 +26,7 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommandRequest, H
         _authService = authService;
     }
 
-    public async Task<HttpResult<TokenResponseDto>> Handle(LoginCommandRequest request,
+    public async Task<HttpResult<AuthResponseDto>> Handle(LoginCommandRequest request,
         CancellationToken cancellationToken)
     {
         var result = await _authBusinessRules.UserNameShouldExistBeforeLogin(request.Username);
@@ -66,6 +66,9 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommandRequest, H
 
         await _efRepository.SaveChangesAsync(cancellationToken);
 
-        return new TokenResponseDto(accessToken.Token, refreshToken.Token);
+
+                var authResponseDto = new AuthResponseDto(user.Id,user.Username,user.ProfileImageUrl,accessToken.Token, refreshToken.Token, accessToken.Expiration,claims:[]);
+
+        return authResponseDto;
     }
 }

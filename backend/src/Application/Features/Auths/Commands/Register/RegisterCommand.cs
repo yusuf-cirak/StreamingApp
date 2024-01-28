@@ -5,10 +5,10 @@ using Application.Features.Auths.Rules;
 namespace Application.Features.Auths.Commands.Register;
 
 public readonly record struct RegisterCommandRequest(string Username, string Password)
-    : IRequest<HttpResult<TokenResponseDto>>;
+    : IRequest<HttpResult<AuthResponseDto>>;
 
 public sealed class
-    RegisterUserCommandHandler : IRequestHandler<RegisterCommandRequest, HttpResult<TokenResponseDto>>
+    RegisterUserCommandHandler : IRequestHandler<RegisterCommandRequest, HttpResult<AuthResponseDto>>
 {
     private readonly IEfRepository _efRepository;
     private readonly AuthBusinessRules _authBusinessRules;
@@ -31,7 +31,7 @@ public sealed class
         _encryptionHelper = encryptionHelper;
     }
 
-    public async Task<HttpResult<TokenResponseDto>> Handle(RegisterCommandRequest request,
+    public async Task<HttpResult<AuthResponseDto>> Handle(RegisterCommandRequest request,
         CancellationToken cancellationToken)
     {
         var result = await _authBusinessRules.UserNameCannotBeDuplicatedBeforeRegistered(request.Username);
@@ -60,15 +60,15 @@ public sealed class
         var streamerTitle = $"{newUser.Username}'s stream";
         var streamerDescription = $"{newUser.Username}'s stream description";
 
-        var streamer = StreamOption.Create(newUser.Id, streamerKey, streamerTitle, streamerDescription);
+        var streamOption = StreamOption.Create(newUser.Id, streamerKey, streamerTitle, streamerDescription);
 
-        _efRepository.StreamOptions.Add(streamer);
+        _efRepository.StreamOptions.Add(streamOption);
 
         await _efRepository.SaveChangesAsync(cancellationToken);
 
-        var tokenResponseDto = new TokenResponseDto(accessToken.Token, refreshToken.Token);
+        var authResponseDto = new AuthResponseDto(newUser.Id,newUser.Username,ProfileImageUrl:string.Empty,accessToken.Token, refreshToken.Token, accessToken.Expiration,claims:[]);
 
-        return HttpResult<TokenResponseDto>.Success(tokenResponseDto,
+        return HttpResult<AuthResponseDto>.Success(authResponseDto,
             StatusCodes.Status201Created);
     }
 }

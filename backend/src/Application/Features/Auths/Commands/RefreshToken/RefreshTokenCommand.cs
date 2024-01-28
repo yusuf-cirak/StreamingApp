@@ -5,14 +5,14 @@ using Application.Features.Auths.Services;
 namespace Application.Features.Auths.Commands.Refresh;
 
 public readonly record struct RefreshTokenCommandRequest
-    : IRequest<HttpResult<TokenResponseDto>>
+    : IRequest<HttpResult<AuthResponseDto>>
 {
     public Guid UserId { get; init; }
     public string RefreshToken { get; init; }
 }
 
 public sealed class
-    RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommandRequest, HttpResult<TokenResponseDto>>
+    RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommandRequest, HttpResult<AuthResponseDto>>
 {
     private readonly IEfRepository _efRepository;
     private readonly IJwtHelper _jwtHelper;
@@ -30,7 +30,7 @@ public sealed class
         _authService = authService;
     }
 
-    public async Task<HttpResult<TokenResponseDto>> Handle(RefreshTokenCommandRequest request,
+    public async Task<HttpResult<AuthResponseDto>> Handle(RefreshTokenCommandRequest request,
         CancellationToken cancellationToken)
     {
         var userId = (request.UserId);
@@ -70,6 +70,7 @@ public sealed class
 
         await _efRepository.SaveChangesAsync(cancellationToken);
 
-        return new TokenResponseDto(accessToken.Token, refreshToken.Token);
+        return new AuthResponseDto(user.Id, user.Username, user.ProfileImageUrl, accessToken.Token, refreshToken.Token,
+            accessToken.Expiration, claimsDictionary);
     }
 }
