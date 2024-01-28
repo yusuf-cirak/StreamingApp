@@ -1,18 +1,18 @@
 import { Component, Input, signal } from '@angular/core';
-import { Streamer } from '../../models/streamer';
-import { NgClass } from '@angular/common';
+import { NgClass, NgIf } from '@angular/common';
+import { LiveStream } from '../../models/live-stream';
 
 @Component({
   standalone: true,
-  imports: [NgClass],
+  imports: [NgClass, NgIf],
   templateUrl: './streamer.component.html',
   selector: 'app-streamer',
 })
 export class StreamerComponent {
-  readonly #streamer = signal<Streamer | undefined>(undefined);
-  readonly streamer = this.#streamer.asReadonly();
+  readonly #liveStream = signal<LiveStream | undefined>(undefined);
+  readonly liveStream = this.#liveStream.asReadonly();
 
-  @Input('streamer') set streamerSetter(streamer: Streamer) {
-    this.#streamer.set(streamer);
+  @Input('liveStream') set streamerSetter(streamer: LiveStream) {
+    this.#liveStream.set(streamer);
   }
 }

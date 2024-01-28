@@ -9,3 +9,5 @@ export * from './clapper-board.icon';
 export * from './offline-streamer-icon';
 export * from './spooky-icon';
 export * from './loading-icon';
+export * from './chat-disabled.icon';
+export * from './info-icon';
