@@ -18,8 +18,9 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch()),
     provideToastr({
       timeOut: 5000,
-      positionClass: 'toast-top-right',
       preventDuplicates: true,
+      easing: 'ease-in',
+      easeTime: 300,
     }),
   ],
 };

@@ -2,12 +2,28 @@
 @import "primeng/resources/primeng.css";
 @import "primeng/resources/themes/lara-light-blue/theme.css";
 
+@import "ngx-toastr/toastr";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
   --primary-text: #1a202c;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hidden {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  ::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 * {
@@ -40,10 +56,10 @@ body {
     padding: 0;
     justify-content: center;
   }
+}
 
-  div.main {
-    margin-left: 5rem;
-  }
+div.scroller-none {
+  scrollbar-width: 0;
 }
 
 @media screen and (min-width: 640px) {
