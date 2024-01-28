@@ -1,0 +1,28 @@
+@if (chatState(); as chatState) {
+<div class="w-full h-full flex flex-col">
+  @if (!chatState.enabled) {
+  <ng-container [ngTemplateOutlet]="chatDisabledTemplate"></ng-container>
+  }@else {
+  <ng-container [ngTemplateOutlet]="chatTemplate"></ng-container>
+  }
+</div>
+}
+
+<ng-template #chatTemplate>
+  <div class="w-full h-[80%] items-start justify-end flex flex-col">
+    <app-chat-list></app-chat-list>
+  </div>
+  <div class="w-full h-[20%]">
+    <app-chat-form [chatState]="chatState()"></app-chat-form>
+  </div>
+</ng-template>
+
+<ng-template #chatDisabledTemplate>
+  <div class="w-full h-[80%] items-center justify-center flex flex-col">
+    <app-chat-disabled-icon class="text-white"></app-chat-disabled-icon>
+    <div class="text-white">Chat is disabled</div>
+  </div>
+  <div class="w-full h-[20%]">
+    <app-chat-form [chatState]="chatState()"></app-chat-form>
+  </div>
+</ng-template>

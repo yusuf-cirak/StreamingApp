@@ -1,0 +1,28 @@
+@if (chatState(); as chatState) {
+
+<form class="w-full h-full flex flex-col items-center p-3">
+  @if (chatState.followersOnly) {
+  <app-hint class="w-full" [text]="'Followers only'"></app-hint>
+  }
+  <input
+    #searchInput
+    type="text"
+    placeholder="Send a message"
+    class="w-full h-14 border border-white/10 rounded-md bg-inherit px-2 text-white"
+    (input)="setMessage($any($event.target).value)"
+    [value]="message()"
+    [autofocus]="true"
+    [ngClass]="{
+      'rounded-t-none border-t-0': chatState.followersOnly,
+    }"
+  />
+  <button
+    pRipple
+    class="w-14 h-10 rounded-lg bg-blue-600 outline-none ml-auto text-white mt-3"
+    [disabled]="chatState.followersOnly"
+    type="submit"
+  >
+    Chat
+  </button>
+</form>
+}

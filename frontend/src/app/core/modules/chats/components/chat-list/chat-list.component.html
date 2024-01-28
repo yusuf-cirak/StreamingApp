@@ -1,0 +1,5 @@
+<div class="flex w-full flex-col-reverse text-white p-2 overflow-y-scroll">
+  @for (message of messages; track messages) {
+  <app-chat-message [data]="message"></app-chat-message>
+  }
+</div>

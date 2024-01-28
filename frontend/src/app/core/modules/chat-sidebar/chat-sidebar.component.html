@@ -1,0 +1,24 @@
+@if (chatSidebar(); as chatSidebar) {
+<div class="w-full h-full px-4 flex flex-col">
+  <div
+    class="flex flex-row flex-1 w-full h-[10%] items-center justify-between text-white"
+  >
+    <span class="font-semibold">{{
+      chatSidebar.variant === "chat" ? "Stream Chat" : "Community"
+    }}</span>
+    <a class="cursor-pointer" (click)="changeVariant()">
+      @if (chatSidebar.variant==='chat') {
+      <app-community-icon
+        pTooltip="Community"
+        tooltipPosition="left"
+      ></app-community-icon>
+      }@else {
+      <app-chat-icon pTooltip="Chat" tooltipPosition="left"></app-chat-icon>
+      }
+    </a>
+  </div>
+  <div class="flex w-full h-[90%]">
+    <app-chat class="w-full h-full" [chatState]="chatState()"></app-chat>
+  </div>
+</div>
+}
