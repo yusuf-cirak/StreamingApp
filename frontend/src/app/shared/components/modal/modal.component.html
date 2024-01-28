@@ -1,7 +1,12 @@
-<div class="modal text-black" #createChatModalRef>
+@if (visible()) {
+<div class="modal text-black" #modalRef>
   <article class="modal-container min-w-[27rem] bg-white relative">
     <header class="modal-container-header">
-      <h1 class="modal-container-title">{{ modalHeaderTitle() }}</h1>
+      @if (!headerTemplate()) {
+      <h1 class="modal-container-title">{{ header() }}</h1>
+      }@else {
+      <ng-container [ngTemplateOutlet]="headerTemplate()"></ng-container>
+      }
       <button class="icon-button" (click)="emitCloseModalClicked()">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -18,12 +23,13 @@
       </button>
     </header>
 
-    @if (modalBodyTemplate()) {
+    @if (bodyTemplate()) {
     <div
       class="modal-container-body rtf flex flex-col items-center justify-center w-full"
     >
-      <ng-container [ngTemplateOutlet]="modalBodyTemplate()"></ng-container>
+      <ng-container [ngTemplateOutlet]="bodyTemplate()"></ng-container>
     </div>
     }
   </article>
 </div>
+}

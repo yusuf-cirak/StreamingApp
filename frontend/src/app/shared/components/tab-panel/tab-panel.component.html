@@ -1,0 +1,15 @@
+<div class="flex flex-row gap-10">
+  @for (tab of tabs(); track tab) {
+  <div
+    class="min-w-16 w-16 flex-col hover:opacity-70 cursor-pointer items-center text-center justify-center"
+    (click)="emitTabClicked(tab)"
+  >
+    @if (activeTab() === tab) {
+    <span class="font-bold text-blue-600">{{ tab }}</span>
+    <div class="w-full h-1 bg-blue-600 text-blue-600"></div>
+    }@else {
+    <span>{{ tab }}</span>
+    }
+  </div>
+  }
+</div>

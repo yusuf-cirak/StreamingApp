@@ -1,28 +1,43 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgTemplateOutlet } from '@angular/common';
 import {
   Component,
   ElementRef,
   EventEmitter,
+  HostListener,
   Output,
   TemplateRef,
+  ViewChild,
   input,
 } from '@angular/core';
 
 @Component({
   selector: 'app-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [NgTemplateOutlet],
   templateUrl: './modal.component.html',
-  styleUrl: './modal.component.scss',
 })
 export class ModalComponent {
-  modalHeaderTitle = input.required({ alias: 'modalHeaderTitle' });
+  visible = input.required<boolean>();
+  header = input<string>('');
 
-  modalBodyTemplate = input<TemplateRef<ElementRef> | null>(null);
+  headerTemplate = input<TemplateRef<ElementRef> | null>(null);
+
+  bodyTemplate = input<TemplateRef<ElementRef> | null>(null);
+
+  @ViewChild('modalRef') modalRef!: ElementRef;
 
   @Output() closeModalClicked = new EventEmitter<void>();
+  @Output() outsideModalClicked = new EventEmitter<void>();
 
   emitCloseModalClicked() {
     this.closeModalClicked.emit();
+  }
+
+  emitOutsideClicked() {
+    this.outsideModalClicked.emit();
+  }
+
+  @HostListener('document:keydown.escape', ['$event']) onKeydownHandler() {
+    this.emitOutsideClicked();
   }
 }
