@@ -4,9 +4,11 @@ import {
   HostListener,
   ViewChild,
   computed,
+  inject,
   signal,
 } from '@angular/core';
 import { fadeAnimation } from '../../../../../shared/animations/fade-animation';
+import { AuthService } from '@streaming-app/core';
 
 @Component({
   selector: 'app-main-profilebar',
@@ -16,6 +18,7 @@ import { fadeAnimation } from '../../../../../shared/animations/fade-animation';
   animations: [fadeAnimation],
 })
 export class ProfilebarComponent {
+  readonly authService = inject(AuthService);
   #profileMenuOpen = signal(false);
 
   readonly profileMenuOpen = this.#profileMenuOpen.asReadonly();
@@ -46,5 +49,7 @@ export class ProfilebarComponent {
       this.closeProfileMenu();
     }
   }
-  logout() {}
+  logout() {
+    this.authService.logout();
+  }
 }

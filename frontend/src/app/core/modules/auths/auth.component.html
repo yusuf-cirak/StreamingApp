@@ -1,11 +1,20 @@
-@if (visible()) {
 <app-modal
-  modalHeaderTitle="Login"
-  [modalBodyTemplate]="loginForm"
+  [visible]="visible()"
+  [bodyTemplate]="formTemplateRef"
+  [headerTemplate]="headerRef"
   (closeModalClicked)="emitCloseModalClicked()"
+  (outsideModalClicked)="emitOutsideModalClicked()"
 ></app-modal>
-<ng-template #loginForm>
-  <form class="w-full" [formGroup]="form" (ngSubmit)="login()">
+
+<ng-template #headerRef>
+  <app-tab-panel
+    [tabs]="tabs()"
+    [activeTab]="activeTab()"
+    (tabClicked)="onTabClicked($event)"
+  ></app-tab-panel>
+</ng-template>
+<ng-template #formTemplateRef>
+  <form class="w-full" [formGroup]="form" (ngSubmit)="submit()">
     <app-input
       [control]="form.controls.username"
       inputType="text"
@@ -28,9 +37,10 @@
       <span class="flex items-center justify-center w-full h-full">
         @if (form.disabled) {
         <app-loading-icon></app-loading-icon>
-        }@else { Login }
+        }@else {
+        <span>{{ activeTab() }}</span>
+        }
       </span>
     </button>
   </form>
 </ng-template>
-}

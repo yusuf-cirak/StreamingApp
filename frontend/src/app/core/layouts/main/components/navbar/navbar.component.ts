@@ -9,7 +9,7 @@ import { SearchComponent } from '../search/search.component';
 import { ClapperBoardIcon } from '../../../../../shared/icons/clapper-board.icon';
 import { RouterLink } from '@angular/router';
 import { ProfilebarComponent } from '../profilebar/profilebar.component';
-import { AuthService } from '../../../../services/auth.service';
+import { AuthService } from '../../../../modules/auths/services/auth.service';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { AuthComponent } from '../../../../modules/auths/auth.component';

@@ -1,20 +1,19 @@
 <main class="w-full h-full bg-slate-300 flex flex-col overflow-y-auto">
   <div class="navbar-container w-full h-[10%]">
     <app-main-navbar
-      class="text-white flex items-center justify-between fixed top-0 left-0"
+      class="text-white flex items-center justify-between h-full"
     />
   </div>
   <div class="sidebar-main-container flex w-full h-full">
     <div class="sidebar-container h-full">
-      <app-main-sidebar
-        class="text-white h-full left-0 flex flex-col fixed top-20"
-      />
+      <app-main-sidebar class="text-white h-full flex flex-col relative" />
     </div>
 
-    <div class="main w-[50%] h-[50%] ml-60 overflow-y-auto">
+    <div class="main w-full h-full ml-60 overflow-y-auto">
       <!-- <router-outlet></router-outlet> -->
       @if (streamer) {
-      <app-stream></app-stream>
+      <!-- <app-stream></app-stream> -->
+      <app-offline-stream [streamerName]="'yusuf'"></app-offline-stream>
       }@else {}
     </div>
   </div>
