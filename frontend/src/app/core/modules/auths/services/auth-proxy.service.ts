@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClientService } from '@streaming-app/shared/services';
 import { Observable } from 'rxjs';
-import { UserLoginDto } from '../../../components/dtos/user-login-dto';
+import { UserLoginDto } from '../../../dtos/user-login-dto';
 import { UserAuthDto } from '../dtos/user-auth-dto';
 
 @Injectable({

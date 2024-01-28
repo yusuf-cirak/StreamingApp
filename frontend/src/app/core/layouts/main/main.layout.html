@@ -9,12 +9,9 @@
       <app-main-sidebar class="text-white h-full flex flex-col relative" />
     </div>
 
-    <div class="main w-full h-full ml-60 overflow-y-auto">
+    <div class="main w-full h-full overflow-y-auto">
       <!-- <router-outlet></router-outlet> -->
-      @if (streamer) {
-      <!-- <app-stream></app-stream> -->
-      <app-offline-stream [streamerName]="'yusuf'"></app-offline-stream>
-      }@else {}
+      <app-stream></app-stream>
     </div>
   </div>
 </main>

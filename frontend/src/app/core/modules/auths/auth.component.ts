@@ -15,13 +15,13 @@ import { TabViewModule } from 'primeng/tabview';
 import { AuthService } from '@streaming-app/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { minLength } from '../../components/validators/min-length';
-import { UserLoginDto } from '../../components/dtos/user-login-dto';
+import { UserLoginDto } from '../../dtos/user-login-dto';
 import { InputComponent } from '../../../shared/components/input/input.component';
 import { RippleModule } from 'primeng/ripple';
 import { LoadingIcon } from '../../../shared/icons/loading-icon';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
 import { TabPanelComponent } from '../../../shared/components/tab-panel/tab-panel.component';
-import { UserRegisterDto } from '../../components/dtos/user-register-dto';
+import { UserRegisterDto } from '../../dtos/user-register-dto';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
 import { Tab } from './models/tab';
@@ -124,7 +124,10 @@ export class AuthComponent {
   }
 
   showErrorAndEnableForm(error: any) {
-    this.toastrService.error(error?.error?.detail || 'Something went wrong');
+    this.toastrService.error(
+      error?.error?.detail || 'Something went wrong',
+      'Error'
+    );
     this.form.enable();
   }
 

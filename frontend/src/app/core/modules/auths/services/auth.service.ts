@@ -1,8 +1,8 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { CurrentUser } from '../../../models/current-user';
 import { AuthProxyService } from './auth-proxy.service';
-import { UserLoginDto } from '../../../components/dtos/user-login-dto';
-import { UserRegisterDto } from '../../../components/dtos/user-register-dto';
+import { UserLoginDto } from '../../../dtos/user-login-dto';
+import { UserRegisterDto } from '../../../dtos/user-register-dto';
 
 @Injectable({
   providedIn: 'root',
