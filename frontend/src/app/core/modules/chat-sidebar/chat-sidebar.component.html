@@ -1,7 +1,7 @@
 @if (chatSidebar(); as chatSidebar) {
-<div class="w-full h-full px-4 flex flex-col">
+<div class="w-full h-full px-3 flex flex-col">
   <div
-    class="flex flex-row flex-1 w-full h-[10%] items-center justify-between text-white"
+    class="flex flex-row flex-1 w-full h-[5%] max-h-[5%] items-center justify-between text-white"
   >
     <span class="font-semibold">{{
       chatSidebar.variant === "chat" ? "Stream Chat" : "Community"
@@ -17,8 +17,9 @@
       }
     </a>
   </div>
-  <div class="flex w-full h-[90%]">
-    <app-chat class="w-full h-full" [chatState]="chatState()"></app-chat>
-  </div>
+  <app-chat
+    class="flex w-full h-[95%] max-h-[95%]"
+    [streamState]="streamState()"
+  />
 </div>
 }

@@ -1,8 +1,17 @@
-import { Component, HostListener, input, signal } from '@angular/core';
-import { ChatState } from '../../models/chat-state';
+import {
+  Component,
+  EventEmitter,
+  HostListener,
+  Output,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
+import { StreamState } from '../../../streams/models/stream-state';
 import { RippleModule } from 'primeng/ripple';
 import { NgClass } from '@angular/common';
 import { HintComponent } from '../../../../components/hint/hint.component';
+import { AuthService } from '../../../../services';
 
 @Component({
   selector: 'app-chat-form',
@@ -11,24 +20,31 @@ import { HintComponent } from '../../../../components/hint/hint.component';
   templateUrl: './chat-form.component.html',
 })
 export class ChatFormComponent {
-  chatState = input.required<ChatState>();
+  streamState = input.required<StreamState>();
+
+  readonly authService = inject(AuthService);
+
+  message = signal<string>('');
+
+  @Output() messageSend = new EventEmitter<string>();
 
   @HostListener('document:keydown.enter', ['$event'])
   onEnter() {
-    const chatState = this.chatState();
+    const streamState = this.streamState();
     const message = this.message();
-    if (chatState.enabled && message) {
+    if (streamState.enabled && message) {
       setTimeout(() => {
         this.sendMessage();
-      }, chatState.delaySecond * 1000);
+      }, streamState.delaySecond * 1000);
     }
   }
-
-  message = signal<string>('');
 
   setMessage(message: string) {
     this.message.update(() => message);
   }
 
-  sendMessage() {}
+  sendMessage() {
+    this.messageSend.emit(this.message());
+    this.message.update(() => '');
+  }
 }

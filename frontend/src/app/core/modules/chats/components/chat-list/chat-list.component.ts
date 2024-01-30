@@ -9,36 +9,5 @@ import { ChatMessageComponent } from '../chat-message/chat-message.component';
   templateUrl: './chat-list.component.html',
 })
 export class ChatListComponent {
-  // messages = input.required<ChatMessage[]>();
-  messages: ChatMessage[] = [
-    { message: 'deneme3', sentAt: new Date(), username: 'yusuf' },
-    { message: 'deneme7', sentAt: new Date(), username: 'yusuf' },
-    { message: 'deneme00', sentAt: new Date(), username: 'yusuf' },
-    { message: 'deneme00', sentAt: new Date(), username: 'yusuf' },
-    { message: 'deneme000', sentAt: new Date(), username: 'yusuf' },
-    {
-      message:
-        'deneme000ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd',
-      sentAt: new Date(),
-      username: 'yusuf',
-    },
-    {
-      message:
-        'deneme000ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd',
-      sentAt: new Date(),
-      username: 'yusuf',
-    },
-    {
-      message:
-        'deneme000ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd',
-      sentAt: new Date(),
-      username: 'yusuf',
-    },
-    {
-      message:
-        'deneme000ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd',
-      sentAt: new Date(),
-      username: 'yusuf',
-    },
-  ].reverse();
+  messages = input.required<ChatMessage[]>();
 }
