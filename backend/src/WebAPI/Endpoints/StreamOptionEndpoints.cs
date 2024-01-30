@@ -5,7 +5,7 @@ using SharedKernel;
 
 namespace WebAPI.Endpoints;
 
-public static class StreamerEndpoints
+public static class StreamOptionEndpoints
 {
     public static void MapStreamerEndpoints(this IEndpointRouteBuilder builder)
     {

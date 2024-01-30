@@ -1,5 +1,6 @@
 ﻿using Application.Features.Streams.Commands.Create;
 using Application.Features.Streams.Commands.Update;
+using Application.Features.Streams.Queries.Get;
 using Application.Features.Streams.Queries.GetAll;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,13 @@ public static class StreamEndpoints
                 async (IMediator mediator) =>
                 {
                     return (await mediator.Send(new GetAllLiveStreamsQueryRequest())).ToHttpResponse();
+                })
+            .WithTags("Streams");
+
+        groupBuilder.MapGet("/{streamName}",
+                async (string streamName, IMediator mediator) =>
+                {
+                    return (await mediator.Send(new GetStreamViewerInfoQueryRequest(streamName))).ToHttpResponse();
                 })
             .WithTags("Streams");
 
