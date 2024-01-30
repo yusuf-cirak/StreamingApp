@@ -16,7 +16,7 @@ services:
       - ./database:/var/lib/postgresql/data
     networks:
       - streaming-app
-    
+
   redis:
     image: redis:latest
     container_name: redis
@@ -25,14 +25,30 @@ services:
       - "6379:6379"
     networks:
       - streaming-app
-  
+
   media-server:
     container_name: media-server
     restart: unless-stopped
     build: ./media-server
     ports:
       - "1935:1935"
-    networks: 
+      - "8080:8080"
+    networks:
+      - streaming-app
+    
+  
+  backend:
+    container_name: backend
+    restart: unless-stopped
+    build:
+      context: ./backend/src
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    
+    ports:
+      - "5117:8080"
+    networks:
       - streaming-app
 
 networks:

@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "backend", "backend", "{0FA737DF-6D7C-4A7E-B274-FD8895266285}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4E78F46D-FE3F-4624-AD83-17D2BDCA6C26}"
+	ProjectSection(SolutionItems) = preProject
+		backend\src\Dockerfile = backend\src\Dockerfile
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedKernel", "backend\src\SharedKernel\SharedKernel.csproj", "{2FCAD7AB-5614-45DD-AC8C-BA137765A1D9}"
 EndProject
