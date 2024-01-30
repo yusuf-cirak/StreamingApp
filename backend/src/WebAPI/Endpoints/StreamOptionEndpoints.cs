@@ -9,7 +9,7 @@ public static class StreamerEndpoints
 {
     public static void MapStreamerEndpoints(this IEndpointRouteBuilder builder)
     {
-        var groupBuilder = builder.MapGroup("api/streamers");
+        var groupBuilder = builder.MapGroup("api/stream-options");
 
 
         groupBuilder.MapPatch("/",
@@ -18,6 +18,6 @@ public static class StreamerEndpoints
                 {
                     return (await mediator.Send(updateStreamOptionCommandRequest)).ToHttpResponse();
                 })
-            .WithTags("Streamers");
+            .WithTags("StreamOptions");
     }
 }

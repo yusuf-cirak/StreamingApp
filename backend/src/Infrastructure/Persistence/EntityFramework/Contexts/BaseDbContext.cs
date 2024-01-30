@@ -14,7 +14,6 @@ public class BaseDbContext : DbContext
     public virtual DbSet<StreamOption> StreamOptions { get; set; }
     
     public virtual DbSet<StreamFollowerUser> StreamFollowerUsers { get; set; }
-    public virtual DbSet<StreamChatMessage> StreamChatMessages { get; set; }
     public virtual DbSet<StreamBlockedUser> StreamBlockedUsers { get; set; }
     public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
 

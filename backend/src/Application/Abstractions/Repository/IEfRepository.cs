@@ -24,7 +24,6 @@ public interface IEfRepository
     DbSet<StreamOption> StreamOptions { get; }
 
     DbSet<StreamBlockedUser> StreamBlockedUsers { get; }
-    DbSet<StreamChatMessage> StreamChatMessages { get; }
     DbSet<StreamFollowerUser> StreamFollowerUsers { get; }
 
     

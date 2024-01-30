@@ -10,8 +10,9 @@ public static class ClaimsPrincipalExtensions
         return result;
     }
 
-    public static List<string>? ClaimRoles(this ClaimsPrincipal claimsPrincipal) => claimsPrincipal?.Claims(ClaimTypes.Role);
+    public static List<string>? ClaimRoles(this ClaimsPrincipal claimsPrincipal) =>
+        claimsPrincipal?.Claims(ClaimTypes.Role);
 
     public static string GetUserId(this ClaimsPrincipal claimsPrincipal) =>
-        claimsPrincipal?.Claims(ClaimTypes.NameIdentifier)?.Single()!;
+        claimsPrincipal?.Claims(ClaimTypes.NameIdentifier)?.SingleOrDefault() ?? string.Empty;
 }
