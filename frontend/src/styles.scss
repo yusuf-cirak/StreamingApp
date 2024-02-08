@@ -8,6 +8,20 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+body {
+  height: 100%;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
 :root {
   --primary-text: #1a202c;
   --scroll-bar-color: #c5c5c5;
@@ -31,17 +45,8 @@
   background-color: #293443;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  height: 100%;
-  height: 100vh;
-  height: 100svh;
-  overflow: hidden;
+::-webkit-scrollbar-thumb:active {
+  background-color: #344153;
 }
 
 .sidebar-closed {
