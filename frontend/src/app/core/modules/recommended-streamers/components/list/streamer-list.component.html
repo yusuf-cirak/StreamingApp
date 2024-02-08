@@ -1,0 +1,5 @@
+@for (liveStreamer of liveStreamers(); track liveStreamers();) {
+<app-live-streamer [liveStreamer]="liveStreamer" />
+} @for (followingStreamer of followingStreamers(); track followingStreamers()) {
+<app-following-streamer [followingStreamer]="followingStreamer" />
+}

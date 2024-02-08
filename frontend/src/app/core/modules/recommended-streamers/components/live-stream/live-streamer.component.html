@@ -1,24 +1,22 @@
+@if (liveStreamer(); as liveStreamer) {
 <div
   class="flex flex-row justify-start items-center cursor-pointer hover:bg-muted-foreground px-5 h-12"
-  *ngIf="liveStream() as liveStream"
 >
   <img
     src="https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=Yusuf+Cirak"
     class="w-10 h-10 rounded-full"
     alt="user image"
     [ngClass]="{
-      'ring-2 ring-rose-500 border border-background': liveStream.id
+      'ring-2 ring-rose-500 border border-background': true
     }"
   />
   <span class="hideable text-white font-semibold px-5 truncate">
-    {{ liveStream.user.username }}
+    {{ liveStreamer.user.username }}
   </span>
 
   <span
     class="hideable text-white bg-rose-500 text-center p-0.5 px-1.5 rounded-md text-[10px] border border-background font-semibold tracking-wide w-10 ml-auto"
-    [ngClass]="{
-    'hidden': !liveStream.id,
-  }"
     >LIVE</span
   >
 </div>
+}

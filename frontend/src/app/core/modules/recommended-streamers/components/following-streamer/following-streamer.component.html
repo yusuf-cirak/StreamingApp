@@ -1,0 +1,17 @@
+@if (followingStreamer(); as followingStreamer) {
+<div
+  class="flex flex-row justify-start items-center cursor-pointer hover:bg-muted-foreground px-5 h-12"
+>
+  <img
+    src="https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=Yusuf+Cirak"
+    class="w-10 h-10 rounded-full"
+    alt="user image"
+    [ngClass]="{
+      'ring-2 ring-rose-500 border border-background': false
+    }"
+  />
+  <span class="hideable text-white font-semibold px-5 truncate">
+    {{ followingStreamer.user.username }}
+  </span>
+</div>
+}
