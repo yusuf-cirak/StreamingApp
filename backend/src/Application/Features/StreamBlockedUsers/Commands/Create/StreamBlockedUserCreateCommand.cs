@@ -40,7 +40,7 @@ public sealed class
         CancellationToken cancellationToken)
     {
         var streamBlockedUserExistResult =
-            await _streamBlockedUserBusinessRules.BlockedUserIsNotAlreadyBlocked(request.StreamerId,
+            await _streamBlockedUserBusinessRules.BlockedUserIsNotAlreadyBlockedAsync(request.StreamerId,
                 request.BlockedUserId, cancellationToken);
 
         if (streamBlockedUserExistResult.IsFailure)

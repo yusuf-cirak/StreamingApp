@@ -2,9 +2,9 @@
 
 namespace Application.Features.StreamOptions.Commands.Update;
 
-public sealed class UpdateStreamOptionCommandValidator : AbstractValidator<UpdateStreamOptionCommandRequest>
+public sealed class UpdateStreamTitleDescriptionCommandValidator : AbstractValidator<UpdateStreamTitleDescriptionCommandRequest>
 {
-    public UpdateStreamOptionCommandValidator()
+    public UpdateStreamTitleDescriptionCommandValidator()
     {
         RuleFor(u => u.StreamTitle).NotEmpty().NotNull().MinimumLength(1)
             .WithMessage("{PropertyName} should at least be {MinLength} characters long");

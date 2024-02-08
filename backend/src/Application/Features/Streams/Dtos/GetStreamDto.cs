@@ -3,4 +3,4 @@ using Application.Features.Users.Dtos;
 
 namespace Application.Features.Streams.Dtos;
 
-public record GetStreamDto(Guid Id, DateTime StartedAt, GetUserDto User, GetStreamOptionDto StreamOption);
+public sealed record GetStreamDto(Guid Id, GetUserDto User, GetStreamOptionDto? StreamOption);

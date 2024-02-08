@@ -8,7 +8,18 @@ namespace Application.Features.StreamOptions.Rules;
 
 public static class StreamOptionAuthorizationRules
 {
-    public static Result CanUserUpdateStreamer(HttpContext context, ICollection<Claim> claims, object request)
+    public static Result UserMustBeStreamer(HttpContext context, ICollection<Claim> claims, object request)
+    {
+        // Check if user is the streamer
+        if (IsUserStreamer(claims, request))
+        {
+            return Result.Success();
+        }
+
+        return Result.Failure(AuthorizationErrors.Unauthorized("User is not authorized to update stream"));
+    }
+
+    public static Result CanUserGetOrUpdateStreamOptions(HttpContext context, ICollection<Claim> claims, object request)
     {
         // Check if user is the streamer
         if (IsUserStreamer(claims, request))
@@ -29,11 +40,11 @@ public static class StreamOptionAuthorizationRules
             return Result.Success();
         }
 
-        return Result.Failure(AuthorizationErrors.Unauthorized("User is not authorized to update stream"));
+        return Result.Failure(AuthorizationErrors.Unauthorized("User is not authorized"));
     }
 
 
-    private static bool IsUserStreamer(ICollection<Claim> claims, object request)
+    public static bool IsUserStreamer(ICollection<Claim> claims, object request)
     {
         Guid userId = Guid.Parse(claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value ??
                                  string.Empty);

@@ -32,7 +32,7 @@ public readonly record struct StreamErrors
         "User is not the streamer");
 
     public static readonly Error StreamerNotExists = Error.Create("Stream.StreamerNotExists",
-        "Streamer does not exist");
+        "Either key or streamer not exists");
     
     public static readonly Error StreamIsLive = Error.Create("Stream.StreamIsLive",
         "Streamer is live");

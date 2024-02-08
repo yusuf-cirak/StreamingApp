@@ -11,7 +11,7 @@ public sealed class StreamBlockedUserBusinessRules : BaseBusinessRules
         _efRepository = efRepository;
     }
 
-    public async Task<Result> BlockedUserIsNotAlreadyBlocked(Guid streamerId, Guid blockedUserId,
+    public async Task<Result> BlockedUserIsNotAlreadyBlockedAsync(Guid streamerId, Guid blockedUserId,
         CancellationToken cancellationToken = default)
     {
         var isBlocked = await _efRepository

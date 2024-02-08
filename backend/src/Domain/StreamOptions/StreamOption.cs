@@ -1,11 +1,12 @@
 ﻿namespace Domain.Entities;
 
-public class StreamOption : Entity
+public class StreamOption : Entity, ICloneable
 {
-    public string StreamKey { get; init; }
-    public string StreamTitle { get; init; } = string.Empty;
+    public string StreamKey { get; set; } = string.Empty;
+    public string StreamTitle { get; set; } = string.Empty;
     public string StreamDescription { get; init; } = string.Empty;
 
+    public bool MustBeFollower { get; set; } = false;
     public bool ChatDisabled { get; set; } = false;
 
     public int ChatDelaySecond { get; set; } = 0;
@@ -30,5 +31,10 @@ public class StreamOption : Entity
         StreamOption streamOption = new(userId, streamKey, streamTitle, streamDescription);
 
         return streamOption;
+    }
+
+    public object Clone()
+    {
+        return Create(Id, this.StreamKey, this.StreamTitle, this.StreamDescription);
     }
 }

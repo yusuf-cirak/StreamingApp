@@ -21,13 +21,13 @@ public sealed class StreamService : IStreamService
     }
 
 
-    public async Task<Result<StreamOption, Error>> StreamerExistsAsync(Guid userId,
+    public async Task<Result<StreamOption, Error>> StreamerExistsAsync(string streamKey,
         CancellationToken cancellationToken = default)
     {
         var streamer = await _efRepository
             .StreamOptions
             .Include(s => s.Streamer)
-            .Where(s => s.Id == userId)
+            .Where(s => s.StreamKey == streamKey)
             .SingleOrDefaultAsync(cancellationToken: cancellationToken);
 
         if (streamer is null)
@@ -38,12 +38,13 @@ public sealed class StreamService : IStreamService
         return streamer;
     }
 
-    public async Task<Result> IsStreamerLiveAsync(Guid streamerId, CancellationToken cancellationToken)
+    public async Task<Result> IsStreamerLiveAsync(User user, string streamKey, CancellationToken cancellationToken)
     {
         var liveStreamers = (await _redisDatabase.Database.ListRangeAsync(RedisConstant.Key.LiveStreamers))
             .Select(ls => _redisDatabase.Serializer.Deserialize<GetStreamDto>(ls)).ToList();
 
-        var isStreamerLive = liveStreamers.Exists(ls => ls.User.Id == streamerId);
+        var isStreamerLive =
+            liveStreamers.Exists(ls => ls.StreamOption!.Value.StreamKey == streamKey || ls.User.Id == user.Id);
 
         return isStreamerLive ? Result.Failure(StreamErrors.StreamIsLive) : Result.Success();
     }
@@ -56,18 +57,17 @@ public sealed class StreamService : IStreamService
         return liveStreams;
     }
 
-    public Result<Guid,Error> GetUserIdFromStreamKey(string streamKey)
+    public Task<List<GetFollowingStreamDto>> GetFollowingStreamsAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        Guid.TryParse(_encryptionHelper.Decrypt(streamKey), out var userId);
+        var followingStreams = _efRepository
+            .StreamFollowerUsers
+            .Include(sfu => sfu.Streamer)
+            .Where(sfu => sfu.UserId == userId)
+            .Select(sfu => new GetFollowingStreamDto(sfu.Streamer.ToDto()))
+            .ToListAsync(cancellationToken: cancellationToken);
 
-        if (userId == Guid.Empty)
-        {
-            return Error.Create("Guid.Empty", "Failed to parse stream key");
-        }
-        
-        return userId;
+        return followingStreams;
     }
-
 
     public async Task<bool> StartNewStreamAsync(StreamOption streamOption, Stream stream,
         CancellationToken cancellationToken = default)
@@ -81,14 +81,25 @@ public sealed class StreamService : IStreamService
             return false;
         }
 
-        var getStreamDto = stream.ToDto(streamOption.Streamer.ToDto(), streamOption.ToDto());
+        var getStreamDto = stream.ToDto(stream.Id, streamOption.Streamer.ToDto(), streamOption.ToStreamOptionDto());
 
         var serializedStream = _redisDatabase.Serializer.Serialize(getStreamDto);
 
-        var index = await _redisDatabase.Database.ListRightPushAsync(RedisConstant.Key.LiveStreamers,
+        var redisIndex = await _redisDatabase.Database.ListRightPushAsync(RedisConstant.Key.LiveStreamers,
             serializedStream);
 
-        return insertResult > 0 && index > 0;
+
+        var newStreamKey = GenerateStreamKey(streamOption.Streamer);
+
+        var updateStreamKeyResult = await _efRepository.StreamOptions
+            .Where(st => st.Id == streamOption.Streamer.Id)
+            .ExecuteUpdateAsync(
+                streamer => streamer
+                    .SetProperty(x => x.StreamKey, x => newStreamKey),
+                cancellationToken:
+                cancellationToken);
+
+        return insertResult > 0 && redisIndex > 0;
     }
 
     public async Task<bool> EndStreamAsync(GetStreamDto stream, CancellationToken cancellationToken = default)
@@ -118,8 +129,9 @@ public sealed class StreamService : IStreamService
                 .SetProperty(s => s.EndedAt, DateTime.UtcNow), cancellationToken);
     }
 
-    private string GetStreamKeyFromUserId(Guid userId)
+    public string GenerateStreamKey(User streamer)
     {
-        return _encryptionHelper.Encrypt(userId.ToString());
+        var streamKeyText = $"{streamer.Username}-{DateTime.Now:dd-MM-YYYY:hh:mm}";
+        return _encryptionHelper.Encrypt(streamKeyText);
     }
 }

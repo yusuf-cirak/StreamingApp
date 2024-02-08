@@ -5,7 +5,7 @@ using Application.Features.StreamOptions.Rules;
 namespace Application.Features.StreamOptions.Commands.Update;
 
 // TODO: Update chat disabled, delay
-public readonly record struct UpdateStreamOptionCommandRequest
+public readonly record struct UpdateStreamTitleDescriptionCommandRequest
     : IStreamOptionCommandRequest, IRequest<HttpResult>, ISecuredRequest
 {
     public Guid StreamerId { get; init; }
@@ -13,13 +13,13 @@ public readonly record struct UpdateStreamOptionCommandRequest
     public string StreamDescription { get; init; }
     public AuthorizationFunctions AuthorizationFunctions { get; }
 
-    public UpdateStreamOptionCommandRequest()
+    public UpdateStreamTitleDescriptionCommandRequest()
     {
         AuthorizationFunctions =
-            [StreamOptionAuthorizationRules.CanUserUpdateStreamer];
+            [StreamOptionAuthorizationRules.CanUserGetOrUpdateStreamOptions];
     }
 
-    public UpdateStreamOptionCommandRequest(Guid streamerId, string streamTitle, string streamDescription) : this()
+    public UpdateStreamTitleDescriptionCommandRequest(Guid streamerId, string streamTitle, string streamDescription) : this()
     {
         StreamerId = streamerId;
         StreamTitle = streamTitle;
@@ -27,18 +27,18 @@ public readonly record struct UpdateStreamOptionCommandRequest
     }
 }
 
-public sealed class UpdateStreamOptionCommandHandler : IRequestHandler<UpdateStreamOptionCommandRequest, HttpResult>
+public sealed class UpdateStreamTitleDescriptionCommandHandler : IRequestHandler<UpdateStreamTitleDescriptionCommandRequest, HttpResult>
 {
     private readonly IEfRepository _efRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public UpdateStreamOptionCommandHandler(IEfRepository efRepository, IHttpContextAccessor httpContextAccessor)
+    public UpdateStreamTitleDescriptionCommandHandler(IEfRepository efRepository, IHttpContextAccessor httpContextAccessor)
     {
         _efRepository = efRepository;
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<HttpResult> Handle(UpdateStreamOptionCommandRequest request, CancellationToken cancellationToken)
+    public async Task<HttpResult> Handle(UpdateStreamTitleDescriptionCommandRequest request, CancellationToken cancellationToken)
     {
         var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.GetUserId());
 

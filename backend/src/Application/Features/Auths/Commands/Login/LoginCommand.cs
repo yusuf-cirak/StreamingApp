@@ -66,8 +66,8 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommandRequest, H
 
         await _efRepository.SaveChangesAsync(cancellationToken);
 
-
-                var authResponseDto = new AuthResponseDto(user.Id,user.Username,user.ProfileImageUrl,accessToken.Token, refreshToken.Token, accessToken.Expiration,claims:[]);
+        var authResponseDto = new AuthResponseDto(user.Id, user.Username, user.ProfileImageUrl, accessToken.Token,
+            refreshToken.Token, accessToken.Expiration, claims: claimsDictionary);
 
         return authResponseDto;
     }

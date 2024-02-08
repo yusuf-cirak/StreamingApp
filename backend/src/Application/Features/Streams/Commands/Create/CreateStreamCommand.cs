@@ -21,50 +21,43 @@ public readonly record struct CreateStreamCommandRequest : IStreamCommandRequest
 
 public sealed class CreateStreamCommandHandler : IRequestHandler<CreateStreamCommandRequest, HttpResult<string>>
 {
-    private readonly IEfRepository _efRepository;
     private readonly IStreamService _streamService;
 
-    public CreateStreamCommandHandler(IEfRepository efRepository, IStreamService streamService)
+    public CreateStreamCommandHandler(IStreamService streamService)
     {
-        _efRepository = efRepository;
         _streamService = streamService;
     }
 
-    public async Task<HttpResult<string>> Handle(CreateStreamCommandRequest request, CancellationToken cancellationToken)
+    public async Task<HttpResult<string>> Handle(CreateStreamCommandRequest request,
+        CancellationToken cancellationToken)
     {
-        var streamerIdResult = _streamService.GetUserIdFromStreamKey(request.StreamKey);
         
-        if (streamerIdResult.IsFailure)
+        var streamOptionResult = await _streamService.StreamerExistsAsync(request.StreamKey, cancellationToken);
+
+        if (streamOptionResult.IsFailure)
         {
-            return streamerIdResult.Error;
+            return streamOptionResult.Error;
         }
         
-        var streamerId = streamerIdResult.Value;
+        var streamOptions = streamOptionResult.Value;
 
-        var streamerResult = await _streamService.StreamerExistsAsync(streamerId, cancellationToken);
+        var streamer = streamOptions.Streamer;
 
-        if (streamerResult.IsFailure)
-        {
-            return streamerResult.Error;
-        }
-
-        var isStreamerLiveResult = await _streamService.IsStreamerLiveAsync(streamerId, cancellationToken);
+        var isStreamerLiveResult = await _streamService.IsStreamerLiveAsync(streamer,request.StreamKey, cancellationToken);
 
         if (isStreamerLiveResult.IsFailure)
         {
             return isStreamerLiveResult.Error;
         }
 
-        var stream = Stream.Create(streamerId);
+        var stream = Stream.Create(streamer.Id);
 
-        var streamer = streamerResult.Value;
-
-        var isStreamStarted = await _streamService.StartNewStreamAsync(streamer, stream, cancellationToken);
+        var isStreamStarted = await _streamService.StartNewStreamAsync(streamOptions, stream, cancellationToken);
 
         //TODO: Add event to notify users that stream has started
 
         return isStreamStarted
-            ? HttpResult<string>.Success(streamer.Streamer.Username)
+            ? HttpResult<string>.Success(streamer.Username)
             : StreamErrors.FailedToCreateStream;
     }
 }
