@@ -14,7 +14,12 @@
   ></app-tab-panel>
 </ng-template>
 <ng-template #formTemplateRef>
-  <form class="w-full" [formGroup]="form" (ngSubmit)="submit()">
+  <form
+    class="w-full"
+    [formGroup]="form"
+    (ngSubmit)="submit()"
+    [autofocus]="true"
+  >
     <app-input
       [control]="form.controls.username"
       inputType="text"
@@ -35,7 +40,7 @@
       class="focus:outline-none rounded text-white bg-wp-green hover:opacity-90 w-full h-10 bg-slate-600 disabled:opacity-40"
     >
       <span class="flex items-center justify-center w-full h-full">
-        @if (form.disabled) {
+        @if (formSubmitted()) {
         <app-loading-icon></app-loading-icon>
         }@else {
         <span>{{ activeTab() }}</span>

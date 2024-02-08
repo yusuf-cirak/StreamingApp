@@ -69,6 +69,9 @@ export class AuthComponent {
     password: ['', [minLength(4, 'Password')]],
   });
 
+  #formSubmitted = signal(false);
+  formSubmitted = this.#formSubmitted.asReadonly();
+
   emitCloseModalClicked() {
     this.closeModalClicked.emit();
   }
@@ -87,16 +90,17 @@ export class AuthComponent {
       return;
     }
     this.form.disable();
+    this.#formSubmitted.set(true);
 
     if (this.activeTab() === 'Login') {
-      return this.login();
+      this.login();
+    } else {
+      this.register();
     }
-
-    return this.register();
   }
 
   login() {
-    return this.authService
+    this.authService
       .login(this.form.value as UserLoginDto)
       .pipe(takeUntilDestroyed(this.#destroyRef))
       .subscribe({
@@ -110,7 +114,7 @@ export class AuthComponent {
   }
 
   register() {
-    return this.authService
+    this.authService
       .register(this.form.value as UserRegisterDto)
       .pipe(takeUntilDestroyed(this.#destroyRef))
       .subscribe({
@@ -124,11 +128,12 @@ export class AuthComponent {
   }
 
   showErrorAndEnableForm(error: any) {
+    this.form.enable();
+    this.#formSubmitted.set(false);
     this.toastrService.error(
       error?.error?.detail || 'Something went wrong',
       'Error'
     );
-    this.form.enable();
   }
 
   setUserAndEnableForm(user: UserAuthDto) {
@@ -141,5 +146,6 @@ export class AuthComponent {
     this.emitCloseModalClicked();
     this.form.reset();
     this.form.enable();
+    this.#formSubmitted.set(false);
   }
 }

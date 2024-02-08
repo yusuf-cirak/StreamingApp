@@ -22,7 +22,7 @@ export class AuthService {
   }
 
   setUser(user: CurrentUser) {
-    this.#user.set(user);
+    this.#user.update(() => user);
     localStorage.setItem('user', JSON.stringify(user));
   }
 
