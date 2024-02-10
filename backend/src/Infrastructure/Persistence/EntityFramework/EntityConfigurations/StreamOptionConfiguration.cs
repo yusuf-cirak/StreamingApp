@@ -21,6 +21,8 @@ namespace Infrastructure.Persistence.EntityFramework.EntityConfigurations
 
             builder.Property(u => u.ChatDisabled).HasColumnName("ChatDisabled").IsRequired().HasDefaultValue(false);
 
+            builder.Property(u => u.MustBeFollower).HasColumnName("MustBeFollower").IsRequired().HasDefaultValue(false);
+
             builder.Property(u => u.ChatDelaySecond).HasColumnName("ChatDelaySecond").IsRequired().HasDefaultValue(0);
 
             builder.HasOne(u => u.Streamer).WithOne().HasForeignKey<StreamOption>(u => u.Id);
