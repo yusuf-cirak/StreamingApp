@@ -1,4 +1,5 @@
 import { Route } from '@angular/router';
+import { streamStateResolver } from '../../modules/streams/resolvers/stream-state.resolver';
 
 export const mainRoutes: Route[] = [
   {
@@ -9,9 +10,12 @@ export const mainRoutes: Route[] = [
       import('@streaming-app/layouts/main').then((m) => m.MainLayout),
   },
   {
-    path: ':streamer',
+    path: ':streamerName',
     pathMatch: 'full',
     canActivate: [],
+    resolve: {
+      streamState: streamStateResolver,
+    },
     loadComponent: () =>
       import('@streaming-app/layouts/main').then((m) => m.MainLayout),
   },

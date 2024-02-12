@@ -11,7 +11,9 @@
 
     <div class="main w-full h-full overflow-y-auto">
       <!-- <router-outlet></router-outlet> -->
-      <app-stream></app-stream>
+      @if (streamerName(); as streamerName) {
+      <app-stream />
+      }
     </div>
   </div>
 </main>

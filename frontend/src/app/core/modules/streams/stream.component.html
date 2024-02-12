@@ -1,3 +1,4 @@
+@if (streamState(); as streamState) {
 <div
   class="flex flex-col sm:flex-row w-full h-full overflow-y-auto"
   [autofocus]="true"
@@ -6,7 +7,6 @@
     <div
       class="w-full h-full sm:h-[80%] flex flex-col items-center justify-center"
     >
-      @if (hlsUrl(); as hlsUrl) {
       <vg-player #player (onPlayerReady)="onPlayerReady($event)">
         <vg-overlay-play vgFor="stream"></vg-overlay-play>
         <vg-buffering></vg-buffering>
@@ -31,11 +31,10 @@
           #media
           id="stream"
           preload="auto"
-          [vgHls]="hlsUrl"
+          [vgHls]="streamFacade.getHlsUrl(streamState.options.streamKey)"
           crossorigin
         ></video>
       </vg-player>
-      }
     </div>
     <div class="hidden sm:block w-full h-[20%] bg-slate-200"></div>
   </div>
@@ -43,3 +42,4 @@
     <app-chat-sidebar></app-chat-sidebar>
   </div>
 </div>
+}

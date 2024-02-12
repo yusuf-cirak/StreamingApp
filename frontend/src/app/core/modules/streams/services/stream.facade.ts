@@ -1,12 +1,15 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { StreamService } from './stream.service';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class StreamFacade {
-  #stream = signal<any>(undefined);
+  readonly streamService = inject(StreamService);
 
-  readonly stream = this.#stream.asReadonly();
+  getStreamInfo(streamerName: string) {
+    return this.streamService.getStreamInfo(streamerName);
+  }
 
-  setStream(stream: any) {
-    this.#stream.set(stream);
+  getHlsUrl(streamKey: string) {
+    return this.streamService.getHlsUrl(streamKey);
   }
 }

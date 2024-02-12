@@ -8,4 +8,5 @@ export interface CurrentUser extends User {
   refreshToken: string;
   roles: UserRoleDto[];
   operationClaims: UserOperationClaimDto[];
+  followingStreamers?: string[];
 }
