@@ -1,3 +1,4 @@
+import { StreamApiOption } from "src/shared/models/stream-api.option";
 import { RedisOption } from "./../src/shared/models/redis.option";
 export default () => ({
   redis: {
@@ -5,5 +6,8 @@ export default () => ({
     port: process.env.REDIS_PORT || 6379,
     // password: process.env.REDIS_PASSWORD || "password",
   } as RedisOption,
-  streamApiUrl: process.env.STREAM_API_URL || "http://localhost:5117/api",
+  streamApi: {
+    baseUrl: process.env.STREAM_API_BASE_URL || "http://localhost:8080/api",
+    key: process.env.STREAM_API_KEY || "key",
+  } as StreamApiOption,
 });

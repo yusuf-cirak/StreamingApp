@@ -1,4 +1,4 @@
-import { Body, Controller, Patch, Post, Res } from "@nestjs/common";
+import { Body, Controller, Post, Res, UseInterceptors } from "@nestjs/common";
 import { PublishStreamDto } from "./models/publish-stream-dto";
 import { catchError, of, tap } from "rxjs";
 import { StreamProxyService } from "./services/stream-proxy.service";
@@ -11,12 +11,10 @@ export class StreamController {
   @Post("publish")
   publishStream(@Body() streamInfo: PublishStreamDto, @Res() res: Response) {
     return this.streamProxyService.publishStream(streamInfo.name).pipe(
-      tap((streamerName) => {
-        console.log(`Stream started for ${streamerName}`);
-        return of(res.status(200).send(streamerName));
+      tap((response) => {
+        return of(res.status(200).send(response.data));
       }),
       catchError((err) => {
-        console.log(err);
         return of(res.status(401).send(err));
       }),
     );
