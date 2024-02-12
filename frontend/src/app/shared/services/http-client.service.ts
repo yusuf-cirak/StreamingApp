@@ -25,6 +25,13 @@ export class HttpClientService {
       ternany operator : action var mı? varsa /action şeklinde ekle, yoksa bir şey ekleme.
       */
 
+      url += requestParameter.routeParams
+        ? requestParameter.routeParams.reduce(
+            (acc, curr) => `${acc}/${curr}`,
+            ''
+          )
+        : '';
+
       url += `${idParam ? `/${idParam}` : ''}${
         requestParameter.queryString ? `?${requestParameter.queryString}` : ''
       }`;
@@ -79,12 +86,13 @@ export interface RequestParameter {
   action?: string;
 
   // Http header,query string, baseUrl
-  queryString?: string;
+  queryString: string;
+  routeParams: string[];
   headers: HttpHeaders;
-  baseUrl?: string;
+  baseUrl: string;
 
   // Other services (might have different routes)
-  fullEndPoint?: string; // Dış dünyayla iletişime geçmemiz gerekebilir, dış dünyadaki servisin route'ı bizimkiyle uyuşmayabilir.
-  withCredentials?: boolean;
+  fullEndPoint: string; // Dış dünyayla iletişime geçmemiz gerekebilir, dış dünyadaki servisin route'ı bizimkiyle uyuşmayabilir.
+  withCredentials: boolean;
   responseType: string;
 }
