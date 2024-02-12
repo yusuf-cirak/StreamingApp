@@ -1,9 +1,14 @@
 @if (liveStreamer(); as liveStreamer) {
 <div
-  class="flex flex-row justify-start items-center cursor-pointer hover:bg-muted-foreground px-5 h-12"
+  class="flex flex-row justify-start items-center cursor-pointer hover:bg-muted-foreground px-5 h-12 hover:bg-gray-600"
 >
   <img
-    src="https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=Yusuf+Cirak"
+    [src]="
+      !!liveStreamer.user.profileImageUrl
+        ? liveStreamer.user.profileImageUrl
+        : 'https://ui-avatars.com/api/?background=random&name=' +
+          liveStreamer.user.username
+    "
     class="w-10 h-10 rounded-full"
     alt="user image"
     [ngClass]="{
