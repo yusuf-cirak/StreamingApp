@@ -10,6 +10,7 @@ public interface IStreamService : IDomainService<Stream>
 
     Task<bool> StartNewStreamAsync(StreamOption streamOption, Stream stream, CancellationToken cancellationToken);
     Task<List<GetStreamDto>> GetLiveStreamsAsync();
+    Task<Result<GetStreamDto, Error>> GetLiveStreamerByNameAsync(string streamerName);
     Task<List<GetFollowingStreamDto>> GetFollowingStreamsAsync(Guid userId, CancellationToken cancellationToken);
 
     Task<bool> EndStreamAsync(GetStreamDto stream, CancellationToken cancellationToken);

@@ -4,11 +4,11 @@ using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Helpers.Security.Encryption;
 
-public sealed class EncryptionHelper : IEncryptionHelper
+public sealed class XorEncryptionHelper : IEncryptionHelper
 {
     private readonly byte[] _key;
 
-    public EncryptionHelper(IConfiguration configuration)
+    public XorEncryptionHelper(IConfiguration configuration)
     {
         _key = Encoding.UTF8.GetBytes(configuration.GetSection("EncryptionKey").Get<string>()!);
     }

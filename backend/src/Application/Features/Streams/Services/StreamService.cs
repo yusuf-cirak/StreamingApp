@@ -57,7 +57,22 @@ public sealed class StreamService : IStreamService
         return liveStreams;
     }
 
-    public Task<List<GetFollowingStreamDto>> GetFollowingStreamsAsync(Guid userId, CancellationToken cancellationToken = default)
+    public async Task<Result<GetStreamDto, Error>> GetLiveStreamerByNameAsync(string streamerName)
+    {
+        var liveStream = (await _redisDatabase.Database.ListRangeAsync(RedisConstant.Key.LiveStreamers))
+            .Select(ls => _redisDatabase.Serializer.Deserialize<GetStreamDto>(ls))
+            .FirstOrDefault(stream => stream.User.Username == streamerName);
+
+        if (liveStream is null)
+        {
+            return StreamErrors.StreamIsNotLive;
+        }
+
+        return liveStream;
+    }
+
+    public Task<List<GetFollowingStreamDto>> GetFollowingStreamsAsync(Guid userId,
+        CancellationToken cancellationToken = default)
     {
         var followingStreams = _efRepository
             .StreamFollowerUsers

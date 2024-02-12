@@ -31,14 +31,14 @@ public static class ServiceRegistration
             opt.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 
             opt.UseNpgsql(configuration.GetConnectionString("Postgres"),
-                sqlOpt => { sqlOpt.EnableRetryOnFailure(maxRetryCount: 3); })
-            .AddInterceptors(auditableEntityDateInterceptor, domainEventToOutboxMessageInterceptor);
+                    sqlOpt => { sqlOpt.EnableRetryOnFailure(maxRetryCount: 3); })
+                .AddInterceptors(auditableEntityDateInterceptor, domainEventToOutboxMessageInterceptor);
         }, poolSize: 100);
 
 
         services.AddSingleton<IJwtHelper, JwtHelper>();
         services.AddSingleton<IHashingHelper, HashingHelper>();
-        services.AddSingleton<IEncryptionHelper, EncryptionHelper>();
+        services.AddSingleton<IEncryptionHelper, AesEncryptionHelper>();
 
         services.AddQuartzBackgroundJob();
     }

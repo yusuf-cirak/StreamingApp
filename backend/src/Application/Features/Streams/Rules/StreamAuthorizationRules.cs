@@ -5,7 +5,7 @@ namespace Application.Features.Streams.Rules;
 
 public static class StreamAuthorizationRules
 {
-    public const string HeaderApiKey = "X-Api-Key";
+    private const string HeaderApiKey = "X-Api-Key";
 
     public static Result RequesterMustHaveValidApiKey(HttpContext context, ICollection<Claim> claims, object request)
     {

@@ -33,5 +33,5 @@ public static class MappingExtensions
 
     public static GetStreamDto ToDto(this Stream stream, Guid streamId, GetUserDto userDto,
         GetStreamOptionDto? streamOptionDto) =>
-        new(streamId, userDto, streamOptionDto);
+        new(streamId, stream.StartedAt, userDto, streamOptionDto);
 }
