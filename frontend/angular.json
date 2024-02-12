@@ -58,7 +58,9 @@
               "namedChunks": false,
               "extractLicenses": true,
               "optimization": true,
-              "sourceMap": false
+              "sourceMap": false,
+              "ssr": false,
+              "prerender": false
             },
             "development": {
               "optimization": false,
