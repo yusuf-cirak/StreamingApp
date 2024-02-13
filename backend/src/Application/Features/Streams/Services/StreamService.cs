@@ -63,12 +63,24 @@ public sealed class StreamService : IStreamService
             .Select(ls => _redisDatabase.Serializer.Deserialize<GetStreamDto>(ls))
             .FirstOrDefault(stream => stream.User.Username == streamerName);
 
-        if (liveStream is null)
-        {
-            return StreamErrors.StreamIsNotLive;
+
+        if (liveStream is not null){
+            return liveStream;
         }
 
-        return liveStream;
+        var streamerExists = await _efRepository
+            .StreamOptions
+            .Include(s => s.Streamer)
+            .Where(s => s.Streamer.Username == streamerName)
+            .AnyAsync();
+
+
+        if (!streamerExists)
+        {
+            return StreamErrors.StreamerNotExists;
+        }
+
+        return StreamErrors.StreamIsNotLive;
     }
 
     public Task<List<GetFollowingStreamDto>> GetFollowingStreamsAsync(Guid userId,
