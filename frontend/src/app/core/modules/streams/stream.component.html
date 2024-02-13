@@ -1,45 +1,12 @@
-@if (streamState(); as streamState) {
-<div
-  class="flex flex-col sm:flex-row w-full h-full overflow-y-auto"
-  [autofocus]="true"
->
-  <div class="w-full sm:w-[80%] h-full">
-    <div
-      class="w-full h-full sm:h-[80%] flex flex-col items-center justify-center"
-    >
-      <vg-player #player (onPlayerReady)="onPlayerReady($event)">
-        <vg-overlay-play vgFor="stream"></vg-overlay-play>
-        <vg-buffering></vg-buffering>
+@if (streamState()?.stream; as liveStream) {
+<app-live-stream [liveStream]="liveStream"></app-live-stream>
+}
 
-        <vg-controls>
-          <vg-play-pause></vg-play-pause>
-          <vg-playback-button></vg-playback-button>
-
-          <vg-time-display
-            vgProperty="current"
-            vgFormat="mm:ss"
-          ></vg-time-display>
-
-          <vg-scrub-bar style="pointer-events: none"></vg-scrub-bar>
-
-          <vg-mute></vg-mute>
-          <vg-volume></vg-volume>
-          <vg-fullscreen></vg-fullscreen>
-        </vg-controls>
-        <video
-          [vgMedia]="$any(media)"
-          #media
-          id="stream"
-          preload="auto"
-          [vgHls]="streamFacade.getHlsUrl(streamState.options.streamKey)"
-          crossorigin
-        ></video>
-      </vg-player>
-    </div>
-    <div class="hidden sm:block w-full h-[20%] bg-slate-200"></div>
-  </div>
-  <div class="chat-sidebar w-full sm:w-[20%] h-full bg-gray-800 pt-4 sm:pt-0">
-    <app-chat-sidebar></app-chat-sidebar>
-  </div>
-</div>
+@if (streamState()?.error; as streamError) {
+  @if (streamError.statusCode===400) {
+      <app-offline-stream [streamError]="streamError"></app-offline-stream>
+  }
+  @else {
+    <app-not-found-stream></app-not-found-stream>
+  }
 }

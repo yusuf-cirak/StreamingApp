@@ -1,6 +1,7 @@
-export type StreamState = {
-  streamerId: string;
-  enabled: boolean;
-  delaySecond: number;
-  followersOnly: boolean;
-};
+import { Error } from '../../../../shared/api/error';
+import { LiveStreamDto } from '../../recommended-streamers/models/live-stream-dto';
+
+export interface StreamState {
+  stream?: LiveStreamDto;
+  error?: Error;
+}
