@@ -1,8 +1,8 @@
-@if (streamState(); as streamState) {
+@if (liveStream(); as liveStream) {
 
 <div class="w-full h-full flex flex-col items-center p-3">
-  @if (streamState.followersOnly) {
-  <app-hint class="w-full" [text]="'Followers only'"></app-hint>
+  @if (userChatErrorMessage(); as errorMessage) {
+  <app-hint class="w-full" [text]="errorMessage"></app-hint>
   }
   <input
     #searchInput
@@ -13,7 +13,7 @@
     [value]="message()"
     [autofocus]="true"
     [ngClass]="{
-      'rounded-t-none border-t-0': streamState.followersOnly,
+      'rounded-t-none border-t-0': !!userChatErrorMessage(),
     }"
   />
   <button

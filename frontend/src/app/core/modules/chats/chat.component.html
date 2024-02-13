@@ -1,20 +1,24 @@
-@if (chatState(); as chatState) {
+@if (liveStream(); as liveStream) {
 <div class="w-full h-full flex flex-col">
-  @if (!chatState.enabled) {
+  @if (liveStream?.options?.chatDisabled) {
   <ng-container [ngTemplateOutlet]="chatDisabledTemplate"></ng-container>
-  }@else {
+  }
+  @else {
   <ng-container [ngTemplateOutlet]="chatTemplate"></ng-container>
   }
 </div>
 }
 
 <ng-template #chatTemplate>
-  <div class="w-full h-[80%] items-start justify-end flex flex-col">
-    <app-chat-list></app-chat-list>
-  </div>
-  <div class="w-full h-[20%]">
-    <app-chat-form [chatState]="chatState()"></app-chat-form>
-  </div>
+  <app-chat-list
+    class="w-full h-[80%] max-h-[80%] items-start flex flex-col"
+    [messages]="chatMessages()"
+  />
+  <app-chat-form
+    class="w-full h-[20%]"
+    [liveStream]="liveStream()"
+    (messageSend)="onMessageSend($event)"
+  ></app-chat-form>
 </ng-template>
 
 <ng-template #chatDisabledTemplate>
@@ -22,7 +26,5 @@
     <app-chat-disabled-icon class="text-white"></app-chat-disabled-icon>
     <div class="text-white">Chat is disabled</div>
   </div>
-  <div class="w-full h-[20%]">
-    <app-chat-form [chatState]="chatState()"></app-chat-form>
-  </div>
+  <app-chat-form class="w-full h-[20%]" [liveStream]="liveStream()" />
 </ng-template>

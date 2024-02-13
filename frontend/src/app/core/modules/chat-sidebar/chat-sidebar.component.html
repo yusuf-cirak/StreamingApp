@@ -19,7 +19,8 @@
   </div>
   <app-chat
     class="flex w-full h-[95%] max-h-[95%]"
-    [streamState]="streamState()"
+    [liveStream]="liveStream()"
+    (messageSend)="onMessageSend($event)"
   />
 </div>
 }

@@ -3,15 +3,17 @@ import {
   EventEmitter,
   HostListener,
   Output,
+  computed,
   inject,
   input,
   signal,
 } from '@angular/core';
-import { StreamState } from '../../../streams/models/stream-state';
 import { RippleModule } from 'primeng/ripple';
 import { NgClass } from '@angular/common';
 import { HintComponent } from '../../../../components/hint/hint.component';
 import { AuthService } from '../../../../services';
+import { LiveStreamDto } from '../../../recommended-streamers/models/live-stream-dto';
+import { ChatAuthService } from '../../services/chat-auth.service';
 
 @Component({
   selector: 'app-chat-form',
@@ -20,9 +22,15 @@ import { AuthService } from '../../../../services';
   templateUrl: './chat-form.component.html',
 })
 export class ChatFormComponent {
-  streamState = input.required<StreamState>();
+  liveStream = input.required<LiveStreamDto>();
+
+  chatOptions = computed(() => this.liveStream().options);
 
   readonly authService = inject(AuthService);
+
+  readonly chatAuthService = inject(ChatAuthService);
+
+  readonly userChatErrorMessage = computed(() => this.chatAuthService.canUserSendMessage(this.liveStream()));
 
   message = signal<string>('');
 
@@ -30,12 +38,12 @@ export class ChatFormComponent {
 
   @HostListener('document:keydown.enter', ['$event'])
   onEnter() {
-    const streamState = this.streamState();
+    const chatOptions = this.chatOptions();
     const message = this.message();
-    if (streamState.enabled && message) {
+    if (!chatOptions.chatDisabled && message) {
       setTimeout(() => {
         this.sendMessage();
-      }, streamState.delaySecond * 1000);
+      }, chatOptions.chatDelaySecond * 1000);
     }
   }
 
