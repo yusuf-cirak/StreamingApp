@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { StreamerProxyService } from './recommended-streamer.proxy.service';
-import { forkJoin, map, tap } from 'rxjs';
+import { forkJoin, map, of, tap } from 'rxjs';
 import { LiveStreamDto } from '../models/live-stream-dto';
 import { FollowingStreamerDto } from '../models/following-stream-dto';
 import { AuthService } from '@streaming-app/core';
@@ -25,7 +25,7 @@ export class RecommendedStreamersService {
       liveStreamersResult: this.getLiveStreamers(),
       followingStreamersResult: this.authService.isAuthenticated()
         ? this.getFollowingStreamers()
-        : [],
+        : of([]),
     }).pipe(
       map(({ liveStreamersResult, followingStreamersResult }) => {
         // Exclude live streamers from following streamers

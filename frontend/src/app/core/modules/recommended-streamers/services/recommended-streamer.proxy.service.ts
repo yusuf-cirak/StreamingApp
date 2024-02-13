@@ -12,14 +12,14 @@ export class StreamerProxyService {
 
   getLiveStreamers(): Observable<LiveStreamDto[]> {
     return this.httpClientService.get<LiveStreamDto[]>({
-      controller: 'streamers',
+      controller: 'streams',
       action: 'live',
     });
   }
 
   getFollowingStreamers(): Observable<FollowingStreamerDto[]> {
     return this.httpClientService.get<FollowingStreamerDto[]>({
-      controller: 'streamers',
+      controller: 'streams',
       action: 'following',
     });
   }
