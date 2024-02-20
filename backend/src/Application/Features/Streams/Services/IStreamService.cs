@@ -7,6 +7,7 @@ public interface IStreamService : IDomainService<Stream>
 {
     Task<Result<StreamOption, Error>> StreamerExistsAsync(string streamKey, CancellationToken cancellationToken);
     Task<Result> IsStreamerLiveAsync(User user, string streamKey, CancellationToken cancellationToken);
+    Task<Result<GetStreamDto, Error>> GetLiveStreamerByKeyAsync(string streamerKey);
 
     Task<bool> StartNewStreamAsync(StreamOption streamOption, Stream stream, CancellationToken cancellationToken);
     Task<List<GetStreamDto>> GetLiveStreamsAsync();

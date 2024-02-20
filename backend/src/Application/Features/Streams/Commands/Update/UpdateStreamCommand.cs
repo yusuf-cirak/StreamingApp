@@ -7,7 +7,7 @@ namespace Application.Features.Streams.Commands.Update;
 public readonly record struct UpdateStreamCommandRequest : IStreamCommandRequest, IRequest<HttpResult>,
     IApiSecuredRequest
 {
-    public string Username { get; init; }
+    public string StreamKey { get; init; }
     public AuthorizationFunctions AuthorizationFunctions { get; }
 
     public UpdateStreamCommandRequest()
@@ -18,23 +18,16 @@ public readonly record struct UpdateStreamCommandRequest : IStreamCommandRequest
 
 public sealed class UpdateStreamCommandHandler : IRequestHandler<UpdateStreamCommandRequest, HttpResult>
 {
-    private readonly IEfRepository _efRepository;
     private readonly IStreamService _streamService;
-    private readonly StreamBusinessRules _streamBusinessRules;
 
-    public UpdateStreamCommandHandler(IEfRepository efRepository, IStreamService streamService,
-        StreamBusinessRules streamBusinessRules)
+    public UpdateStreamCommandHandler(IStreamService streamService)
     {
-        _efRepository = efRepository;
         _streamService = streamService;
-        _streamBusinessRules = streamBusinessRules;
     }
 
     public async Task<HttpResult> Handle(UpdateStreamCommandRequest request, CancellationToken cancellationToken)
     {
-        var liveStreams = await _streamService.GetLiveStreamsAsync();
-
-        var streamLiveResult = _streamBusinessRules.IsStreamLive(liveStreams, request.Username);
+        var streamLiveResult = await _streamService.GetLiveStreamerByKeyAsync(request.StreamKey);
 
         if (streamLiveResult.IsFailure)
         {

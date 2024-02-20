@@ -52,10 +52,9 @@ public static class StreamOptionEndpoints
         
         
         groupBuilder.MapGet("/key",
-                async ([FromBody] GetStreamKeyQueryRequest getStreamKeyQueryRequest,
-                    IMediator mediator) =>
+                async (IMediator mediator) =>
                 {
-                    return (await mediator.Send(getStreamKeyQueryRequest)).ToHttpResponse();
+                    return (await mediator.Send(new GetStreamKeyQueryRequest())).ToHttpResponse();
                 })
             .WithTags("StreamOptions");
 

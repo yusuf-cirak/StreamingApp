@@ -83,6 +83,21 @@ public sealed class StreamService : IStreamService
         return StreamErrors.StreamIsNotLive;
     }
 
+
+        public async Task<Result<GetStreamDto, Error>> GetLiveStreamerByKeyAsync(string streamerKey)
+    {
+        var liveStream = (await _redisDatabase.Database.ListRangeAsync(RedisConstant.Key.LiveStreamers))
+            .Select(ls => _redisDatabase.Serializer.Deserialize<GetStreamDto>(ls))
+            .FirstOrDefault(stream => stream.StreamOption.Value.StreamKey == streamerKey);
+
+
+        if (liveStream is not null) {
+            return liveStream;
+        }
+
+        return StreamErrors.StreamIsNotLive;
+    }
+
     public Task<List<GetFollowingStreamDto>> GetFollowingStreamsAsync(Guid userId,
         CancellationToken cancellationToken = default)
     {
