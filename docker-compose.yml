@@ -59,7 +59,7 @@ services:
       context: ./backend/src
       dockerfile: Dockerfile
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Docker
 
     ports:
       - "5117:8080"
