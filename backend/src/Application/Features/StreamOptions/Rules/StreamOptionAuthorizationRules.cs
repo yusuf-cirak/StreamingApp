@@ -49,14 +49,14 @@ public static class StreamOptionAuthorizationRules
         Guid userId = Guid.Parse(claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value ??
                                  string.Empty);
 
-        Guid streamerId = ((IStreamOptionCommandRequest)request).StreamerId;
+        Guid streamerId = ((IStreamOptionRequest)request).StreamerId;
 
         return userId == streamerId;
     }
 
     private static bool IsUserModeratorOfStreamByRole(ICollection<Claim> claims, object request)
     {
-        string streamerIdString = ((IStreamOptionCommandRequest)request).StreamerId.ToString();
+        string streamerIdString = ((IStreamOptionRequest)request).StreamerId.ToString();
 
         string rolesString = claims.First(c => c.Type == "Roles").Value;
         List<GetUserRoleDto> roleClaims = JsonSerializer.Deserialize<List<GetUserRoleDto>>(rolesString);
@@ -67,7 +67,7 @@ public static class StreamOptionAuthorizationRules
 
     private static bool IsUserModeratorOfStreamByOperationClaim(ICollection<Claim> claims, object request)
     {
-        string streamerIdString = ((IStreamOptionCommandRequest)request).StreamerId.ToString();
+        string streamerIdString = ((IStreamOptionRequest)request).StreamerId.ToString();
 
         string operationClaimsString = claims.First(c => c.Type == "OperationClaims").Value;
 

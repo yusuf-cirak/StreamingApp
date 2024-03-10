@@ -6,7 +6,7 @@ using Application.Features.Streams.Services;
 namespace Application.Features.StreamOptions.Commands.Update;
 
 public readonly record struct GenerateStreamKeyCommandRequest
-    : IStreamOptionCommandRequest, IRequest<HttpResult>, ISecuredRequest
+    : IStreamOptionRequest, IRequest<HttpResult>, ISecuredRequest
 {
     public Guid StreamerId { get; init; }
     public AuthorizationFunctions AuthorizationFunctions { get; }

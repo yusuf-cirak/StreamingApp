@@ -5,7 +5,7 @@ using Application.Features.StreamOptions.Rules;
 namespace Application.Features.StreamOptions.Commands.Update;
 
 public readonly record struct UpdateStreamChatSettingsCommandRequest
-    : IStreamOptionCommandRequest, IRequest<HttpResult>, ISecuredRequest
+    : IStreamOptionRequest, IRequest<HttpResult>, ISecuredRequest
 {
     public Guid StreamerId { get; init; }
     public bool ChatDisabled { get; init; } = false;

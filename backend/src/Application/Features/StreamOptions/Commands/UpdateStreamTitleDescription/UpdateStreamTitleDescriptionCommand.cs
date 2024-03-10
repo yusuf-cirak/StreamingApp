@@ -6,7 +6,7 @@ namespace Application.Features.StreamOptions.Commands.Update;
 
 // TODO: Update chat disabled, delay
 public readonly record struct UpdateStreamTitleDescriptionCommandRequest
-    : IStreamOptionCommandRequest, IRequest<HttpResult>, ISecuredRequest
+    : IStreamOptionRequest, IRequest<HttpResult>, ISecuredRequest
 {
     public Guid StreamerId { get; init; }
     public string StreamTitle { get; init; }
