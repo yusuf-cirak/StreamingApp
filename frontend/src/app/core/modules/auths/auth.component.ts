@@ -3,7 +3,6 @@ import {
   Component,
   DestroyRef,
   EventEmitter,
-  Input,
   Output,
   inject,
   input,

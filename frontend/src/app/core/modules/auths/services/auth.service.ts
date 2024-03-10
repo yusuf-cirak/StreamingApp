@@ -3,6 +3,7 @@ import { CurrentUser } from '../../../models/current-user';
 import { AuthProxyService } from './auth-proxy.service';
 import { UserLoginDto } from '../../../dtos/user-login-dto';
 import { UserRegisterDto } from '../../../dtos/user-register-dto';
+import { UserRefreshTokenDto } from '../../../dtos/user-refresh-token-dto';
 
 @Injectable({
   providedIn: 'root',
@@ -35,8 +36,12 @@ export class AuthService {
   }
 
   refreshToken() {
-    const token = this.user()?.refreshToken;
-    return this.authProxyService.refreshToken(token!);
+    const user = this.user();
+    const userRefreshTokenDto: UserRefreshTokenDto = {
+      refreshToken: user?.refreshToken!,
+      userId: user?.id!,
+    };
+    return this.authProxyService.refreshToken(userRefreshTokenDto);
   }
 
   logout() {

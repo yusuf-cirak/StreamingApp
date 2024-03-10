@@ -3,6 +3,7 @@ import { HttpClientService } from '@streaming-app/shared/services';
 import { Observable } from 'rxjs';
 import { UserLoginDto } from '../../../dtos/user-login-dto';
 import { UserAuthDto } from '../dtos/user-auth-dto';
+import { UserRefreshTokenDto } from '../../../dtos/user-refresh-token-dto';
 
 @Injectable({
   providedIn: 'root',
@@ -24,10 +25,10 @@ export class AuthProxyService {
     );
   }
 
-  refreshToken(token: string): Observable<UserAuthDto> {
+  refreshToken(refreshTokenDto: UserRefreshTokenDto): Observable<UserAuthDto> {
     return this.httpClientService.post(
       { controller: 'auths', action: 'refresh' },
-      token
+      refreshTokenDto
     );
   }
 }
