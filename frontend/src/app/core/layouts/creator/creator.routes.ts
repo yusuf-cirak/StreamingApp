@@ -1,4 +1,5 @@
 import { Route } from '@angular/router';
+import { authGuard } from '../../guards/auth.guard';
 
 export const creatorRoutes: Route[] = [
   {
@@ -20,9 +21,9 @@ export const creatorRoutes: Route[] = [
       {
         path: 'key',
         pathMatch: 'full',
-        canActivate: [],
+        canActivateChild: [authGuard],
         loadComponent: () =>
-          import('./components/key/key.component').then((c) => c.KeyComponent),
+          import('../../modules/key/key.component').then((c) => c.KeyComponent),
       },
     ],
   },
