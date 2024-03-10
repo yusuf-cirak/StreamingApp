@@ -6,8 +6,16 @@ using StackExchange.Redis.Extensions.MsgPack;
 
 namespace WebAPI.Extensions;
 
+/// <summary>
+/// Cache extensions for the application.
+/// </summary>
 public static class CacheExtensions
 {
+    /// <summary>
+    /// Extension method for registering Redis configurations and services to the application.
+    /// </summary>
+    /// <param name="services">IServiceCollection interface reference for extension.</param>
+    /// <param name="configuration">IConfiguration for reading application configurations.</param>
     public static void AddStackExchangeRedis(this IServiceCollection services,
         IConfiguration configuration)
     {
