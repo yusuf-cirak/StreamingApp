@@ -6,11 +6,11 @@ public sealed class UpdateStreamChatSettingsCommandValidator : AbstractValidator
 {
     public UpdateStreamChatSettingsCommandValidator()
     {
-        RuleFor(u => u.ChatDisabled).NotEmpty()
-            .WithMessage("{PropertyName} should cannot be empty");
-        RuleFor(u => u.ChatDelaySecond).NotEmpty().LessThanOrEqualTo(60)
+        RuleFor(u => u.ChatDisabled).NotNull()
+            .WithMessage("{PropertyName} cannot be empty");
+        RuleFor(u => u.ChatDelaySecond).NotNull().LessThanOrEqualTo(60)
             .WithMessage("{PropertyName} cannot be longer than 60 seconds");
-        RuleFor(u => u.MustBeFollower).NotEmpty()
-            .WithMessage("{PropertyName} should cannot be empty");
+        RuleFor(u => u.MustBeFollower).NotNull()
+            .WithMessage("{PropertyName} cannot be empty");
     }
 }

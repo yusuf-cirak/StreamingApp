@@ -1,10 +1,11 @@
 ﻿using Application.Common.Mapping;
+using Application.Features.StreamOptions.Abstractions;
 using Application.Features.StreamOptions.Dtos;
 using Application.Features.StreamOptions.Rules;
 
 namespace Application.Features.StreamOptions.Queries.GetChatSettings;
 
-public readonly record struct GetStreamChatSettingsQueryRequest : IRequest<HttpResult<GetStreamChatSettingsDto>>,
+public readonly record struct GetStreamChatSettingsQueryRequest : IStreamOptionRequest, IRequest<HttpResult<GetStreamChatSettingsDto>>,
     ISecuredRequest
 {
     public Guid StreamerId { get; init; }
@@ -14,6 +15,11 @@ public readonly record struct GetStreamChatSettingsQueryRequest : IRequest<HttpR
     public GetStreamChatSettingsQueryRequest()
     {
         AuthorizationFunctions = [StreamOptionAuthorizationRules.CanUserGetOrUpdateStreamOptions];
+    }
+
+    public GetStreamChatSettingsQueryRequest(Guid streamerId) : this()
+    {
+        StreamerId = streamerId;
     }
 }
 

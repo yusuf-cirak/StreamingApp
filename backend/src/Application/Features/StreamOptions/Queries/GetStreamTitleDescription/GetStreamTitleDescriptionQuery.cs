@@ -14,6 +14,11 @@ public readonly record struct
     {
         AuthorizationFunctions = [StreamOptionAuthorizationRules.CanUserGetOrUpdateStreamOptions];
     }
+
+    public GetStreamTitleDescriptionQueryRequest(Guid streamerId) : this()
+    {
+        StreamerId = streamerId;
+    }
 }
 
 public sealed class GetStreamTitleDescriptionQueryHandler : IRequestHandler<GetStreamTitleDescriptionQueryRequest,

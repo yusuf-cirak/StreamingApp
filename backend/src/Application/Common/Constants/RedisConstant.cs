@@ -1,14 +1,8 @@
 ﻿namespace Application.Common.Constants;
     public static class RedisConstant
     {
-        public static readonly RedisKeyConstant Key = new();
-
-        public sealed class RedisKeyConstant
+        public static class Key
         {
-            public string LiveStreamers => "LiveStreams";
-
-            internal RedisKeyConstant()
-            {
-            }
+            public const string LiveStreamers = "LiveStreams";
         }
     }

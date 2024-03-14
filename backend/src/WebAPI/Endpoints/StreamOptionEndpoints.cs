@@ -14,11 +14,11 @@ public static class StreamOptionEndpoints
     {
         var groupBuilder = builder.MapGroup("api/stream-options");
 
-        groupBuilder.MapGet("/chat-settings",
-                async ([FromBody] GetStreamChatSettingsQueryRequest getStreamChatSettingsQueryRequest,
+        groupBuilder.MapGet("/chat-settings/{streamerId}",
+                async (Guid streamerId,
                     IMediator mediator) =>
                 {
-                    return (await mediator.Send(getStreamChatSettingsQueryRequest)).ToHttpResponse();
+                    return (await mediator.Send(new GetStreamChatSettingsQueryRequest(streamerId))).ToHttpResponse();
                 })
             .WithTags("StreamOptions");
 
@@ -27,16 +27,17 @@ public static class StreamOptionEndpoints
                 async ([FromBody] UpdateStreamChatSettingsCommandRequest updateStreamTitleDescriptionCommandRequest,
                     IMediator mediator) =>
                 {
+                    System.Console.WriteLine(updateStreamTitleDescriptionCommandRequest);
                     return (await mediator.Send(updateStreamTitleDescriptionCommandRequest)).ToHttpResponse();
                 })
             .WithTags("StreamOptions");
 
 
-        groupBuilder.MapGet("/title-description",
-                async ([FromBody] GetStreamTitleDescriptionQueryRequest getStreamTitleDescriptionQueryRequest,
+        groupBuilder.MapGet("/title-description/{streamerId}",
+                async (Guid streamerId,
                     IMediator mediator) =>
                 {
-                    return (await mediator.Send(getStreamTitleDescriptionQueryRequest)).ToHttpResponse();
+                    return (await mediator.Send(new GetStreamTitleDescriptionQueryRequest(streamerId))).ToHttpResponse();
                 })
             .WithTags("StreamOptions");
 
