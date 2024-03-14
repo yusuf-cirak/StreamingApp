@@ -15,6 +15,8 @@ export class AuthService {
 
   readonly user = this.#user.asReadonly();
 
+  readonly userId = computed(() => this.user()?.id);
+
   readonly isAuthenticated = computed(() => !!this.user());
 
   getUserFromLocalStorage(): CurrentUser | null {

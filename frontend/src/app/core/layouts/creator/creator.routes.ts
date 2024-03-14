@@ -12,11 +12,11 @@ export const creatorRoutes: Route[] = [
       {
         path: 'chat-settings',
         pathMatch: 'full',
-        canActivate: [],
+        canActivate: [authGuard],
         loadComponent: () =>
-          import('./components/chat-settings/chat-settings.component').then(
-            (c) => c.ChatSettingsComponent
-          ),
+          import(
+            '../../modules/stream-options/components/chat-settings/chat-settings.component'
+          ).then((c) => c.ChatSettingsComponent),
       },
       {
         path: 'key',

@@ -8,7 +8,7 @@
   <form
     class="space-y-4 px-10 sm:w-[50%] gap-5 flex flex-col"
     [formGroup]="form"
-    (ngSubmit)="updateChatSettings(form.valid, form.value)"
+    (ngSubmit)="patchChatSettings(form.valid, form.value)"
   >
     <div
       class="flex flex-col gap-2 w-full sm:flex-row items-center space-x-4 rounded-md p-4 bg-gray-600"
@@ -49,7 +49,7 @@
         [max]="60"
         class="pl-0 ml-0"
         inputStyleClass="bg-gray-800 text-white h-10 rounded-md disabled:cursor-not-allowed w-24 sm:w-36"
-        [formControl]="form.controls.chatDelaySeconds"
+        [formControl]="form.controls.chatDelaySecond"
       ></p-inputNumber>
     </div>
     <button
@@ -69,4 +69,8 @@
 
 } @placeholder {
 <app-chat-settings-skeleton></app-chat-settings-skeleton>
+} @error {
+<div class="flex items-center justify-center h-full">
+  <p class="text-white">An error occurred while loading chat settings</p>
+</div>
 }

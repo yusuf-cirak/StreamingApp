@@ -73,6 +73,16 @@ export class HttpClientService {
       withCredentials: requestParameter.withCredentials,
     });
   }
+
+  patch<T>(
+    requestParameter: Partial<RequestParameter>,
+    body: Partial<T> | any
+  ): Observable<T> {
+    return this._httpClient.patch<T>(this.url(requestParameter), body, {
+      headers: requestParameter.headers,
+      withCredentials: requestParameter.withCredentials,
+    });
+  }
   delete(requestParameter: Partial<RequestParameter>, id: string) {
     return this._httpClient.delete(this.url(requestParameter, id), {
       headers: requestParameter.headers,
