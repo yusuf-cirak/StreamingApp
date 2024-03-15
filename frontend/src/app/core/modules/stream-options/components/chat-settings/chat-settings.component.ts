@@ -66,7 +66,13 @@ export class ChatSettingsComponent {
     this.streamOptionProxyService
       .getChatSettings(this.authService.userId()!)
       .pipe(finalize(() => this.#loaded.set(true)))
-      .subscribe({ next: (settings) => this.form.patchValue({ ...settings }) });
+      .subscribe({
+        next: (settings) =>
+          this.form.patchValue({
+            ...settings,
+            chatEnabled: !settings.chatDisabled,
+          }),
+      });
   }
 
   patchChatSettings(valid: boolean, value: typeof this.form.value) {
@@ -74,13 +80,17 @@ export class ChatSettingsComponent {
       this.form.markAllAsTouched();
       return;
     }
-
     this.form.disable();
+    const { chatEnabled, ...rest } = value;
+
+    const formValues = {
+      ...rest,
+      chatDisabled: !chatEnabled,
+      streamerId: this.authService.userId()!,
+    } as PatchStreamChatSettingsDto;
+
     this.streamOptionProxyService
-      .patchChatSettings({
-        ...value,
-        streamerId: this.authService.userId()!,
-      } as PatchStreamChatSettingsDto)
+      .patchChatSettings(formValues)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.form.enable())
