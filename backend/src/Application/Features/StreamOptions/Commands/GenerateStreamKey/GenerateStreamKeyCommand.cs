@@ -6,7 +6,7 @@ using Application.Features.Streams.Services;
 namespace Application.Features.StreamOptions.Commands.Update;
 
 public readonly record struct GenerateStreamKeyCommandRequest
-    : IStreamOptionRequest, IRequest<HttpResult>, ISecuredRequest
+    : IStreamOptionRequest, IRequest<HttpResult<string>>, ISecuredRequest
 {
     public Guid StreamerId { get; init; }
     public AuthorizationFunctions AuthorizationFunctions { get; }
@@ -17,15 +17,14 @@ public readonly record struct GenerateStreamKeyCommandRequest
             [StreamOptionAuthorizationRules.UserMustBeStreamer];
     }
 
-    public GenerateStreamKeyCommandRequest(Guid streamerId, bool chatDisabled, bool mustBeFollower,
-        int chatDelaySecond) : this()
+    public GenerateStreamKeyCommandRequest(Guid streamerId) : this()
     {
         StreamerId = streamerId;
     }
 }
 
 public sealed class
-    GenerateStreamKeyCommandRequestHandler : IRequestHandler<GenerateStreamKeyCommandRequest, HttpResult>
+    GenerateStreamKeyCommandRequestHandler : IRequestHandler<GenerateStreamKeyCommandRequest, HttpResult<string>>
 {
     private readonly IEfRepository _efRepository;
 
@@ -37,7 +36,8 @@ public sealed class
         _streamService = streamService;
     }
 
-    public async Task<HttpResult> Handle(GenerateStreamKeyCommandRequest request, CancellationToken cancellationToken)
+    public async Task<HttpResult<string>> Handle(GenerateStreamKeyCommandRequest request,
+        CancellationToken cancellationToken)
     {
         var user = await _efRepository
             .Users
@@ -54,7 +54,7 @@ public sealed class
                 cancellationToken);
 
         return result > 0
-            ? HttpResult.Success(StatusCodes.Status204NoContent)
-            : HttpResult.Failure(StreamOptionErrors.CannotBeUpdated);
+            ? newStreamKey
+            : StreamOptionErrors.CannotBeUpdated;
     }
 }

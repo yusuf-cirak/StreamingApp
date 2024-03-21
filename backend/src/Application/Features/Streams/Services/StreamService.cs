@@ -173,7 +173,7 @@ public sealed class StreamService : IStreamService
 
     public string GenerateStreamKey(User streamer)
     {
-        var streamKeyText = $"{streamer.Username}-{DateTime.Now:dd-MM-YYYY:hh:mm}";
+        var streamKeyText = $"{streamer.Username}-{DateTime.Now:dd-MM-YYYY:hh:mm:ss}";
         return _encryptionHelper.Encrypt(streamKeyText);
     }
 }
