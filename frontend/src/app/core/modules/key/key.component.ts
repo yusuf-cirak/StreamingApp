@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -8,20 +8,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { KeySkeletonComponent } from './skeleton/key-skeleton.component';
 import { CopyClipboardComponent } from '../../components/copy-clipboard/copy-clipboard.component';
 import { KeyService } from './services/key.service';
-import {
-  takeUntilDestroyed,
-  toObservable,
-  toSignal,
-} from '@angular/core/rxjs-interop';
-import {
-  BehaviorSubject,
-  concatMap,
-  lastValueFrom,
-  Observable,
-  Subject,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
 import { InfoIcon } from '../../../shared/icons/info-icon';
 
 @Component({
@@ -41,7 +29,6 @@ import { InfoIcon } from '../../../shared/icons/info-icon';
   ],
 })
 export class KeyComponent {
-  readonly #destroyRef = inject(DestroyRef);
   readonly #loaded = signal(false);
   readonly loaded = this.#loaded.asReadonly();
 
@@ -68,10 +55,6 @@ export class KeyComponent {
   }
 
   getStreamKey() {
-    return this.keyService.get().pipe(
-      tap(() => {
-        this.#loaded.set(true);
-      })
-    );
+    return this.keyService.get().pipe(tap(() => this.#loaded.set(true)));
   }
 }
