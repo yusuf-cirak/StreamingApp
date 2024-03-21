@@ -48,42 +48,30 @@ export class KeyComponent {
   readonly #generateKeySubmitted = signal(false);
   readonly generateKeySubmitted = this.#generateKeySubmitted.asReadonly();
 
-  // readonly key$ = new Subject<Observable<string>>();
-
   readonly keyService = inject(KeyService);
 
-  readonly #key = signal<string>('');
-  readonly key = this.#key.asReadonly();
+  readonly key$ = new BehaviorSubject<Observable<string>>(this.getStreamKey());
 
-  ngOnInit() {
-    this.getStreamKey();
-  }
+  readonly key = toSignal(
+    this.key$.pipe(switchMap((observable) => observable))
+  );
 
   generateStreamKey() {
     this.#generateKeySubmitted.set(true);
-
-    this.keyService
-      .generate()
-      .pipe(
-        takeUntilDestroyed(this.#destroyRef),
-        tap((value) => {
+    this.key$.next(
+      this.keyService.generate().pipe(
+        tap(() => {
           this.#generateKeySubmitted.set(false);
-          this.#key.set(value);
         })
       )
-      .subscribe();
+    );
   }
 
   getStreamKey() {
-    this.keyService
-      .get()
-      .pipe(
-        takeUntilDestroyed(this.#destroyRef),
-        tap((value) => {
-          this.#loaded.set(true);
-          this.#key.set(value);
-        })
-      )
-      .subscribe();
+    return this.keyService.get().pipe(
+      tap(() => {
+        this.#loaded.set(true);
+      })
+    );
   }
 }
