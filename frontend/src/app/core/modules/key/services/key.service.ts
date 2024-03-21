@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { AuthService } from '@streaming-app/core';
 import { HttpClientService } from '@streaming-app/shared/services';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -23,13 +23,15 @@ export class KeyService {
 
   generate(): Observable<string> {
     const streamerId = this.authService.userId() as string;
-    return this.httpClientService.post(
-      {
-        controller: 'stream-options',
-        action: 'key',
-        responseType: 'text',
-      },
-      { streamerId }
-    );
+    return this.httpClientService
+      .post(
+        {
+          controller: 'stream-options',
+          action: 'key',
+          responseType: 'text',
+        },
+        { streamerId }
+      )
+      .pipe(map((response) => String(response)));
   }
 }
