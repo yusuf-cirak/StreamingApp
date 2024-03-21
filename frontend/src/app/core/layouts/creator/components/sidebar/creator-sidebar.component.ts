@@ -1,22 +1,21 @@
 import { NgClass } from '@angular/common';
 import {
   Component,
-  ElementRef,
-  HostListener,
-  ViewChild,
-  effect,
+
   inject,
-  signal,
 } from '@angular/core';
-import { CollapseLeftIcon } from '../../../../../shared/icons/collapse-left';
-import { ExpandRightIcon } from '../../../../../shared/icons/expand-right';
-import { expandCollapseAnimation } from '../../../../../shared/animations/expand-collapse-animation';
-import { StreamIconComponent } from '../../../../../shared/icons/stream-icon';
-import { ChatIconComponent } from '../../../../../shared/icons/chat-icon';
-import { KeyIconComponent } from '../../../../../shared/icons/key-icon';
-import { CommunityIconComponent } from '../../../../../shared/icons/community-icon';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { LayoutService } from '../../../../services/layout.service';
+import { AuthService } from '@streaming-app/core';
+import {
+  ChatIconComponent,
+  CollapseLeftIcon,
+  CommunityIconComponent,
+  ExpandRightIcon,
+  KeyIconComponent,
+  StreamIconComponent,
+} from '@streaming-app/shared/icons';
+import { expandCollapseAnimation } from '../../../../../shared/animations/expand-collapse-animation';
 
 @Component({
   selector: 'app-creator-sidebar',
@@ -36,4 +35,13 @@ import { LayoutService } from '../../../../services/layout.service';
 })
 export class CreatorSidebarComponent {
   readonly layoutService = inject(LayoutService);
+  readonly currentUser = inject(AuthService).user;
+
+  readonly router = inject(Router);
+
+  navigateToStream() {
+    this.router.navigate(['/creator/stream'], {
+      state: { streamerName: this.currentUser()?.username },
+    });
+  }
 }

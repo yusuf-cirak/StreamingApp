@@ -1,4 +1,4 @@
-import { Component, Input, inject, signal } from '@angular/core';
+import { Component, Input, inject, input, output, signal } from '@angular/core';
 import { Button, ButtonModule } from 'primeng/button';
 import { Clipboard } from '@angular/cdk/clipboard';
 
@@ -15,15 +15,15 @@ import { Clipboard } from '@angular/cdk/clipboard';
   ></p-button> `,
 })
 export class CopyClipboardComponent {
-  #copyText = signal<string>('');
-  @Input('copyText') set copyTextSetter(value: string) {
-    this.#copyText.set(value);
-  }
+  copyText = input.required<string>();
+
+  copied = output<void>();
 
   readonly #clipboard = inject(Clipboard);
 
   copyToClipboard(button: Button) {
-    this.#clipboard.copy(this.#copyText());
+    this.#clipboard.copy(this.copyText());
+    this.copied.emit();
 
     button.icon = 'pi pi-check';
 

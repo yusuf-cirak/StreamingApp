@@ -10,6 +10,7 @@ import { CopyClipboardComponent } from '../../components/copy-clipboard/copy-cli
 import { KeyService } from './services/key.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { tap } from 'rxjs';
+import { InfoIcon } from '../../../shared/icons/info-icon';
 @Component({
   standalone: true,
   selector: 'app-key',
@@ -23,6 +24,7 @@ import { tap } from 'rxjs';
     KeySkeletonComponent,
     InputTextModule,
     CopyClipboardComponent,
+    InfoIcon,
   ],
 })
 export class KeyComponent {
