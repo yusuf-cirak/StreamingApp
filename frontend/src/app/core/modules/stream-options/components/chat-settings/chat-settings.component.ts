@@ -53,25 +53,21 @@ export class ChatSettingsComponent {
   ngOnInit() {
     this.form.controls.chatEnabled.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((value: boolean) => {
-        const chatDelaySeconds = this.form.controls.chatDelaySecond;
-        if (value) {
-          chatDelaySeconds.enable();
-        } else {
-          chatDelaySeconds.setValue(0);
-          chatDelaySeconds.disable();
-        }
+      .subscribe(() => {
+        this.updateFormValues();
       });
 
     this.streamOptionProxyService
       .getChatSettings(this.authService.userId()!)
       .pipe(finalize(() => this.#loaded.set(true)))
       .subscribe({
-        next: (settings) =>
+        next: (settings) => {
           this.form.patchValue({
             ...settings,
             chatEnabled: !settings.chatDisabled,
           }),
+            this.updateFormValues();
+        },
       });
   }
 
@@ -93,8 +89,21 @@ export class ChatSettingsComponent {
       .patchChatSettings(formValues)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.form.enable())
+        finalize(() => {
+          this.form.enable();
+          this.updateFormValues();
+        })
       )
       .subscribe();
+  }
+
+  updateFormValues() {
+    const chatDelaySeconds = this.form.controls.chatDelaySecond;
+    if (this.form.controls.chatEnabled.value) {
+      chatDelaySeconds.enable();
+    } else {
+      chatDelaySeconds.setValue(0);
+      chatDelaySeconds.disable();
+    }
   }
 }
