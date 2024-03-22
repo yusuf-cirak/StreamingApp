@@ -1,14 +1,12 @@
 <main class="w-full h-full flex flex-col overflow-y-auto">
   <div class="navbar-container w-full h-[10%] z-40">
     <app-creator-navbar
-      class="text-white flex items-center justify-between fixed top-0 left-0"
+      class="text-white flex items-center justify-between h-full"
     />
   </div>
-  <div class="sidebar-main-container flex w-full h-full">
+  <div class="sidebar-main-container flex w-full h-[90%]">
     <div class="sidebar-container h-full">
-      <app-creator-sidebar
-        class="text-white h-full left-0 flex flex-col fixed top-20"
-      />
+      <app-creator-sidebar class="text-white h-full flex flex-col relative" />
     </div>
 
     <div class="main w-full h-full ml-60 overflow-y-auto">
