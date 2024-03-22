@@ -23,15 +23,13 @@ export class KeyService {
 
   generate(): Observable<string> {
     const streamerId = this.authService.userId() as string;
-    return this.httpClientService
-      .post(
-        {
-          controller: 'stream-options',
-          action: 'key',
-          responseType: 'text',
-        },
-        { streamerId }
-      )
-      .pipe(map((response) => String(response)));
+    return this.httpClientService.post<string>(
+      {
+        controller: 'stream-options',
+        action: 'key',
+        responseType: 'text',
+      },
+      { streamerId }
+    );
   }
 }
