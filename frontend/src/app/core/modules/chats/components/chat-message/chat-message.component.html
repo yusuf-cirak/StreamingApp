@@ -5,12 +5,9 @@
     <p class="text-sm font-semibold whitespace-nowrap">
       <span
         class="truncate"
-        [ngStyle]="{
-          color: usernameColor(data.username)
-        }"
-      >
-        {{ data.username }}:</span
-      >
+        [textContent]="data.username + ':'"
+        appTextHashColor
+      ></span>
     </p>
     <p class="text-sm break-all">{{ data.message }}</p>
   </div>

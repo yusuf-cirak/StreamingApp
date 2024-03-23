@@ -22,12 +22,19 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "paths": {
-      "@streaming-app/shared/icons": ["./src/app/shared/icons/index.ts"],
-      "@streaming-app/shared/services": ["./src/app/shared/services/index.ts"],
       "@streaming-app/shared/animations": [
         "./src/app/shared/animations/index.ts"
       ],
       "@streaming-app/shared/api": ["./src/app/shared/api/index.ts"],
+      "@streaming-app/shared/components": [
+        "./src/app/shared/components/index.ts"
+      ],
+      "@streaming-app/shared/directives": [
+        "./src/app/shared/directives/index.ts"
+      ],
+      "@streaming-app/shared/icons": ["./src/app/shared/icons/index.ts"],
+      "@streaming-app/shared/services": ["./src/app/shared/services/index.ts"],
+
       "@streaming-app/layouts/main": ["./src/app/core/layouts/main/index.ts"],
       "@streaming-app/layouts/creator": [
         "./src/app/core/layouts/creator/index.ts"

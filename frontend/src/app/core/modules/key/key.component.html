@@ -5,7 +5,9 @@
   <div class="mb-4">
     <h1 class="text-2xl font-bold">Key & URL</h1>
   </div>
-  <div class="flex flex-col w-[50%] items-center justify-center mb-14 gap-10">
+  <div
+    class="flex flex-col w-full sm:w-[50%] items-center justify-center mb-14 gap-10"
+  >
     <div
       class="flex flex-col gap-2 w-full sm:flex-row items-center space-x-4 rounded-md p-4 bg-zinc-500"
     >
@@ -19,20 +21,20 @@
     </div>
   </div>
 
-  <div class="space-y-4 px-10 sm:w-[50%] gap-5 flex flex-col">
+  <div class="space-y-4 px-10 sm:w-[50%] gap-5 flex flex-col items-center">
     <div
-      class="flex flex-col gap-2 w-full sm:flex-row items-center space-x-4 rounded-md p-4 bg-gray-600"
+      class="flex flex-col gap-2 w-fit sm:w-full sm:flex-row items-center space-x-4 rounded-md p-4 bg-gray-600"
     >
       <div class="flex-1 space-y-1">
         <p class="text-sm font-medium leading-none">Server URL</p>
       </div>
 
-      <div class="flex items-center text-center w-[50%] bg-white rounded-md">
-        <p
-          class="inline h-fit text-slate-600 whitespace-nowrap overflow-hidden text-ellipsis p-2"
+      <div class="flex items-center justify-center w-[50%] bg-white rounded-md">
+        <span
+          class="inline h-fit text-center text-slate-600 whitespace-nowrap overflow-hidden text-ellipsis p-2"
         >
           {{ "rtmp://139.144.76.14/live" }}
-        </p>
+        </span>
       </div>
 
       <app-copy-clipboard
@@ -42,18 +44,17 @@
 
     @if (key(); as key) {
     <div
-      class="flex flex-col gap-2 w-full sm:flex-row items-center space-x-4 rounded-md p-4 bg-gray-600"
+      class="flex flex-col gap-2 w-fit sm:w-full sm:flex-row items-center space-x-4 rounded-md p-4 bg-gray-600"
     >
       <div class="flex-1 space-y-1">
         <p class="text-sm font-medium leading-none">Stream Key</p>
       </div>
 
-      <div class="flex items-center text-center w-[50%] bg-white rounded-md">
-        <p
-          class="inline h-fit text-slate-600 whitespace-nowrap overflow-hidden text-ellipsis p-2"
-        >
-          {{ key }}
-        </p>
+      <div class="flex items-center justify-center w-[50%] bg-white rounded-md">
+        <span
+          [textContent]="key"
+          class="inline h-fit text-center text-slate-600 whitespace-nowrap overflow-hidden text-ellipsis p-2"
+        ></span>
       </div>
 
       <app-copy-clipboard [copyText]="key"></app-copy-clipboard>
@@ -61,7 +62,7 @@
     }
     <button
       pRipple
-      class="w-full sm:w-[50%] h-10 rounded-lg bg-slate-600 outline-none flex self-center text-center justify-center items-center"
+      class="w-[30%] sm:h-10 rounded-lg bg-slate-600 outline-none flex self-end text-center justify-center items-center"
       [disabled]="generateKeySubmitted()"
       (click)="generateStreamKey()"
     >

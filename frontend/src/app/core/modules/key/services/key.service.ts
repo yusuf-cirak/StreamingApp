@@ -15,7 +15,6 @@ export class KeyService {
       {
         controller: 'stream-options',
         action: 'key',
-        responseType: 'text',
       },
       this.authService.user()?.id
     );
@@ -27,7 +26,6 @@ export class KeyService {
       {
         controller: 'stream-options',
         action: 'key',
-        responseType: 'text',
       },
       { streamerId }
     );

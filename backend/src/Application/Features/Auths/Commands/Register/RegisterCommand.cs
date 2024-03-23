@@ -1,6 +1,7 @@
 ﻿using Application.Common.Models;
 using Application.Features.Auths.Dtos;
 using Application.Features.Auths.Rules;
+using Application.Features.Streams.Services;
 
 namespace Application.Features.Auths.Commands.Register;
 
@@ -17,18 +18,18 @@ public sealed class
 
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    private readonly IEncryptionHelper _encryptionHelper;
+    private readonly IStreamService _streamService;
 
     public RegisterUserCommandHandler(AuthBusinessRules authBusinessRules, IJwtHelper jwtHelper,
         IHashingHelper hashingHelper, IHttpContextAccessor httpContextAccessor, IEfRepository efRepository,
-        IEncryptionHelper encryptionHelper)
+        IStreamService streamService)
     {
         _authBusinessRules = authBusinessRules;
         _jwtHelper = jwtHelper;
         _hashingHelper = hashingHelper;
         _httpContextAccessor = httpContextAccessor;
         _efRepository = efRepository;
-        _encryptionHelper = encryptionHelper;
+        _streamService = streamService;
     }
 
     public async Task<HttpResult<AuthResponseDto>> Handle(RegisterCommandRequest request,
@@ -56,7 +57,7 @@ public sealed class
 
         // All users are also streamers, so we create a streamer for the user
         // TODO: Handle this with events
-        var streamerKey = _encryptionHelper.Encrypt(newUser.Id.ToString());
+        var streamerKey = _streamService.GenerateStreamKey(newUser);
         var streamerTitle = $"{newUser.Username}'s stream";
         var streamerDescription = $"{newUser.Username}'s stream description";
 
@@ -66,7 +67,8 @@ public sealed class
 
         await _efRepository.SaveChangesAsync(cancellationToken);
 
-        var authResponseDto = new AuthResponseDto(newUser.Id,newUser.Username,ProfileImageUrl:string.Empty,accessToken.Token, refreshToken.Token, accessToken.Expiration,claims:[]);
+        var authResponseDto = new AuthResponseDto(newUser.Id, newUser.Username, ProfileImageUrl: string.Empty,
+            accessToken.Token, refreshToken.Token, accessToken.Expiration, claims: []);
 
         return HttpResult<AuthResponseDto>.Success(authResponseDto,
             StatusCodes.Status201Created);

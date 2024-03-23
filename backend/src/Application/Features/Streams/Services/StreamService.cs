@@ -64,7 +64,8 @@ public sealed class StreamService : IStreamService
             .FirstOrDefault(stream => stream.User.Username == streamerName);
 
 
-        if (liveStream is not null){
+        if (liveStream is not null)
+        {
             return liveStream;
         }
 
@@ -84,14 +85,15 @@ public sealed class StreamService : IStreamService
     }
 
 
-        public async Task<Result<GetStreamDto, Error>> GetLiveStreamerByKeyAsync(string streamerKey)
+    public async Task<Result<GetStreamDto, Error>> GetLiveStreamerByKeyAsync(string streamerKey)
     {
         var liveStream = (await _redisDatabase.Database.ListRangeAsync(RedisConstant.Key.LiveStreamers))
             .Select(ls => _redisDatabase.Serializer.Deserialize<GetStreamDto>(ls))
             .FirstOrDefault(stream => stream.StreamOption.Value.StreamKey == streamerKey);
 
 
-        if (liveStream is not null) {
+        if (liveStream is not null)
+        {
             return liveStream;
         }
 
@@ -141,7 +143,7 @@ public sealed class StreamService : IStreamService
                 cancellationToken:
                 cancellationToken);
 
-        return insertResult > 0 && redisIndex > 0;
+        return insertResult > 0 && redisIndex > 0 && updateStreamKeyResult > 0;
     }
 
     public async Task<bool> EndStreamAsync(GetStreamDto stream, CancellationToken cancellationToken = default)
@@ -173,7 +175,23 @@ public sealed class StreamService : IStreamService
 
     public string GenerateStreamKey(User streamer)
     {
-        var streamKeyText = $"{streamer.Username}-{DateTime.Now:dd-MM-YYYY:hh:mm:ss}";
+        var streamKeyText = $"{streamer.Username}-{GenerateRandomText()}";
         return _encryptionHelper.Encrypt(streamKeyText);
+    }
+
+    static string GenerateRandomText()
+    {
+        const int length = 5;
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        Random random = new Random();
+
+        var randomChars = new char[length];
+        for (int i = 0; i < length; i++)
+        {
+            randomChars[i] = chars[random.Next(chars.Length)];
+        }
+
+        return new string(randomChars);
     }
 }

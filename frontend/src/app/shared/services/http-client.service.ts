@@ -60,7 +60,6 @@ export class HttpClientService {
     return this._httpClient.post<T>(this.url(requestParameter), body, {
       headers: requestParameter.headers,
       withCredentials: requestParameter.withCredentials,
-      responseType: (requestParameter?.responseType || 'json') as 'json',
     });
   }
 
@@ -104,5 +103,4 @@ export interface RequestParameter {
   // Other services (might have different routes)
   fullEndPoint: string; // Dış dünyayla iletişime geçmemiz gerekebilir, dış dünyadaki servisin route'ı bizimkiyle uyuşmayabilir.
   withCredentials: boolean;
-  responseType: string;
 }

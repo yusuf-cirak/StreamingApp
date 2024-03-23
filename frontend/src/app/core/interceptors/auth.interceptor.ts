@@ -12,13 +12,12 @@ export function authInterceptor(
   request: HttpRequest<unknown>,
   next: HttpHandlerFn
 ) {
-  console.log('authInterceptor');
-  const skipInterceptor = request.headers.get('SkipInterceptor');
-  request.headers.delete('SkipInterceptor');
-
-  if (skipInterceptor === 'true') {
+  const skipInterceptor = request.headers.has('SkipInterceptor');
+  if (skipInterceptor) {
+    request.headers.delete('SkipInterceptor');
     return next(request);
   }
+
   const authService = inject(AuthService);
 
   if (!authService.isAuthenticated()) {
