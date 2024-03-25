@@ -4,7 +4,7 @@ import {
   HttpHandlerFn,
   HttpErrorResponse,
 } from '@angular/common/http';
-import { catchError, tap, throwError, mergeMap } from 'rxjs';
+import { catchError, tap, throwError, mergeMap, switchMap } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthService } from '../services';
 
@@ -37,19 +37,10 @@ export function authInterceptor(
       if (error.status === 401) {
         return authService.refreshToken().pipe(
           catchError((_) => {
-            debugger;
             router.navigateByUrl('');
             return throwError(() => error);
           }),
-          tap((user) => {
-            const { claims, ...rest } = user;
-            authService.setUser({
-              ...rest,
-              roles: claims.roles,
-              operationClaims: claims.operationClaims,
-            });
-          }),
-          mergeMap((user) => {
+          switchMap((user) => {
             const newRequest = request.clone({
               headers: request.headers.set(
                 'Authorization',

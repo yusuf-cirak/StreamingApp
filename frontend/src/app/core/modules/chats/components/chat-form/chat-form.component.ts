@@ -1,11 +1,10 @@
 import {
   Component,
-  EventEmitter,
   HostListener,
-  Output,
   computed,
   inject,
   input,
+  output,
   signal,
 } from '@angular/core';
 import { RippleModule } from 'primeng/ripple';
@@ -26,15 +25,19 @@ export class ChatFormComponent {
 
   chatOptions = computed(() => this.liveStream().options);
 
+  chatDisabled = computed(() => this.chatOptions().chatDisabled);
+
   readonly authService = inject(AuthService);
 
   readonly chatAuthService = inject(ChatAuthService);
 
-  readonly userChatErrorMessage = computed(() => this.chatAuthService.canUserSendMessage(this.liveStream()));
+  readonly userChatErrorMessage = computed(() =>
+    this.chatAuthService.canUserSendMessage(this.liveStream())
+  );
 
   message = signal<string>('');
 
-  @Output() messageSend = new EventEmitter<string>();
+  messageSend = output<string>();
 
   @HostListener('document:keydown.enter', ['$event'])
   onEnter() {
@@ -52,7 +55,9 @@ export class ChatFormComponent {
   }
 
   sendMessage() {
-    this.messageSend.emit(this.message());
-    this.message.update(() => '');
+    if (!this.chatDisabled()) {
+      this.messageSend.emit(this.message());
+      this.message.update(() => '');
+    }
   }
 }

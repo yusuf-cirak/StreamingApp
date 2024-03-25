@@ -25,14 +25,8 @@ export class AppComponent {
     });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.primeNgConfig.ripple = true;
-    const user = this.authService.getUserFromLocalStorage();
-    if (user) {
-      const tokenExpiration = new Date(user.tokenExpiration);
-      if (tokenExpiration > new Date(Date.now())) {
-        this.authService.setUser(user);
-      }
-    }
+    await this.authService.initializeUser();
   }
 }

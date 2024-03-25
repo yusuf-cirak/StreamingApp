@@ -6,21 +6,14 @@ import { AuthService } from '../services';
 export const authGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
 
+  const router = inject(Router);
+
   if (authService.isAuthenticated()) {
     return true;
   }
 
-  const router = inject(Router);
-
   return authService.refreshToken().pipe(
-    map((user) => {
-      const { claims, ...rest } = user;
-      authService.setUser({
-        ...rest,
-        roles: claims.roles,
-        operationClaims: claims.operationClaims,
-      });
-
+    map(() => {
       return true;
     }),
     catchError((_) => {

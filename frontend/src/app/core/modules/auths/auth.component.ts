@@ -25,6 +25,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
 import { Tab } from './models/tab';
 import { UserAuthDto } from './dtos/user-auth-dto';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-auth',
@@ -103,8 +104,8 @@ export class AuthComponent {
       .login(this.form.value as UserLoginDto)
       .pipe(takeUntilDestroyed(this.#destroyRef))
       .subscribe({
-        next: (response) => {
-          this.setUserAndEnableForm(response);
+        next: () => {
+          this.enableForm();
         },
         error: (error) => {
           this.showErrorAndEnableForm(error);
@@ -117,8 +118,8 @@ export class AuthComponent {
       .register(this.form.value as UserRegisterDto)
       .pipe(takeUntilDestroyed(this.#destroyRef))
       .subscribe({
-        next: (response) => {
-          this.setUserAndEnableForm(response);
+        next: () => {
+          this.enableForm();
         },
         error: (error) => {
           this.showErrorAndEnableForm(error);
@@ -135,13 +136,7 @@ export class AuthComponent {
     );
   }
 
-  setUserAndEnableForm(user: UserAuthDto) {
-    const { claims, ...rest } = user;
-    this.authService.setUser({
-      ...rest,
-      roles: claims.roles,
-      operationClaims: claims.operationClaims,
-    });
+  enableForm() {
     this.emitCloseModalClicked();
     this.form.reset();
     this.form.enable();

@@ -12,6 +12,7 @@
     (input)="setMessage($any($event.target).value)"
     [value]="message()"
     [autofocus]="true"
+    [disabled]="chatDisabled()"
     [ngClass]="{
       'rounded-t-none border-t-0': !!userChatErrorMessage(),
     }"
@@ -20,6 +21,7 @@
     pRipple
     class="w-14 h-10 rounded-lg bg-blue-600 outline-none ml-auto text-white mt-3"
     type="button"
+    [disabled]="chatDisabled()"
     (click)="sendMessage()"
   >
     Chat

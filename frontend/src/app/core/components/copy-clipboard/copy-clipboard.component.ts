@@ -1,4 +1,11 @@
-import { Component, Input, inject, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { Button, ButtonModule } from 'primeng/button';
 import { Clipboard } from '@angular/cdk/clipboard';
 
@@ -8,7 +15,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
   imports: [ButtonModule],
   template: `<p-button
     #button
-    icon="pi pi-copy"
+    [icon]="icon()"
     [text]="true"
     severity="secondary"
     (onClick)="copyToClipboard(button)"
@@ -16,6 +23,8 @@ import { Clipboard } from '@angular/cdk/clipboard';
 })
 export class CopyClipboardComponent {
   copyText = input.required<string>();
+
+  readonly icon = signal<string>('pi pi-copy');
 
   copied = output<void>();
 
@@ -25,10 +34,10 @@ export class CopyClipboardComponent {
     this.#clipboard.copy(this.copyText());
     this.copied.emit();
 
-    button.icon = 'pi pi-check';
+    this.icon.update(() => 'pi pi-check');
 
     setInterval(() => {
-      button.icon = 'pi pi-copy';
+      this.icon.update(() => 'pi pi-copy');
     }, 1000);
   }
 }
