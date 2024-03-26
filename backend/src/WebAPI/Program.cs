@@ -4,6 +4,7 @@ using Infrastructure;
 using Infrastructure.Helpers.JWT;
 using Infrastructure.Helpers.Security;
 using Infrastructure.Persistence.EntityFramework;
+using Infrastructure.SignalR.Hubs;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using StackExchange.Redis.Extensions.Core.Configuration;
 using WebAPI.Endpoints;
@@ -37,6 +38,8 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddStackExchangeRedis(builder.Configuration);
 
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -62,5 +65,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapApiEndpoints(); // From WebAPI\Extensions\EndpointExtensions.cs
+
+app.MapHub<StreamHub>("/_stream");
 
 app.Run();

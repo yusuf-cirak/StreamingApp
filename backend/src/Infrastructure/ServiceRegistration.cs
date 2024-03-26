@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Helpers;
+using Application.Abstractions.Hubs;
 using Application.Abstractions.Repository;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.Helpers.Hashing;
@@ -7,6 +8,9 @@ using Infrastructure.Helpers.Security.Encryption;
 using Infrastructure.Persistence.EntityFramework.Contexts;
 using Infrastructure.Persistence.EntityFramework.Interceptors;
 using Infrastructure.Persistence.EntityFramework.Repositories;
+using Infrastructure.Services.Hub.Streams;
+using Infrastructure.Services.Hub.Streams.InMemory;
+using Infrastructure.SignalR.Hubs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,7 +44,9 @@ public static class ServiceRegistration
         services.AddSingleton<IHashingHelper, HashingHelper>();
         services.AddSingleton<IEncryptionHelper, AesEncryptionHelper>();
 
-        services.AddQuartzBackgroundJob();
+        // services.AddQuartzBackgroundJob();
+
+        services.AddSignalrServices();
     }
 
 
@@ -60,5 +66,13 @@ public static class ServiceRegistration
         });
 
         services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+    }
+
+    private static void AddSignalrServices(this IServiceCollection services)
+    {
+        services.AddScoped<IStreamHubUserService, InMemoryStreamHubUserService>();
+        services.AddScoped<IStreamHubViewerService, InMemoryStreamHubViewerService>();
+
+        services.AddScoped<IStreamHubService, InMemoryStreamHubService>();
     }
 }

@@ -22,8 +22,5 @@
       <PackageReference Include="Quartz.Extensions.Hosting" Version="3.8.1" />
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.4.0" />
     </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Services\" />
-    </ItemGroup>
 
 </Project>
