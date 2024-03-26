@@ -10,10 +10,13 @@ import { AuthService } from '@streaming-app/core';
 export const streamStateResolver: ResolveFn<LiveStreamDto | Error> = (
   route
 ) => {
-  const { streamerName } =
-    route.params['streamerName'] ||
-    inject(Router).getCurrentNavigation()?.extras.state ||
-    inject(AuthService).user()?.username;
+  let streamerName = route.params['streamerName'];
+
+  if (!streamerName) {
+    streamerName =
+      inject(Router).getCurrentNavigation()?.extras.state!['streamerName'] || // User state passed from the previous route
+      inject(AuthService).user()?.username; //
+  }
 
   const streamService = inject(StreamService);
   const streamFacade = inject(StreamFacade);

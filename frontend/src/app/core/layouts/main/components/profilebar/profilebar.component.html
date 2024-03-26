@@ -1,11 +1,6 @@
 <div #profileMenuWrapperRef>
   <img
-    [src]="
-      authService.user()?.profileImageUrl?.length
-        ? authService.user()?.profileImageUrl
-        : 'https://ui-avatars.com/api/?background=random&name=' +
-          authService.user()?.username
-    "
+    [src]="userImageService.getProfileImageUrl(authService.user())"
     class="w-10 h-10 rounded-full cursor-pointer"
     (click)="toggleProfileMenu()"
   />

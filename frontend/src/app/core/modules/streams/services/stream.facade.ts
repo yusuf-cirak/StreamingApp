@@ -4,10 +4,11 @@ import { LiveStreamDto } from '../../recommended-streamers/models/live-stream-dt
 import { StreamState } from '../models/stream-state';
 import { Error } from '../../../../shared/api/error';
 import { AuthService } from '@streaming-app/core';
+import { StreamHub } from '../../../hubs/stream-hub';
 
-@Injectable({providedIn:'root'})
+@Injectable({ providedIn: 'root' })
 export class StreamFacade {
-  #streamState = signal<StreamState | undefined>(undefined)
+  #streamState = signal<StreamState | undefined>(undefined);
 
   readonly authService = inject(AuthService);
 
@@ -17,32 +18,38 @@ export class StreamFacade {
 
   readonly streamService = inject(StreamService);
 
+  readonly streamHub = inject(StreamHub);
+
   setLiveStream(liveStream: LiveStreamDto) {
-    this.#streamState.update((state) =>({...state,stream:liveStream}));
+    this.#streamState.update((state) => ({ ...state, stream: liveStream }));
   }
 
   setLiveStreamErrorState(error: Error) {
-    this.#streamState.update((state) =>({...state,error}));
+    this.#streamState.update((state) => ({ ...state, error }));
   }
-
 
   getHlsUrl() {
-    return this.streamService.getHlsUrl(this.liveStream()?.options.streamKey || '');
+    return this.streamService.getHlsUrl(
+      this.liveStream()?.options.streamKey || ''
+    );
   }
 
-  sendMessage(message:string){
+  sendMessage(message: string) {
     // send message to the server
     const liveStream = this.liveStream();
     const user = this.authService.user();
 
     const messages = liveStream?.chatMessages || [];
 
-    liveStream!.chatMessages =
-     [
+    liveStream!.chatMessages = [
       { message, sentAt: new Date(), username: user?.username! },
       ...messages,
     ];
 
     this.setLiveStream(liveStream!);
+  }
+
+  connectToStreamHub() {
+    this.streamHub.connectToStreamHub();
   }
 }

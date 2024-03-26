@@ -72,6 +72,9 @@ export class ChatSettingsComponent {
   }
 
   patchChatSettings(valid: boolean, value: typeof this.form.value) {
+    if (!this.form.dirty) {
+      return;
+    }
     if (!valid) {
       this.form.markAllAsTouched();
       return;
