@@ -17,7 +17,7 @@ export class StreamHub {
   // chatMessageReceived$ = new BehaviorSubject<MessageDto>(null!);
   // chatGroupCreated$ = new BehaviorSubject<CreateHubChatGroupDto>(null!);
 
-  connectToStreamHub() {
+  connect() {
     this._hubConnection
       .start()
       .then(() => {
@@ -30,7 +30,7 @@ export class StreamHub {
       });
   }
 
-  disconnectFromHub() {
+  disconnect() {
     this._hubConnection
       .stop()
       .then(() => {
@@ -53,9 +53,9 @@ export class StreamHub {
     // );
   }
 
-  invokeOnJoinedStream() {
+  invokeOnJoinedStream(streamerId: string) {
     this._hubConnection
-      .invoke(StreamHubAction.OnJoinedStream)
+      .invoke(StreamHubAction.OnJoinedStream, streamerId)
       .then(() => {
         console.log('Joined stream');
       })
@@ -64,9 +64,9 @@ export class StreamHub {
       });
   }
 
-  invokeOnLeavedStream() {
+  invokeOnLeavedStream(streamerId: string) {
     this._hubConnection
-      .invoke(StreamHubAction.OnLeavedStream)
+      .invoke(StreamHubAction.OnLeavedStream, streamerId)
       .then(() => {
         console.log('Leaved stream');
       })

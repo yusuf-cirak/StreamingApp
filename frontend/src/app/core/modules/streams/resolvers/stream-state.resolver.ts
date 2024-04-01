@@ -17,9 +17,11 @@ export const streamStateResolver: ResolveFn<LiveStreamDto | Error> = (
       inject(Router).getCurrentNavigation()?.extras.state!['streamerName'] || // User state passed from the previous route
       inject(AuthService).user()?.username; //
   }
+  const streamFacade = inject(StreamFacade);
+
+  streamFacade.setStreamerName(streamerName);
 
   const streamService = inject(StreamService);
-  const streamFacade = inject(StreamFacade);
 
   return streamService.getStreamInfo(streamerName).pipe(
     tap((liveStream) => {

@@ -1,7 +1,8 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, effect, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { PrimeNGConfig } from 'primeng/api';
 import { AuthService, LayoutService } from './core/services';
+import { StreamHub } from './core/hubs/stream-hub';
 
 @Component({
   selector: 'app-root',
@@ -9,11 +10,12 @@ import { AuthService, LayoutService } from './core/services';
   imports: [RouterOutlet],
   templateUrl: './app.component.html',
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
   readonly primeNgConfig = inject(PrimeNGConfig);
   readonly layoutService = inject(LayoutService);
   readonly authService = inject(AuthService);
   readonly router = inject(Router);
+  readonly streamHub = inject(StreamHub);
 
   constructor() {
     effect(() => {
@@ -28,5 +30,10 @@ export class AppComponent {
   async ngOnInit() {
     this.primeNgConfig.ripple = true;
     await this.authService.initializeUser();
+    this.streamHub.connect();
+  }
+
+  ngOnDestroy() {
+    this.streamHub.disconnect();
   }
 }

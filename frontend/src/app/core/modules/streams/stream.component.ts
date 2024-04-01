@@ -1,5 +1,4 @@
 import { OfflineStreamComponent } from './components/offline-stream/offline-stream.component';
-import { ActivatedRoute } from '@angular/router';
 import { Component, computed, inject } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { LiveStreamComponent } from './components/live-stream/live-stream.component';
@@ -18,11 +17,23 @@ import { NotFoundStreamComponent } from './components/not-found-stream/not-found
   ],
 })
 export class StreamComponent {
-  readonly route = inject(ActivatedRoute);
-
   readonly streamFacade = inject(StreamFacade);
 
-  streamState = computed(() => this.streamFacade.streamState());
+  readonly canJoinToChatRoom = computed(
+    () =>
+      this.streamFacade.streamState()?.error?.statusCode !== 404 ||
+      this.streamFacade.liveStream()
+  );
 
-  liveStream = computed(() => this.streamFacade.liveStream());
+  ngOnInit() {
+    if (this.canJoinToChatRoom()) {
+      this.streamFacade.joinStreamRoom(this.streamFacade.streamerName());
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.canJoinToChatRoom()) {
+      this.streamFacade.leaveStreamRoom(this.streamFacade.streamerName());
+    }
+  }
 }

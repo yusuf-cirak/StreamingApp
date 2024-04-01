@@ -9,16 +9,27 @@ import { StreamHub } from '../../../hubs/stream-hub';
 @Injectable({ providedIn: 'root' })
 export class StreamFacade {
   #streamState = signal<StreamState | undefined>(undefined);
+  #streamerName = signal<string>('');
 
-  readonly authService = inject(AuthService);
-
-  readonly streamState = computed(() => this.#streamState());
+  readonly streamState = this.#streamState.asReadonly();
 
   readonly liveStream = computed(() => this.#streamState()?.stream);
+
+  readonly streamerName = computed(
+    () => this.liveStream()?.user.username || this.#streamerName()
+  );
+
+  readonly authService = inject(AuthService);
 
   readonly streamService = inject(StreamService);
 
   readonly streamHub = inject(StreamHub);
+
+  getHlsUrl() {
+    return this.streamService.getHlsUrl(
+      this.liveStream()?.options.streamKey || ''
+    );
+  }
 
   setLiveStream(liveStream: LiveStreamDto) {
     this.#streamState.update((state) => ({ ...state, stream: liveStream }));
@@ -28,10 +39,8 @@ export class StreamFacade {
     this.#streamState.update((state) => ({ ...state, error }));
   }
 
-  getHlsUrl() {
-    return this.streamService.getHlsUrl(
-      this.liveStream()?.options.streamKey || ''
-    );
+  setStreamerName(streamerName: string) {
+    this.#streamerName.set(streamerName);
   }
 
   sendMessage(message: string) {
@@ -50,6 +59,14 @@ export class StreamFacade {
   }
 
   connectToStreamHub() {
-    this.streamHub.connectToStreamHub();
+    this.streamHub.connect();
+  }
+
+  joinStreamRoom(userId: string) {
+    this.streamHub.invokeOnJoinedStream(userId);
+  }
+
+  leaveStreamRoom(userId: string) {
+    this.streamHub.invokeOnLeavedStream(userId);
   }
 }
