@@ -17,8 +17,8 @@ export class StreamHub {
   // chatMessageReceived$ = new BehaviorSubject<MessageDto>(null!);
   // chatGroupCreated$ = new BehaviorSubject<CreateHubChatGroupDto>(null!);
 
-  connect() {
-    this._hubConnection
+  async connect() {
+    await this._hubConnection
       .start()
       .then(() => {
         console.log('Connected to stream hub');
@@ -30,8 +30,8 @@ export class StreamHub {
       });
   }
 
-  disconnect() {
-    this._hubConnection
+  async disconnect() {
+    await this._hubConnection
       .stop()
       .then(() => {
         console.log('Disconnected from stream hub');
