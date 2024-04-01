@@ -8,9 +8,7 @@ using Infrastructure.Helpers.Security.Encryption;
 using Infrastructure.Persistence.EntityFramework.Contexts;
 using Infrastructure.Persistence.EntityFramework.Interceptors;
 using Infrastructure.Persistence.EntityFramework.Repositories;
-using Infrastructure.Services.Hub.Streams;
-using Infrastructure.Services.Hub.Streams.InMemory;
-using Infrastructure.SignalR.Hubs;
+using Infrastructure.SignalR.Hubs.Services.InMemory;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -71,7 +69,7 @@ public static class ServiceRegistration
     private static void AddSignalrServices(this IServiceCollection services)
     {
         services.AddScoped<IStreamHubUserService, InMemoryStreamHubUserService>();
-        services.AddScoped<IStreamHubViewerService, InMemoryStreamHubViewerService>();
+        services.AddScoped<IStreamHubChatRoomService, InMemoryStreamHubChatRoomService>();
 
         services.AddScoped<IStreamHubService, InMemoryStreamHubService>();
     }

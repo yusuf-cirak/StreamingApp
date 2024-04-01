@@ -1,7 +1,11 @@
-﻿namespace Infrastructure.SignalR.Hubs;
+﻿using Application.Features.Streams.Dtos;
+
+namespace Infrastructure.SignalR.Hubs;
 
 public interface IStreamHub
 {
-    ValueTask OnJoinedStreamAsync(string streamerId, string userId);
-    ValueTask OnLeavedStreamAsync(string streamerId, string userId);
+    Task OnStreamStartedAsync(GetStreamDto streamDto);
+    Task OnStreamEndAsync(GetStreamDto streamDto);
+    ValueTask OnJoinedStreamAsync(string streamerId);
+    ValueTask OnLeavedStreamAsync(string streamerId);
 }

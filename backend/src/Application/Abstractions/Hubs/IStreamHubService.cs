@@ -1,5 +1,5 @@
 ﻿namespace Application.Abstractions.Hubs;
 
-public interface IStreamHubService : IStreamHubUserService, IStreamHubViewerService
+public interface IStreamHubService : IStreamHubUserService, IStreamHubChatRoomService
 {
 }
