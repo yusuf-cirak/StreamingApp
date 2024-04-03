@@ -1,4 +1,4 @@
-﻿using Application.Features.Streams.Dtos;
+﻿using Application.Contracts.Streams;
 using Application.Features.Streams.Services;
 
 namespace Application.Features.Streams.Queries.Get;

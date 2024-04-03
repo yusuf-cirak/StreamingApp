@@ -1,7 +1,5 @@
-﻿using System.Security.Claims;
-using Application.Common.Mapping;
+﻿using Application.Common.Mapping;
 using Application.Common.Rules;
-using Application.Features.OperationClaims.Dtos;
 using Application.Features.OperationClaims.Rules;
 
 namespace Application.Features.OperationClaims.Commands.Create;

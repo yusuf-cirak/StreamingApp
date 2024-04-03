@@ -6,6 +6,7 @@ using Infrastructure.Helpers.Security;
 using Infrastructure.Persistence.EntityFramework;
 using Infrastructure.SignalR.Hubs;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using SignalR.Concretes;
 using StackExchange.Redis.Extensions.Core.Configuration;
 using WebAPI.Endpoints;
 using WebAPI.Extensions;

@@ -1,7 +1,4 @@
-﻿using System.Security.Claims;
-using System.Text.Json;
-using Application.Features.OperationClaims.Dtos;
-using Application.Features.Roles.Dtos;
+﻿using System.Text.Json;
 using Application.Features.StreamBlockedUsers.Abstractions;
 
 namespace Application.Features.StreamBlockedUsers.Rules;

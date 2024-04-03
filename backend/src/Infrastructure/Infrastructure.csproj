@@ -9,6 +9,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Application\Application.csproj" />
       <ProjectReference Include="..\Domain\Domain.csproj" />
+      <ProjectReference Include="..\SignalR\SignalR\SignalR.csproj" />
     </ItemGroup>
     <ItemGroup>
       <PackageReference Include="Bogus" Version="35.4.0" />
@@ -24,8 +25,7 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Services\Hub\Streams\" />
-      <Folder Include="SignalR\Hubs\Services\" />
-      <Folder Include="SignalR\Services\" />
+      <Folder Include="SignalR\Hubs\" />
     </ItemGroup>
 
 </Project>

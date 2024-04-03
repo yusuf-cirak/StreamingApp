@@ -1,6 +1,6 @@
 ﻿using Application.Common.Mapping;
+using Application.Contracts.StreamOptions;
 using Application.Features.StreamOptions.Abstractions;
-using Application.Features.StreamOptions.Dtos;
 using Application.Features.StreamOptions.Rules;
 
 namespace Application.Features.StreamOptions.Queries.GetChatSettings;

@@ -1,5 +1,4 @@
 ﻿using Application.Abstractions.Helpers;
-using Application.Abstractions.Hubs;
 using Application.Abstractions.Repository;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.Helpers.Hashing;
@@ -8,11 +7,12 @@ using Infrastructure.Helpers.Security.Encryption;
 using Infrastructure.Persistence.EntityFramework.Contexts;
 using Infrastructure.Persistence.EntityFramework.Interceptors;
 using Infrastructure.Persistence.EntityFramework.Repositories;
-using Infrastructure.SignalR.Hubs.Services.InMemory;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
+using SignalR.Abstractions.Services;
+using SignalR.Concretes.Services.InMemory;
 
 namespace Infrastructure;
 

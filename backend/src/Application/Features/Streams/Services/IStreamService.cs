@@ -1,4 +1,4 @@
-﻿using Application.Features.Streams.Dtos;
+﻿using Application.Contracts.Streams;
 using Stream = Domain.Entities.Stream;
 
 namespace Application.Features.Streams.Services;

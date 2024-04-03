@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using Application.Common.Errors;
-using Application.Features.Roles.Dtos;
+using Application.Contracts.Roles;
 using Application.Features.UserOperationClaims.Abstractions;
 
 namespace Application.Features.UserOperationClaims.Rules;

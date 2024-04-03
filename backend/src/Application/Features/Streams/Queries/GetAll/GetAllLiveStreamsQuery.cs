@@ -1,5 +1,5 @@
 ﻿using Application.Common.Constants;
-using Application.Features.Streams.Dtos;
+using Application.Contracts.Streams;
 using StackExchange.Redis.Extensions.Core.Abstractions;
 
 namespace Application.Features.Streams.Queries.GetAll;

@@ -61,6 +61,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "stream", "stream", "{407673
 		media-server\services\stream\stream-service.js = media-server\services\stream\stream-service.js
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalR", "backend\src\SignalR\SignalR\SignalR.csproj", "{5C71C798-A286-4915-985A-CE887C2595E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Contracts", "backend\src\Application.Contracts\Application.Contracts\Application.Contracts.csproj", "{413AA815-ECBB-429F-87F9-07FFC3789E4E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +91,14 @@ Global
 		{7FA72C71-699B-4D91-BE84-413F9EA3474D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FA72C71-699B-4D91-BE84-413F9EA3474D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7FA72C71-699B-4D91-BE84-413F9EA3474D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C71C798-A286-4915-985A-CE887C2595E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C71C798-A286-4915-985A-CE887C2595E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C71C798-A286-4915-985A-CE887C2595E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C71C798-A286-4915-985A-CE887C2595E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{413AA815-ECBB-429F-87F9-07FFC3789E4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{413AA815-ECBB-429F-87F9-07FFC3789E4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{413AA815-ECBB-429F-87F9-07FFC3789E4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{413AA815-ECBB-429F-87F9-07FFC3789E4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -103,6 +115,8 @@ Global
 		{7B41755D-E9CA-4BAF-8272-4ED1E750264E} = {785AC37C-AE99-4AEC-A4B2-C792292C84F9}
 		{1304B263-05EF-4F7E-84AB-5454B4218CB0} = {785AC37C-AE99-4AEC-A4B2-C792292C84F9}
 		{40767337-6BCB-4A8B-8FEC-90D39F82639C} = {1304B263-05EF-4F7E-84AB-5454B4218CB0}
+		{5C71C798-A286-4915-985A-CE887C2595E7} = {4E78F46D-FE3F-4624-AD83-17D2BDCA6C26}
+		{413AA815-ECBB-429F-87F9-07FFC3789E4E} = {4E78F46D-FE3F-4624-AD83-17D2BDCA6C26}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E6A6F31D-D34D-419F-A8D9-F395C1409CBE}

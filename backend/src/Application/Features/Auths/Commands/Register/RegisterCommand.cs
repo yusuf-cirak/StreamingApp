@@ -1,5 +1,5 @@
 ﻿using Application.Common.Models;
-using Application.Features.Auths.Dtos;
+using Application.Contracts.Auths;
 using Application.Features.Auths.Rules;
 using Application.Features.Streams.Services;
 

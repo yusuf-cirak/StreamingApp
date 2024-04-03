@@ -1,6 +1,6 @@
 ﻿using Application.Common.Constants;
 using Application.Common.Mapping;
-using Application.Features.Streams.Dtos;
+using Application.Contracts.Streams;
 using StackExchange.Redis.Extensions.Core.Abstractions;
 using Stream = Domain.Entities.Stream;
 
@@ -125,7 +125,7 @@ public sealed class StreamService : IStreamService
             return false;
         }
 
-        var getStreamDto = stream.ToDto(stream.Id, streamOption.Streamer.ToDto(), streamOption.ToStreamOptionDto());
+        var getStreamDto = stream.ToDto(streamOption.Streamer.ToDto(), streamOption.ToStreamOptionDto());
 
         var serializedStream = _redisDatabase.Serializer.Serialize(getStreamDto);
 

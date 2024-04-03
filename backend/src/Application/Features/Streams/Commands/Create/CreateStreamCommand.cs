@@ -1,4 +1,5 @@
-﻿using Application.Features.Streams.Abstractions;
+﻿using Application.Common.Mapping;
+using Application.Features.Streams.Abstractions;
 using Application.Features.Streams.Rules;
 using Application.Features.Streams.Services;
 using Stream = Domain.Entities.Stream;
@@ -14,7 +15,6 @@ public readonly record struct CreateStreamCommandRequest : IStreamCommandRequest
 
     public CreateStreamCommandRequest()
     {
-        // TODO: Add authorization with API key and Stream Key
         AuthorizationFunctions = [StreamAuthorizationRules.RequesterMustHaveValidApiKey];
     }
 }
@@ -54,10 +54,13 @@ public sealed class CreateStreamCommandHandler : IRequestHandler<CreateStreamCom
 
         var isStreamStarted = await _streamService.StartNewStreamAsync(streamOptions, stream, cancellationToken);
 
-        //TODO: Add event to notify users that stream has started
+        if (!isStreamStarted)
+        {
+            return StreamErrors.FailedToCreateStream;
+        }
 
-        return isStreamStarted
-            ? HttpResult<string>.Success(streamer.Username)
-            : StreamErrors.FailedToCreateStream;
+        var streamDto = stream.ToDto(streamer.ToDto(), streamOptions.ToStreamOptionDto());
+        
+        return streamer.Username;
     }
 }

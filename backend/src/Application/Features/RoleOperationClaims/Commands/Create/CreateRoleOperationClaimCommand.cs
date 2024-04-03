@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Application.Common.Mapping;
 using Application.Common.Rules;
-using Application.Features.RoleOperationClaims.Dtos;
+using Application.Contracts.RoleOperationClaims;
 using Application.Features.RoleOperationClaims.Rules;
 
 namespace Application.Features.RoleOperationClaims.Commands.Create;

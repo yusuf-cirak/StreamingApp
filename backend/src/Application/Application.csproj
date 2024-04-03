@@ -17,13 +17,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Application.Contracts\Application.Contracts\Application.Contracts.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\SignalR\SignalR\SignalR.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\StreamBlockedUsers\Dtos\" />
-    <Folder Include="Features\StreamFollowerUsers\Dtos\" />
-    <Folder Include="Features\UserOperationClaims\Dtos\" />
+    <Folder Include="Abstractions\Hubs\" />
+    <Folder Include="Features\OperationClaims\Dtos\" />
+    <Folder Include="Features\StreamOptions\Dtos\" />
+    <Folder Include="Features\Users\Dtos\" />
   </ItemGroup>
 
 </Project>

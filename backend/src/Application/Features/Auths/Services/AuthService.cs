@@ -1,6 +1,5 @@
-﻿using Application.Common.Dtos;
-using Application.Features.OperationClaims.Dtos;
-using Application.Features.Roles.Dtos;
+﻿using Application.Contracts.Common;
+using Application.Contracts.Roles;
 
 namespace Application.Features.Auths.Services;
 

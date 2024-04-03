@@ -1,10 +1,4 @@
-﻿using Application.Features.OperationClaims.Dtos;
-using Application.Features.RoleOperationClaims.Dtos;
-using Application.Features.Roles.Dtos;
-using Application.Features.StreamOptions.Dtos;
-using Application.Features.Streams.Dtos;
-using Application.Features.Users.Dtos;
-using Stream = Domain.Entities.Stream;
+﻿using Stream = Domain.Entities.Stream;
 
 namespace Application.Common.Mapping;
 
@@ -31,7 +25,7 @@ public static class MappingExtensions
     public static GetStreamTitleDescriptionDto ToStreamTitleDescriptionDto(this StreamOption streamOption) =>
         new(streamOption.Id, streamOption.StreamTitle, streamOption.StreamDescription);
 
-    public static GetStreamDto ToDto(this Stream stream, Guid streamId, GetUserDto userDto,
+    public static GetStreamDto ToDto(this Stream stream, GetUserDto userDto,
         GetStreamOptionDto? streamOptionDto) =>
-        new(streamId, stream.StartedAt, userDto, streamOptionDto);
+        new(stream.Id, stream.StartedAt, userDto, streamOptionDto);
 }
