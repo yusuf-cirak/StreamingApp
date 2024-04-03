@@ -1,14 +1,14 @@
 ﻿using SharedKernel;
-using SignalR.Abstractions.Services;
+using SignalR.Hubs.Stream.Client.Abstractions.Services;
 
-namespace SignalR.Concretes.Services.InMemory;
+namespace SignalR.Hubs.Stream.Client.Concretes.Services.InMemory;
 
-public sealed class InMemoryStreamHubService : IStreamHubService
+public sealed class InMemoryStreamHubClientService : IStreamHubClientService
 {
     private readonly IStreamHubUserService _streamHubUserService;
     private readonly IStreamHubChatRoomService _streamHubChatRoomService;
 
-    public InMemoryStreamHubService(IStreamHubUserService streamHubUserService,
+    public InMemoryStreamHubClientService(IStreamHubUserService streamHubUserService,
         IStreamHubChatRoomService streamHubChatRoomService)
     {
         _streamHubUserService = streamHubUserService;

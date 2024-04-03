@@ -25,7 +25,6 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Services\Hub\Streams\" />
-      <Folder Include="SignalR\Hubs\" />
     </ItemGroup>
 
 </Project>

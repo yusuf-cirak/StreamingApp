@@ -1,12 +1,17 @@
 ﻿using System.Collections.Concurrent;
-using SignalR.Abstractions.Services;
+using SignalR.Hubs.Stream.Client.Abstractions.Services;
+using SignalR.Hubs.Stream.Shared;
 
-namespace SignalR.Concretes.Services.InMemory;
+namespace SignalR.Hubs.Stream.Client.Concretes.Services.InMemory;
 
 public sealed class InMemoryStreamHubChatRoomService : IStreamHubChatRoomService
 {
-    private readonly ConcurrentDictionary<string, HashSet<string>> _streamViewers = new();
+    private readonly ConcurrentDictionary<string, HashSet<string>> _streamViewers;
 
+    public InMemoryStreamHubChatRoomService(IStreamHubState hubState)
+    {
+        _streamViewers = hubState.StreamViewers;
+    }
 
     public ValueTask<HashSet<string>> GetStreamViewerConnectionIds(string streamerId)
     {
@@ -18,6 +23,8 @@ public sealed class InMemoryStreamHubChatRoomService : IStreamHubChatRoomService
         var streamViewers = _streamViewers.GetOrAdd(streamerName, new HashSet<string>());
 
         streamViewers.Add(connectionId);
+
+        Console.WriteLine($"ConnectionId: {connectionId} joined to StreamerName:{streamerName}'s stream!");
 
         return ValueTask.CompletedTask;
     }

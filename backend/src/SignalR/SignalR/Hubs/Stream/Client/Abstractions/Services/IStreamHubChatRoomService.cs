@@ -1,4 +1,4 @@
-﻿namespace SignalR.Abstractions.Services;
+﻿namespace SignalR.Hubs.Stream.Client.Abstractions.Services;
 
 public interface IStreamHubChatRoomService
 {

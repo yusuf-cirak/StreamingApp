@@ -11,8 +11,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
-using SignalR.Abstractions.Services;
-using SignalR.Concretes.Services.InMemory;
+using SignalR.Hubs.Stream.Client.Abstractions.Services;
+using SignalR.Hubs.Stream.Client.Concretes.Services.InMemory;
+using SignalR.Hubs.Stream.Shared;
+using SignalR.Hubs.Stream.Shared.InMemory;
 
 namespace Infrastructure;
 
@@ -68,9 +70,11 @@ public static class ServiceRegistration
 
     private static void AddSignalrServices(this IServiceCollection services)
     {
+        services.AddSingleton<IStreamHubState, InMemoryStreamHubState>();
+
         services.AddScoped<IStreamHubUserService, InMemoryStreamHubUserService>();
         services.AddScoped<IStreamHubChatRoomService, InMemoryStreamHubChatRoomService>();
 
-        services.AddScoped<IStreamHubService, InMemoryStreamHubService>();
+        services.AddScoped<IStreamHubClientService, InMemoryStreamHubClientService>();
     }
 }

@@ -1,16 +1,19 @@
 ﻿using System.Collections.Concurrent;
 using Infrastructure.SignalR.Hubs.Constants;
 using SharedKernel;
-using SignalR.Abstractions.Services;
+using SignalR.Hubs.Stream.Client.Abstractions.Services;
+using SignalR.Hubs.Stream.Shared;
 
-namespace SignalR.Concretes.Services.InMemory;
+namespace SignalR.Hubs.Stream.Client.Concretes.Services.InMemory;
 
 public sealed class InMemoryStreamHubUserService : IStreamHubUserService
 {
-    private readonly ConcurrentDictionary<string, HashSet<string>> _onlineUsers = new()
+    private readonly ConcurrentDictionary<string, HashSet<string>> _onlineUsers;
+
+    public InMemoryStreamHubUserService(IStreamHubState hubState)
     {
-        [StreamHubConstant.AnonymousUser] = new HashSet<string>()
-    };
+        _onlineUsers = hubState.OnlineUsers;
+    }
 
     public ValueTask<bool> OnConnectedAsync(string userId, string connectionId)
     {
