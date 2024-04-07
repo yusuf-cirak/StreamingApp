@@ -15,6 +15,7 @@ export class StreamController {
         return of(res.status(200).send(response.data));
       }),
       catchError((err) => {
+        console.log(err);
         return of(res.status(401).send(err));
       }),
     );
@@ -28,6 +29,7 @@ export class StreamController {
       }),
       catchError((err) => {
         res.status(401).send(err);
+        console.log(err);
         return of(err);
       }),
     );
