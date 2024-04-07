@@ -31,12 +31,24 @@ export class StreamFacade {
     );
   }
 
-  setLiveStream(liveStream: LiveStreamDto) {
+  setLiveStream(liveStream: LiveStreamDto | undefined) {
     this.#streamState.update((state) => ({ ...state, stream: liveStream }));
   }
 
   setLiveStreamErrorState(error: Error) {
     this.#streamState.update((state) => ({ ...state, error }));
+  }
+
+  endStream() {
+    this.#streamState.update((state) => ({
+      ...state,
+      stream: undefined,
+      error: { statusCode: 400, message: 'Stream is now offline' },
+    }));
+  }
+
+  leaveStream() {
+    this.#streamState.set(undefined);
   }
 
   setStreamerName(streamerName: string) {

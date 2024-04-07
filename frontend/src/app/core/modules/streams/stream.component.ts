@@ -4,6 +4,9 @@ import { NgTemplateOutlet } from '@angular/common';
 import { LiveStreamComponent } from './components/live-stream/live-stream.component';
 import { StreamFacade } from './services/stream.facade';
 import { NotFoundStreamComponent } from './components/not-found-stream/not-found-stream.component';
+import { StreamHub } from '../../hubs/stream-hub';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-stream',
@@ -17,13 +20,32 @@ import { NotFoundStreamComponent } from './components/not-found-stream/not-found
   ],
 })
 export class StreamComponent {
+  readonly streamHub = inject(StreamHub);
   readonly streamFacade = inject(StreamFacade);
+  readonly router = inject(Router);
 
   readonly canJoinToChatRoom = computed(
     () =>
       this.streamFacade.streamState()?.error?.statusCode !== 404 ||
       this.streamFacade.liveStream()
   );
+
+  constructor() {
+    this.streamHub.streamStarted$.subscribe({
+      next: (value) => {
+        this.streamFacade.setLiveStream(value);
+
+        //TODO: Add it from current live streamers
+      },
+    });
+
+    this.streamHub.streamEnd$.pipe(takeUntilDestroyed()).subscribe({
+      next: () => {
+        this.streamFacade.endStream();
+        //TODO: Delete it from current live streamers
+      },
+    });
+  }
 
   ngOnInit() {
     if (this.canJoinToChatRoom()) {

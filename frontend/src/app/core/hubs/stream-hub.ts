@@ -1,9 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../services';
 import { StreamHubAction } from './stream-hub-action';
+import { LiveStreamDto } from '../modules/recommended-streamers/models/live-stream-dto';
+import { StreamInfoDto } from '../modules/streams/contracts/stream-info-dto';
 
 @Injectable({ providedIn: 'root' })
 export class StreamHub {
@@ -14,8 +16,8 @@ export class StreamHub {
     })
     .build();
 
-  // chatMessageReceived$ = new BehaviorSubject<MessageDto>(null!);
-  // chatGroupCreated$ = new BehaviorSubject<CreateHubChatGroupDto>(null!);
+  streamStarted$ = new Subject<LiveStreamDto>();
+  streamEnd$ = new Subject<string>();
 
   async connect() {
     await this._hubConnection
@@ -42,15 +44,25 @@ export class StreamHub {
   }
 
   registerStreamHubHandlers() {
-    // this._hubConnection.on('ReceiveMessageAsync', (message: MessageDto) => {
-    //   this.chatMessageReceived$.next(message);
-    // });
-    // this._hubConnection.on(
-    //   'ChatGroupCreatedAsync',
-    //   (chatGroup: CreateHubChatGroupDto) => {
-    //     this.chatGroupCreated$.next(chatGroup);
-    //   }
-    // );
+    this._hubConnection.on(
+      StreamHubAction.OnStreamStarted,
+      (streamInfo: StreamInfoDto) => {
+        const stream = {
+          startedAt: streamInfo.startedAt,
+          options: streamInfo.streamOption,
+          user: streamInfo.user,
+        } as LiveStreamDto;
+
+        this.streamStarted$.next(stream);
+      }
+    );
+
+    this._hubConnection.on(
+      StreamHubAction.OnStreamEnd,
+      (streamerName: string) => {
+        this.streamEnd$.next(streamerName);
+      }
+    );
   }
 
   invokeOnJoinedStream(streamerId: string) {

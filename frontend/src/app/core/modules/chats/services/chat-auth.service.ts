@@ -11,10 +11,11 @@ export class ChatAuthService {
 
   readonly streamFacade = inject(StreamFacade);
 
-  userChatErrorMessage = computed(() => this.canUserSendMessage(this.streamFacade.liveStream()!));
+  userChatErrorMessage = computed(() =>
+    this.canUserSendMessage(this.streamFacade.liveStream()!)
+  );
 
-
-  canUserSendMessage(liveStream: LiveStreamDto ):  string | null {
+  canUserSendMessage(liveStream: LiveStreamDto): string | null {
     const options = liveStream.options;
     if (options.chatDisabled) {
       return 'Chat is disabled';

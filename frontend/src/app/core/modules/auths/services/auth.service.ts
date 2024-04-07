@@ -54,7 +54,7 @@ export class AuthService {
       if (tokenExpiration < new Date(Date.now())) {
         await lastValueFrom(
           this.refreshToken(this.getUserFromAuthDto(userAuthDto))
-        );
+        ).catch((err) => {});
       }
     }
   }

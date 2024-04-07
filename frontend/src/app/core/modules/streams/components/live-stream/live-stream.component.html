@@ -16,7 +16,7 @@
 
           <vg-time-display
             vgProperty="current"
-            vgFormat="mm:ss"
+            vgFormat="hh:mm:ss"
           ></vg-time-display>
 
           <vg-scrub-bar style="pointer-events: none"></vg-scrub-bar>
@@ -29,15 +29,14 @@
           [vgMedia]="$any(media)"
           #media
           id="stream"
-          preload="auto"
+          preload="metadata"
           [vgHls]="streamFacade.getHlsUrl()"
-          crossorigin
         ></video>
       </vg-player>
     </div>
     <div class="hidden sm:block w-full h-[20%] bg-slate-200"></div>
   </div>
   <div class="chat-sidebar w-full sm:w-[20%] h-full bg-gray-800 pt-4 sm:pt-0">
-    <app-chat-sidebar [liveStream]="liveStream()" (messageSend)="sendMessage($event)"></app-chat-sidebar>
+    <app-chat-sidebar [liveStream]="liveStream()"></app-chat-sidebar>
   </div>
 </div>

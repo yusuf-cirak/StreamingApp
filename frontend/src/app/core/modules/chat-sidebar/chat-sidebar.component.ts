@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Output, input, signal } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { ChatSidebar } from './models/chat-sidebar';
 import { CommunityIconComponent } from '../../../shared/icons/community-icon';
 import { ChatIconComponent } from '../../../shared/icons/chat-icon';
 import { TooltipModule } from 'primeng/tooltip';
 import { ChatComponent } from '../chats/chat.component';
 import { LiveStreamDto } from '../recommended-streamers/models/live-stream-dto';
+import { StreamFacade } from '../streams/services/stream.facade';
 
 @Component({
   selector: 'app-chat-sidebar',
@@ -20,12 +21,11 @@ import { LiveStreamDto } from '../recommended-streamers/models/live-stream-dto';
 export class ChatSidebarComponent {
   liveStream = input.required<LiveStreamDto>();
 
+  readonly streamFacade = inject(StreamFacade);
 
   chatSidebar = signal<ChatSidebar>({
     variant: 'chat',
   });
-
-  @Output() messageSend = new EventEmitter<string>();
 
   changeVariant() {
     const currentVariant = this.chatSidebar().variant;
@@ -33,8 +33,7 @@ export class ChatSidebarComponent {
     this.chatSidebar.update(() => ({ variant: newVariant }));
   }
 
-
   onMessageSend(message: string) {
-    this.messageSend.emit(message);
+    this.streamFacade.sendMessage(message);
   }
 }

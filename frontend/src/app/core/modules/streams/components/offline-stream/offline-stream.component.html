@@ -9,7 +9,7 @@
       <div class="text-center flex flex-col items-center">
         <app-offline-streamer-icon></app-offline-streamer-icon>
         <p class="mb-4 text-lg text-gray-600">
-          Streamer is offline at the moment.
+          {{ streamError().message }}
         </p>
         <div class="animate-bounce">
           <svg
@@ -27,7 +27,7 @@
           </svg>
         </div>
         <p class="mt-4 text-gray-600">
-          Let's get you back <a href="/" class="text-blue-500">home</a>.
+          Let's get you back <a routerLink="/" class="text-blue-500">home</a>.
         </p>
       </div>
     </div>

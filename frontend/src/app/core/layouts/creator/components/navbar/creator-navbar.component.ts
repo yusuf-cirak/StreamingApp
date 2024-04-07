@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { CreatorLogoComponent } from '../logo/logo.component';
-import { ClapperBoardIcon } from '../../../../../shared/icons/clapper-board.icon';
 import { RouterLink } from '@angular/router';
 import { ProfilebarComponent } from '../../../main/components/profilebar/profilebar.component';
 import { ArrowRightIcon } from '../../../../../shared/icons/arrow-right-icon';

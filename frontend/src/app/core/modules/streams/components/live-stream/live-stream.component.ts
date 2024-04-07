@@ -1,4 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { VgApiService, VgCoreModule } from '@videogular/ngx-videogular/core';
 import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
@@ -24,13 +24,7 @@ import { ChatSidebarComponent } from '../../../chat-sidebar/chat-sidebar.compone
 export class LiveStreamComponent {
   liveStream = input.required<LiveStreamDto>();
 
-  chatMessages = computed(() => this.liveStream().chatMessages);
-
   readonly streamFacade = inject(StreamFacade);
-
-  ngOnInit() {
-    this.streamFacade.connectToStreamHub();
-  }
 
   onPlayerReady(service: VgApiService) {
     service.getDefaultMedia().subscriptions.loadedData.subscribe({
@@ -40,7 +34,7 @@ export class LiveStreamComponent {
     });
   }
 
-  sendMessage(message: string) {
-    this.streamFacade.sendMessage(message);
+  ngOnDestroy() {
+    this.streamFacade.leaveStream();
   }
 }

@@ -11,14 +11,14 @@ export class StreamProxyService {
 
   getStreamInfo(streamerName: string): Observable<LiveStreamDto | Error> {
     return this.httpClient
-      .get<StreamInfoDto | Error>({
+      .get<StreamInfoDto>({
         controller: 'streams',
         action: 'live',
         routeParams: [streamerName],
       })
       .pipe(
         map(
-          (res:any) =>
+          (res) =>
             ({
               startedAt: res.startedAt,
               options: res.streamOption,
