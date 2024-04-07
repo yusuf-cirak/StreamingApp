@@ -15,14 +15,14 @@ public sealed class InMemoryStreamHubClientService : IStreamHubClientService
         _streamHubChatRoomService = streamHubChatRoomService;
     }
 
-    public ValueTask<bool> OnConnectedAsync(string userId, string connectionId)
+    public ValueTask<bool> OnConnectedToHubAsync(string userId, string connectionId)
     {
-        return _streamHubUserService.OnConnectedAsync(userId, connectionId);
+        return _streamHubUserService.OnConnectedToHubAsync(userId, connectionId);
     }
 
-    public ValueTask<bool> OnDisconnectedAsync(string userId, string connectionId)
+    public ValueTask<bool> OnDisconnectedFromHubAsync(string userId, string connectionId)
     {
-        return _streamHubUserService.OnDisconnectedAsync(userId, connectionId);
+        return _streamHubUserService.OnDisconnectedFromHubAsync(userId, connectionId);
     }
 
     public ValueTask<Result<string, Error>> GetUserIdByConnectionIdAsync(string connectionId)
@@ -30,9 +30,9 @@ public sealed class InMemoryStreamHubClientService : IStreamHubClientService
         return _streamHubUserService.GetUserIdByConnectionIdAsync(connectionId);
     }
 
-    public ValueTask<HashSet<string>> GetStreamViewerConnectionIds(string streamerId)
+    public ValueTask<HashSet<string>> GetStreamViewerConnectionIds(string streamerName)
     {
-        return _streamHubChatRoomService.GetStreamViewerConnectionIds(streamerId);
+        return _streamHubChatRoomService.GetStreamViewerConnectionIds(streamerName);
     }
 
     public ValueTask OnJoinedStreamAsync(string streamerName, string connectionId)
@@ -43,5 +43,10 @@ public sealed class InMemoryStreamHubClientService : IStreamHubClientService
     public ValueTask OnLeavedStreamAsync(string streamerName, string connectionId)
     {
         return _streamHubChatRoomService.OnLeavedStreamAsync(streamerName, connectionId);
+    }
+
+    public ValueTask<bool> OnDisconnectedFromChatRoomsAsync(string connectionId)
+    {
+        return _streamHubChatRoomService.OnDisconnectedFromChatRoomsAsync(connectionId);
     }
 }

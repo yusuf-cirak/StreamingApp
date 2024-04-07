@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
-using Infrastructure.SignalR.Hubs.Constants;
 using Microsoft.AspNetCore.SignalR;
+using SignalR.Constants;
 using SignalR.Hubs.Stream.Client.Abstractions.Services;
 
 namespace SignalR.Hubs.Stream;
@@ -19,14 +19,23 @@ public sealed class StreamHub : Hub<IStreamHub>
 
     public override async Task OnConnectedAsync()
     {
-        await _hubClientService.OnConnectedAsync(_userId, Context.ConnectionId);
-        await base.OnConnectedAsync();
+        var tasks = new List<Task>()
+        {
+            _hubClientService.OnConnectedToHubAsync(_userId, Context.ConnectionId).AsTask(),
+            base.OnConnectedAsync()
+        };
+        await Task.WhenAll(tasks);
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        await _hubClientService.OnDisconnectedAsync(_userId, Context.ConnectionId);
-        await base.OnDisconnectedAsync(exception);
+        var tasks = new List<Task>
+        {
+            _hubClientService.OnDisconnectedFromHubAsync(_userId, Context.ConnectionId).AsTask(),
+            _hubClientService.OnDisconnectedFromChatRoomsAsync(Context.ConnectionId).AsTask(),
+            base.OnDisconnectedAsync(exception)
+        };
+        await Task.WhenAll(tasks);
     }
 
     public async ValueTask OnJoinedStreamAsync(string streamerName)
@@ -38,22 +47,4 @@ public sealed class StreamHub : Hub<IStreamHub>
     {
         await _hubClientService.OnLeavedStreamAsync(streamerName, Context.ConnectionId);
     }
-
-    // public async Task OnStreamStartedAsync(GetStreamDto streamDto)
-    // {
-    //     var streamerId = streamDto.User.Id.ToString();
-    //
-    //     var streamViewerConnectionIds = await _hubClientService.GetStreamViewerConnectionIds(streamerId);
-    //
-    //     await Clients.Clients(streamViewerConnectionIds).OnStreamStartedAsync(streamDto);
-    // }
-    //
-    // public async ValueTask OnStreamEndAsync(GetStreamDto streamDto)
-    // {
-    //     var streamerId = streamDto.User.Id.ToString();
-    //
-    //     var streamViewerConnectionIds = await _hubClientService.GetStreamViewerConnectionIds(streamerId);
-    //
-    //     await Clients.Clients(streamViewerConnectionIds).OnStreamEndAsync(streamDto);
-    // }
 }

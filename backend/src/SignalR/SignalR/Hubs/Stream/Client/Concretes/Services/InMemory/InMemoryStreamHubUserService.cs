@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using Infrastructure.SignalR.Hubs.Constants;
 using SharedKernel;
 using SignalR.Hubs.Stream.Client.Abstractions.Services;
 using SignalR.Hubs.Stream.Shared;
@@ -15,7 +14,7 @@ public sealed class InMemoryStreamHubUserService : IStreamHubUserService
         _onlineUsers = hubState.OnlineUsers;
     }
 
-    public ValueTask<bool> OnConnectedAsync(string userId, string connectionId)
+    public ValueTask<bool> OnConnectedToHubAsync(string userId, string connectionId)
     {
         var userConnectionIds = this.GetUserConnectionIds(userId);
 
@@ -24,7 +23,7 @@ public sealed class InMemoryStreamHubUserService : IStreamHubUserService
         return ValueTask.FromResult(true);
     }
 
-    public ValueTask<bool> OnDisconnectedAsync(string userId, string connectionId)
+    public ValueTask<bool> OnDisconnectedFromHubAsync(string userId, string connectionId)
     {
         var userConnectionIds = this.GetUserConnectionIds(userId);
         if (userConnectionIds.Count == 1)

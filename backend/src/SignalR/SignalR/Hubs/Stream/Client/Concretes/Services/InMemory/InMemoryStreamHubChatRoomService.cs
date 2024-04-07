@@ -13,9 +13,10 @@ public sealed class InMemoryStreamHubChatRoomService : IStreamHubChatRoomService
         _streamViewers = hubState.StreamViewers;
     }
 
-    public ValueTask<HashSet<string>> GetStreamViewerConnectionIds(string streamerId)
+    public ValueTask<HashSet<string>> GetStreamViewerConnectionIds(string streamerName)
     {
-        return ValueTask.FromResult(_streamViewers.GetOrAdd(streamerId, new HashSet<string>()));
+
+        return ValueTask.FromResult(_streamViewers.GetOrAdd(streamerName, new HashSet<string>()));
     }
 
     public ValueTask OnJoinedStreamAsync(string streamerName, string connectionId)
@@ -23,8 +24,6 @@ public sealed class InMemoryStreamHubChatRoomService : IStreamHubChatRoomService
         var streamViewers = _streamViewers.GetOrAdd(streamerName, new HashSet<string>());
 
         streamViewers.Add(connectionId);
-
-        Console.WriteLine($"ConnectionId: {connectionId} joined to StreamerName:{streamerName}'s stream!");
 
         return ValueTask.CompletedTask;
     }
@@ -48,5 +47,13 @@ public sealed class InMemoryStreamHubChatRoomService : IStreamHubChatRoomService
         }
 
         return ValueTask.CompletedTask;
+    }
+
+    public ValueTask<bool> OnDisconnectedFromChatRoomsAsync(string connectionId)
+    {
+        var keys = _streamViewers.Where(kvp => kvp.Value.Any(id => id == connectionId)).Select(kvp => kvp.Key).ToList();
+
+        keys.ForEach(key => this.OnLeavedStreamAsync(key, connectionId));
+        return ValueTask.FromResult(true);
     }
 }

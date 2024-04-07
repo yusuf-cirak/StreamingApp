@@ -1,5 +1,5 @@
 ﻿using System.Collections.Concurrent;
-using Infrastructure.SignalR.Hubs.Constants;
+using SignalR.Constants;
 
 namespace SignalR.Hubs.Stream.Shared.InMemory;
 
