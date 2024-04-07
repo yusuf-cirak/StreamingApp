@@ -2,6 +2,7 @@
 using Application.Features.Streams.Abstractions;
 using Application.Features.Streams.Rules;
 using Application.Features.Streams.Services;
+using SignalR.Hubs.Stream.Server.Abstractions;
 using Stream = Domain.Entities.Stream;
 
 namespace Application.Features.Streams.Commands.Create;
@@ -22,28 +23,30 @@ public readonly record struct CreateStreamCommandRequest : IStreamCommandRequest
 public sealed class CreateStreamCommandHandler : IRequestHandler<CreateStreamCommandRequest, HttpResult<string>>
 {
     private readonly IStreamService _streamService;
+    private readonly IStreamHubServerService _hubServerService;
 
-    public CreateStreamCommandHandler(IStreamService streamService)
+    public CreateStreamCommandHandler(IStreamService streamService, IStreamHubServerService hubServerService)
     {
         _streamService = streamService;
+        _hubServerService = hubServerService;
     }
 
     public async Task<HttpResult<string>> Handle(CreateStreamCommandRequest request,
         CancellationToken cancellationToken)
     {
-        
         var streamOptionResult = await _streamService.StreamerExistsAsync(request.StreamKey, cancellationToken);
 
         if (streamOptionResult.IsFailure)
         {
             return streamOptionResult.Error;
         }
-        
+
         var streamOptions = streamOptionResult.Value;
 
         var streamer = streamOptions.Streamer;
 
-        var isStreamerLiveResult = await _streamService.IsStreamerLiveAsync(streamer,request.StreamKey, cancellationToken);
+        var isStreamerLiveResult =
+            await _streamService.IsStreamerLiveAsync(streamer, request.StreamKey, cancellationToken);
 
         if (isStreamerLiveResult.IsFailure)
         {
@@ -60,7 +63,9 @@ public sealed class CreateStreamCommandHandler : IRequestHandler<CreateStreamCom
         }
 
         var streamDto = stream.ToDto(streamer.ToDto(), streamOptions.ToStreamOptionDto());
-        
+
+        _ = _hubServerService.OnStreamStartedAsync(streamDto);
+
         return streamer.Username;
     }
 }

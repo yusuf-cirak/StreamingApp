@@ -1,6 +1,7 @@
 ﻿using Application.Features.Streams.Abstractions;
 using Application.Features.Streams.Rules;
 using Application.Features.Streams.Services;
+using SignalR.Hubs.Stream.Server.Abstractions;
 
 namespace Application.Features.Streams.Commands.Update;
 
@@ -19,10 +20,12 @@ public readonly record struct UpdateStreamCommandRequest : IStreamCommandRequest
 public sealed class UpdateStreamCommandHandler : IRequestHandler<UpdateStreamCommandRequest, HttpResult>
 {
     private readonly IStreamService _streamService;
+    private readonly IStreamHubServerService _hubServerService;
 
-    public UpdateStreamCommandHandler(IStreamService streamService)
+    public UpdateStreamCommandHandler(IStreamService streamService, IStreamHubServerService hubServerService)
     {
         _streamService = streamService;
+        _hubServerService = hubServerService;
     }
 
     public async Task<HttpResult> Handle(UpdateStreamCommandRequest request, CancellationToken cancellationToken)
@@ -37,6 +40,8 @@ public sealed class UpdateStreamCommandHandler : IRequestHandler<UpdateStreamCom
         var liveStream = streamLiveResult.Value;
 
         var streamHasEnded = await _streamService.EndStreamAsync(liveStream, cancellationToken);
+
+        await _hubServerService.OnStreamEndAsync(liveStream.User.Username);
 
         return streamHasEnded
             ? HttpResult.Success(StatusCodes.Status204NoContent)

@@ -13,6 +13,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using SignalR.Hubs.Stream.Client.Abstractions.Services;
 using SignalR.Hubs.Stream.Client.Concretes.Services.InMemory;
+using SignalR.Hubs.Stream.Server.Abstractions;
+using SignalR.Hubs.Stream.Server.Concretes;
 using SignalR.Hubs.Stream.Shared;
 using SignalR.Hubs.Stream.Shared.InMemory;
 
@@ -76,5 +78,7 @@ public static class ServiceRegistration
         services.AddScoped<IStreamHubChatRoomService, InMemoryStreamHubChatRoomService>();
 
         services.AddScoped<IStreamHubClientService, InMemoryStreamHubClientService>();
+        services.AddScoped<IStreamHubServerService, InMemoryStreamHubServerService>();
+
     }
 }
