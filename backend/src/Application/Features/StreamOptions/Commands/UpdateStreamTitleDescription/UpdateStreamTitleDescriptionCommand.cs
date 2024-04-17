@@ -4,7 +4,7 @@ using Application.Features.StreamOptions.Rules;
 
 namespace Application.Features.StreamOptions.Commands.Update;
 
-// TODO: Update chat disabled, delay
+//TODO: Send notification to all current viewers
 public readonly record struct UpdateStreamTitleDescriptionCommandRequest
     : IStreamOptionRequest, IRequest<HttpResult>, ISecuredRequest
 {

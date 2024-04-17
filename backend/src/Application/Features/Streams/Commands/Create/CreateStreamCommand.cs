@@ -62,7 +62,7 @@ public sealed class CreateStreamCommandHandler : IRequestHandler<CreateStreamCom
             return StreamErrors.FailedToCreateStream;
         }
 
-        var streamDto = stream.ToDto(streamer.ToDto(), streamOptions.ToStreamOptionDto());
+        var streamDto = stream.ToDto(streamer.ToDto(), streamOptions.ToDto());
 
         _ = _hubServerService.OnStreamStartedAsync(streamDto);
 

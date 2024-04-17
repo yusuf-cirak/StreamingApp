@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Helpers;
+﻿using Application.Abstractions.Caching;
+using Application.Abstractions.Helpers;
 using Application.Abstractions.Repository;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.Helpers.Hashing;
@@ -7,6 +8,7 @@ using Infrastructure.Helpers.Security.Encryption;
 using Infrastructure.Persistence.EntityFramework.Contexts;
 using Infrastructure.Persistence.EntityFramework.Interceptors;
 using Infrastructure.Persistence.EntityFramework.Repositories;
+using Infrastructure.Services.Cache;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -80,5 +82,6 @@ public static class ServiceRegistration
         services.AddScoped<IStreamHubClientService, InMemoryStreamHubClientService>();
         services.AddScoped<IStreamHubServerService, InMemoryStreamHubServerService>();
 
+        services.AddSingleton<ICacheService, RedisCacheService>();
     }
 }

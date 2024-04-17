@@ -32,7 +32,8 @@ public readonly record struct Result
     public TResult Match<TResult>(Func<TResult> success, Func<Error, TResult> failure)
         => IsSuccess ? success() : failure(Error);
 }
-public record Result<TValue, TError>
+
+public sealed record Result<TValue, TError>
 {
     public TValue Value { get; }
     public TError Error { get; }
