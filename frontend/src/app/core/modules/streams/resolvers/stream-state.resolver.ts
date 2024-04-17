@@ -14,8 +14,8 @@ export const streamStateResolver: ResolveFn<LiveStreamDto | Error> = (
 
   if (!streamerName) {
     streamerName =
-      inject(Router).getCurrentNavigation()?.extras.state!['streamerName'] || // User state passed from the previous route
-      inject(AuthService).user()?.username; //
+      inject(AuthService).user()?.username ||
+      inject(Router).getCurrentNavigation()?.extras.state!['streamerName']; // User state passed from the previous route
   }
   const streamFacade = inject(StreamFacade);
 

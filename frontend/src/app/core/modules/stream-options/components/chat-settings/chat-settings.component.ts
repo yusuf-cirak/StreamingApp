@@ -72,7 +72,7 @@ export class ChatSettingsComponent {
   }
 
   patchChatSettings(valid: boolean, value: typeof this.form.value) {
-    if (!this.form.dirty) {
+    if (!this.form.touched) {
       return;
     }
     if (!valid) {
@@ -94,6 +94,7 @@ export class ChatSettingsComponent {
         takeUntilDestroyed(this.destroyRef),
         finalize(() => {
           this.form.enable();
+          this.form.markAsUntouched();
           this.updateFormValues();
         })
       )
