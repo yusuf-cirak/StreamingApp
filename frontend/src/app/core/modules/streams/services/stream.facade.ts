@@ -5,6 +5,7 @@ import { StreamState } from '../models/stream-state';
 import { Error } from '../../../../shared/api/error';
 import { AuthService } from '@streaming-app/core';
 import { StreamHub } from '../../../hubs/stream-hub';
+import { StreamChatOptionsDto } from '../contracts/stream-options-dto';
 
 @Injectable({ providedIn: 'root' })
 export class StreamFacade {
@@ -33,6 +34,16 @@ export class StreamFacade {
 
   setLiveStream(liveStream: LiveStreamDto | undefined) {
     this.#streamState.update((state) => ({ ...state, stream: liveStream }));
+  }
+  setStreamChatOptions(chatOptions: StreamChatOptionsDto) {
+    this.#streamState.update((state) => {
+      const stream = state?.stream;
+      const options = { ...stream?.options, ...chatOptions };
+      return {
+        ...state,
+        stream: { ...stream, options: { ...options, chatOptions: options } },
+      } as StreamState;
+    });
   }
 
   setLiveStreamErrorState(error: Error) {

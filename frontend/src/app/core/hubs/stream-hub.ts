@@ -6,6 +6,7 @@ import { AuthService } from '../services';
 import { StreamHubAction } from './stream-hub-action';
 import { LiveStreamDto } from '../modules/recommended-streamers/models/live-stream-dto';
 import { StreamInfoDto } from '../modules/streams/contracts/stream-info-dto';
+import { StreamChatOptionsDto } from '../modules/streams/contracts/stream-options-dto';
 
 @Injectable({ providedIn: 'root' })
 export class StreamHub {
@@ -18,6 +19,8 @@ export class StreamHub {
 
   streamStarted$ = new Subject<LiveStreamDto>();
   streamEnd$ = new Subject<string>();
+
+  streamChatOptionsChanged$ = new Subject<StreamChatOptionsDto>();
 
   async connect() {
     await this._hubConnection
@@ -61,6 +64,13 @@ export class StreamHub {
       StreamHubAction.OnStreamEnd,
       (streamerName: string) => {
         this.streamEnd$.next(streamerName);
+      }
+    );
+
+    this._hubConnection.on(
+      StreamHubAction.OnStreamChatOptionsChanged,
+      (streamChatOptionsDto: StreamChatOptionsDto) => {
+        this.streamChatOptionsChanged$.next(streamChatOptionsDto);
       }
     );
   }

@@ -45,6 +45,15 @@ export class StreamComponent {
         //TODO: Delete it from current live streamers
       },
     });
+
+    this.streamHub.streamChatOptionsChanged$
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: (value) => {
+          console.log('Stream chat options changed');
+          this.streamFacade.setStreamChatOptions(value);
+        },
+      });
   }
 
   ngOnInit() {
