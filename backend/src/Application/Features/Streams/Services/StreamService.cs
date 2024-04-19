@@ -45,10 +45,10 @@ public sealed class StreamService : IStreamService
     public async Task<Result> IsStreamerLiveAsync(User user, string streamKey,
         CancellationToken cancellationToken = default)
     {
-        var liveStreamers = await this.GetLiveStreamsAsync(cancellationToken);
+        var liveStreams = _liveStreamers.Count == 0 ? await this.GetLiveStreamsAsync(cancellationToken) : _liveStreamers;
 
         var isStreamerLive =
-            liveStreamers.Exists(ls => ls.StreamOption!.Value.StreamKey == streamKey || ls.User.Id == user.Id);
+            liveStreams.Exists(ls => ls.StreamOption!.Value.StreamKey == streamKey || ls.User.Id == user.Id);
 
         return isStreamerLive ? Result.Failure(StreamErrors.StreamIsLive) : Result.Success();
     }
@@ -62,7 +62,7 @@ public sealed class StreamService : IStreamService
     public async Task<Result<GetStreamDto, Error>> GetLiveStreamerByNameAsync(string streamerName,
         CancellationToken cancellationToken = default)
     {
-        var liveStreams = _liveStreamers.Count == 0 ? await this.GetLiveStreamsAsync(cancellationToken) : [];
+        var liveStreams = _liveStreamers.Count == 0 ? await this.GetLiveStreamsAsync(cancellationToken) : _liveStreamers;
 
         var liveStream = liveStreams.SingleOrDefault(stream => stream.User.Username == streamerName);
 
@@ -90,8 +90,8 @@ public sealed class StreamService : IStreamService
     public async Task<Result<GetStreamDto, Error>> GetLiveStreamerByKeyAsync(string streamerKey,
         CancellationToken cancellationToken = default)
     {
-        var liveStreams = _liveStreamers.Count == 0 ? await this.GetLiveStreamsAsync(cancellationToken) : [];
-
+        var liveStreams = _liveStreamers.Count == 0 ? await this.GetLiveStreamsAsync(cancellationToken) : _liveStreamers;
+        
         var liveStream = liveStreams.SingleOrDefault(stream => stream.StreamOption!.Value.StreamKey == streamerKey);
 
 
@@ -140,8 +140,8 @@ public sealed class StreamService : IStreamService
 
     private async Task<bool> AddNewStreamToCacheAsync(GetStreamDto streamDto)
     {
-        var liveStreams = _liveStreamers.Count == 0 ? await this.GetLiveStreamsAsync() : [];
-
+        var liveStreams = _liveStreamers.Count == 0 ? await this.GetLiveStreamsAsync() : _liveStreamers;
+        
         liveStreams.Add(streamDto);
 
         return await _cacheService.SetAsync(RedisConstant.Key.LiveStreamers, liveStreams);
@@ -159,7 +159,7 @@ public sealed class StreamService : IStreamService
 
     private async Task<bool> RemoveStreamFromCacheAsync(GetStreamDto stream)
     {
-        var liveStreams = _liveStreamers.Count == 0 ? await this.GetLiveStreamsAsync() : [];
+        var liveStreams = _liveStreamers.Count == 0 ? await this.GetLiveStreamsAsync() : _liveStreamers;
 
         liveStreams.Remove(stream);
 
