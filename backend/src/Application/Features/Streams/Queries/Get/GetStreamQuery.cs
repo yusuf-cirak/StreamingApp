@@ -18,7 +18,7 @@ public sealed class
     public async Task<HttpResult<GetStreamDto>> Handle(GetStreamQueryRequest request,
         CancellationToken cancellationToken)
     {
-        var liveStreamResult = await _streamService.GetLiveStreamerByNameAsync(request.StreamerName);
+        var liveStreamResult = await _streamService.GetLiveStreamerByNameAsync(request.StreamerName, cancellationToken);
 
         return liveStreamResult
             .Match<HttpResult<GetStreamDto>>

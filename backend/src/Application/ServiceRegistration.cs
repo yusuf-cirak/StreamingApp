@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using Application.Abstractions;
 using Application.Common.Behaviors;
-using Application.Features.Auths.Services;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -69,10 +68,11 @@ public static class ServiceRegistration
         services.AddValidatorsFromAssembly(executingAssembly);
 
         // AuthorizationBehavior dependency injection
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
+
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehavior<,>));
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ApiAuthorizationBehavior<,>));
 
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
     }
 }

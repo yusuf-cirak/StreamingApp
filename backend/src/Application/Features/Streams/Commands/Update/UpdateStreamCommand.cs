@@ -30,7 +30,7 @@ public sealed class UpdateStreamCommandHandler : IRequestHandler<UpdateStreamCom
 
     public async Task<HttpResult> Handle(UpdateStreamCommandRequest request, CancellationToken cancellationToken)
     {
-        var streamLiveResult = await _streamService.GetLiveStreamerByKeyAsync(request.StreamKey);
+        var streamLiveResult = await _streamService.GetLiveStreamerByKeyAsync(request.StreamKey, cancellationToken);
 
         if (streamLiveResult.IsFailure)
         {
@@ -39,9 +39,9 @@ public sealed class UpdateStreamCommandHandler : IRequestHandler<UpdateStreamCom
 
         var liveStream = streamLiveResult.Value;
 
-        var streamHasEnded = await _streamService.EndStreamAsync(liveStream, cancellationToken);
+        var streamHasEnded = await _streamService.EndStreamAsync(liveStream);
 
-        await _hubServerService.OnStreamEndAsync(liveStream.User.Username);
+        _ = _hubServerService.OnStreamEndAsync(liveStream.User.Username);
 
         return streamHasEnded
             ? HttpResult.Success(StatusCodes.Status204NoContent)

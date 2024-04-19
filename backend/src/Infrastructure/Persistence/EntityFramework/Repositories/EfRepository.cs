@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Repository;
 using Application.Common.Models;
+using Application.Contracts.Streams;
 using Infrastructure.Persistence.EntityFramework.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Stream = Domain.Entities.Stream;
@@ -27,16 +28,26 @@ public sealed class EfRepository : IEfRepository
     public DbSet<StreamBlockedUser> StreamBlockedUsers => Context.StreamBlockedUsers;
 
     public DbSet<OutboxMessage> OutboxMessages => Context.OutboxMessages;
-    
+
     public DbSet<Role> Roles => Context.Roles;
-    
+
     public DbSet<UserOperationClaim> UserOperationClaims => Context.UserOperationClaims;
 
 
-
-    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+    public Task<int> SaveChangesAsync(CancellationToken cancellationToken)
     {
-        return await Context.SaveChangesAsync(cancellationToken);
+        return Context.SaveChangesAsync(cancellationToken);
     }
 
+
+    public ValueTask<List<GetStreamDto>> GetLiveStreamers(CancellationToken cancellationToken = default)
+    {
+        return CompiledQueries.GetLiveStreamers(Context).ToListAsync(cancellationToken);
+    }
+
+    public ValueTask<List<GetFollowingStreamDto>> GetFollowingStreamersAsync(Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        return CompiledQueries.GetFollowingStreamers(Context, userId).ToListAsync(cancellationToken);
+    }
 }

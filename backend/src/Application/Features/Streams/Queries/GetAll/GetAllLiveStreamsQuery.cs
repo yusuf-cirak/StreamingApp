@@ -1,6 +1,4 @@
-﻿using Application.Common.Constants;
-using Application.Contracts.Streams;
-using StackExchange.Redis.Extensions.Core.Abstractions;
+﻿using Application.Features.Streams.Services;
 
 namespace Application.Features.Streams.Queries.GetAll;
 
@@ -9,19 +7,16 @@ public readonly record struct GetAllLiveStreamsQueryRequest() : IRequest<HttpRes
 public sealed class
     GetAllLiveStreamsQueryHandler : IRequestHandler<GetAllLiveStreamsQueryRequest, HttpResult<List<GetStreamDto>>>
 {
-    private readonly IRedisDatabase _redisDatabase;
+    private readonly IStreamService _streamService;
 
-    public GetAllLiveStreamsQueryHandler(IRedisDatabase redisDatabase)
+    public GetAllLiveStreamsQueryHandler(IStreamService streamService)
     {
-        _redisDatabase = redisDatabase;
+        _streamService = streamService;
     }
 
     public async Task<HttpResult<List<GetStreamDto>>> Handle(GetAllLiveStreamsQueryRequest request,
         CancellationToken cancellationToken)
     {
-        var liveStreams = (await _redisDatabase.Database.ListRangeAsync(RedisConstant.Key.LiveStreamers))
-            .Select(ls => _redisDatabase.Serializer.Deserialize<GetStreamDto>(ls)).ToList();
-
-        return liveStreams;
+        return await _streamService.GetLiveStreamsAsync(cancellationToken);
     }
 }

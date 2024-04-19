@@ -1,8 +1,5 @@
-﻿using System.Text.Json;
-using Application.Common.Exceptions;
-using Application.Common.Models;
+﻿using Application.Common.Models;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Newtonsoft.Json;
 using SharedKernel;
 
 namespace Infrastructure.Persistence.EntityFramework.Interceptors;

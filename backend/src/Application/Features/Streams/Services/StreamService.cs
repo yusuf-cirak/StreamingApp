@@ -1,4 +1,5 @@
-﻿using Application.Common.Constants;
+﻿using Application.Abstractions.Caching;
+using Application.Common.Constants;
 using Application.Common.Mapping;
 using StackExchange.Redis.Extensions.Core.Abstractions;
 using Stream = Domain.Entities.Stream;
@@ -10,13 +11,17 @@ public sealed class StreamService : IStreamService
     private readonly IEncryptionHelper _encryptionHelper;
     private readonly IEfRepository _efRepository;
     private readonly IRedisDatabase _redisDatabase;
+    private readonly ICacheService _cacheService;
+
+    private readonly List<GetStreamDto> _liveStreamers = [];
 
     public StreamService(IEncryptionHelper encryptionHelper, IEfRepository efRepository,
-        IRedisDatabase redisDatabase)
+        IRedisDatabase redisDatabase, ICacheService cacheService)
     {
         _encryptionHelper = encryptionHelper;
         _efRepository = efRepository;
         _redisDatabase = redisDatabase;
+        _cacheService = cacheService;
     }
 
 
@@ -37,10 +42,10 @@ public sealed class StreamService : IStreamService
         return streamer;
     }
 
-    public async Task<Result> IsStreamerLiveAsync(User user, string streamKey, CancellationToken cancellationToken)
+    public async Task<Result> IsStreamerLiveAsync(User user, string streamKey,
+        CancellationToken cancellationToken = default)
     {
-        var liveStreamers = (await _redisDatabase.Database.ListRangeAsync(RedisConstant.Key.LiveStreamers))
-            .Select(ls => _redisDatabase.Serializer.Deserialize<GetStreamDto>(ls)).ToList();
+        var liveStreamers = await this.GetLiveStreamsAsync(cancellationToken);
 
         var isStreamerLive =
             liveStreamers.Exists(ls => ls.StreamOption!.Value.StreamKey == streamKey || ls.User.Id == user.Id);
@@ -48,20 +53,18 @@ public sealed class StreamService : IStreamService
         return isStreamerLive ? Result.Failure(StreamErrors.StreamIsLive) : Result.Success();
     }
 
-    public async Task<List<GetStreamDto>> GetLiveStreamsAsync()
+    public Task<List<GetStreamDto>> GetLiveStreamsAsync(CancellationToken cancellationToken = default)
     {
-        var liveStreams = (await _redisDatabase.Database.ListRangeAsync(RedisConstant.Key.LiveStreamers))
-            .Select(ls => _redisDatabase.Serializer.Deserialize<GetStreamDto>(ls)).ToList();
-
-        return liveStreams;
+        return _cacheService.GetOrAddAsync(RedisConstant.Key.LiveStreamers,
+            _efRepository.GetLiveStreamers(cancellationToken).AsTask, cancellationToken: cancellationToken);
     }
 
-    public async Task<Result<GetStreamDto, Error>> GetLiveStreamerByNameAsync(string streamerName)
+    public async Task<Result<GetStreamDto, Error>> GetLiveStreamerByNameAsync(string streamerName,
+        CancellationToken cancellationToken = default)
     {
-        var liveStream = (await _redisDatabase.Database.ListRangeAsync(RedisConstant.Key.LiveStreamers))
-            .Select(ls => _redisDatabase.Serializer.Deserialize<GetStreamDto>(ls))
-            .FirstOrDefault(stream => stream.User.Username == streamerName);
+        var liveStreams = _liveStreamers.Count == 0 ? await this.GetLiveStreamsAsync(cancellationToken) : [];
 
+        var liveStream = liveStreams.SingleOrDefault(stream => stream.User.Username == streamerName);
 
         if (liveStream is not null)
         {
@@ -72,7 +75,7 @@ public sealed class StreamService : IStreamService
             .StreamOptions
             .Include(s => s.Streamer)
             .Where(s => s.Streamer.Username == streamerName)
-            .AnyAsync();
+            .AnyAsync(cancellationToken);
 
 
         if (!streamerExists)
@@ -84,11 +87,12 @@ public sealed class StreamService : IStreamService
     }
 
 
-    public async Task<Result<GetStreamDto, Error>> GetLiveStreamerByKeyAsync(string streamerKey)
+    public async Task<Result<GetStreamDto, Error>> GetLiveStreamerByKeyAsync(string streamerKey,
+        CancellationToken cancellationToken = default)
     {
-        var liveStream = (await _redisDatabase.Database.ListRangeAsync(RedisConstant.Key.LiveStreamers))
-            .Select(ls => _redisDatabase.Serializer.Deserialize<GetStreamDto>(ls))
-            .FirstOrDefault(stream => stream.StreamOption.Value.StreamKey == streamerKey);
+        var liveStreams = _liveStreamers.Count == 0 ? await this.GetLiveStreamsAsync(cancellationToken) : [];
+
+        var liveStream = liveStreams.SingleOrDefault(stream => stream.StreamOption!.Value.StreamKey == streamerKey);
 
 
         if (liveStream is not null)
@@ -99,17 +103,10 @@ public sealed class StreamService : IStreamService
         return StreamErrors.StreamIsNotLive;
     }
 
-    public Task<List<GetFollowingStreamDto>> GetFollowingStreamsAsync(Guid userId,
+    public ValueTask<List<GetFollowingStreamDto>> GetFollowingStreamsAsync(Guid userId,
         CancellationToken cancellationToken = default)
     {
-        var followingStreams = _efRepository
-            .StreamFollowerUsers
-            .Include(sfu => sfu.Streamer)
-            .Where(sfu => sfu.UserId == userId)
-            .Select(sfu => new GetFollowingStreamDto(sfu.Streamer.ToDto()))
-            .ToListAsync(cancellationToken: cancellationToken);
-
-        return followingStreams;
+        return _efRepository.GetFollowingStreamersAsync(userId, cancellationToken);
     }
 
     public async Task<bool> StartNewStreamAsync(StreamOption streamOption, Stream stream,
@@ -126,11 +123,7 @@ public sealed class StreamService : IStreamService
 
         var getStreamDto = stream.ToDto(streamOption.Streamer.ToDto(), streamOption.ToDto());
 
-        var serializedStream = _redisDatabase.Serializer.Serialize(getStreamDto);
-
-        var redisIndex = await _redisDatabase.Database.ListRightPushAsync(RedisConstant.Key.LiveStreamers,
-            serializedStream);
-
+        var cacheUpdated = await this.AddNewStreamToCacheAsync(getStreamDto);
 
         var newStreamKey = GenerateStreamKey(streamOption.Streamer);
 
@@ -142,34 +135,44 @@ public sealed class StreamService : IStreamService
                 cancellationToken:
                 cancellationToken);
 
-        return insertResult > 0 && redisIndex > 0 && updateStreamKeyResult > 0;
+        return insertResult > 0 && cacheUpdated && updateStreamKeyResult > 0;
     }
 
-    public async Task<bool> EndStreamAsync(GetStreamDto stream, CancellationToken cancellationToken = default)
+    private async Task<bool> AddNewStreamToCacheAsync(GetStreamDto streamDto)
+    {
+        var liveStreams = _liveStreamers.Count == 0 ? await this.GetLiveStreamsAsync() : [];
+
+        liveStreams.Add(streamDto);
+
+        return await _cacheService.SetAsync(RedisConstant.Key.LiveStreamers, liveStreams);
+    }
+
+    public async Task<bool> EndStreamAsync(GetStreamDto stream)
     {
         var removeFromCacheTask = RemoveStreamFromCacheAsync(stream);
-        var setEndDateTask = SetStreamEndDateToDatabaseAsync(stream, cancellationToken);
+        var setEndDateTask = SetStreamEndDateToDatabaseAsync(stream);
 
         await Task.WhenAll(removeFromCacheTask, setEndDateTask);
 
-        return removeFromCacheTask.Result > -1 && setEndDateTask.Result > 0;
+        return removeFromCacheTask.Result && setEndDateTask.Result > 0;
     }
 
-    private async Task<long> RemoveStreamFromCacheAsync(GetStreamDto stream)
+    private async Task<bool> RemoveStreamFromCacheAsync(GetStreamDto stream)
     {
-        var serializedStream = _redisDatabase.Serializer.Serialize(stream);
+        var liveStreams = _liveStreamers.Count == 0 ? await this.GetLiveStreamsAsync() : [];
 
-        return await _redisDatabase.Database.ListRemoveAsync(RedisConstant.Key.LiveStreamers, serializedStream);
+        liveStreams.Remove(stream);
+
+        return await _cacheService.SetAsync(RedisConstant.Key.LiveStreamers, liveStreams);
     }
 
-    private async Task<int> SetStreamEndDateToDatabaseAsync(GetStreamDto streamDto,
-        CancellationToken cancellationToken = default)
+    private Task<int> SetStreamEndDateToDatabaseAsync(GetStreamDto streamDto)
     {
-        return await _efRepository
+        return _efRepository
             .Streams
             .Where(s => s.Id == streamDto.Id)
             .ExecuteUpdateAsync(stream => stream
-                .SetProperty(s => s.EndedAt, DateTime.UtcNow), cancellationToken);
+                .SetProperty(s => s.EndedAt, DateTime.UtcNow));
     }
 
     public string GenerateStreamKey(User streamer)

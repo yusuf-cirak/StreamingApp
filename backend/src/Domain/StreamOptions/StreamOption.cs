@@ -1,10 +1,10 @@
 ﻿namespace Domain.Entities;
 
-public class StreamOption : Entity, ICloneable
+public class StreamOption : Entity
 {
     public string StreamKey { get; set; } = string.Empty;
     public string StreamTitle { get; set; } = string.Empty;
-    public string StreamDescription { get; init; } = string.Empty;
+    public string StreamDescription { get; set; } = string.Empty;
 
     public bool MustBeFollower { get; set; } = false;
     public bool ChatDisabled { get; set; } = false;
@@ -25,16 +25,76 @@ public class StreamOption : Entity, ICloneable
         StreamDescription = streamDescription;
     }
 
+    private StreamOption(Guid userId, string streamKey, string streamTitle, string streamDescription,
+        bool mustBeFollower, bool chatDisabled, int chatDelaySecond) : base(userId)
+    {
+        StreamKey = streamKey;
+        StreamTitle = streamTitle;
+        StreamDescription = streamDescription;
+        MustBeFollower = mustBeFollower;
+        ChatDisabled = chatDisabled;
+        ChatDelaySecond = chatDelaySecond;
+    }
+
 
     public static StreamOption Create(Guid userId, string streamKey, string streamTitle, string streamDescription)
     {
         StreamOption streamOption = new(userId, streamKey, streamTitle, streamDescription);
-
         return streamOption;
     }
 
-    public object Clone()
+    public static StreamOption Create(Guid userId, string streamKey, string streamTitle, string streamDescription,
+        bool mustBeFollower, bool chatDisabled, int chatDelaySecond)
     {
-        return Create(Id, this.StreamKey, this.StreamTitle, this.StreamDescription);
+        StreamOption streamOption = new(userId, streamKey, streamTitle, streamDescription, mustBeFollower, chatDisabled,
+            chatDelaySecond);
+        return streamOption;
+    }
+
+    public StreamOption Update(bool mustBeFollower, bool chatDisabled, int chatDelaySecond)
+    {
+        this.MustBeFollower = mustBeFollower;
+        this.ChatDisabled = chatDisabled;
+        this.ChatDelaySecond = chatDelaySecond;
+
+        return this;
+    }
+
+    public StreamOption UpdateWithEvent(string previousKey, bool mustBeFollower, bool chatDisabled, int chatDelaySecond)
+    {
+        this.Update(mustBeFollower, chatDisabled, chatDelaySecond);
+
+        var streamOption = this.Clone();
+        streamOption.StreamKey = previousKey;
+
+        Raise(new StreamOptionUpdatedEvent(streamOption));
+
+        return this;
+    }
+
+    public StreamOption Update(string streamTitle, string streamDescription)
+    {
+        this.StreamTitle = streamTitle;
+        this.StreamDescription = streamDescription;
+
+        return this;
+    }
+
+    public StreamOption UpdateWithEvent(string previousKey, string streamTitle, string streamDescription)
+    {
+        this.Update(streamTitle, streamDescription);
+
+        var streamOption = this.Clone();
+        streamOption.StreamKey = previousKey;
+
+        Raise(new StreamOptionUpdatedEvent(streamOption));
+
+        return this;
+    }
+
+    public StreamOption Clone()
+    {
+        return Create(Id, StreamKey, StreamTitle, StreamDescription, MustBeFollower, ChatDisabled,
+            ChatDelaySecond);
     }
 }
