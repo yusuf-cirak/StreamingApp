@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Streams;
-using Stream = Domain.Entities.Stream;
+﻿using Stream = Domain.Entities.Stream;
 
 namespace Application.Features.Streams.Services;
 
@@ -15,8 +14,6 @@ public interface IStreamService : IDomainService<Stream>
 
     Task<bool> StartNewStreamAsync(StreamOption streamOption, Stream stream,
         CancellationToken cancellationToken = default);
-
-    Task<List<GetStreamDto>> GetLiveStreamsAsync(CancellationToken cancellationToken = default);
 
     Task<Result<GetStreamDto, Error>> GetLiveStreamerByNameAsync(string streamerName,
         CancellationToken cancellationToken = default);

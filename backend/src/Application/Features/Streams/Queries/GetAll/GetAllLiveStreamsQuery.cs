@@ -7,16 +7,16 @@ public readonly record struct GetAllLiveStreamsQueryRequest() : IRequest<HttpRes
 public sealed class
     GetAllLiveStreamsQueryHandler : IRequestHandler<GetAllLiveStreamsQueryRequest, HttpResult<List<GetStreamDto>>>
 {
-    private readonly IStreamService _streamService;
+    private readonly IStreamCacheService _streamCacheService;
 
-    public GetAllLiveStreamsQueryHandler(IStreamService streamService)
+    public GetAllLiveStreamsQueryHandler(IStreamCacheService streamCacheService)
     {
-        _streamService = streamService;
+        _streamCacheService = streamCacheService;
     }
 
     public async Task<HttpResult<List<GetStreamDto>>> Handle(GetAllLiveStreamsQueryRequest request,
         CancellationToken cancellationToken)
     {
-        return await _streamService.GetLiveStreamsAsync(cancellationToken);
+        return await _streamCacheService.GetLiveStreamsAsync(cancellationToken);
     }
 }

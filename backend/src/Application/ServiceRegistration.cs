@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Application.Abstractions;
 using Application.Common.Behaviors;
+using Application.Features.Streams.Services;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -62,6 +63,9 @@ public static class ServiceRegistration
 
         RegisterInterfaceServices(services, executingAssembly, typeof(IDomainService<>));
 
+
+        services.AddScoped<IStreamCacheService, StreamCacheService>();
+
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(executingAssembly));
 
         // FluentValidation dependency injection
@@ -73,6 +77,5 @@ public static class ServiceRegistration
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehavior<,>));
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ApiAuthorizationBehavior<,>));
-
     }
 }
