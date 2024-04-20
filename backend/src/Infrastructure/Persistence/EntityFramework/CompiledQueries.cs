@@ -22,12 +22,4 @@ internal static class CompiledQueries
                     }))
                 .Select(result =>
                     result.Stream.ToDto(result.StreamOption.Streamer.ToDto(), result.StreamOption.ToDto())));
-
-
-    internal static readonly Func<BaseDbContext, Guid, IAsyncEnumerable<GetFollowingStreamDto>> GetFollowingStreamers =
-        EF.CompileAsyncQuery((BaseDbContext context, Guid userId) =>
-            context.StreamFollowerUsers
-                .Include(s => s.Streamer)
-                .Where(sfu => sfu.UserId == userId)
-                .Select(sfu => new GetFollowingStreamDto(sfu.Streamer.ToDto())));
 }

@@ -18,7 +18,7 @@ public interface IStreamService : IDomainService<Stream>
     Task<Result<GetStreamDto, Error>> GetLiveStreamerByNameAsync(string streamerName,
         CancellationToken cancellationToken = default);
 
-    ValueTask<List<GetFollowingStreamDto>> GetFollowingStreamsAsync(Guid userId,
+    Task<List<GetFollowingStreamDto>> GetFollowingStreamsAsync(Guid userId,
         CancellationToken cancellationToken = default);
 
     Task<bool> EndStreamAsync(GetStreamDto stream);

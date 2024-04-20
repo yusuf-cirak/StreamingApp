@@ -31,7 +31,4 @@ public interface IEfRepository
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
     Func<Task<List<GetStreamDto>>> GetLiveStreamers(CancellationToken cancellationToken = default);
-
-    Func<Task<List<GetFollowingStreamDto>>> GetFollowingStreamersAsync(Guid userId,
-        CancellationToken cancellationToken = default);
 }

@@ -1,6 +1,4 @@
-﻿using Application.Abstractions.Caching;
-using Application.Common.Constants;
-using Application.Common.Mapping;
+﻿using Application.Common.Mapping;
 using Stream = Domain.Entities.Stream;
 
 namespace Application.Features.Streams.Services;
@@ -100,10 +98,13 @@ public sealed class StreamService : IStreamService
         return StreamErrors.StreamIsNotLive;
     }
 
-    public ValueTask<List<GetFollowingStreamDto>> GetFollowingStreamsAsync(Guid userId,
+    public Task<List<GetFollowingStreamDto>> GetFollowingStreamsAsync(Guid userId,
         CancellationToken cancellationToken = default)
     {
-        return _efRepository.GetFollowingStreamersAsync(userId, cancellationToken);
+        return _efRepository.StreamFollowerUsers
+            .Include(s => s.Streamer)
+            .Where(sfu => sfu.UserId == userId)
+            .Select(sfu => new GetFollowingStreamDto(sfu.Streamer.ToDto())).ToListAsync(cancellationToken);
     }
 
     public async Task<bool> StartNewStreamAsync(StreamOption streamOption, Stream stream,

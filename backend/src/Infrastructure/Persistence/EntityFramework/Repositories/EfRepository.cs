@@ -44,11 +44,4 @@ public sealed class EfRepository : IEfRepository
     {
         return async () => await CompiledQueries.GetLiveStreamers(Context).ToListAsync(cancellationToken);
     }
-
-
-    public Func<Task<List<GetFollowingStreamDto>>> GetFollowingStreamersAsync(Guid userId,
-        CancellationToken cancellationToken = default)
-    {
-        return async () => await CompiledQueries.GetFollowingStreamers(Context, userId).ToListAsync(cancellationToken);
-    }
 }
