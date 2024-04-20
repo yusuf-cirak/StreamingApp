@@ -27,10 +27,8 @@ export class AppComponent implements OnInit, OnDestroy {
     });
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     this.primeNgConfig.ripple = true;
-    await this.authService.initializeUser();
-    await this.streamHub.connect();
   }
 
   async ngOnDestroy() {
