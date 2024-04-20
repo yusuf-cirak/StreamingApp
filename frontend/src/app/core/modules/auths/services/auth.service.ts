@@ -5,7 +5,7 @@ import { UserLoginDto } from '../../../dtos/user-login-dto';
 import { UserRegisterDto } from '../../../dtos/user-register-dto';
 import { UserRefreshTokenDto } from '../../../dtos/user-refresh-token-dto';
 import { UserAuthDto } from '../dtos/user-auth-dto';
-import { lastValueFrom, tap } from 'rxjs';
+import { lastValueFrom, tap, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -44,18 +44,21 @@ export class AuthService {
 
   async initializeUser() {
     const userAuthDto = this.getUserFromLocalStorage();
-    if (userAuthDto) {
-      const tokenExpiration = new Date(userAuthDto.tokenExpiration);
 
-      userAuthDto.tokenExpiration = tokenExpiration;
+    if (!userAuthDto) {
+      return;
+    }
 
-      this.setUser(userAuthDto);
+    const tokenExpiration = new Date(userAuthDto.tokenExpiration);
 
-      if (tokenExpiration < new Date(Date.now())) {
-        await lastValueFrom(
-          this.refreshToken(this.getUserFromAuthDto(userAuthDto))
-        ).catch((err) => {});
-      }
+    userAuthDto.tokenExpiration = tokenExpiration;
+
+    this.setUser(userAuthDto);
+
+    if (tokenExpiration < new Date(Date.now())) {
+      await lastValueFrom(
+        this.refreshToken(this.getUserFromAuthDto(userAuthDto))
+      ).catch((err) => {});
     }
   }
 
@@ -81,10 +84,15 @@ export class AuthService {
   refreshToken(user?: CurrentUser) {
     user = user ?? this.user();
 
+    if (!user) {
+      return throwError('User is not authenticated');
+    }
+
     const userRefreshTokenDto: UserRefreshTokenDto = {
       refreshToken: user?.refreshToken!,
       userId: user?.id!,
     };
+
     return this.authProxyService
       .refreshToken(userRefreshTokenDto)
       .pipe(tap((userAuthDto) => this.setUser(userAuthDto)));

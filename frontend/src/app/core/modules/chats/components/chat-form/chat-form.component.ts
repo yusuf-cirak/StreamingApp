@@ -27,6 +27,13 @@ export class ChatFormComponent {
 
   chatDisabled = computed(() => this.chatOptions().chatDisabled);
 
+  canSendMessage = computed(() => {
+    return (
+      !this.chatDisabled() &&
+      !this.chatAuthService.canUserSendMessage(this.liveStream())
+    );
+  });
+
   readonly authService = inject(AuthService);
 
   readonly chatAuthService = inject(ChatAuthService);
