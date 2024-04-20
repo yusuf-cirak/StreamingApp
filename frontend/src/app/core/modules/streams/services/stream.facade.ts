@@ -9,12 +9,17 @@ import { StreamChatOptionsDto } from '../contracts/stream-options-dto';
 
 @Injectable({ providedIn: 'root' })
 export class StreamFacade {
-  #streamState = signal<StreamState | undefined>(undefined);
+  #streamError = signal<Error | undefined>(undefined);
+  #liveStream = signal<LiveStreamDto | undefined>(undefined);
+
+  streamState = computed(() => ({
+    stream: this.#liveStream(),
+    error: this.#streamError(),
+  }));
+
   #streamerName = signal<string>('');
 
-  readonly streamState = this.#streamState.asReadonly();
-
-  readonly liveStream = computed(() => this.#streamState()?.stream);
+  readonly liveStream = computed(() => this.streamState()?.stream);
 
   readonly streamerName = computed(
     () => this.liveStream()?.user.username || this.#streamerName()
@@ -33,33 +38,41 @@ export class StreamFacade {
   }
 
   setLiveStream(liveStream: LiveStreamDto | undefined) {
-    this.#streamState.update((state) => ({ ...state, stream: liveStream }));
+    this.#liveStream.set(liveStream);
   }
   setStreamChatOptions(chatOptions: StreamChatOptionsDto) {
-    this.#streamState.update((state) => {
-      const stream = state?.stream;
+    // this.streamState.update((state) => {
+    //   const stream = state?.stream;
+    //   const options = { ...stream?.options, ...chatOptions };
+    //   return {
+    //     ...state,
+    //     stream: { ...stream, options: { ...options, chatOptions: options } },
+    //   } as StreamState;
+    // });
+
+    this.#liveStream.update((stream) => {
       const options = { ...stream?.options, ...chatOptions };
       return {
-        ...state,
-        stream: { ...stream, options: { ...options, chatOptions: options } },
-      } as StreamState;
+        ...stream,
+        options: { ...options, chatOptions: options },
+      } as LiveStreamDto;
     });
   }
 
   setLiveStreamErrorState(error: Error) {
-    this.#streamState.update((state) => ({ ...state, error }));
+    this.#streamError.set(error);
   }
 
   endStream() {
-    this.#streamState.update((state) => ({
-      ...state,
-      stream: undefined,
-      error: { statusCode: 400, message: 'Stream is now offline' },
-    }));
+    this.#liveStream.set(undefined);
+    this.#streamError.set({
+      statusCode: 400,
+      message: 'Stream is now offline',
+    });
   }
 
   leaveStream() {
-    this.#streamState.set(undefined);
+    this.#liveStream.set(undefined);
   }
 
   setStreamerName(streamerName: string) {

@@ -22,6 +22,8 @@ import { Router } from '@angular/router';
 export class StreamComponent {
   readonly streamHub = inject(StreamHub);
   readonly streamFacade = inject(StreamFacade);
+
+  readonly streamError = computed(() => this.streamFacade.streamState()?.error);
   readonly router = inject(Router);
 
   readonly canJoinToChatRoom = computed(
