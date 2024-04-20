@@ -12,15 +12,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Persistence.EntityFramework.Migrations
 {
     [DbContext(typeof(BaseDbContext))]
-    [Migration("20231227190938_UniqueIndexFix")]
-    partial class UniqueIndexFix
+    [Migration("20240420153429_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -143,8 +143,7 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                     b.HasIndex("OperationClaimId")
                         .IsUnique();
 
-                    b.HasIndex("RoleId")
-                        .IsUnique();
+                    b.HasIndex("RoleId");
 
                     b.HasIndex("RoleId", "OperationClaimId")
                         .IsUnique();
@@ -158,14 +157,6 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("Id");
-
-                    b.Property<int>("ChatDelaySecond")
-                        .HasColumnType("integer")
-                        .HasColumnName("ChatDelaySecond");
-
-                    b.Property<bool>("ChatDisabled")
-                        .HasColumnType("boolean")
-                        .HasColumnName("ChatDisabled");
 
                     b.Property<DateTime?>("EndedAt")
                         .HasColumnType("timestamp with time zone")
@@ -184,8 +175,7 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                     b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex("StreamerId")
-                        .IsUnique();
+                    b.HasIndex("StreamerId");
 
                     b.ToTable("Streams", (string)null);
                 });
@@ -210,49 +200,6 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                     b.ToTable("StreamBlockedUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.StreamChatMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("Id");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("CreatedAt");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Message");
-
-                    b.Property<Guid>("StreamId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("StreamerId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("StreamerId");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.HasIndex("StreamerId")
-                        .IsUnique();
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("StreamChatMessages", (string)null);
-                });
-
             modelBuilder.Entity("Domain.Entities.StreamFollowerUser", b =>
                 {
                     b.Property<Guid>("StreamerId")
@@ -265,6 +212,8 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
 
                     b.HasKey("StreamerId", "UserId");
 
+                    b.HasIndex("StreamerId");
+
                     b.HasIndex("UserId");
 
                     b.HasIndex("StreamerId", "UserId")
@@ -273,11 +222,29 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                     b.ToTable("StreamFollowerUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Streamer", b =>
+            modelBuilder.Entity("Domain.Entities.StreamOption", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
                         .HasColumnName("Id");
+
+                    b.Property<int>("ChatDelaySecond")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("ChatDelaySecond");
+
+                    b.Property<bool>("ChatDisabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("ChatDisabled");
+
+                    b.Property<bool>("MustBeFollower")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("MustBeFollower");
 
                     b.Property<string>("StreamDescription")
                         .HasColumnType("text")
@@ -294,7 +261,7 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Streamers", (string)null);
+                    b.ToTable("StreamOptions", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -357,11 +324,9 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
 
                     b.HasKey("OperationClaimId", "UserId", "Value");
 
-                    b.HasIndex("OperationClaimId")
-                        .IsUnique();
+                    b.HasIndex("OperationClaimId");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.HasIndex("OperationClaimId", "UserId", "Value")
                         .IsUnique();
@@ -386,6 +351,8 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                     b.HasKey("UserId", "RoleId", "Value");
 
                     b.HasIndex("RoleId");
+
+                    b.HasIndex("UserId");
 
                     b.HasIndex("UserId", "RoleId", "Value")
                         .IsUnique();
@@ -425,9 +392,9 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
 
             modelBuilder.Entity("Domain.Entities.Stream", b =>
                 {
-                    b.HasOne("Domain.Entities.Streamer", "Streamer")
-                        .WithOne()
-                        .HasForeignKey("Domain.Entities.Stream", "StreamerId")
+                    b.HasOne("Domain.Entities.User", "Streamer")
+                        .WithMany("Streams")
+                        .HasForeignKey("StreamerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -436,7 +403,7 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
 
             modelBuilder.Entity("Domain.Entities.StreamBlockedUser", b =>
                 {
-                    b.HasOne("Domain.Entities.Streamer", "Streamer")
+                    b.HasOne("Domain.Entities.User", "Streamer")
                         .WithMany()
                         .HasForeignKey("StreamerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -447,33 +414,6 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Streamer");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Domain.Entities.StreamChatMessage", b =>
-                {
-                    b.HasOne("Domain.Entities.Stream", "Stream")
-                        .WithOne()
-                        .HasForeignKey("Domain.Entities.StreamChatMessage", "StreamerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Streamer", "Streamer")
-                        .WithOne()
-                        .HasForeignKey("Domain.Entities.StreamChatMessage", "StreamerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.User", "User")
-                        .WithOne()
-                        .HasForeignKey("Domain.Entities.StreamChatMessage", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Stream");
 
                     b.Navigation("Streamer");
 
@@ -482,7 +422,7 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
 
             modelBuilder.Entity("Domain.Entities.StreamFollowerUser", b =>
                 {
-                    b.HasOne("Domain.Entities.Streamer", "Streamer")
+                    b.HasOne("Domain.Entities.User", "Streamer")
                         .WithMany()
                         .HasForeignKey("StreamerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -499,15 +439,15 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Streamer", b =>
+            modelBuilder.Entity("Domain.Entities.StreamOption", b =>
                 {
-                    b.HasOne("Domain.Entities.User", "User")
+                    b.HasOne("Domain.Entities.User", "Streamer")
                         .WithOne()
-                        .HasForeignKey("Domain.Entities.Streamer", "Id")
+                        .HasForeignKey("Domain.Entities.StreamOption", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Streamer");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserOperationClaim", b =>
@@ -519,8 +459,8 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.User", "User")
-                        .WithOne()
-                        .HasForeignKey("Domain.Entities.UserOperationClaim", "UserId")
+                        .WithMany("UserOperationClaims")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -532,8 +472,8 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
             modelBuilder.Entity("Domain.Entities.UserRoleClaim", b =>
                 {
                     b.HasOne("Domain.Entities.Role", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId")
+                        .WithOne()
+                        .HasForeignKey("Domain.Entities.UserRoleClaim", "RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -551,6 +491,10 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Navigation("RefreshTokens");
+
+                    b.Navigation("Streams");
+
+                    b.Navigation("UserOperationClaims");
 
                     b.Navigation("UserRoleClaims");
                 });

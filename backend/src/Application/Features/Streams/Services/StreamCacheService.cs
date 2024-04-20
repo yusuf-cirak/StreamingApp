@@ -18,7 +18,7 @@ public sealed class StreamCacheService : IStreamCacheService
     public Task<List<GetStreamDto>> GetLiveStreamsAsync(CancellationToken cancellationToken = default)
     {
         return _cacheService.GetOrAddAsync(RedisConstant.Key.LiveStreamers,
-            factory: _efRepository.GetLiveStreamers(cancellationToken).AsTask, cancellationToken: cancellationToken);
+            factory: _efRepository.GetLiveStreamers(cancellationToken), cancellationToken: cancellationToken);
     }
 
     public Task<bool> SetLiveStreamsAsync(List<GetStreamDto> liveStreams, CancellationToken cancellationToken = default)
@@ -40,7 +40,14 @@ public sealed class StreamCacheService : IStreamCacheService
     {
         var liveStreams = await this.GetLiveStreamsAsync();
 
-        liveStreams.Remove(stream);
+        var index = liveStreams.FindIndex(ls => ls.Id == stream.Id);
+
+        if (index is -1)
+        {
+            return true;
+        }
+
+        liveStreams.RemoveAt(index);
 
         return await _cacheService.SetAsync(RedisConstant.Key.LiveStreamers, liveStreams);
     }

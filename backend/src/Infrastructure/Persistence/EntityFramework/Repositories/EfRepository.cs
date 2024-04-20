@@ -40,14 +40,15 @@ public sealed class EfRepository : IEfRepository
     }
 
 
-    public ValueTask<List<GetStreamDto>> GetLiveStreamers(CancellationToken cancellationToken = default)
+    public Func<Task<List<GetStreamDto>>> GetLiveStreamers(CancellationToken cancellationToken = default)
     {
-        return CompiledQueries.GetLiveStreamers(Context).ToListAsync(cancellationToken);
+        return async () => await CompiledQueries.GetLiveStreamers(Context).ToListAsync(cancellationToken);
     }
 
-    public ValueTask<List<GetFollowingStreamDto>> GetFollowingStreamersAsync(Guid userId,
+
+    public Func<Task<List<GetFollowingStreamDto>>> GetFollowingStreamersAsync(Guid userId,
         CancellationToken cancellationToken = default)
     {
-        return CompiledQueries.GetFollowingStreamers(Context, userId).ToListAsync(cancellationToken);
+        return async () => await CompiledQueries.GetFollowingStreamers(Context, userId).ToListAsync(cancellationToken);
     }
 }

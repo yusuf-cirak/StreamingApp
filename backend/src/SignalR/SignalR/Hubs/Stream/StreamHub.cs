@@ -21,10 +21,11 @@ public sealed class StreamHub : Hub<IStreamHub>
     {
         var tasks = new List<Task>()
         {
+            base.OnConnectedAsync(),
             _hubClientService.OnConnectedToHubAsync(_userId, Context.ConnectionId).AsTask(),
-            base.OnConnectedAsync()
         };
         await Task.WhenAll(tasks);
+
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
