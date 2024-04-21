@@ -59,8 +59,8 @@ public sealed class
 
         var claimsDictionary = new Dictionary<string, object>
         {
-            { "Roles", userRolesAndOperationClaims.Roles },
-            { "OperationClaims", userRolesAndOperationClaims.OperationClaims }
+            { "roles", userRolesAndOperationClaims.Roles },
+            { "operationClaims", userRolesAndOperationClaims.OperationClaims }
         };
 
         var accessToken = _jwtHelper.CreateAccessToken(user, claimsDictionary);

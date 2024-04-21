@@ -6,11 +6,15 @@ import { UserRegisterDto } from '../../../dtos/user-register-dto';
 import { UserRefreshTokenDto } from '../../../dtos/user-refresh-token-dto';
 import { UserAuthDto } from '../dtos/user-auth-dto';
 import { lastValueFrom, tap, throwError } from 'rxjs';
+import { LocalStorageEventService } from '@streaming-app/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  readonly localStorageEventService = inject(LocalStorageEventService);
+
   readonly authProxyService = inject(AuthProxyService);
 
   #user = signal<CurrentUser | undefined>(undefined);
@@ -24,6 +28,10 @@ export class AuthService {
 
     return !!user && user.tokenExpiration > new Date(Date.now());
   });
+
+  constructor() {
+    this.handleStorageEvents();
+  }
 
   getUserFromLocalStorage(): UserAuthDto | null {
     const user = localStorage.getItem('user');
@@ -63,6 +71,11 @@ export class AuthService {
   }
 
   setUser(userAuthDto: UserAuthDto) {
+    if (!userAuthDto) {
+      this.#user.set(undefined);
+      return;
+    }
+
     const user = this.getUserFromAuthDto(userAuthDto);
     this.#user.set(user);
 
@@ -101,5 +114,17 @@ export class AuthService {
   logout() {
     this.#user.set(undefined);
     localStorage.removeItem('user');
+  }
+
+  private handleStorageEvents() {
+    this.localStorageEventService.userChanged$
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: (value) => {
+          debugger;
+          const user = value ? JSON.parse(value) : undefined;
+          this.setUser(user);
+        },
+      });
   }
 }

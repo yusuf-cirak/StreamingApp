@@ -54,8 +54,8 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommandRequest, H
 
         var claimsDictionary = new Dictionary<string, dynamic>
         {
-            { "Roles", userRolesAndOperationClaims.Roles },
-            { "OperationClaims", userRolesAndOperationClaims.OperationClaims }
+            { "roles", userRolesAndOperationClaims.Roles },
+            { "operationClaims", userRolesAndOperationClaims.OperationClaims }
         };
 
         AccessToken accessToken = _jwtHelper.CreateAccessToken(user, claimsDictionary);
