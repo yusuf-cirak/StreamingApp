@@ -38,8 +38,11 @@ export class ChatFormComponent {
 
   readonly chatAuthService = inject(ChatAuthService);
 
-  readonly userChatErrorMessage = computed(() =>
-    this.chatAuthService.canUserSendMessage(this.liveStream())
+  readonly chatHintMessage = computed(
+    () =>
+      this.chatAuthService.canUserSendMessage(this.liveStream()) ??
+      this.chatAuthService.chatDelayMessage() ??
+      ''
   );
 
   message = signal<string>('');
@@ -48,13 +51,7 @@ export class ChatFormComponent {
 
   @HostListener('document:keydown.enter', ['$event'])
   onEnter() {
-    const chatOptions = this.chatOptions();
-    const message = this.message();
-    if (!chatOptions.chatDisabled && message) {
-      setTimeout(() => {
-        this.sendMessage();
-      }, chatOptions.chatDelaySecond * 1000);
-    }
+    this.sendMessage();
   }
 
   setMessage(message: string) {
@@ -62,9 +59,12 @@ export class ChatFormComponent {
   }
 
   sendMessage() {
-    if (!this.chatDisabled()) {
-      this.messageSend.emit(this.message());
-      this.message.update(() => '');
+    const message = this.message();
+    if (!this.chatDisabled() && message) {
+      setTimeout(() => {
+        this.messageSend.emit(this.message());
+        this.message.update(() => '');
+      }, this.chatOptions().chatDelaySecond * 1000);
     }
   }
 }

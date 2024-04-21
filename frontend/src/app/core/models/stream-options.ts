@@ -3,7 +3,7 @@ export interface StreamOptions {
   title: string;
   description: string;
   chatDisabled: boolean;
-  followersOnly: boolean;
+  mustBeFollower: boolean;
   chatDelaySecond: number;
   streamKey: string;
 }

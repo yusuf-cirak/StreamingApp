@@ -1,8 +1,8 @@
 @if (liveStream(); as liveStream) {
 
 <div class="w-full h-full flex flex-col items-center p-3">
-  @if (userChatErrorMessage(); as errorMessage) {
-  <app-hint class="w-full" [text]="errorMessage"></app-hint>
+  @if (chatHintMessage(); as hintMessage) {
+  <app-hint class="w-full" [text]="hintMessage"></app-hint>
   }
   <input
     #searchInput
@@ -14,7 +14,7 @@
     [autofocus]="true"
     [disabled]="!canSendMessage()"
     [ngClass]="{
-      'rounded-t-none border-t-0': !!userChatErrorMessage(),
+      'rounded-t-none border-t-0': !!chatHintMessage(),
     }"
   />
   <button

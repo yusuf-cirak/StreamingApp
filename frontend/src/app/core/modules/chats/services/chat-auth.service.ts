@@ -11,7 +11,12 @@ export class ChatAuthService {
 
   readonly streamFacade = inject(StreamFacade);
 
-  userChatErrorMessage = computed(() =>
+  readonly chatDelayMessage = computed(() => {
+    const second = this.streamFacade.liveStream()?.options.chatDelaySecond;
+    return second ? `Slow mode with ${second} second delay` : null;
+  });
+
+  chatErrorMessage = computed(() =>
     this.canUserSendMessage(this.streamFacade.liveStream()!)
   );
 
@@ -26,7 +31,7 @@ export class ChatAuthService {
       return 'You must be logged in to use chat';
     }
 
-    if (options.followersOnly) {
+    if (options.mustBeFollower) {
       const user = this.authService.user();
       const isFollowing = user?.followingStreamers?.includes(
         liveStream.user.id
