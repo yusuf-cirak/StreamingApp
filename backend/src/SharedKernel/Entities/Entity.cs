@@ -1,4 +1,5 @@
 ﻿namespace SharedKernel;
+
 public abstract class Entity : BaseEntity
 {
     public Guid Id { get; init; }
@@ -15,10 +16,9 @@ public abstract class Entity : BaseEntity
         Id = id;
     }
 
-    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.ToList();
 
     protected void Raise(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
-    
-    public void ClearDomainEvents() => _domainEvents.Clear();
 
+    public void ClearDomainEvents() => _domainEvents.Clear();
 }

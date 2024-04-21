@@ -1,9 +1,9 @@
 ﻿using Infrastructure.Persistence.EntityFramework.Contexts;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using Quartz;
 using SharedKernel;
+using Newtonsoft.Json;
 
 namespace Infrastructure.BackgroundJobs;
 
@@ -21,9 +21,9 @@ public sealed class ProcessOutboxMessagesJob : IJob
 
     public async Task Execute(IJobExecutionContext context)
     {
-        var outboxMessages = await _dbContext.OutboxMessages
-            .Where(x => x.ProcessedOnUtc == null)
-            .ToListAsync(context.CancellationToken);
+        var outboxMessages = _dbContext.OutboxMessages
+            .AsTracking()
+            .Where(x => x.ProcessedOnUtc == null);
 
         foreach (var outboxMessage in outboxMessages)
         {
@@ -34,6 +34,9 @@ public sealed class ProcessOutboxMessagesJob : IJob
             outboxMessage.MarkAsProcessed();
         }
 
-        await _dbContext.SaveChangesAsync(context.CancellationToken);
+        if (outboxMessages.Any())
+        {
+            await _dbContext.SaveChangesAsync(context.CancellationToken);
+        }
     }
 }

@@ -1,14 +1,15 @@
 ﻿using Application.Common.Models;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using SharedKernel;
-
 namespace Infrastructure.Persistence.EntityFramework.Interceptors;
 
 public sealed class DomainEventToOutboxMessageInterceptor : SaveChangesInterceptor
 {
-    public override ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData, int result,
-        CancellationToken cancellationToken = default)
+    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData,
+        InterceptionResult<int> result,
+        CancellationToken cancellationToken = new CancellationToken())
     {
+        
         var dbContext = eventData.Context;
 
         if (dbContext is null)
@@ -29,10 +30,10 @@ public sealed class DomainEventToOutboxMessageInterceptor : SaveChangesIntercept
 
 
         var outboxMessages = domainEvents
-            .Select(OutboxMessage.Create);
+            .Select(OutboxMessage.Create).ToList();
 
         dbContext.Set<OutboxMessage>().AddRange(outboxMessages);
 
-        return base.SavedChangesAsync(eventData, result, cancellationToken);
+        return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 }
