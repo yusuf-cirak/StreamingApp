@@ -48,7 +48,7 @@ public static class ServiceRegistration
         services.AddSingleton<IHashingHelper, HashingHelper>();
         services.AddSingleton<IEncryptionHelper, AesEncryptionHelper>();
 
-        // services.AddQuartzBackgroundJob();
+        services.AddQuartzBackgroundJob();
 
         services.AddSignalrServices();
     }

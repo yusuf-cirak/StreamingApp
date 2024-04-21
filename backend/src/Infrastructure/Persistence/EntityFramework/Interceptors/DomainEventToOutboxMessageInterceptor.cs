@@ -29,8 +29,7 @@ public sealed class DomainEventToOutboxMessageInterceptor : SaveChangesIntercept
 
 
         var outboxMessages = domainEvents
-            .Select(OutboxMessage.Create)
-            .ToList();
+            .Select(OutboxMessage.Create);
 
         dbContext.Set<OutboxMessage>().AddRange(outboxMessages);
 

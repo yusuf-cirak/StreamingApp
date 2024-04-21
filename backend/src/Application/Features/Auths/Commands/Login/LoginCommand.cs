@@ -1,5 +1,4 @@
 ﻿using Application.Common.Models;
-using Application.Contracts.Auths;
 using Application.Features.Auths.Rules;
 using Application.Features.Auths.Services;
 
@@ -55,8 +54,8 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommandRequest, H
 
         var claimsDictionary = new Dictionary<string, dynamic>
         {
-            { "roles", userRolesAndOperationClaims.Roles },
-            { "operationClaims", userRolesAndOperationClaims.OperationClaims }
+            { "Roles", userRolesAndOperationClaims.Roles },
+            { "OperationClaims", userRolesAndOperationClaims.OperationClaims }
         };
 
         AccessToken accessToken = _jwtHelper.CreateAccessToken(user, claimsDictionary);

@@ -11,8 +11,6 @@ public sealed class StreamService : IStreamService
     private readonly IStreamCacheService _streamCacheService;
     private readonly IStreamHubServerService _hubServerService;
 
-    private readonly List<GetStreamDto> _liveStreamers = [];
-
     public StreamService(IEncryptionHelper encryptionHelper, IEfRepository efRepository,
         IStreamCacheService streamCacheService, IStreamHubServerService hubServerService)
     {
@@ -43,9 +41,7 @@ public sealed class StreamService : IStreamService
     public async Task<Result> IsStreamerLiveAsync(User user, string streamKey,
         CancellationToken cancellationToken = default)
     {
-        var liveStreams = _liveStreamers.Count == 0
-            ? await _streamCacheService.GetLiveStreamsAsync(cancellationToken)
-            : _liveStreamers;
+        var liveStreams = await _streamCacheService.GetLiveStreamsAsync(cancellationToken);
 
         var isStreamerLive =
             liveStreams.Exists(ls => ls.StreamOption!.Value.StreamKey == streamKey || ls.User.Id == user.Id);
@@ -53,12 +49,16 @@ public sealed class StreamService : IStreamService
         return isStreamerLive ? Result.Failure(StreamErrors.StreamIsLive) : Result.Success();
     }
 
+    public Task<List<GetStreamDto>> GetLiveStreamersAsync(
+        CancellationToken cancellationToken = default)
+    {
+        return _streamCacheService.GetLiveStreamsAsync(cancellationToken);
+    }
+
     public async Task<Result<GetStreamDto, Error>> GetLiveStreamerByNameAsync(string streamerName,
         CancellationToken cancellationToken = default)
     {
-        var liveStreams = _liveStreamers.Count == 0
-            ? await _streamCacheService.GetLiveStreamsAsync(cancellationToken)
-            : _liveStreamers;
+        var liveStreams = await _streamCacheService.GetLiveStreamsAsync(cancellationToken);
 
         var liveStream = liveStreams.SingleOrDefault(stream => stream.User.Username == streamerName);
 
@@ -86,9 +86,7 @@ public sealed class StreamService : IStreamService
     public async Task<Result<GetStreamDto, Error>> GetLiveStreamerByKeyAsync(string streamerKey,
         CancellationToken cancellationToken = default)
     {
-        var liveStreams = _liveStreamers.Count == 0
-            ? await _streamCacheService.GetLiveStreamsAsync(cancellationToken)
-            : _liveStreamers;
+        var liveStreams = await _streamCacheService.GetLiveStreamsAsync(cancellationToken);
 
         var liveStream = liveStreams.SingleOrDefault(stream => stream.StreamOption!.Value.StreamKey == streamerKey);
 

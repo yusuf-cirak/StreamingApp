@@ -4,6 +4,9 @@ namespace Application.Features.Streams.Services;
 
 public interface IStreamService : IDomainService<Stream>
 {
+    Task<List<GetStreamDto>> GetLiveStreamersAsync(
+        CancellationToken cancellationToken = default);
+
     Task<Result<StreamOption, Error>> StreamerExistsAsync(string streamKey,
         CancellationToken cancellationToken = default);
 
@@ -14,6 +17,7 @@ public interface IStreamService : IDomainService<Stream>
 
     Task<bool> StartNewStreamAsync(StreamOption streamOption, Stream stream,
         CancellationToken cancellationToken = default);
+
 
     Task<Result<GetStreamDto, Error>> GetLiveStreamerByNameAsync(string streamerName,
         CancellationToken cancellationToken = default);
