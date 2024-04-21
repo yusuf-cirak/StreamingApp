@@ -73,7 +73,7 @@ public sealed class
         var liveStreamers = await _streamService.GetLiveStreamersAsync(cancellationToken);
 
 
-        var index = liveStreamers.FindIndex(ls => ls.Id == userId);
+        var index = liveStreamers.FindIndex(ls => ls.User.Id == userId);
 
         if (index is not -1)
         {

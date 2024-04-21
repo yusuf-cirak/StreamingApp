@@ -17,7 +17,7 @@ public sealed class StreamOptionChangedNotification : INotificationHandler<Strea
     {
         List<GetStreamDto> liveStreamers = await _streamCacheService.GetLiveStreamsAsync(cancellationToken);
 
-        var index = liveStreamers.FindIndex(ls => ls.Id == notification.StreamOption.Streamer.Id);
+        var index = liveStreamers.FindIndex(ls => ls.User.Id == notification.StreamOption.Id);
 
         if (index is -1)
         {

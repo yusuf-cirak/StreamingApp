@@ -25,7 +25,7 @@ public class RefreshToken : Entity
     public static RefreshToken Create(string token, Guid userId, string createdByIp, DateTime expiresAt)
     {
         RefreshToken refreshToken = new(token, userId, createdByIp, expiresAt);
-        refreshToken.Raise(new RefreshTokenCreatedEvent(refreshToken));
+        // refreshToken.Raise(new RefreshTokenCreatedEvent(refreshToken));
         return refreshToken;
     }
 }
