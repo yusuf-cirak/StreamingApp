@@ -20,10 +20,7 @@ public sealed class OutboxMessage
         Id = Guid.NewGuid();
         OccuredOnUtc = DateTime.UtcNow;
         Type = domainEvent.GetType().Name;
-        Content = JsonConvert.SerializeObject(domainEvent, new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.All
-        });
+        Content = JsonConvert.SerializeObject(domainEvent);
     }
 
     public static OutboxMessage Create(IDomainEvent domainEvent) => new(domainEvent);
