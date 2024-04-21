@@ -23,12 +23,10 @@ public readonly record struct CreateStreamCommandRequest : IStreamCommandRequest
 public sealed class CreateStreamCommandHandler : IRequestHandler<CreateStreamCommandRequest, HttpResult<string>>
 {
     private readonly IStreamService _streamService;
-    private readonly IStreamHubServerService _hubServerService;
 
-    public CreateStreamCommandHandler(IStreamService streamService, IStreamHubServerService hubServerService)
+    public CreateStreamCommandHandler(IStreamService streamService)
     {
         _streamService = streamService;
-        _hubServerService = hubServerService;
     }
 
     public async Task<HttpResult<string>> Handle(CreateStreamCommandRequest request,
@@ -61,10 +59,6 @@ public sealed class CreateStreamCommandHandler : IRequestHandler<CreateStreamCom
         {
             return StreamErrors.FailedToCreateStream;
         }
-
-        var streamDto = stream.ToDto(streamer.ToDto(), streamOptions.ToDto());
-
-        _ = _hubServerService.OnStreamStartedAsync(streamDto);
 
         return streamer.Username;
     }

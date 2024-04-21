@@ -23,4 +23,6 @@ public interface IStreamService : IDomainService<Stream>
 
     Task<bool> EndStreamAsync(GetStreamDto stream);
     string GenerateStreamKey(User user);
+
+    Task UpdateCacheAndSendNotificationAsync(GetStreamDto streamDto);
 }

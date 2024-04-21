@@ -1,4 +1,5 @@
 ﻿using Application.Common.Mapping;
+using SignalR.Hubs.Stream.Server.Abstractions;
 using Stream = Domain.Entities.Stream;
 
 namespace Application.Features.Streams.Services;
@@ -8,15 +9,17 @@ public sealed class StreamService : IStreamService
     private readonly IEncryptionHelper _encryptionHelper;
     private readonly IEfRepository _efRepository;
     private readonly IStreamCacheService _streamCacheService;
+    private readonly IStreamHubServerService _hubServerService;
 
     private readonly List<GetStreamDto> _liveStreamers = [];
 
     public StreamService(IEncryptionHelper encryptionHelper, IEfRepository efRepository,
-        IStreamCacheService streamCacheService)
+        IStreamCacheService streamCacheService, IStreamHubServerService hubServerService)
     {
         _encryptionHelper = encryptionHelper;
         _efRepository = efRepository;
         _streamCacheService = streamCacheService;
+        _hubServerService = hubServerService;
     }
 
 
@@ -112,16 +115,12 @@ public sealed class StreamService : IStreamService
     {
         _efRepository.Streams.Add(stream);
 
-        var insertResult = await _efRepository.SaveChangesAsync(cancellationToken);
+        var addStream = await _efRepository.SaveChangesAsync(cancellationToken);
 
-        if (insertResult == 0)
+        if (addStream is 0)
         {
             return false;
         }
-
-        var getStreamDto = stream.ToDto(streamOption.Streamer.ToDto(), streamOption.ToDto());
-
-        var cacheUpdated = await _streamCacheService.AddNewStreamToCacheAsync(getStreamDto);
 
         var newStreamKey = GenerateStreamKey(streamOption.Streamer);
 
@@ -133,7 +132,12 @@ public sealed class StreamService : IStreamService
                 cancellationToken:
                 cancellationToken);
 
-        return insertResult > 0 && cacheUpdated && updateStreamKeyResult > 0;
+
+        var getStreamDto = stream.ToDto(streamOption.Streamer.ToDto(), streamOption.ToDto());
+
+        _ = this.UpdateCacheAndSendNotificationAsync(getStreamDto);
+
+        return updateStreamKeyResult > 0;
     }
 
     public async Task<bool> EndStreamAsync(GetStreamDto stream)
@@ -144,6 +148,17 @@ public sealed class StreamService : IStreamService
         await Task.WhenAll(removeFromCacheTask, setEndDateTask);
 
         return removeFromCacheTask.Result && setEndDateTask.Result > 0;
+    }
+
+    public async Task UpdateCacheAndSendNotificationAsync(GetStreamDto streamDto)
+    {
+        await Task.Delay(TimeSpan.FromSeconds(10));
+
+        var updateCacheTask = _streamCacheService.AddNewStreamToCacheAsync(streamDto);
+
+        var sendNotificationTask = _hubServerService.OnStreamStartedAsync(streamDto);
+
+        await Task.WhenAll(updateCacheTask, sendNotificationTask);
     }
 
     private Task<int> SetStreamEndDateToDatabaseAsync(GetStreamDto streamDto)
