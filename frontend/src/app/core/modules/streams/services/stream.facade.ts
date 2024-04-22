@@ -38,18 +38,9 @@ export class StreamFacade {
   }
 
   setLiveStream(liveStream: LiveStreamDto | undefined) {
-    this.#liveStream.set(liveStream);
+    this.#liveStream.update(() => liveStream);
   }
   setStreamChatOptions(chatOptions: StreamChatOptionsDto) {
-    // this.streamState.update((state) => {
-    //   const stream = state?.stream;
-    //   const options = { ...stream?.options, ...chatOptions };
-    //   return {
-    //     ...state,
-    //     stream: { ...stream, options: { ...options, chatOptions: options } },
-    //   } as StreamState;
-    // });
-
     this.#liveStream.update((stream) => {
       const options = { ...stream?.options, ...chatOptions };
       return {

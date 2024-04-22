@@ -27,19 +27,20 @@
     </div>
     <div
       class="flex flex-row w-full pl-4 justify-start items-center gap-3 cursor-pointer hover:bg-muted-foreground h-12 icon-container hover:bg-gray-500"
-      [routerLink]="['key']"
+      (click)="navigateTo('creator/key')"
     >
       <app-key-icon />
       <span class="hideable">Keys</span>
     </div>
     <div
       class="flex flex-row w-full pl-4 justify-start items-center gap-3 cursor-pointer hover:bg-muted-foreground h-12 icon-container hover:bg-gray-500 active:bg-gray-500"
-      [routerLink]="['chat-settings']"
+      (click)="navigateTo('creator/chat-settings')"
     >
       <app-chat-icon />
       <span class="hideable">Chat</span>
     </div>
     <div
+      (click)="navigateTo('creator/community')"
       class="flex flex-row w-full pl-4 justify-start items-center gap-3 cursor-pointer hover:bg-muted-foreground h-12 icon-container hover:bg-gray-500"
     >
       <app-community-icon />

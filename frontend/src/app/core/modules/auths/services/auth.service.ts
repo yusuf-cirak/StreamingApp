@@ -38,7 +38,7 @@ export class AuthService {
     return user?.length ? JSON.parse(user) : null;
   }
 
-  getUserFromAuthDto(userAuthDto: UserAuthDto): CurrentUser {
+  mapToCurrentUser(userAuthDto: UserAuthDto): CurrentUser {
     const { claims, ...rest } = userAuthDto;
 
     rest.tokenExpiration = new Date(rest.tokenExpiration);
@@ -65,7 +65,7 @@ export class AuthService {
 
     if (tokenExpiration < new Date(Date.now())) {
       await lastValueFrom(
-        this.refreshToken(this.getUserFromAuthDto(userAuthDto))
+        this.refreshToken(this.mapToCurrentUser(userAuthDto))
       ).catch((err) => {});
     }
   }
@@ -76,7 +76,7 @@ export class AuthService {
       return;
     }
 
-    const user = this.getUserFromAuthDto(userAuthDto);
+    const user = this.mapToCurrentUser(userAuthDto);
     this.#user.set(user);
 
     localStorage.setItem('user', JSON.stringify(userAuthDto));
@@ -121,7 +121,6 @@ export class AuthService {
       .pipe(takeUntilDestroyed())
       .subscribe({
         next: (value) => {
-          debugger;
           const user = value ? JSON.parse(value) : undefined;
           this.setUser(user);
         },
