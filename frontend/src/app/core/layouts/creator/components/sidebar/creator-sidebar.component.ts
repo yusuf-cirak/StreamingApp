@@ -12,6 +12,7 @@ import {
   StreamIconComponent,
 } from '@streaming-app/shared/icons';
 import { expandCollapseAnimation } from '../../../../../shared/animations/expand-collapse-animation';
+import { CtrlDirective } from '../../../../../shared/directives/ctrl.directive';
 
 @Component({
   selector: 'app-creator-sidebar',
@@ -25,6 +26,7 @@ import { expandCollapseAnimation } from '../../../../../shared/animations/expand
     ChatIconComponent,
     KeyIconComponent,
     CommunityIconComponent,
+    CtrlDirective,
   ],
   templateUrl: './creator-sidebar.component.html',
   animations: [expandCollapseAnimation],
@@ -36,15 +38,6 @@ export class CreatorSidebarComponent {
   readonly router = inject(Router);
 
   readonly ctrlPressed = signal(false);
-
-  @HostListener('document:keydown.control', ['$event'])
-  onCtrlDown() {
-    this.ctrlPressed.set(true);
-  }
-  @HostListener('document:keyup.control', ['$event'])
-  onCtrlUp() {
-    this.ctrlPressed.set(false);
-  }
 
   navigateToStream() {
     if (this.ctrlPressed()) {
