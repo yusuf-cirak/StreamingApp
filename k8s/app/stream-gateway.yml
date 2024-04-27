@@ -1,0 +1,46 @@
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: streaming-app-gateway
+  labels:
+    app: streaming-app-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: streaming-app-gateway
+  template:
+    metadata:
+      labels:
+        app: streaming-app-gateway
+    spec:
+      containers:
+        - name: streaming-app-gateway
+          image: streaming-app-gateway:latest
+          ports:
+            - containerPort: 3000
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+---
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: streaming-app-gateway-service
+  labels:
+    app: streaming-app-gateway-service
+
+spec:
+  selector:
+    app: streaming-app-gateway
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
