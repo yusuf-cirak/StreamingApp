@@ -6,9 +6,20 @@ import { Error } from '../../../../shared/api/error';
 import { AuthService } from '@streaming-app/core';
 import { StreamHub } from '../../../hubs/stream-hub';
 import { StreamChatOptionsDto } from '../contracts/stream-options-dto';
+import { map, Observable, Subject, switchMap } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Injectable({ providedIn: 'root' })
 export class StreamFacade {
+  // services
+  readonly authService = inject(AuthService);
+
+  readonly streamService = inject(StreamService);
+
+  readonly streamHub = inject(StreamHub);
+
+  // states
+
   #streamError = signal<Error | undefined>(undefined);
   #liveStream = signal<LiveStreamDto | undefined>(undefined);
 
@@ -25,11 +36,27 @@ export class StreamFacade {
     () => this.liveStream()?.user.username || this.#streamerName()
   );
 
-  readonly authService = inject(AuthService);
+  // sources
 
-  readonly streamService = inject(StreamService);
+  readonly joinStream$ = new Subject<Observable<unknown>>();
+  readonly leaveStream$ = new Subject<Observable<unknown>>();
 
-  readonly streamHub = inject(StreamHub);
+  constructor() {
+    // reducers
+    this.joinStream$
+      .pipe(
+        takeUntilDestroyed(),
+        switchMap((source) => source)
+      )
+      .subscribe();
+
+    this.leaveStream$
+      .pipe(
+        takeUntilDestroyed(),
+        switchMap((source) => source)
+      )
+      .subscribe();
+  }
 
   getHlsUrl() {
     return this.streamService.getHlsUrl(
@@ -86,10 +113,10 @@ export class StreamFacade {
   }
 
   joinStreamRoom(userId: string) {
-    this.streamHub.invokeOnJoinedStream(userId);
+    this.joinStream$.next(this.streamHub.invokeOnJoinedStream(userId));
   }
 
   leaveStreamRoom(userId: string) {
-    this.streamHub.invokeOnLeavedStream(userId);
+    this.leaveStream$.next(this.streamHub.invokeOnLeavedStream(userId));
   }
 }

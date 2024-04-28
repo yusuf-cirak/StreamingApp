@@ -18,10 +18,14 @@ import {
 } from '@angular/common/http';
 import { authInterceptor, AuthService } from './core';
 import { StreamHub } from './core/hubs/stream-hub';
+import {  from, switchMap, tap } from 'rxjs';
 
 function initializeApp(authService: AuthService, streamHub: StreamHub) {
   return () => {
-    return authService.initializeUser().then(() => streamHub.connect());
+    return from(authService.initializeUser()).pipe(
+      tap(() => console.log('User initialized')),
+      switchMap(() => streamHub.connect())
+    );
   };
 }
 

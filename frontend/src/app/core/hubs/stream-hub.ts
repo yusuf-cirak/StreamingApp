@@ -32,20 +32,15 @@ export class StreamHub {
     );
   }
 
-  async disconnect() {
-    await this._hubConnection
-      .stop()
-      .then(() => {
-        console.log('Disconnected from stream hub');
-      })
-      .catch((err) => {
+  disconnect() {
+    return from(this._hubConnection.stop()).pipe(
+      tap(() => console.log('Disconnected from stream hub')),
+      catchError((err) => {
         console.error(err);
-      });
+        return EMPTY;
+      })
+    );
   }
-
-  // disconnect(){
-
-  // }
 
   registerStreamHubHandlers() {
     this._hubConnection.on(
@@ -77,25 +72,27 @@ export class StreamHub {
   }
 
   invokeOnJoinedStream(streamerId: string) {
-    this._hubConnection
-      .invoke(StreamHubAction.OnJoinedStream, streamerId)
-      .then(() => {
-        console.log('Joined stream');
-      })
-      .catch((err) => {
+    return from(
+      this._hubConnection.invoke(StreamHubAction.OnJoinedStream, streamerId)
+    ).pipe(
+      tap(() => console.log('Joined stream')),
+      catchError((err) => {
         console.error(err);
-      });
+        return EMPTY;
+      })
+    );
   }
 
   invokeOnLeavedStream(streamerId: string) {
-    this._hubConnection
-      .invoke(StreamHubAction.OnLeavedStream, streamerId)
-      .then(() => {
-        console.log('Leaved stream');
-      })
-      .catch((err) => {
+    return from(
+      this._hubConnection.invoke(StreamHubAction.OnLeavedStream, streamerId)
+    ).pipe(
+      tap(() => console.log('Leaved stream')),
+      catchError((err) => {
         console.error(err);
-      });
+        return EMPTY;
+      })
+    );
   }
 
   buildConnection() {
