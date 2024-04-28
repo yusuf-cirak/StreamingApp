@@ -19,7 +19,7 @@ import {
 import { authInterceptor, AuthService } from './core';
 import { StreamHub } from './core/hubs/stream-hub';
 
-export function initializeApp(authService: AuthService, streamHub: StreamHub) {
+function initializeApp(authService: AuthService, streamHub: StreamHub) {
   return () => {
     return authService.initializeUser().then(() => streamHub.connect());
   };

@@ -85,10 +85,6 @@ export class StreamFacade {
     this.setLiveStream(liveStream!);
   }
 
-  connectToStreamHub() {
-    this.streamHub.connect();
-  }
-
   joinStreamRoom(userId: string) {
     this.streamHub.invokeOnJoinedStream(userId);
   }

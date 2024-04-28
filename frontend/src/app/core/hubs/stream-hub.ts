@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { catchError, EMPTY, from, Subject, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../services';
 import { StreamHubAction } from './stream-hub-action';
@@ -11,28 +11,25 @@ import { StreamChatOptionsDto } from '../modules/streams/contracts/stream-option
 @Injectable({ providedIn: 'root' })
 export class StreamHub {
   private readonly authService = inject(AuthService);
-  private readonly _hubConnection = new signalR.HubConnectionBuilder()
-    .withUrl(environment.streamHubUrl!, {
-      accessTokenFactory: () => this.authService.user()?.accessToken!,
-    })
-    .build();
+  private readonly _hubConnection = this.buildConnection();
 
   streamStarted$ = new Subject<LiveStreamDto>();
   streamEnd$ = new Subject<string>();
 
   streamChatOptionsChanged$ = new Subject<StreamChatOptionsDto>();
 
-  async connect() {
-    await this._hubConnection
-      .start()
-      .then(() => {
+  connect() {
+    return from(this._hubConnection.start()).pipe(
+      tap(() => {
         console.log('Connected to stream hub');
         this.registerStreamHubHandlers();
         console.log('Registered stream hub handlers');
-      })
-      .catch((err) => {
+      }),
+      catchError((err) => {
         console.error(err);
-      });
+        return EMPTY;
+      })
+    );
   }
 
   async disconnect() {
@@ -45,6 +42,10 @@ export class StreamHub {
         console.error(err);
       });
   }
+
+  // disconnect(){
+
+  // }
 
   registerStreamHubHandlers() {
     this._hubConnection.on(
@@ -95,5 +96,13 @@ export class StreamHub {
       .catch((err) => {
         console.error(err);
       });
+  }
+
+  buildConnection() {
+    return new signalR.HubConnectionBuilder()
+      .withUrl(environment.streamHubUrl!, {
+        accessTokenFactory: () => this.authService.user()?.accessToken!,
+      })
+      .build();
   }
 }
