@@ -5,9 +5,10 @@ import { UserLoginDto } from '../../../dtos/user-login-dto';
 import { UserRegisterDto } from '../../../dtos/user-register-dto';
 import { UserRefreshTokenDto } from '../../../dtos/user-refresh-token-dto';
 import { UserAuthDto } from '../dtos/user-auth-dto';
-import { lastValueFrom, tap, throwError } from 'rxjs';
+import { lastValueFrom, map, switchMap, tap, throwError } from 'rxjs';
 import { LocalStorageEventService } from '@streaming-app/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { StreamHub } from '../../../hubs/stream-hub';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +17,8 @@ export class AuthService {
   readonly localStorageEventService = inject(LocalStorageEventService);
 
   readonly authProxyService = inject(AuthProxyService);
+
+  readonly streamHub = inject(StreamHub);
 
   #user = signal<CurrentUser | undefined>(undefined);
 
@@ -66,7 +69,7 @@ export class AuthService {
     if (tokenExpiration < new Date(Date.now())) {
       await lastValueFrom(
         this.refreshToken(this.mapToCurrentUser(userAuthDto))
-      ).catch((err) => {});
+      ).catch(() => {});
     }
   }
 
@@ -83,15 +86,19 @@ export class AuthService {
   }
 
   login(credentials: UserLoginDto) {
-    return this.authProxyService
-      .login(credentials)
-      .pipe(tap((userAuthDto) => this.setUser(userAuthDto)));
+    return this.authProxyService.login(credentials).pipe(
+      tap((userAuthDto) => this.setUser(userAuthDto)),
+      switchMap(() => this.streamHub.disconnect()),
+      switchMap(() => this.streamHub.buildAndConnect(this.user()?.accessToken))
+    );
   }
 
   register(credentials: UserRegisterDto) {
-    return this.authProxyService
-      .register(credentials)
-      .pipe(tap((userAuthDto) => this.setUser(userAuthDto)));
+    return this.authProxyService.register(credentials).pipe(
+      tap((userAuthDto) => this.setUser(userAuthDto)),
+      switchMap(() => this.streamHub.disconnect()),
+      switchMap(() => this.streamHub.buildAndConnect(this.user()?.accessToken))
+    );
   }
 
   refreshToken(user?: CurrentUser) {
@@ -106,14 +113,25 @@ export class AuthService {
       userId: user?.id!,
     };
 
-    return this.authProxyService
-      .refreshToken(userRefreshTokenDto)
-      .pipe(tap((userAuthDto) => this.setUser(userAuthDto)));
+    return this.authProxyService.refreshToken(userRefreshTokenDto).pipe(
+      tap((userAuthDto) => this.setUser(userAuthDto)),
+      switchMap(() => this.streamHub.disconnect()),
+      switchMap(() =>
+        this.streamHub
+          .buildAndConnect(this.user()?.accessToken)
+          .pipe(map(() => this.user()!))
+      )
+    );
   }
 
   logout() {
     this.#user.set(undefined);
     localStorage.removeItem('user');
+
+    this.streamHub
+      .disconnect()
+      .pipe(switchMap(() => this.streamHub.buildAndConnect()))
+      .subscribe();
   }
 
   private handleStorageEvents() {

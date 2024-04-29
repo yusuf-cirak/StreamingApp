@@ -1,8 +1,4 @@
-import {
-  APP_INITIALIZER,
-  ApplicationConfig,
-  importProvidersFrom,
-} from '@angular/core';
+import { ApplicationConfig } from '@angular/core';
 import {
   provideRouter,
   withComponentInputBinding,
@@ -18,7 +14,7 @@ import {
 } from '@angular/common/http';
 import { authInterceptor } from './core';
 import { INITIALIZE_USER_PROVIDER } from './core/providers/user';
-import { PRIMENG_CONFIG_PROVIDER } from './core/config/prime-ng';
+import { PRIMENG_CONFIG_PROVIDER } from './core/config/primeng';
 
 export const appConfig: ApplicationConfig = {
   providers: [

@@ -7,7 +7,9 @@ function initializeUserFactory(authService: AuthService, streamHub: StreamHub) {
   return () => {
     return from(authService.initializeUser()).pipe(
       tap(() => console.log('User initialized')),
-      switchMap(() => streamHub.connect())
+      switchMap(() =>
+        streamHub.buildAndConnect(authService.user()?.accessToken)
+      )
     );
   };
 }

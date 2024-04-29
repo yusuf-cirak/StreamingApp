@@ -1,8 +1,7 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, Signal } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { catchError, EMPTY, from, Subject, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AuthService } from '../services';
 import { StreamHubAction } from './stream-hub-action';
 import { LiveStreamDto } from '../modules/recommended-streamers/models/live-stream-dto';
 import { StreamInfoDto } from '../modules/streams/contracts/stream-info-dto';
@@ -10,8 +9,7 @@ import { StreamChatOptionsDto } from '../modules/streams/contracts/stream-option
 
 @Injectable({ providedIn: 'root' })
 export class StreamHub {
-  private readonly authService = inject(AuthService);
-  private readonly _hubConnection = this.buildConnection();
+  private _hubConnection!: signalR.HubConnection;
 
   streamStarted$ = new Subject<LiveStreamDto>();
   streamEnd$ = new Subject<string>();
@@ -95,10 +93,15 @@ export class StreamHub {
     );
   }
 
-  buildConnection() {
-    return new signalR.HubConnectionBuilder()
+  buildAndConnect(accessToken?: string) {
+    this.buildConnection(accessToken);
+    return this.connect();
+  }
+
+  private buildConnection(accessToken?: string) {
+    this._hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(environment.streamHubUrl!, {
-        accessTokenFactory: () => this.authService.user()?.accessToken!,
+        accessTokenFactory: () => accessToken!,
       })
       .build();
   }
