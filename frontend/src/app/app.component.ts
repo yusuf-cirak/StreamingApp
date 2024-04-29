@@ -10,8 +10,7 @@ import { StreamHub } from './core/hubs/stream-hub';
   imports: [RouterOutlet],
   templateUrl: './app.component.html',
 })
-export class AppComponent implements OnInit, OnDestroy {
-  readonly primeNgConfig = inject(PrimeNGConfig);
+export class AppComponent {
   readonly layoutService = inject(LayoutService);
   readonly authService = inject(AuthService);
   readonly router = inject(Router);
@@ -25,13 +24,5 @@ export class AppComponent implements OnInit, OnDestroy {
         }
       }
     });
-  }
-
-  ngOnInit() {
-    this.primeNgConfig.ripple = true;
-  }
-
-  async ngOnDestroy() {
-    await this.streamHub.disconnect();
   }
 }

@@ -16,7 +16,6 @@ public readonly record struct Result
 
     private Result(bool isSuccess)
     {
-        Error = default;
         IsSuccess = isSuccess;
     }
 
@@ -33,10 +32,10 @@ public readonly record struct Result
         => IsSuccess ? success() : failure(Error);
 }
 
-public sealed record Result<TValue, TError>
+public sealed record Result<TValue, TError> where TError : IError
 {
-    public TValue Value { get; }
-    public TError Error { get; }
+    public TValue Value { get; } = default;
+    public TError Error { get; } = default;
 
     public bool IsSuccess { get; }
 
@@ -45,13 +44,11 @@ public sealed record Result<TValue, TError>
     private Result(TValue value)
     {
         Value = value;
-        Error = default;
         IsSuccess = true;
     }
 
     private Result(TError error)
     {
-        Value = default;
         Error = error;
         IsSuccess = false;
     }
@@ -65,5 +62,5 @@ public sealed record Result<TValue, TError>
     public static implicit operator Result<TValue, TError>(TError error) => Failure(error);
 
     public TResult Match<TResult>(Func<TValue, TResult> success, Func<TError, TResult> failure)
-        => IsSuccess ? success(Value!) : failure(Error!);
+        => this.IsSuccess ? success(this.Value) : failure(this.Error);
 }

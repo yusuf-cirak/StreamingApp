@@ -16,18 +16,9 @@ import {
   withFetch,
   withInterceptors,
 } from '@angular/common/http';
-import { authInterceptor, AuthService } from './core';
-import { StreamHub } from './core/hubs/stream-hub';
-import {  from, switchMap, tap } from 'rxjs';
-
-function initializeApp(authService: AuthService, streamHub: StreamHub) {
-  return () => {
-    return from(authService.initializeUser()).pipe(
-      tap(() => console.log('User initialized')),
-      switchMap(() => streamHub.connect())
-    );
-  };
-}
+import { authInterceptor } from './core';
+import { INITIALIZE_USER_PROVIDER } from './core/providers/user';
+import { PRIMENG_CONFIG_PROVIDER } from './core/config/prime-ng';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -41,11 +32,7 @@ export const appConfig: ApplicationConfig = {
       easing: 'ease-in',
       easeTime: 300,
     }),
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeApp,
-      deps: [AuthService, StreamHub],
-      multi: true,
-    },
+    PRIMENG_CONFIG_PROVIDER,
+    INITIALIZE_USER_PROVIDER,
   ],
 };
