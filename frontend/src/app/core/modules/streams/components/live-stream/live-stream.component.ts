@@ -33,8 +33,4 @@ export class LiveStreamComponent {
       },
     });
   }
-
-  ngOnDestroy() {
-    this.streamFacade.leaveStream();
-  }
 }

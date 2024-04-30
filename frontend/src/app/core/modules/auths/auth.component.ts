@@ -131,7 +131,7 @@ export class AuthComponent {
     this.form.enable();
     this.#formSubmitted.set(false);
     this.toastrService.error(
-      error?.error?.detail || 'Something went wrong',
+      error?.error?.message || 'Something went wrong',
       'Error'
     );
   }

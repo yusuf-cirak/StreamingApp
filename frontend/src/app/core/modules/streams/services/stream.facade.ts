@@ -95,6 +95,8 @@ export class StreamFacade {
 
   leaveStream() {
     this.#liveStream.set(undefined);
+    this.#chatMessages.set([]);
+    this.#streamError.set(undefined);
   }
 
   setStreamerName(streamerName: string) {

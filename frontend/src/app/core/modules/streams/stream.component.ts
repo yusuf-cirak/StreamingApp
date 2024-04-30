@@ -68,5 +68,6 @@ export class StreamComponent {
     if (this.canJoinToChatRoom()) {
       this.streamFacade.leaveStreamRoom(this.streamFacade.streamerName());
     }
+    this.streamFacade.leaveStream();
   }
 }
