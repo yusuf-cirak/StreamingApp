@@ -13,6 +13,7 @@ import { HintComponent } from '../../../../components/hint/hint.component';
 import { AuthService } from '../../../../services';
 import { LiveStreamDto } from '../../../recommended-streamers/models/live-stream-dto';
 import { ChatAuthService } from '../../services/chat-auth.service';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-chat-form',
@@ -33,6 +34,8 @@ export class ChatFormComponent {
       !this.chatAuthService.canUserSendMessage(this.liveStream())
     );
   });
+
+  sendingMessage = signal(false);
 
   readonly authService = inject(AuthService);
 
@@ -61,10 +64,13 @@ export class ChatFormComponent {
   sendMessage() {
     const message = this.message();
     if (!this.chatDisabled() && message) {
+      const chatDelaySecond = this.chatOptions().chatDelaySecond;
+      this.sendingMessage.set(chatDelaySecond > 0);
       setTimeout(() => {
         this.messageSend.emit(this.message());
         this.message.update(() => '');
-      }, this.chatOptions().chatDelaySecond * 1000);
+        this.sendingMessage.set(false);
+      }, chatDelaySecond * 1000);
     }
   }
 }
