@@ -8,6 +8,7 @@ import { StreamHub } from '../../../hubs/stream-hub';
 import { StreamChatOptionsDto } from '../contracts/stream-options-dto';
 import { map, Observable, Subject, switchMap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChatMessage } from '../../chats/models/chat-message';
 
 @Injectable({ providedIn: 'root' })
 export class StreamFacade {
@@ -22,6 +23,7 @@ export class StreamFacade {
 
   #streamError = signal<Error | undefined>(undefined);
   #liveStream = signal<LiveStreamDto | undefined>(undefined);
+  #chatMessages = signal<ChatMessage[]>([]);
 
   streamState = computed(() => ({
     stream: this.#liveStream(),
@@ -35,6 +37,8 @@ export class StreamFacade {
   readonly streamerName = computed(
     () => this.liveStream()?.user.username || this.#streamerName()
   );
+
+  readonly chatMessages = this.#chatMessages.asReadonly();
 
   // sources
 
@@ -99,17 +103,15 @@ export class StreamFacade {
 
   sendMessage(message: string) {
     // send message to the server
-    const liveStream = this.liveStream();
+
     const user = this.authService.user();
 
-    const messages = liveStream?.chatMessages || [];
-
-    liveStream!.chatMessages = [
-      { message, sentAt: new Date(), username: user?.username! },
-      ...messages,
-    ];
-
-    this.setLiveStream(liveStream!);
+    this.#chatMessages.update((messages) => {
+      return [
+        { message, sentAt: new Date(), username: user?.username! },
+        ...messages,
+      ];
+    });
   }
 
   joinStreamRoom(userId: string) {

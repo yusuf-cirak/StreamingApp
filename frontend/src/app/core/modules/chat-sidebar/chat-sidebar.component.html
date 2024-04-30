@@ -20,6 +20,7 @@
   <app-chat
     class="flex w-full h-[95%] max-h-[95%]"
     [liveStream]="liveStream()"
+    [chatMessages]="chatMessages()"
     (messageSend)="onMessageSend($event)"
   />
 </div>

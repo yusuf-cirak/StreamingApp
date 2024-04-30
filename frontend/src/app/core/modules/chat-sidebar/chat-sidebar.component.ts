@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, inject, input, Signal, signal } from '@angular/core';
 import { ChatSidebar } from './models/chat-sidebar';
 import { CommunityIconComponent } from '../../../shared/icons/community-icon';
 import { ChatIconComponent } from '../../../shared/icons/chat-icon';
@@ -19,9 +19,11 @@ import { StreamFacade } from '../streams/services/stream.facade';
   templateUrl: './chat-sidebar.component.html',
 })
 export class ChatSidebarComponent {
-  liveStream = input.required<LiveStreamDto>();
-
   readonly streamFacade = inject(StreamFacade);
+
+  readonly liveStream = this.streamFacade.liveStream as Signal<LiveStreamDto>;
+
+  readonly chatMessages = this.streamFacade.chatMessages;
 
   chatSidebar = signal<ChatSidebar>({
     variant: 'chat',
