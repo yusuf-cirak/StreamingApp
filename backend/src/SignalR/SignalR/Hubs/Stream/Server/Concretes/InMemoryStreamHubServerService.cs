@@ -2,6 +2,7 @@
 using Application.Contracts.Streams;
 using Microsoft.AspNetCore.SignalR;
 using SignalR.Constants;
+using SignalR.Contracts;
 using SignalR.Hubs.Stream.Client.Abstractions.Services;
 using SignalR.Hubs.Stream.Server.Abstractions;
 
@@ -39,12 +40,22 @@ public sealed class InMemoryStreamHubServerService : IStreamHubServerService
             .SendAsync(StreamHubConstant.Method.OnStreamEndAsync, streamerName, default);
     }
 
-    public async Task OnStreamChatOptionsChangedAsync(GetStreamChatSettingsDto streamChatSettingsDto, string streamerName)
+    public async Task OnStreamChatOptionsChangedAsync(GetStreamChatSettingsDto streamChatSettingsDto,
+        string streamerName)
     {
         var streamViewerConnectionIds =
             await _hubChatRoomService.GetStreamViewerConnectionIds(streamerName);
 
         await _hubContext.Clients.Clients(streamViewerConnectionIds)
             .SendAsync(StreamHubConstant.Method.OnStreamChatOptionsChangedAsync, streamChatSettingsDto, default);
+    }
+
+    public async Task OnStreamChatMessageSendAsync(string streamerName, StreamChatMessageDto streamChatMessageDto)
+    {
+        var streamViewerConnectionIds =
+            await _hubChatRoomService.GetStreamViewerConnectionIds(streamerName);
+
+        await _hubContext.Clients.Clients(streamViewerConnectionIds)
+            .SendAsync(StreamHubConstant.Method.OnStreamChatMessageSendAsync, streamChatMessageDto);
     }
 }

@@ -4,4 +4,5 @@ export enum StreamHubAction {
   OnStreamStarted = 'OnStreamStartedAsync',
   OnStreamEnd = 'OnStreamEndAsync',
   OnStreamChatOptionsChanged = 'OnStreamChatOptionsChangedAsync',
+  OnStreamChatMessageSend = 'OnStreamChatMessageSendAsync',
 }

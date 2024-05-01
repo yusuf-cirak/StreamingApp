@@ -1,5 +1,5 @@
 import { OfflineStreamComponent } from './components/offline-stream/offline-stream.component';
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { LiveStreamComponent } from './components/live-stream/live-stream.component';
 import { StreamFacade } from './services/stream.facade';
@@ -7,6 +7,7 @@ import { NotFoundStreamComponent } from './components/not-found-stream/not-found
 import { StreamHub } from '../../hubs/stream-hub';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services';
 
 @Component({
   selector: 'app-stream',
@@ -22,14 +23,16 @@ import { Router } from '@angular/router';
 export class StreamComponent {
   readonly streamHub = inject(StreamHub);
   readonly streamFacade = inject(StreamFacade);
+  readonly authService = inject(AuthService);
 
   readonly streamError = computed(() => this.streamFacade.streamState()?.error);
   readonly router = inject(Router);
 
   readonly canJoinToChatRoom = computed(
     () =>
-      this.streamFacade.streamState()?.error?.statusCode !== 404 ||
-      this.streamFacade.liveStream()
+      this.streamHub.connectedToHub() &&
+      (this.streamFacade.liveStream() ||
+        this.streamFacade.streamState()?.error?.statusCode !== 404)
   );
 
   constructor() {
@@ -56,6 +59,12 @@ export class StreamComponent {
           this.streamFacade.setStreamChatOptions(value);
         },
       });
+
+    effect(() => {
+      if (this.authService.isAuthenticated() && this.canJoinToChatRoom()) {
+        this.streamFacade.joinStreamRoom(this.streamFacade.streamerName());
+      }
+    });
   }
 
   ngOnInit() {

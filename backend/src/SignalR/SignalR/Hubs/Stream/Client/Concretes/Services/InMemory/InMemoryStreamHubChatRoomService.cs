@@ -15,7 +15,6 @@ public sealed class InMemoryStreamHubChatRoomService : IStreamHubChatRoomService
 
     public ValueTask<HashSet<string>> GetStreamViewerConnectionIds(string streamerName)
     {
-
         return ValueTask.FromResult(_streamViewers.GetOrAdd(streamerName, new HashSet<string>()));
     }
 

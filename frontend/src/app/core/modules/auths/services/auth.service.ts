@@ -6,7 +6,7 @@ import { UserRegisterDto } from '../../../dtos/user-register-dto';
 import { UserRefreshTokenDto } from '../../../dtos/user-refresh-token-dto';
 import { UserAuthDto } from '../dtos/user-auth-dto';
 import { lastValueFrom, map, switchMap, tap, throwError } from 'rxjs';
-import { LocalStorageEventService } from '@streaming-app/core';
+import { LocalStorageEventService, User } from '@streaming-app/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { StreamHub } from '../../../hubs/stream-hub';
 
@@ -50,6 +50,15 @@ export class AuthService {
       ...rest,
       roles: claims.roles,
       operationClaims: claims.operationClaims,
+    };
+  }
+
+  currentUserToUserDto(): User {
+    const current = this.user() as User;
+    return {
+      id: current.id,
+      username: current.username,
+      profileImageUrl: current.profileImageUrl,
     };
   }
 

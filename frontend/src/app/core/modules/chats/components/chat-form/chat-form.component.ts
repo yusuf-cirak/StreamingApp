@@ -1,6 +1,7 @@
 import {
   Component,
   HostListener,
+  Signal,
   computed,
   inject,
   input,
@@ -13,7 +14,22 @@ import { HintComponent } from '../../../../components/hint/hint.component';
 import { AuthService } from '../../../../services';
 import { LiveStreamDto } from '../../../recommended-streamers/models/live-stream-dto';
 import { ChatAuthService } from '../../services/chat-auth.service';
-import { Subject } from 'rxjs';
+import {
+  catchError,
+  combineLatest,
+  delay,
+  EMPTY,
+  filter,
+  map,
+  Observable,
+  of,
+  pipe,
+  Subject,
+  switchMap,
+  tap,
+} from 'rxjs';
+import { StreamFacade } from '../../../streams/services/stream.facade';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-chat-form',
@@ -22,7 +38,13 @@ import { Subject } from 'rxjs';
   templateUrl: './chat-form.component.html',
 })
 export class ChatFormComponent {
-  liveStream = input.required<LiveStreamDto>();
+  readonly authService = inject(AuthService);
+
+  readonly chatAuthService = inject(ChatAuthService);
+
+  readonly streamFacade = inject(StreamFacade);
+
+  readonly liveStream = this.streamFacade.liveStream as Signal<LiveStreamDto>;
 
   chatOptions = computed(() => this.liveStream().options);
 
@@ -35,12 +57,6 @@ export class ChatFormComponent {
     );
   });
 
-  sendingMessage = signal(false);
-
-  readonly authService = inject(AuthService);
-
-  readonly chatAuthService = inject(ChatAuthService);
-
   readonly chatHintMessage = computed(
     () =>
       this.chatAuthService.canUserSendMessage(this.liveStream()) ??
@@ -48,29 +64,63 @@ export class ChatFormComponent {
       ''
   );
 
+  sendingMessage = signal(false);
+
   message = signal<string>('');
 
-  messageSend = output<string>();
+  messageSent$ = new Subject<Observable<any>>();
 
   @HostListener('document:keydown.enter', ['$event'])
   onEnter() {
-    this.sendMessage();
+    this.messageSent$.next(this.sendMessage());
+  }
+
+  constructor() {
+    this.messageSent$
+      .pipe(
+        takeUntilDestroyed(),
+        switchMap((source) => source)
+      )
+      .subscribe();
   }
 
   setMessage(message: string) {
     this.message.update(() => message);
   }
 
+  // sendMessage() {
+  //   const message = this.message();
+  //   if (message) {
+  //     const chatDelaySecond = this.chatOptions().chatDelaySecond;
+  //     this.sendingMessage.set(chatDelaySecond > 0);
+  //     setTimeout(() => {
+  //       this.streamFacade.sendMessage(message);
+
+  //       this.message.update(() => '');
+  //       this.sendingMessage.set(false);
+  //     }, chatDelaySecond * 1000);
+  //   }
+  // }
+
   sendMessage() {
     const message = this.message();
-    if (!this.chatDisabled() && message) {
-      const chatDelaySecond = this.chatOptions().chatDelaySecond;
-      this.sendingMessage.set(chatDelaySecond > 0);
-      setTimeout(() => {
-        this.messageSend.emit(this.message());
+    const chatDelaySecond = this.chatOptions().chatDelaySecond;
+    return of(message).pipe(
+      filter((message) => !!message),
+      tap(() => {
+        this.sendingMessage.set(chatDelaySecond > 0);
+      }),
+      delay(chatDelaySecond * 1000),
+      switchMap(() => this.streamFacade.sendMessage(this.message())),
+      tap(() => {
         this.message.update(() => '');
         this.sendingMessage.set(false);
-      }, chatDelaySecond * 1000);
-    }
+      }),
+      catchError(() => {
+        this.message.update(() => '');
+        this.sendingMessage.set(false);
+        return EMPTY;
+      })
+    );
   }
 }

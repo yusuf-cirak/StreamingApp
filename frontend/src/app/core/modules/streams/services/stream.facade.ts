@@ -6,9 +6,19 @@ import { Error } from '../../../../shared/api/error';
 import { AuthService } from '@streaming-app/core';
 import { StreamHub } from '../../../hubs/stream-hub';
 import { StreamChatOptionsDto } from '../contracts/stream-options-dto';
-import { map, Observable, Subject, switchMap } from 'rxjs';
+import {
+  catchError,
+  combineLatest,
+  map,
+  Observable,
+  of,
+  Subject,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ChatMessage } from '../../chats/models/chat-message';
+import { StreamChatMessageDto } from '../contracts/stream-chat-message-dto';
 
 @Injectable({ providedIn: 'root' })
 export class StreamFacade {
@@ -60,6 +70,25 @@ export class StreamFacade {
         switchMap((source) => source)
       )
       .subscribe();
+
+    // effects
+    this.streamHub.streamChatMessageReceived$
+      .pipe(
+        takeUntilDestroyed(),
+        tap((chatMessageDto) => {
+          this.#chatMessages.update((messages) => {
+            return [
+              {
+                message: chatMessageDto.message,
+                sentAt: new Date(),
+                username: chatMessageDto.sender.username,
+              },
+              ...messages,
+            ];
+          });
+        })
+      )
+      .subscribe();
   }
 
   getHlsUrl() {
@@ -99,28 +128,29 @@ export class StreamFacade {
     this.#streamError.set(undefined);
   }
 
-  setStreamerName(streamerName: string) {
-    this.#streamerName.set(streamerName);
-  }
-
-  sendMessage(message: string) {
-    // send message to the server
-
-    const user = this.authService.user();
-
-    this.#chatMessages.update((messages) => {
-      return [
-        { message, sentAt: new Date(), username: user?.username! },
-        ...messages,
-      ];
-    });
-  }
-
   joinStreamRoom(userId: string) {
     this.joinStream$.next(this.streamHub.invokeOnJoinedStream(userId));
   }
 
   leaveStreamRoom(userId: string) {
     this.leaveStream$.next(this.streamHub.invokeOnLeavedStream(userId));
+  }
+
+  setStreamerName(streamerName: string) {
+    this.#streamerName.set(streamerName);
+  }
+
+  sendMessage(message: string) {
+    // send message to the server
+    const streamerName = this.streamerName();
+    const streamChatMessageDto = {
+      sender: this.authService.currentUserToUserDto(),
+      message,
+    } as StreamChatMessageDto;
+
+    return this.streamHub.invokeOnStreamChatMessageSend(
+      streamerName,
+      streamChatMessageDto
+    );
   }
 }

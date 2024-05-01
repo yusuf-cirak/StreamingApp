@@ -1,4 +1,4 @@
-import { inject, Injectable, Signal } from '@angular/core';
+import { inject, Injectable, signal, Signal } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { catchError, EMPTY, from, Subject, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -6,21 +6,27 @@ import { StreamHubAction } from './stream-hub-action';
 import { LiveStreamDto } from '../modules/recommended-streamers/models/live-stream-dto';
 import { StreamInfoDto } from '../modules/streams/contracts/stream-info-dto';
 import { StreamChatOptionsDto } from '../modules/streams/contracts/stream-options-dto';
+import { StreamChatMessageDto } from '../modules/streams/contracts/stream-chat-message-dto';
 
 @Injectable({ providedIn: 'root' })
 export class StreamHub {
   private _hubConnection!: signalR.HubConnection;
+
+  readonly connectedToHub = signal(false);
 
   streamStarted$ = new Subject<LiveStreamDto>();
   streamEnd$ = new Subject<string>();
 
   streamChatOptionsChanged$ = new Subject<StreamChatOptionsDto>();
 
+  streamChatMessageReceived$ = new Subject<StreamChatMessageDto>();
+
   connect() {
     return from(this._hubConnection.start()).pipe(
       tap(() => {
         console.log('Connected to stream hub');
         this.registerStreamHubHandlers();
+        this.connectedToHub.set(true);
         console.log('Registered stream hub handlers');
       }),
       catchError((err) => {
@@ -32,7 +38,10 @@ export class StreamHub {
 
   disconnect() {
     return from(this._hubConnection.stop()).pipe(
-      tap(() => console.log('Disconnected from stream hub')),
+      tap(() => {
+        console.log('Disconnected from stream hub');
+        this.connectedToHub.set(false);
+      }),
       catchError((err) => {
         console.error(err);
         return EMPTY;
@@ -67,6 +76,13 @@ export class StreamHub {
         this.streamChatOptionsChanged$.next(streamChatOptionsDto);
       }
     );
+
+    this._hubConnection.on(
+      StreamHubAction.OnStreamChatMessageSend,
+      (streamChatMessageDto: StreamChatMessageDto) => {
+        this.streamChatMessageReceived$.next(streamChatMessageDto);
+      }
+    );
   }
 
   invokeOnJoinedStream(streamerId: string) {
@@ -89,6 +105,25 @@ export class StreamHub {
       catchError((err) => {
         console.error(err);
         return EMPTY;
+      })
+    );
+  }
+
+  invokeOnStreamChatMessageSend(
+    streamerName: string,
+    streamChatMessageDto: StreamChatMessageDto
+  ) {
+    return from(
+      this._hubConnection.invoke(
+        StreamHubAction.OnStreamChatMessageSend,
+        streamerName,
+        streamChatMessageDto
+      )
+    ).pipe(
+      tap(() => console.log('Message sent')),
+      catchError((err) => {
+        console.error(err);
+        return err;
       })
     );
   }
