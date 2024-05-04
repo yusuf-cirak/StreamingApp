@@ -60,34 +60,10 @@ public class StreamOption : Entity
         return this;
     }
 
-    public StreamOption UpdateWithEvent(string previousKey, bool mustBeFollower, bool chatDisabled, int chatDelaySecond)
-    {
-        this.Update(mustBeFollower, chatDisabled, chatDelaySecond);
-
-        var streamOption = this.Clone();
-        streamOption.StreamKey = previousKey;
-
-        Raise(new StreamOptionUpdatedEvent(streamOption));
-
-        return this;
-    }
-
     public StreamOption Update(string streamTitle, string streamDescription)
     {
         this.StreamTitle = streamTitle;
         this.StreamDescription = streamDescription;
-
-        return this;
-    }
-
-    public StreamOption UpdateWithEvent(string previousKey, string streamTitle, string streamDescription)
-    {
-        this.Update(streamTitle, streamDescription);
-
-        var streamOption = this.Clone();
-        streamOption.StreamKey = previousKey;
-
-        Raise(new StreamOptionUpdatedEvent(streamOption));
 
         return this;
     }

@@ -15,13 +15,16 @@ public static class MappingExtensions
     public static GetUserDto ToDto(this User user) =>
         new(user.Id, user.Username, user.ProfileImageUrl);
 
-    public static GetStreamOptionDto ToDto(this StreamOption streamOption) =>
+    public static GetStreamOptionDto ToDto(this StreamOption streamOption, string? streamKey = null) =>
         new(streamOption.StreamTitle, streamOption.StreamDescription, streamOption.ChatDisabled,
             streamOption.MustBeFollower,
             streamOption.ChatDelaySecond, streamOption.StreamKey);
 
     public static GetStreamChatSettingsDto ToStreamChatSettingsDto(this StreamOption streamOption) =>
-        new(streamOption.Id, streamOption.ChatDisabled, streamOption.MustBeFollower, streamOption.ChatDelaySecond);
+        new(streamOption.ChatDisabled, streamOption.MustBeFollower, streamOption.ChatDelaySecond);
+
+    public static GetStreamChatSettingsDto ToStreamChatSettingsDto(this GetStreamOptionDto streamOption) =>
+        new(streamOption.ChatDisabled, streamOption.MustBeFollower, streamOption.ChatDelaySecond);
 
     public static GetStreamTitleDescriptionDto ToStreamTitleDescriptionDto(this StreamOption streamOption) =>
         new(streamOption.Id, streamOption.StreamTitle, streamOption.StreamDescription);

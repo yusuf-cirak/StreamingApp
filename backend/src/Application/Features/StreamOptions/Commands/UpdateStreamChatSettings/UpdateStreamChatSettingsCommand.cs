@@ -1,10 +1,7 @@
-﻿using Application.Abstractions.Caching;
-using Application.Common.Extensions;
-using Application.Common.Mapping;
+﻿using Application.Common.Extensions;
 using Application.Features.StreamOptions.Abstractions;
 using Application.Features.StreamOptions.Rules;
 using Application.Features.Streams.Services;
-using SignalR.Hubs.Stream.Server.Abstractions;
 
 namespace Application.Features.StreamOptions.Commands.Update;
 
@@ -41,17 +38,13 @@ public sealed class
 {
     private readonly IEfRepository _efRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IStreamHubServerService _hubServerService;
-    private readonly ICacheService _cacheService;
     private readonly IStreamService _streamService;
 
     public UpdateChatSettingsCommandHandler(IEfRepository efRepository, IHttpContextAccessor httpContextAccessor,
-        IStreamHubServerService hubServerService, ICacheService cacheService, IStreamService streamService)
+        IStreamService streamService)
     {
         _efRepository = efRepository;
         _httpContextAccessor = httpContextAccessor;
-        _hubServerService = hubServerService;
-        _cacheService = cacheService;
         _streamService = streamService;
     }
 
@@ -69,23 +62,9 @@ public sealed class
                 .SingleOrDefaultAsync(so => so.Id == userId,
                     cancellationToken: cancellationToken);
 
+        streamOptions.Update(request.MustBeFollower,
+            request.ChatDisabled, request.ChatDelaySecond);
 
-        var liveStreamers = await _streamService.GetLiveStreamersAsync(cancellationToken);
-
-
-        var index = liveStreamers.FindIndex(ls => ls.User.Id == userId);
-
-        if (index is not -1)
-        {
-            var previousKey = liveStreamers[index]!.StreamOption!.Value.StreamKey;
-            streamOptions.UpdateWithEvent(previousKey, request.MustBeFollower,
-                request.ChatDisabled, request.ChatDelaySecond);
-            // TODO: Apply locking to the cache when this path occurs.
-        }
-        else
-        {
-            streamOptions.Update(request.MustBeFollower, request.ChatDisabled, request.ChatDelaySecond);
-        }
 
         var result = await _efRepository.SaveChangesAsync(cancellationToken);
 
@@ -94,12 +73,9 @@ public sealed class
             return HttpResult.Failure(StreamOptionErrors.CannotBeUpdated);
         }
 
-        var streamerName = _httpContextAccessor.HttpContext.User.Claims
-            .Where(claim => claim.Type == ClaimTypes.Name)
-            .Select(claim => claim.Value)
-            .SingleOrDefault() ?? string.Empty;
 
-        _ = _hubServerService.OnStreamChatOptionsChangedAsync(streamOptions.ToStreamChatSettingsDto(), streamerName);
+        _ = _streamService.UpdateStreamOptionCacheAndSendNotificationAsync(streamOptions,
+            cancellationToken: cancellationToken);
 
         return HttpResult.Success(StatusCodes.Status204NoContent);
     }

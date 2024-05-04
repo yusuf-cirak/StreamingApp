@@ -21,5 +21,5 @@ internal static class CompiledQueries
                         StreamOption = streamOption
                     }))
                 .Select(result =>
-                    result.Stream.ToDto(result.StreamOption.Streamer.ToDto(), result.StreamOption.ToDto())));
+                    result.Stream.ToDto(result.StreamOption.Streamer.ToDto(), result.StreamOption.ToDto(null))));
 }

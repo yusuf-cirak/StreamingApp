@@ -133,7 +133,7 @@ public sealed class StreamService : IStreamService
 
         var getStreamDto = stream.ToDto(streamOption.Streamer.ToDto(), streamOption.ToDto());
 
-        _ = this.UpdateCacheAndSendNotificationAsync(getStreamDto);
+        _ = this.AddToCacheAndSendNotificationAsync(getStreamDto);
 
         return updateStreamKeyResult > 0;
     }
@@ -148,9 +148,9 @@ public sealed class StreamService : IStreamService
         return removeFromCacheTask.Result && setEndDateTask.Result > 0;
     }
 
-    public async Task UpdateCacheAndSendNotificationAsync(GetStreamDto streamDto)
+    public async Task AddToCacheAndSendNotificationAsync(GetStreamDto streamDto)
     {
-        await Task.Delay(TimeSpan.FromSeconds(10));
+        await Task.Delay(TimeSpan.FromSeconds(5));
 
         var updateCacheTask = _streamCacheService.AddNewStreamToCacheAsync(streamDto);
 
@@ -172,6 +172,42 @@ public sealed class StreamService : IStreamService
     {
         var streamKeyText = $"{streamer.Username}-{GenerateRandomText()}";
         return _encryptionHelper.Encrypt(streamKeyText);
+    }
+
+    public Task<bool> AddToCacheAsync(GetStreamDto streamDto)
+    {
+        return _streamCacheService.AddNewStreamToCacheAsync(streamDto);
+    }
+
+    public async Task
+        UpdateStreamOptionCacheAndSendNotificationAsync(StreamOption streamOption, CancellationToken cancellationToken =
+            default)
+    {
+        var liveStreamers = await this.GetLiveStreamersAsync(cancellationToken);
+
+        var index = liveStreamers.FindIndex(ls => ls.User.Id == streamOption.Streamer.Id);
+
+        if (index is -1)
+        {
+            return;
+        }
+
+        var currentState = liveStreamers[index].StreamOption!.Value;
+
+        liveStreamers[index].StreamOption = streamOption.ToDto(currentState.StreamKey);
+
+        var updateCacheTask = _streamCacheService.SetLiveStreamsAsync(liveStreamers, cancellationToken);
+        var sendNotificationTask =
+            this.SendChatOptionsUpdatedNotificationAsync(liveStreamers[index], cancellationToken);
+
+        await Task.WhenAll(updateCacheTask, sendNotificationTask);
+    }
+
+    public Task SendChatOptionsUpdatedNotificationAsync(GetStreamDto streamDto,
+        CancellationToken cancellationToken = default)
+    {
+        return _hubServerService.OnStreamChatOptionsChangedAsync(
+            streamDto.StreamOption!.Value.ToStreamChatSettingsDto(), streamDto.User.Username);
     }
 
     static string GenerateRandomText()

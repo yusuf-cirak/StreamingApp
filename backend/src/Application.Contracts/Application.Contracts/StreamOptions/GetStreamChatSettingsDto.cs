@@ -1,7 +1,7 @@
 ﻿namespace Application.Contracts.StreamOptions;
 
 public readonly record struct GetStreamChatSettingsDto(
-    Guid StreamerId,
+    // Guid StreamerId,
     bool ChatDisabled,
     bool MustBeFollower,
     int ChatDelaySecond);
