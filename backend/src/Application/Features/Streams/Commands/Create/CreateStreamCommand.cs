@@ -1,8 +1,6 @@
-﻿using Application.Common.Mapping;
-using Application.Features.Streams.Abstractions;
+﻿using Application.Features.Streams.Abstractions;
 using Application.Features.Streams.Rules;
 using Application.Features.Streams.Services;
-using SignalR.Hubs.Stream.Server.Abstractions;
 using Stream = Domain.Entities.Stream;
 
 namespace Application.Features.Streams.Commands.Create;
