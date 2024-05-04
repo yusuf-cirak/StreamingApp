@@ -5,6 +5,7 @@ namespace Application.Features.Streams.Services;
 
 public sealed class StreamCacheService : IStreamCacheService
 {
+    public List<GetStreamDto> LiveStreamers { get; }
     private readonly ICacheService _cacheService;
     private readonly IEfRepository _efRepository;
 
@@ -13,7 +14,9 @@ public sealed class StreamCacheService : IStreamCacheService
     {
         _efRepository = efRepository;
         _cacheService = cacheService;
+        LiveStreamers = this.GetLiveStreamsAsync().GetAwaiter().GetResult();
     }
+
 
     public Task<List<GetStreamDto>> GetLiveStreamsAsync(CancellationToken cancellationToken = default)
     {
@@ -27,28 +30,20 @@ public sealed class StreamCacheService : IStreamCacheService
             cancellationToken: cancellationToken);
     }
 
-    public async Task<bool> AddNewStreamToCacheAsync(GetStreamDto streamDto)
+    public async Task<bool> AddNewStreamToCacheAsync(GetStreamDto streamDto,
+        CancellationToken cancellationToken = default)
     {
-        var liveStreams = await this.GetLiveStreamsAsync();
+        LiveStreamers.Add(streamDto);
 
-        liveStreams.Add(streamDto);
-
-        return await _cacheService.SetAsync(RedisConstant.Key.LiveStreamers, liveStreams);
+        return await _cacheService.SetAsync(RedisConstant.Key.LiveStreamers, LiveStreamers,
+            cancellationToken: cancellationToken);
     }
 
-    public async Task<bool> RemoveStreamFromCacheAsync(GetStreamDto stream)
+    public Task<bool> RemoveStreamFromCacheAsync(int index, CancellationToken cancellationToken = default)
     {
-        var liveStreams = await this.GetLiveStreamsAsync();
+        Console.WriteLine($"Index is: ${index}");
+        LiveStreamers.RemoveAt(index);
 
-        var index = liveStreams.FindIndex(ls => ls.Id == stream.Id);
-
-        if (index is -1)
-        {
-            return true;
-        }
-
-        liveStreams.RemoveAt(index);
-
-        return await _cacheService.SetAsync(RedisConstant.Key.LiveStreamers, liveStreams);
+        return this.SetLiveStreamsAsync(LiveStreamers, cancellationToken);
     }
 }

@@ -3,7 +3,7 @@ using Application.Contracts.Users;
 
 namespace Application.Contracts.Streams;
 
-public sealed class GetStreamDto
+public sealed record GetStreamDto
 {
     public Guid Id { get; }
     public DateTime StartedAt { get; }

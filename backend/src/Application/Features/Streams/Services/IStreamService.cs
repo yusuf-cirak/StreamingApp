@@ -7,14 +7,12 @@ public interface IStreamService : IDomainService<Stream>
     Task<Result<StreamOption, Error>> StreamerExistsAsync(string streamKey,
         CancellationToken cancellationToken = default);
 
-    Task<Result> IsStreamerLiveAsync(User user, string streamKey, CancellationToken cancellationToken = default);
-
-    Task<List<GetStreamDto>> GetLiveStreamersAsync(CancellationToken cancellationToken = default);
+    Result IsStreamerLive(User user, string streamKey);
 
     Task<Result<GetStreamDto, Error>> GetLiveStreamerByNameAsync(string streamerName,
         CancellationToken cancellationToken = default);
 
-    Task<Result<GetStreamDto, Error>> GetLiveStreamerByKeyAsync(string streamerKey,
+    Result<(GetStreamDto, int), Error> GetLiveStreamerByKeyFromCache(string streamerKey,
         CancellationToken cancellationToken = default);
 
     Task<List<GetFollowingStreamDto>> GetFollowingStreamsAsync(Guid userId,
@@ -23,7 +21,7 @@ public interface IStreamService : IDomainService<Stream>
     Task<bool> StartNewStreamAsync(StreamOption streamOption, Stream stream,
         CancellationToken cancellationToken = default);
 
-    Task<bool> EndStreamAsync(GetStreamDto stream);
+    Task<bool> EndStreamAsync(int index, CancellationToken cancellationToken = default);
 
     Task AddToCacheAndSendNotificationAsync(GetStreamDto streamDto);
 

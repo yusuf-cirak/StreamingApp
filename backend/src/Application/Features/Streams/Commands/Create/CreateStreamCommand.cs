@@ -44,7 +44,7 @@ public sealed class CreateStreamCommandHandler : IRequestHandler<CreateStreamCom
         var streamer = streamOptions.Streamer;
 
         var isStreamerLiveResult =
-            await _streamService.IsStreamerLiveAsync(streamer, request.StreamKey, cancellationToken);
+            _streamService.IsStreamerLive(streamer, request.StreamKey);
 
         if (isStreamerLiveResult.IsFailure)
         {
