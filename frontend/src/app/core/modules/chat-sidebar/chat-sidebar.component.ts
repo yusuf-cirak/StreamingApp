@@ -6,6 +6,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { LiveStreamDto } from '../recommended-streamers/models/live-stream-dto';
 import { StreamFacade } from '../streams/services/stream.facade';
 import { ChatComponent } from './chats/chat.component';
+import { NgTemplateOutlet } from '@angular/common';
 
 @Component({
   selector: 'app-chat-sidebar',
@@ -15,6 +16,7 @@ import { ChatComponent } from './chats/chat.component';
     ChatIconComponent,
     TooltipModule,
     ChatComponent,
+    NgTemplateOutlet,
   ],
   templateUrl: './chat-sidebar.component.html',
 })
