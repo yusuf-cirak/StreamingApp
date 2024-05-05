@@ -1,7 +1,7 @@
 import { Injectable, computed, inject } from '@angular/core';
 import { AuthService } from '@streaming-app/core';
-import { LiveStreamDto } from '../../recommended-streamers/models/live-stream-dto';
-import { StreamFacade } from '../../streams/services/stream.facade';
+import { LiveStreamDto } from '../../../recommended-streamers/models/live-stream-dto';
+import { StreamFacade } from '../../../streams/services/stream.facade';
 
 @Injectable({
   providedIn: 'root',

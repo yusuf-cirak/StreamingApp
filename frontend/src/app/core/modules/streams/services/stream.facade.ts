@@ -1,24 +1,14 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { StreamService } from './stream.service';
 import { LiveStreamDto } from '../../recommended-streamers/models/live-stream-dto';
-import { StreamState } from '../models/stream-state';
 import { Error } from '../../../../shared/api/error';
 import { AuthService } from '@streaming-app/core';
 import { StreamHub } from '../../../hubs/stream-hub';
 import { StreamChatOptionsDto } from '../contracts/stream-options-dto';
-import {
-  catchError,
-  combineLatest,
-  map,
-  Observable,
-  of,
-  Subject,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { Observable, Subject, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ChatMessage } from '../../chats/models/chat-message';
 import { StreamChatMessageDto } from '../contracts/stream-chat-message-dto';
+import { ChatMessage } from '../../chat-sidebar/chats/models/chat-message';
 
 @Injectable({ providedIn: 'root' })
 export class StreamFacade {

@@ -3,9 +3,9 @@ import { ChatSidebar } from './models/chat-sidebar';
 import { CommunityIconComponent } from '../../../shared/icons/community-icon';
 import { ChatIconComponent } from '../../../shared/icons/chat-icon';
 import { TooltipModule } from 'primeng/tooltip';
-import { ChatComponent } from '../chats/chat.component';
 import { LiveStreamDto } from '../recommended-streamers/models/live-stream-dto';
 import { StreamFacade } from '../streams/services/stream.facade';
+import { ChatComponent } from './chats/chat.component';
 
 @Component({
   selector: 'app-chat-sidebar',

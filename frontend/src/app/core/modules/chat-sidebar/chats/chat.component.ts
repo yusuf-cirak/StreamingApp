@@ -8,12 +8,12 @@ import {
   signal,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
-import { ChatDisabledIcon } from '../../../shared/icons/chat-disabled.icon';
 import { ChatListComponent } from './components/chat-list/chat-list.component';
 import { ChatFormComponent } from './components/chat-form/chat-form.component';
 import { ChatAuthService } from './services/chat-auth.service';
-import { LiveStreamDto } from '../recommended-streamers/models/live-stream-dto';
 import { ChatMessage } from './models/chat-message';
+import { ChatDisabledIcon } from '../../../../shared/icons/chat-disabled.icon';
+import { LiveStreamDto } from '../../recommended-streamers/models/live-stream-dto';
 
 @Component({
   selector: 'app-chat',
