@@ -1,51 +1,68 @@
-﻿using System.Collections.Concurrent;
-using SharedKernel;
+﻿using Microsoft.AspNetCore.Http;
+using SignalR.Extensions;
 using SignalR.Hubs.Stream.Client.Abstractions.Services;
 using SignalR.Hubs.Stream.Shared;
+using SignalR.Models;
 
 namespace SignalR.Hubs.Stream.Client.Concretes.Services.InMemory;
 
 public sealed class InMemoryStreamHubUserService : IStreamHubUserService
 {
-    private readonly ConcurrentDictionary<string, HashSet<string>> _onlineUsers;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly bool _isAuthenticated;
+    private readonly HubConnectionInfo _onlineUsers;
 
-    public InMemoryStreamHubUserService(IStreamHubState hubState)
+    public InMemoryStreamHubUserService(IStreamHubState hubState, IHttpContextAccessor httpContextAccessor)
     {
+        _httpContextAccessor = httpContextAccessor;
+        _isAuthenticated = httpContextAccessor.HttpContext?.IsAuthenticated() ?? false;
         _onlineUsers = hubState.OnlineUsers;
     }
 
-    public ValueTask<bool> OnConnectedToHubAsync(string userId, string connectionId)
+    public ValueTask<bool> OnConnectedToHubAsync(string connectionId)
     {
-        var userConnectionIds = this.GetUserConnectionIds(userId);
+        return _isAuthenticated switch
+        {
+            true => this.OnUserConnectedToHubAsync(connectionId),
+            false => this.OnAnonymousUserConnectedToHubAsync(connectionId)
+        };
+    }
 
-        userConnectionIds.Add(connectionId);
+    private ValueTask<bool> OnUserConnectedToHubAsync(string connectionId)
+    {
+        var user = HubUserDto.Create(_httpContextAccessor.HttpContext!.User);
+        _ = _onlineUsers.Users.GetOrAdd(connectionId, user);
 
         return ValueTask.FromResult(true);
     }
 
-    public ValueTask<bool> OnDisconnectedFromHubAsync(string userId, string connectionId)
+    private ValueTask<bool> OnAnonymousUserConnectedToHubAsync(string connectionId)
     {
-        var userConnectionIds = this.GetUserConnectionIds(userId);
-        if (userConnectionIds.Count == 1)
-        {
-            return ValueTask.FromResult(_onlineUsers.TryRemove(userId, out _));
-        }
+        _onlineUsers.AnonymousUserConnectionIds.Add(connectionId);
 
-        return ValueTask.FromResult(userConnectionIds.Remove(connectionId));
+        return ValueTask.FromResult(true);
     }
 
-    public ValueTask<Result<string, Error>> GetUserIdByConnectionIdAsync(string connectionId)
+    public ValueTask<bool> OnDisconnectedFromHubAsync(string connectionId)
     {
-        var onlineUser = _onlineUsers.SingleOrDefault(onlineUser => onlineUser.Value.Any(id => id == connectionId));
-
-        if (onlineUser.Value != default)
+        return _isAuthenticated switch
         {
-            return ValueTask.FromResult<Result<string, Error>>(onlineUser.Key);
-        }
-
-        return ValueTask.FromResult<Result<string, Error>>(Error.Create("User.NotFound", "User is not found"));
+            true => this.OnUserDisconnectedFromHubAsync(connectionId),
+            false => this.OnAnonymousUserDisconnectedFromHubAsync(connectionId)
+        };
     }
 
-    private HashSet<string> GetUserConnectionIds(string userId) =>
-        _onlineUsers.GetOrAdd(userId, new HashSet<string>());
+    private ValueTask<bool> OnUserDisconnectedFromHubAsync(string connectionId)
+    {
+        var result = _onlineUsers.Users.TryRemove(connectionId, out _);
+
+        return ValueTask.FromResult(result);
+    }
+
+    private ValueTask<bool> OnAnonymousUserDisconnectedFromHubAsync(string connectionId)
+    {
+        var result = _onlineUsers.AnonymousUserConnectionIds.Remove(connectionId);
+
+        return ValueTask.FromResult(result);
+    }
 }

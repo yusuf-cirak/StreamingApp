@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.SignalR;
-using SignalR.Constants;
+﻿using Microsoft.AspNetCore.SignalR;
 using SignalR.Contracts;
 using SignalR.Hubs.Stream.Client.Abstractions.Services;
 using SignalR.Hubs.Stream.Server.Abstractions;
@@ -11,14 +9,11 @@ public sealed class StreamHub : Hub<IStreamHub>
 {
     private readonly IStreamHubClientService _hubClientService;
     private readonly IStreamHubServerService _hubServerService;
-    private readonly string _userId;
 
     public StreamHub(IStreamHubClientService hubClientService, IStreamHubServerService hubServerService)
     {
         _hubClientService = hubClientService;
         _hubServerService = hubServerService;
-        _userId = Context?.User?.Claims.SingleOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ??
-                  StreamHubConstant.AnonymousUser;
     }
 
     public override async Task OnConnectedAsync()
@@ -26,7 +21,7 @@ public sealed class StreamHub : Hub<IStreamHub>
         var tasks = new List<Task>()
         {
             base.OnConnectedAsync(),
-            _hubClientService.OnConnectedToHubAsync(_userId, Context.ConnectionId).AsTask(),
+            _hubClientService.OnConnectedToHubAsync(Context.ConnectionId).AsTask(),
         };
         await Task.WhenAll(tasks);
     }
@@ -35,7 +30,7 @@ public sealed class StreamHub : Hub<IStreamHub>
     {
         var tasks = new List<Task>
         {
-            _hubClientService.OnDisconnectedFromHubAsync(_userId, Context.ConnectionId).AsTask(),
+            _hubClientService.OnDisconnectedFromHubAsync(Context.ConnectionId).AsTask(),
             _hubClientService.OnDisconnectedFromChatRoomsAsync(Context.ConnectionId).AsTask(),
             base.OnDisconnectedAsync(exception)
         };

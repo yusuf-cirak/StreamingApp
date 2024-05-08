@@ -48,9 +48,11 @@ public static class ServiceRegistration
         services.AddSingleton<IHashingHelper, HashingHelper>();
         services.AddSingleton<IEncryptionHelper, AesEncryptionHelper>();
 
-        services.AddQuartzBackgroundJob();
+        // services.AddQuartzBackgroundJob();
 
-        services.AddSignalrServices();
+        services.AddSingleton<ICacheService, RedisCacheService>();
+
+        services.AddCacheServices();
     }
 
 
@@ -72,16 +74,8 @@ public static class ServiceRegistration
         services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
     }
 
-    private static void AddSignalrServices(this IServiceCollection services)
+    private static void AddCacheServices(this IServiceCollection services)
     {
-        services.AddSingleton<IStreamHubState, InMemoryStreamHubState>();
-
-        services.AddScoped<IStreamHubUserService, InMemoryStreamHubUserService>();
-        services.AddScoped<IStreamHubChatRoomService, InMemoryStreamHubChatRoomService>();
-
-        services.AddScoped<IStreamHubClientService, InMemoryStreamHubClientService>();
-        services.AddScoped<IStreamHubServerService, InMemoryStreamHubServerService>();
-
-        services.AddSingleton<ICacheService, RedisCacheService>();
+        services.AddScoped<ICacheService, RedisCacheService>();
     }
 }

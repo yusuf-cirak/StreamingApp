@@ -1,31 +1,70 @@
 ﻿using System.Collections.Concurrent;
+using Microsoft.AspNetCore.Http;
+using SignalR.Extensions;
 using SignalR.Hubs.Stream.Client.Abstractions.Services;
 using SignalR.Hubs.Stream.Shared;
+using SignalR.Models;
 
 namespace SignalR.Hubs.Stream.Client.Concretes.Services.InMemory;
 
 public sealed class InMemoryStreamHubChatRoomService : IStreamHubChatRoomService
 {
-    private readonly ConcurrentDictionary<string, HashSet<string>> _streamViewers;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly bool _isAuthenticated;
+    private readonly ConcurrentDictionary<string, HubConnectionInfo> _streamViewers;
 
-    public InMemoryStreamHubChatRoomService(IStreamHubState hubState)
+    public InMemoryStreamHubChatRoomService(IStreamHubState hubState, IHttpContextAccessor httpContextAccessor)
     {
+        _httpContextAccessor = httpContextAccessor;
+        _isAuthenticated = httpContextAccessor.HttpContext?.IsAuthenticated() ?? false;
         _streamViewers = hubState.StreamViewers;
     }
 
-    public ValueTask<HashSet<string>> GetStreamViewerConnectionIds(string streamerName)
+    public ValueTask<IEnumerable<string>> GetStreamViewerConnectionIds(string streamerName)
     {
-        return ValueTask.FromResult(_streamViewers.GetOrAdd(streamerName, new HashSet<string>()));
+        if (!_streamViewers.TryGetValue(streamerName, out var hubConnectionInfo))
+        {
+            ValueTask.FromResult<IEnumerable<string>>([]);
+        }
+
+        return ValueTask.FromResult(hubConnectionInfo!.GetAllConnectionIds());
+    }
+
+    public ValueTask<IEnumerable<HubUserDto>> GetStreamViewersAsync(string streamerName)
+    {
+        if (!_streamViewers.TryGetValue(streamerName, out var hubConnectionInfo))
+        {
+            return ValueTask.FromResult<IEnumerable<HubUserDto>>([]);
+        }
+
+        return ValueTask.FromResult(hubConnectionInfo.Users.Values.AsEnumerable());
     }
 
     public ValueTask OnJoinedStreamAsync(string streamerName, string connectionId)
     {
-        var streamViewers = _streamViewers.GetOrAdd(streamerName, new HashSet<string>());
+        var hubConnectionInfo = _streamViewers.GetOrAdd(streamerName, HubConnectionInfo.Create());
 
-        streamViewers.Add(connectionId);
+        return _isAuthenticated switch
+        {
+            true => this.OnUserJoinedStreamAsync(hubConnectionInfo, connectionId),
+            false => this.OnAnonymousUserJoinedStreamAsync(hubConnectionInfo, connectionId)
+        };
+    }
+
+    private ValueTask OnUserJoinedStreamAsync(HubConnectionInfo hubConnectionInfo, string connectionId)
+    {
+        _ = hubConnectionInfo.Users.GetOrAdd(connectionId, HubUserDto.Create(_httpContextAccessor.HttpContext!.User));
 
         return ValueTask.CompletedTask;
     }
+    private ValueTask OnAnonymousUserJoinedStreamAsync(HubConnectionInfo hubConnectionInfo, string connectionId)
+    {
+        hubConnectionInfo.AnonymousUserConnectionIds.Add(connectionId);
+
+        return ValueTask.CompletedTask;
+    }
+
+
 
     public ValueTask OnLeavedStreamAsync(string streamerName, string connectionId)
     {
@@ -36,11 +75,35 @@ public sealed class InMemoryStreamHubChatRoomService : IStreamHubChatRoomService
             return ValueTask.CompletedTask;
         }
 
-        var viewers = _streamViewers[streamerName];
+        var hubConnectionInfo = _streamViewers[streamerName];
 
-        viewers.Remove(connectionId);
 
-        if (viewers.Count == 0)
+        return _isAuthenticated switch
+        {
+            true => this.OnUserLeavedStreamAsync(streamerName, hubConnectionInfo, connectionId),
+            false => this.OnAnonymousUserLeavedStreamAsync(streamerName, hubConnectionInfo, connectionId)
+        };
+    }
+
+    private ValueTask OnUserLeavedStreamAsync(string streamerName, HubConnectionInfo hubConnectionInfo,
+        string connectionId)
+    {
+        hubConnectionInfo.Users.TryRemove(connectionId, out _);
+
+        if (hubConnectionInfo.Users.Count is 0)
+        {
+            _streamViewers.Remove(streamerName, out _);
+        }
+
+        return ValueTask.CompletedTask;
+    }
+
+    private ValueTask OnAnonymousUserLeavedStreamAsync(string streamerName, HubConnectionInfo hubConnectionInfo,
+        string connectionId)
+    {
+        hubConnectionInfo.AnonymousUserConnectionIds.Remove(connectionId);
+
+        if (hubConnectionInfo.AnonymousUserConnectionIds.Count is 0)
         {
             _streamViewers.Remove(streamerName, out _);
         }
@@ -50,9 +113,37 @@ public sealed class InMemoryStreamHubChatRoomService : IStreamHubChatRoomService
 
     public ValueTask<bool> OnDisconnectedFromChatRoomsAsync(string connectionId)
     {
-        var keys = _streamViewers.Where(kvp => kvp.Value.Any(id => id == connectionId)).Select(kvp => kvp.Key).ToList();
+        return _isAuthenticated switch
+        {
+            true => this.OnUserDisconnectedFromChatRoomsAsync(connectionId),
+            false => this.OnAnonymousUserDisconnectedFromChatRoomsAsync(connectionId)
+        };
+    }
 
-        keys.ForEach(key => this.OnLeavedStreamAsync(key, connectionId));
+    private ValueTask<bool> OnUserDisconnectedFromChatRoomsAsync(string connectionId)
+    {
+        var keys = _streamViewers.Where(kvp =>
+                kvp.Value.Users.TryGetValue(connectionId, out _))
+            .Select(kvp => kvp.Key);
+
+        foreach (string key in keys)
+        {
+            this.OnLeavedStreamAsync(key, connectionId);
+        }
+
+        return ValueTask.FromResult(true);
+    }
+
+    private ValueTask<bool> OnAnonymousUserDisconnectedFromChatRoomsAsync(string connectionId)
+    {
+        var keys = _streamViewers.Where(kvp => kvp.Value.AnonymousUserConnectionIds.Any(id => id == connectionId))
+            .Select(kvp => kvp.Key);
+
+        foreach (string key in keys)
+        {
+            this.OnLeavedStreamAsync(key, connectionId);
+        }
+
         return ValueTask.FromResult(true);
     }
 }

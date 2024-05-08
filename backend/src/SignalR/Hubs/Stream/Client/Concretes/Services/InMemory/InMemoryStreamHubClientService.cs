@@ -1,5 +1,6 @@
 ﻿using SharedKernel;
 using SignalR.Hubs.Stream.Client.Abstractions.Services;
+using SignalR.Models;
 
 namespace SignalR.Hubs.Stream.Client.Concretes.Services.InMemory;
 
@@ -15,24 +16,24 @@ public sealed class InMemoryStreamHubClientService : IStreamHubClientService
         _streamHubChatRoomService = streamHubChatRoomService;
     }
 
-    public ValueTask<bool> OnConnectedToHubAsync(string userId, string connectionId)
+    public ValueTask<bool> OnConnectedToHubAsync(string connectionId)
     {
-        return _streamHubUserService.OnConnectedToHubAsync(userId, connectionId);
+        return _streamHubUserService.OnConnectedToHubAsync(connectionId);
     }
 
-    public ValueTask<bool> OnDisconnectedFromHubAsync(string userId, string connectionId)
+    public ValueTask<bool> OnDisconnectedFromHubAsync(string connectionId)
     {
-        return _streamHubUserService.OnDisconnectedFromHubAsync(userId, connectionId);
+        return _streamHubUserService.OnDisconnectedFromHubAsync(connectionId);
     }
 
-    public ValueTask<Result<string, Error>> GetUserIdByConnectionIdAsync(string connectionId)
-    {
-        return _streamHubUserService.GetUserIdByConnectionIdAsync(connectionId);
-    }
-
-    public ValueTask<HashSet<string>> GetStreamViewerConnectionIds(string streamerName)
+    public ValueTask<IEnumerable<string>> GetStreamViewerConnectionIds(string streamerName)
     {
         return _streamHubChatRoomService.GetStreamViewerConnectionIds(streamerName);
+    }
+
+    public ValueTask<IEnumerable<HubUserDto>> GetStreamViewersAsync(string streamerName)
+    {
+        return _streamHubChatRoomService.GetStreamViewersAsync(streamerName);
     }
 
     public ValueTask OnJoinedStreamAsync(string streamerName, string connectionId)

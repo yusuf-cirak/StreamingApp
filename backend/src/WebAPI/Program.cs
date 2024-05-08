@@ -4,6 +4,7 @@ using Infrastructure;
 using Infrastructure.Helpers.JWT;
 using Infrastructure.Persistence.EntityFramework;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using SignalR;
 using SignalR.Hubs.Stream;
 using WebAPI.Extensions;
 using WebAPI.Infrastructure.Middlewares;
@@ -23,6 +24,7 @@ builder.Services.AddJwtAuthenticationServices(builder.Configuration); // From We
 
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddSignalrServices();
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandlerMiddleware>();
 builder.Services.AddProblemDetails();
