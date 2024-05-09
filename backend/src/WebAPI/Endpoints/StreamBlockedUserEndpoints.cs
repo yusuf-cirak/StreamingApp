@@ -13,7 +13,7 @@ public static class StreamBlockedUserEndpoints
     {
         var groupBuilder = builder.MapGroup("api/stream-blocked-users");
 
-                groupBuilder.MapGet("/",
+        groupBuilder.MapGet("/",
                 async (
                     [FromBody] GetIsUserBlockedFromStreamQueryRequest getIsUserBlockedFromStreamQueryRequest,
                     IMediator mediator) =>
@@ -33,7 +33,7 @@ public static class StreamBlockedUserEndpoints
             .WithTags("StreamBlockedUsers");
 
 
-        groupBuilder.MapDelete("/",
+        groupBuilder.MapPut("/",
                 async ([FromBody] StreamBlockedUserDeleteCommandRequest streamBlockedUserDeleteCommandRequest,
                     IMediator mediator) =>
                 {

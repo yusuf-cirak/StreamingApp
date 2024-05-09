@@ -1,5 +1,4 @@
-﻿using SharedKernel;
-using SignalR.Hubs.Stream.Client.Abstractions.Services;
+﻿using SignalR.Hubs.Stream.Client.Abstractions.Services;
 using SignalR.Models;
 
 namespace SignalR.Hubs.Stream.Client.Concretes.Services.InMemory;

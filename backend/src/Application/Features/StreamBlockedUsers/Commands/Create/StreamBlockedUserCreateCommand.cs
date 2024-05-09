@@ -55,7 +55,7 @@ public sealed class
         var result = await _efRepository.SaveChangesAsync(cancellationToken);
 
         return result > 0
-            ? HttpResult.Success(StatusCodes.Status201Created)
+            ? HttpResult.Success(StatusCodes.Status204NoContent)
             : StreamBlockedUserErrors.FailedToBlockUser;
     }
 }

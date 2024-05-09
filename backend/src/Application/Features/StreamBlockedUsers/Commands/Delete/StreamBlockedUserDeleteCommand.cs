@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using Application.Features.StreamBlockedUsers.Abstractions;
+﻿using Application.Features.StreamBlockedUsers.Abstractions;
 using Application.Features.StreamBlockedUsers.Rules;
 
 namespace Application.Features.StreamBlockedUsers.Commands.Delete;
