@@ -1,0 +1,21 @@
+<div class="w-full flex flex-row items-center gap-3">
+  <form
+    class="w-full flex flex-row items-center text-white rounded-lg border-gray-600 border"
+  >
+    <input
+      #searchInput
+      type="text"
+      placeholder="Search"
+      class="w-full rounded-md text-white px-4 py-2 bg-gray-800"
+      (input)="setSearch($any($event.target).value)"
+      [value]="search()"
+      [autofocus]="true"
+    />
+    @if (this.search()) {
+    <i
+      class="pi pi-times cursor-pointer hover:opacity-50 text-muted pr-2 justify-self-end"
+      (click)="setSearch('')"
+    ></i>
+    }
+  </form>
+</div>

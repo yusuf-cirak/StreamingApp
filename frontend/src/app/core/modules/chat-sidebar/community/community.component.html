@@ -1,0 +1,7 @@
+<div class="w-full flex flex-col flex-1 h-full py-4 px-2 gap-8">
+  <app-community-search [(search)]="searchText"></app-community-search>
+  <app-community-viewer-list
+    class="flex flex-col gap-4"
+    [viewers]="filteredViewers()!"
+  ></app-community-viewer-list>
+</div>

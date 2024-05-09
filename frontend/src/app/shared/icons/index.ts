@@ -11,3 +11,4 @@ export * from './spooky-icon';
 export * from './loading-icon';
 export * from './chat-disabled.icon';
 export * from './info-icon';
+export * from './block.icon';

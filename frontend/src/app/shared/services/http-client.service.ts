@@ -82,6 +82,7 @@ export class HttpClientService {
       withCredentials: requestParameter.withCredentials,
     });
   }
+
   delete(requestParameter: Partial<RequestParameter>, id: string) {
     return this._httpClient.delete(this.url(requestParameter, id), {
       headers: requestParameter.headers,

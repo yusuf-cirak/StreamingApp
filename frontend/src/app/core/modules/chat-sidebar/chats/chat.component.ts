@@ -5,7 +5,6 @@ import {
   computed,
   inject,
   input,
-  signal,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { ChatListComponent } from './components/chat-list/chat-list.component';
@@ -14,6 +13,7 @@ import { ChatAuthService } from './services/chat-auth.service';
 import { ChatMessage } from './models/chat-message';
 import { ChatDisabledIcon } from '../../../../shared/icons/chat-disabled.icon';
 import { LiveStreamDto } from '../../recommended-streamers/models/live-stream-dto';
+import { StreamFacade } from '../../streams/services/stream.facade';
 
 @Component({
   selector: 'app-chat',
@@ -27,9 +27,7 @@ import { LiveStreamDto } from '../../recommended-streamers/models/live-stream-dt
   templateUrl: './chat.component.html',
 })
 export class ChatComponent {
-  liveStream = input.required<LiveStreamDto>();
-
-  chatMessages = input.required<ChatMessage[]>();
+  readonly streamFacade = inject(StreamFacade);
 
   readonly chatAuthService = inject(ChatAuthService);
 

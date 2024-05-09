@@ -7,6 +7,7 @@ import { LiveStreamDto } from '../recommended-streamers/models/live-stream-dto';
 import { StreamFacade } from '../streams/services/stream.facade';
 import { ChatComponent } from './chats/chat.component';
 import { NgTemplateOutlet } from '@angular/common';
+import { CommunityComponent } from './community/community.component';
 
 @Component({
   selector: 'app-chat-sidebar',
@@ -17,6 +18,7 @@ import { NgTemplateOutlet } from '@angular/common';
     TooltipModule,
     ChatComponent,
     NgTemplateOutlet,
+    CommunityComponent,
   ],
   templateUrl: './chat-sidebar.component.html',
 })
