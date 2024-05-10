@@ -50,29 +50,30 @@ public sealed class StreamService : IStreamService
         return isStreamerLive ? Result.Failure(StreamErrors.StreamIsLive) : Result.Success();
     }
 
-    public async Task<Result<GetStreamDto, Error>> GetLiveStreamerByNameAsync(string streamerName,
+    public async Task<GetStreamInfoDto> GetLiveStreamerByNameAsync(string streamerName,
         CancellationToken cancellationToken = default)
     {
         var liveStream = LiveStreamers.SingleOrDefault(stream => stream.User.Username == streamerName);
 
         if (liveStream is not null)
         {
-            return liveStream;
+            return new GetStreamInfoDto(liveStream, null);
         }
 
-        var streamerExists = await _efRepository
+        var streamerOption = await _efRepository
             .StreamOptions
             .Include(s => s.Streamer)
             .Where(s => s.Streamer.Username == streamerName)
-            .AnyAsync(cancellationToken);
+            .SingleOrDefaultAsync(cancellationToken);
 
 
-        if (!streamerExists)
+        if (streamerOption is null)
         {
-            return StreamErrors.StreamerNotExists;
+            // return StreamErrors.StreamerNotExists;
+            return new GetStreamInfoDto(null, StreamErrors.StreamerDoesNotExist);
         }
 
-        return StreamErrors.StreamIsNotLive;
+        return new GetStreamInfoDto(streamerOption.ToDtoWithoutStream(), StreamErrors.StreamIsNotLive);
     }
 
 
@@ -184,7 +185,7 @@ public sealed class StreamService : IStreamService
 
         var currentState = LiveStreamers[index].StreamOption!.Value;
 
-        LiveStreamers[index].StreamOption = streamOption.ToDto(currentState.StreamKey);
+        LiveStreamers[index].StreamOption = streamOption.ToDto(streamKey: currentState.StreamKey);
 
         var updateCacheTask = _streamCacheService.SetLiveStreamsAsync(LiveStreamers, cancellationToken);
         var sendNotificationTask =

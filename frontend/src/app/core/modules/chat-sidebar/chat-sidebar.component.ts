@@ -3,7 +3,7 @@ import { ChatSidebar } from './models/chat-sidebar';
 import { CommunityIconComponent } from '../../../shared/icons/community-icon';
 import { ChatIconComponent } from '../../../shared/icons/chat-icon';
 import { TooltipModule } from 'primeng/tooltip';
-import { LiveStreamDto } from '../recommended-streamers/models/live-stream-dto';
+import { StreamDto } from '../streams/contracts/stream-dto';
 import { StreamFacade } from '../streams/services/stream.facade';
 import { ChatComponent } from './chats/chat.component';
 import { NgTemplateOutlet } from '@angular/common';
@@ -25,7 +25,7 @@ import { CommunityComponent } from './community/community.component';
 export class ChatSidebarComponent {
   readonly streamFacade = inject(StreamFacade);
 
-  readonly liveStream = this.streamFacade.liveStream as Signal<LiveStreamDto>;
+  readonly liveStream = this.streamFacade.liveStream as Signal<StreamDto>;
 
   readonly chatMessages = this.streamFacade.chatMessages;
 

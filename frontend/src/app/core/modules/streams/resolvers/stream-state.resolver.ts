@@ -1,15 +1,14 @@
 import { inject } from '@angular/core';
 import { ResolveFn, Router } from '@angular/router';
 import { StreamService } from '../services/stream.service';
-import { LiveStreamDto } from '../../recommended-streamers/models/live-stream-dto';
+import { StreamDto } from '../contracts/stream-dto';
 import { catchError, of, tap } from 'rxjs';
 import { Error } from '../../../../shared/api/error';
 import { StreamFacade } from '../services/stream.facade';
 import { AuthService } from '@streaming-app/core';
+import { StreamState } from '../models/stream-state';
 
-export const streamStateResolver: ResolveFn<LiveStreamDto | Error> = (
-  route
-) => {
+export const streamStateResolver: ResolveFn<StreamState> = (route) => {
   let streamerName = route.params['streamerName'];
 
   if (!streamerName) {
@@ -24,12 +23,12 @@ export const streamStateResolver: ResolveFn<LiveStreamDto | Error> = (
   const streamService = inject(StreamService);
 
   return streamService.getStreamInfo(streamerName).pipe(
-    tap((liveStream) => {
-      streamFacade.setLiveStream(liveStream as LiveStreamDto);
-    }),
-    catchError((err) => {
-      streamFacade.setLiveStreamErrorState(err as Error);
-      return of(err as Error);
+    tap((streamDto) => {
+      streamFacade.setStream(streamDto);
     })
+    // catchError((err) => {
+    //   streamFacade.setLiveStreamErrorState(err as Error);
+    //   return of(err as Error);
+    // })
   );
 };

@@ -9,7 +9,7 @@ public interface IStreamService : IDomainService<Stream>
 
     Result IsStreamerLive(User user, string streamKey);
 
-    Task<Result<GetStreamDto, Error>> GetLiveStreamerByNameAsync(string streamerName,
+    Task<GetStreamInfoDto> GetLiveStreamerByNameAsync(string streamerName,
         CancellationToken cancellationToken = default);
 
     Result<(GetStreamDto, int), Error> GetLiveStreamerByKeyFromCache(string streamerKey,

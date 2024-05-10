@@ -30,8 +30,7 @@ export class CommunityViewerComponent {
   blockViewer = output<StreamBlockUserDto>();
 
   block() {
-    const streamerId =
-      this.streamFacade.streamState().stream?.user.id ?? ('' as string);
+    const streamerId = this.streamFacade.liveStream().user.id ?? ('' as string);
     const blockedUserId = this.viewer().id;
     this.blockViewer.emit({ streamerId, blockedUserId });
   }

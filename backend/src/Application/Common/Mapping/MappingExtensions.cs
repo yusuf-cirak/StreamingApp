@@ -1,4 +1,5 @@
-﻿using Stream = Domain.Entities.Stream;
+﻿using Application.Contracts.Streamers;
+using Stream = Domain.Entities.Stream;
 
 namespace Application.Common.Mapping;
 
@@ -15,10 +16,11 @@ public static class MappingExtensions
     public static GetUserDto ToDto(this User user) =>
         new(user.Id, user.Username, user.ProfileImageUrl);
 
-    public static GetStreamOptionDto ToDto(this StreamOption streamOption, string? streamKey = null) =>
+    public static GetStreamOptionDto ToDto(this StreamOption streamOption, bool withoutKey = false,
+        string streamKey = null) =>
         new(streamOption.StreamTitle, streamOption.StreamDescription, streamOption.ChatDisabled,
             streamOption.MustBeFollower,
-            streamOption.ChatDelaySecond, streamOption.StreamKey);
+            streamOption.ChatDelaySecond, withoutKey is false ? streamKey ?? streamOption.StreamKey : null);
 
     public static GetStreamChatSettingsDto ToStreamChatSettingsDto(this StreamOption streamOption) =>
         new(streamOption.ChatDisabled, streamOption.MustBeFollower, streamOption.ChatDelaySecond);
@@ -32,4 +34,7 @@ public static class MappingExtensions
     public static GetStreamDto ToDto(this Stream stream, GetUserDto userDto,
         GetStreamOptionDto? streamOptionDto) =>
         new(stream.Id, stream.StartedAt, userDto, streamOptionDto);
+
+    public static GetStreamDto ToDtoWithoutStream(this StreamOption streamOption) =>
+        new(streamOption.Streamer.ToDto(), streamOption.ToDto(true));
 }

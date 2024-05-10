@@ -1,8 +1,8 @@
 import { User } from '@streaming-app/core';
 import { StreamOptions } from '../../../models/stream-options';
 
-export interface LiveStreamDto {
-  startedAt: Date;
+export interface StreamDto {
+  startedAt?: Date;
   user: User;
-  options: StreamOptions;
+  streamOption: StreamOptions;
 }

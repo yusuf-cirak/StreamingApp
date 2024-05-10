@@ -38,7 +38,7 @@ export class StreamComponent {
   constructor() {
     this.streamHub.streamStarted$.subscribe({
       next: (value) => {
-        this.streamFacade.setLiveStream(value);
+        this.streamFacade.updateStream(value);
 
         //TODO: Add it from current live streamers
       },

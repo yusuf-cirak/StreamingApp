@@ -1,18 +1,9 @@
-import {
-  Component,
-  EventEmitter,
-  Output,
-  computed,
-  inject,
-  input,
-} from '@angular/core';
+import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { ChatListComponent } from './components/chat-list/chat-list.component';
 import { ChatFormComponent } from './components/chat-form/chat-form.component';
 import { ChatAuthService } from './services/chat-auth.service';
-import { ChatMessage } from './models/chat-message';
 import { ChatDisabledIcon } from '../../../../shared/icons/chat-disabled.icon';
-import { LiveStreamDto } from '../../recommended-streamers/models/live-stream-dto';
 import { StreamFacade } from '../../streams/services/stream.facade';
 
 @Component({
@@ -37,3 +28,5 @@ export class ChatComponent {
     this.messageSend.emit(message);
   }
 }
+
+// todo: make chat available even if streamer is offline

@@ -1,7 +1,7 @@
-@if (streamFacade.streamState().stream; as liveStream) {
-<app-live-stream [liveStream]="liveStream"></app-live-stream>
-} @if (streamError(); as streamError) { @if(streamError!.statusCode===400) {
-<app-offline-stream [streamError]="streamError"></app-offline-stream>
-} @else {
-<app-not-found-stream></app-not-found-stream>
-} }
+@if (streamFacade.streamState(); as streamState) { @if (!streamState.error &&
+streamState.stream) {
+<app-live-stream [liveStream]="streamState.stream"></app-live-stream>
+} @else if (streamState.error && streamState.error.statusCode===400) {
+<app-offline-stream [streamError]="streamState.error"></app-offline-stream>
+}@else {
+<app-not-found-stream></app-not-found-stream>} }

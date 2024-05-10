@@ -23,7 +23,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HintComponent } from '../../../../../components/hint/hint.component';
 import { AuthService } from '../../../../../services';
-import { LiveStreamDto } from '../../../../recommended-streamers/models/live-stream-dto';
+import { StreamDto } from '../../../../streams/contracts/stream-dto';
 import { StreamFacade } from '../../../../streams/services/stream.facade';
 
 @Component({
@@ -39,9 +39,9 @@ export class ChatFormComponent {
 
   readonly streamFacade = inject(StreamFacade);
 
-  readonly liveStream = this.streamFacade.liveStream as Signal<LiveStreamDto>;
+  readonly liveStream = this.streamFacade.liveStream as Signal<StreamDto>;
 
-  chatOptions = computed(() => this.liveStream().options);
+  chatOptions = computed(() => this.liveStream().streamOption);
 
   chatDisabled = computed(() => this.chatOptions().chatDisabled);
 

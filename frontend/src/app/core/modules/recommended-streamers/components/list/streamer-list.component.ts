@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { FollowingStreamerDto } from '../../models/following-stream-dto';
-import { LiveStreamDto } from '../../models/live-stream-dto';
+import { StreamDto } from '../../../streams/contracts/stream-dto';
 import { LiveStreamerComponent } from '../live-stream/live-streamer.component';
 import { FollowingStreamerComponent } from '../following-streamer/following-streamer.component';
 
@@ -11,6 +11,6 @@ import { FollowingStreamerComponent } from '../following-streamer/following-stre
   imports: [LiveStreamerComponent, FollowingStreamerComponent],
 })
 export class StreamerListComponent {
-  readonly liveStreamers = input.required<LiveStreamDto[]>();
+  readonly liveStreamers = input.required<StreamDto[]>();
   readonly followingStreamers = input.required<FollowingStreamerDto[]>();
 }

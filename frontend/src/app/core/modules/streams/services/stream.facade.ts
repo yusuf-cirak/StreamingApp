@@ -1,6 +1,5 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, Signal, computed, inject, signal } from '@angular/core';
 import { StreamService } from './stream.service';
-import { LiveStreamDto } from '../../recommended-streamers/models/live-stream-dto';
 import { Error } from '../../../../shared/api/error';
 import { AuthService } from '@streaming-app/core';
 import { StreamHub } from '../../../hubs/stream-hub';
@@ -9,6 +8,9 @@ import { Observable, Subject, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { StreamChatMessageDto } from '../contracts/stream-chat-message-dto';
 import { ChatMessage } from '../../chat-sidebar/chats/models/chat-message';
+import { StreamState } from '../models/stream-state';
+import { StreamOptions } from '../../../models/stream-options';
+import { StreamDto } from '../contracts/stream-dto';
 
 @Injectable({ providedIn: 'root' })
 export class StreamFacade {
@@ -21,18 +23,20 @@ export class StreamFacade {
 
   // states
 
-  #streamError = signal<Error | undefined>(undefined);
-  #liveStream = signal<LiveStreamDto | undefined>(undefined);
+  #streamState = signal<StreamState | undefined>(undefined);
   #chatMessages = signal<ChatMessage[]>([]);
-
-  streamState = computed(() => ({
-    stream: this.#liveStream(),
-    error: this.#streamError(),
-  }));
 
   #streamerName = signal<string>('');
 
-  readonly liveStream = computed(() => this.streamState()?.stream);
+  readonly streamState = this.#streamState.asReadonly();
+
+  readonly liveStream = computed(
+    () => this.#streamState()?.stream
+  ) as Signal<StreamDto>;
+
+  readonly isStreamLive = computed(
+    () => !!this.liveStream().streamOption?.streamKey
+  );
 
   readonly streamerName = computed(
     () => this.liveStream()?.user.username || this.#streamerName()
@@ -83,39 +87,58 @@ export class StreamFacade {
 
   getHlsUrl() {
     return this.streamService.getHlsUrl(
-      this.liveStream()?.options.streamKey || ''
+      this.liveStream()?.streamOption?.streamKey || ''
     );
   }
 
-  setLiveStream(liveStream: LiveStreamDto | undefined) {
-    this.#liveStream.update(() => liveStream);
+  setStream(liveStream: StreamState | undefined) {
+    this.#streamState.update(() => liveStream);
+  }
+
+  updateStream(streamDto: StreamDto) {
+    this.#streamState.set({
+      stream: streamDto,
+      error: null,
+    });
   }
   setStreamChatOptions(chatOptions: StreamChatOptionsDto) {
-    this.#liveStream.update((stream) => {
-      const options = { ...stream?.options, ...chatOptions };
-      return {
-        ...stream,
-        options: { ...options, chatOptions: options },
-      } as LiveStreamDto;
+    const streamState = this.#streamState() as StreamState;
+    const stream = streamState.stream;
+    const newOptions = {
+      ...stream?.streamOption,
+      ...chatOptions,
+    } as StreamOptions;
+
+    this.#streamState.set({
+      stream: { ...stream, streamOption: newOptions } as StreamDto,
+      error: null,
     });
   }
 
   setLiveStreamErrorState(error: Error) {
-    this.#streamError.set(error);
+    this.#streamState.update((state) => {
+      return {
+        ...state,
+        error,
+      } as StreamState;
+    });
   }
 
   endStream() {
-    this.#liveStream.set(undefined);
-    this.#streamError.set({
-      statusCode: 400,
-      message: 'Stream is now offline',
+    this.#streamState.update((state) => {
+      return {
+        ...state,
+        error: {
+          statusCode: 400,
+          message: 'Stream is now offline',
+        },
+      } as StreamState;
     });
   }
 
   leaveStream() {
-    this.#liveStream.set(undefined);
+    this.#streamState.set(undefined);
     this.#chatMessages.set([]);
-    this.#streamError.set(undefined);
   }
 
   joinStreamRoom(userId: string) {

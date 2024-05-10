@@ -3,7 +3,7 @@ import * as signalR from '@microsoft/signalr';
 import { catchError, EMPTY, from, Subject, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { StreamHubAction } from './stream-hub-action';
-import { LiveStreamDto } from '../modules/recommended-streamers/models/live-stream-dto';
+import { StreamDto } from '../modules/streams/contracts/stream-dto';
 import { StreamInfoDto } from '../modules/streams/contracts/stream-info-dto';
 import { StreamChatOptionsDto } from '../modules/streams/contracts/stream-options-dto';
 import { StreamChatMessageDto } from '../modules/streams/contracts/stream-chat-message-dto';
@@ -14,7 +14,7 @@ export class StreamHub {
 
   readonly connectedToHub = signal(false);
 
-  streamStarted$ = new Subject<LiveStreamDto>();
+  streamStarted$ = new Subject<StreamDto>();
   streamEnd$ = new Subject<string>();
 
   streamChatOptionsChanged$ = new Subject<StreamChatOptionsDto>();
@@ -55,9 +55,9 @@ export class StreamHub {
       (streamInfo: StreamInfoDto) => {
         const stream = {
           startedAt: streamInfo.startedAt,
-          options: streamInfo.streamOption,
+          streamOption: streamInfo.streamOption,
           user: streamInfo.user,
-        } as LiveStreamDto;
+        } as StreamDto;
 
         this.streamStarted$.next(stream);
       }

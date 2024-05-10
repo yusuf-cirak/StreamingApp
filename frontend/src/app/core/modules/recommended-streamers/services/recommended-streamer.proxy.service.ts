@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { FollowingStreamerDto } from '../models/following-stream-dto';
 import { HttpClientService } from '@streaming-app/shared/services';
-import { LiveStreamDto } from '../models/live-stream-dto';
+import { StreamDto } from '../../streams/contracts/stream-dto';
 
 @Injectable({
   providedIn: 'root',
@@ -10,8 +10,8 @@ import { LiveStreamDto } from '../models/live-stream-dto';
 export class StreamerProxyService {
   readonly httpClientService = inject(HttpClientService);
 
-  getLiveStreamers(): Observable<LiveStreamDto[]> {
-    return this.httpClientService.get<LiveStreamDto[]>({
+  getLiveStreamers(): Observable<StreamDto[]> {
+    return this.httpClientService.get<StreamDto[]>({
       controller: 'streams',
       action: 'live',
     });

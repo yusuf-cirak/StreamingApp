@@ -4,7 +4,7 @@ import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
 import { VgStreamingModule } from '@videogular/ngx-videogular/streaming';
-import { LiveStreamDto } from '../../../recommended-streamers/models/live-stream-dto';
+import { StreamDto } from '../../contracts/stream-dto';
 import { StreamFacade } from '../../services/stream.facade';
 import { ChatSidebarComponent } from '../../../chat-sidebar/chat-sidebar.component';
 
@@ -22,7 +22,7 @@ import { ChatSidebarComponent } from '../../../chat-sidebar/chat-sidebar.compone
   ],
 })
 export class LiveStreamComponent {
-  liveStream = input.required<LiveStreamDto>();
+  liveStream = input.required<StreamDto>();
 
   readonly streamFacade = inject(StreamFacade);
 

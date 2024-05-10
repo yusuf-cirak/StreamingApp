@@ -1,12 +1,11 @@
-﻿using Application.Contracts.Streams;
-using Application.Features.Streams.Services;
+﻿using Application.Features.Streams.Services;
 
 namespace Application.Features.Streams.Queries.Get;
 
-public readonly record struct GetStreamQueryRequest(string StreamerName) : IRequest<HttpResult<GetStreamDto>>;
+public readonly record struct GetStreamQueryRequest(string StreamerName) : IRequest<HttpResult<GetStreamInfoDto>>;
 
 public sealed class
-    GetStreamQueryHandler : IRequestHandler<GetStreamQueryRequest, HttpResult<GetStreamDto>>
+    GetStreamQueryHandler : IRequestHandler<GetStreamQueryRequest, HttpResult<GetStreamInfoDto>>
 {
     private readonly IStreamService _streamService;
 
@@ -15,14 +14,7 @@ public sealed class
         _streamService = streamService;
     }
 
-    public async Task<HttpResult<GetStreamDto>> Handle(GetStreamQueryRequest request,
+    public async Task<HttpResult<GetStreamInfoDto>> Handle(GetStreamQueryRequest request,
         CancellationToken cancellationToken)
-    {
-        var liveStreamResult = await _streamService.GetLiveStreamerByNameAsync(request.StreamerName, cancellationToken);
-
-        return liveStreamResult
-            .Match<HttpResult<GetStreamDto>>
-            (streamer => streamer,
-                failure => failure);
-    }
+        => await _streamService.GetLiveStreamerByNameAsync(request.StreamerName, cancellationToken);
 }

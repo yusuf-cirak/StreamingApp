@@ -6,4 +6,4 @@ public readonly record struct GetStreamOptionDto(
     bool ChatDisabled,
     bool MustBeFollower,
     int ChatDelaySecond,
-    string StreamKey);
+    string? StreamKey);

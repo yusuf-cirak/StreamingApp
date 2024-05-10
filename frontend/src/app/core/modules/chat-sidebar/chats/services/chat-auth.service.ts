@@ -1,6 +1,6 @@
 import { Injectable, computed, inject } from '@angular/core';
 import { AuthService } from '@streaming-app/core';
-import { LiveStreamDto } from '../../../recommended-streamers/models/live-stream-dto';
+import { StreamDto } from '../../../streams/contracts/stream-dto';
 import { StreamFacade } from '../../../streams/services/stream.facade';
 
 @Injectable({
@@ -12,7 +12,7 @@ export class ChatAuthService {
   readonly streamFacade = inject(StreamFacade);
 
   readonly chatDelayMessage = computed(() => {
-    const second = this.streamFacade.liveStream()?.options.chatDelaySecond;
+    const second = this.streamFacade.liveStream()?.streamOption.chatDelaySecond;
     return second ? `Slow mode with ${second} second delay` : null;
   });
 
@@ -20,9 +20,9 @@ export class ChatAuthService {
     this.canUserSendMessage(this.streamFacade.liveStream()!)
   );
 
-  canUserSendMessage(liveStream: LiveStreamDto): string | null {
-    const options = liveStream.options;
-    if (options.chatDisabled) {
+  canUserSendMessage(liveStream: StreamDto): string | null {
+    const option = liveStream.streamOption;
+    if (option.chatDisabled) {
       return 'Chat is disabled';
     }
 
@@ -31,7 +31,7 @@ export class ChatAuthService {
       return 'You must be logged in to use chat';
     }
 
-    if (options.mustBeFollower) {
+    if (option.mustBeFollower) {
       const user = this.authService.user();
       const isFollowing = user?.followingStreamers?.includes(
         liveStream.user.id

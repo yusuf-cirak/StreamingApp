@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { StreamerProxyService } from './recommended-streamer.proxy.service';
 import { forkJoin, map, of, tap } from 'rxjs';
-import { LiveStreamDto } from '../models/live-stream-dto';
+import { StreamDto } from '../../streams/contracts/stream-dto';
 import { FollowingStreamerDto } from '../models/following-stream-dto';
 import { AuthService } from '@streaming-app/core';
 
@@ -45,7 +45,7 @@ export class RecommendedStreamersService {
   }
 
   private sortLiveStreamers(
-    liveStreamers: LiveStreamDto[],
+    liveStreamers: StreamDto[],
     followingStreamers: FollowingStreamerDto[]
   ) {
     const followedStreamers = liveStreamers.filter((streamer) =>
@@ -59,7 +59,7 @@ export class RecommendedStreamersService {
   }
 
   private filterLiveStreamersFromFollowing(
-    liveStreamers: LiveStreamDto[],
+    liveStreamers: StreamDto[],
     followingStreamers: FollowingStreamerDto[]
   ) {
     const filteredFollowingStreamers = followingStreamers.filter((streamer) =>
