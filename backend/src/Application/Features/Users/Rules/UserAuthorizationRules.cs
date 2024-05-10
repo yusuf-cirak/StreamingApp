@@ -21,7 +21,7 @@ public static class UserAuthorizationRules
     {
         var rolesString = claims.FirstOrDefault(c => c.Type == "Roles")?.Value ?? string.Empty;
         var roles = JsonSerializer.Deserialize<List<GetUserRoleDto>>(rolesString);
-        return roles.Any(ur => ur.Role.Name == RoleConstants.SystemAdmin);
+        return roles.Any(ur => ur.Name == RoleConstants.SystemAdmin);
     }
 
     private static bool IsOwner(ICollection<Claim> claims, object request)

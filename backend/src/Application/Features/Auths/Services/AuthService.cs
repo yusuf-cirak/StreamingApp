@@ -1,7 +1,4 @@
-﻿using Application.Contracts.Common;
-using Application.Contracts.Roles;
-
-namespace Application.Features.Auths.Services;
+﻿namespace Application.Features.Auths.Services;
 
 public sealed class AuthService : IAuthService
 {
@@ -23,37 +20,32 @@ public sealed class AuthService : IAuthService
         return new GetUserRolesAndOperationClaimsDto(userId, userRoles, userOperationClaims);
     }
 
-    public async Task<List<GetUserRoleDto>> GetUserRolesAsync(Guid userId,
+    public Task<List<GetUserRoleDto>> GetUserRolesAsync(Guid userId,
         CancellationToken cancellationToken = default)
     {
-        var userRoles = await _efRepository
+        return _efRepository
             .UserRoleClaims
             .Include(uoc => uoc.Role)
             .Where(uoc => uoc.UserId == userId)
             .Select(uoc => new GetUserRoleDto()
             {
-                Role = new GetRoleDto(uoc.Role.Id, uoc.Role.Name),
+                Name = uoc.Role.Name,
                 Value = uoc.Value
-            })
-            .ToListAsync(cancellationToken);
-
-        return userRoles;
+            }).ToListAsync(cancellationToken);
     }
 
-    public async Task<List<GetUserOperationClaimDto>> GetUserOperationClaimsAsync(Guid userId,
+    public Task<List<GetUserOperationClaimDto>> GetUserOperationClaimsAsync(Guid userId,
         CancellationToken cancellationToken = default)
     {
-        var userOperationClaims = await _efRepository
+        return _efRepository
             .UserOperationClaims
             .Include(uoc => uoc.OperationClaim)
             .Where(uoc => uoc.UserId == userId)
             .Select(uoc => new GetUserOperationClaimDto()
             {
-                OperationClaim = new GetOperationClaimDto(uoc.OperationClaim.Id, uoc.OperationClaim.Name),
+                Name = uoc.OperationClaim.Name,
                 Value = uoc.Value
             })
             .ToListAsync(cancellationToken);
-
-        return userOperationClaims;
     }
 }

@@ -49,7 +49,7 @@ public static class StreamBlockedUserAuthorizationRules
         List<GetUserRoleDto> roleClaims = JsonSerializer.Deserialize<List<GetUserRoleDto>>(rolesString);
 
         return roleClaims.Exists(rc =>
-            rc.Role.Name == RoleConstants.StreamSuperModerator && rc.Value == streamerIdString);
+            rc.Name == RoleConstants.StreamSuperModerator && rc.Value == streamerIdString);
     }
 
     private static bool IsUserModeratorOfStreamByOperationClaim(ICollection<Claim> claims, object request)
@@ -63,6 +63,6 @@ public static class StreamBlockedUserAuthorizationRules
 
         return operationClaims.Exists(oc =>
             oc.Value == streamerIdString &&
-            oc.OperationClaim.Name == OperationClaimConstants.StreamBlockUserFromChat);
+            oc.Name == OperationClaimConstants.StreamBlockUserFromChat);
     }
 }

@@ -1,15 +1,25 @@
 import { Component, computed, inject, input, output } from '@angular/core';
 import { AuthService, User } from '@streaming-app/core';
-import { TextHashColorDirective } from '@streaming-app/shared/directives';
+import {
+  AuthorizationDirective,
+  TextHashColorDirective,
+} from '@streaming-app/shared/directives';
 import { StreamFacade } from '../../../../streams/services/stream.facade';
 import { BlockIcon } from '../../../../../../shared/icons/block.icon';
 import { TooltipModule } from 'primeng/tooltip';
 import { StreamBlockUserDto } from '../../../models/stream-block-user-dto';
+import { UserRoleDto } from '../../../../auths/models/role';
+import { UserOperationClaimDto } from '../../../../auths/models/operation-claim';
 
 @Component({
   selector: 'app-community-viewer',
   standalone: true,
-  imports: [TextHashColorDirective, BlockIcon, TooltipModule],
+  imports: [
+    TextHashColorDirective,
+    BlockIcon,
+    TooltipModule,
+    AuthorizationDirective,
+  ],
   templateUrl: './community-viewer.component.html',
 })
 export class CommunityViewerComponent {
@@ -18,13 +28,26 @@ export class CommunityViewerComponent {
 
   viewer = input.required<User>();
 
+  readonly streamerId = computed(
+    () => this.streamFacade.liveStream().user.id ?? ''
+  );
+
+  roles: UserRoleDto[] = [
+    { name: 'Admin' },
+    { name: 'SuperModerator', value: this.streamerId() },
+  ];
+
+  operationClaims: UserOperationClaimDto[] = [
+    { name: 'BlockUser', value: this.streamerId() },
+  ];
+
   // TODO: Only authorized users can block other users
   // isHost = computed(
   //   () => this.authService.user()?.username === this.streamFacade.streamerName()
   // );
 
   isSelf = computed(
-    () => this.viewer().username === this.authService.user()?.username && false
+    () => this.viewer().username === this.authService.user()?.username
   );
 
   blockViewer = output<StreamBlockUserDto>();

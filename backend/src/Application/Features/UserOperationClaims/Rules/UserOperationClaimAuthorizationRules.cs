@@ -36,7 +36,7 @@ public static class UserOperationClaimAuthorizationRules
 
         List<GetUserRoleDto> roleClaims = JsonSerializer.Deserialize<List<GetUserRoleDto>>(rolesString);
 
-        return roleClaims.Exists(rc => rc.Role.Name == RoleConstants.SystemAdmin);
+        return roleClaims.Exists(rc => rc.Name == RoleConstants.SystemAdmin);
     }
 
 

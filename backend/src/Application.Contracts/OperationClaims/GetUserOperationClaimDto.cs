@@ -1,3 +1,3 @@
 ﻿namespace Application.Contracts.OperationClaims;
 
-public readonly record struct GetUserOperationClaimDto(GetOperationClaimDto OperationClaim, string Value);
+public readonly record struct GetUserOperationClaimDto(string Name, string Value);

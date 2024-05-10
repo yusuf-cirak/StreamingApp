@@ -1,8 +1,4 @@
-﻿using Application.Contracts.Common;
-using Application.Contracts.OperationClaims;
-using Application.Contracts.Roles;
-
-namespace Application.Features.Auths.Services;
+﻿namespace Application.Features.Auths.Services;
 
 public interface IAuthService : IDomainService<User>
 {

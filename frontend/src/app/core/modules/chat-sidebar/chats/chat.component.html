@@ -13,7 +13,7 @@
     class="w-full h-[70%] max-h-[70%] sm:h-[80%] sm:max-h-[80%] items-start flex flex-col"
     [messages]="streamFacade.chatMessages()"
   />
-  <app-chat-form class="w-full h-[30%] sm:h[20%]"></app-chat-form>
+  <app-chat-form class="w-full h-[30%] sm:h-[20%]"></app-chat-form>
 </ng-template>
 
 <ng-template #chatDisabledTemplate>
@@ -21,5 +21,5 @@
     <app-chat-disabled-icon class="text-white"></app-chat-disabled-icon>
     <div class="text-white">Chat is disabled</div>
   </div>
-  <app-chat-form class="w-full h-[30%] sm:h[20%]" />
+  <app-chat-form class="w-full h-[30%] sm:h-[20%]" />
 </ng-template>
