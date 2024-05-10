@@ -17,7 +17,7 @@ public static class CommonAuthorizationRules
 
         var roles = JsonSerializer.Deserialize<List<GetUserRoleDto>>(rolesString);
 
-        if (!roles.Exists(r => r.Name.Name == RoleConstants.SystemAdmin))
+        if (!roles.Exists(r => r.Name == RoleConstants.SystemAdmin))
         {
             return Result.Failure(AuthorizationErrors.Unauthorized());
         }
