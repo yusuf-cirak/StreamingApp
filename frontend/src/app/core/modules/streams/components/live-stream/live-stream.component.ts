@@ -7,6 +7,7 @@ import { VgStreamingModule } from '@videogular/ngx-videogular/streaming';
 import { StreamDto } from '../../contracts/stream-dto';
 import { StreamFacade } from '../../services/stream.facade';
 import { ChatSidebarComponent } from '../../../chat-sidebar/chat-sidebar.component';
+import { StreamHeaderComponent } from '../stream-header/stream-header.component';
 
 @Component({
   selector: 'app-live-stream',
@@ -19,11 +20,11 @@ import { ChatSidebarComponent } from '../../../chat-sidebar/chat-sidebar.compone
     VgBufferingModule,
     VgStreamingModule,
     ChatSidebarComponent,
+    StreamHeaderComponent,
   ],
 })
 export class LiveStreamComponent {
   liveStream = input.required<StreamDto>();
-
   readonly streamFacade = inject(StreamFacade);
 
   onPlayerReady(service: VgApiService) {

@@ -26,14 +26,9 @@ export class StreamComponent {
   readonly authService = inject(AuthService);
 
   readonly streamError = computed(() => this.streamFacade.streamState()?.error);
-  readonly router = inject(Router);
 
-  readonly canJoinToChatRoom = computed(
-    () =>
-      this.streamHub.connectedToHub() &&
-      (this.streamFacade.liveStream() ||
-        this.streamFacade.streamState()?.error?.statusCode !== 404)
-  );
+  readonly canJoinToChatRoom = this.streamFacade.canJoinToChatRoom;
+  readonly router = inject(Router);
 
   constructor() {
     this.streamHub.streamStarted$.subscribe({
@@ -65,12 +60,6 @@ export class StreamComponent {
         this.streamFacade.joinStreamRoom(this.streamFacade.streamerName());
       }
     });
-  }
-
-  ngOnInit() {
-    if (this.canJoinToChatRoom()) {
-      this.streamFacade.joinStreamRoom(this.streamFacade.streamerName());
-    }
   }
 
   ngOnDestroy() {

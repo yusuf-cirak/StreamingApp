@@ -10,9 +10,10 @@ export class CommunityViewService {
   private readonly streamFacade = inject(StreamFacade);
 
   getCurrentViewers() {
-    const currentStreamerId = this.streamFacade.streamerName() as string;
-    return currentStreamerId
-      ? this.communityProxyService.getViewers(currentStreamerId).pipe(
+    const streamerName = this.streamFacade.streamerName() as string;
+
+    return streamerName
+      ? this.communityProxyService.getViewers(streamerName).pipe(
           map((viewers) => {
             const uniqueViewersMap = new Map();
 
@@ -24,5 +25,13 @@ export class CommunityViewService {
           })
         )
       : of([]);
+  }
+
+  getCurrentViewerCount() {
+    const streamerName = this.streamFacade.streamerName() as string;
+
+    return streamerName
+      ? this.communityProxyService.getViewersCount(streamerName)
+      : of(0);
   }
 }

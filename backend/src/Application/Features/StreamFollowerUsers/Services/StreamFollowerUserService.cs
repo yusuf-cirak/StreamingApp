@@ -10,13 +10,11 @@ public sealed class StreamFollowerUserService : IStreamFollowerUserService
     }
 
 
-        public async Task<bool> IsUserFollowingStreamAsync(Guid streamerId, Guid userId,
+    public Task<bool> IsUserFollowingStreamAsync(Guid streamerId, Guid userId,
         CancellationToken cancellationToken = default)
     {
-        var isBlocked = await _efRepository
+        return _efRepository
             .StreamFollowerUsers
             .AnyAsync(sbu => sbu.StreamerId == streamerId && sbu.UserId == userId, cancellationToken);
-
-        return isBlocked;
     }
 }

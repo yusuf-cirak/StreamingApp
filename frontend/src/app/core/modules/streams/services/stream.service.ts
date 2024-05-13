@@ -10,6 +10,10 @@ export class StreamService {
     return this.streamProxyService.getStreamInfo(streamerName);
   }
 
+  getStreamerViewerCount(streamerName: string) {
+    return this.streamProxyService.getStreamerViewerCount(streamerName);
+  }
+
   getHlsUrl(streamKey: string) {
     return `${environment.hlsUrl}/${streamKey}.m3u8`;
   }

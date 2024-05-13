@@ -13,11 +13,11 @@ public static class StreamerFollowerUserEndpoints
     {
         var groupBuilder = builder.MapGroup("api/stream-follower-users");
 
-                groupBuilder.MapGet("/",
-                async ([FromBody] GetIsUserFollowingStreamQueryRequest streamFollowerUserCreateCommandRequest,
+                groupBuilder.MapGet("/{streamerId}",
+                async (Guid streamerId,
                     IMediator mediator) =>
                 {
-                    return await mediator.Send(streamFollowerUserCreateCommandRequest);
+                    return await mediator.Send(new GetIsUserFollowingStreamQueryRequest(streamerId));
                 })
             .WithTags("StreamerFollowerUsers");
 

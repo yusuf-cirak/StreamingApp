@@ -4,13 +4,10 @@
   [routerLink]="['/', liveStreamer.user.username]"
   type="button"
 >
-  <img
-    [src]="userImageService.getProfileImageUrl(liveStreamer.user)"
-    class="w-10 h-10 rounded-full"
-    alt="user image"
-    [ngClass]="{
-      'ring-2 ring-rose-500 border border-background': true
-    }"
+  <app-streamer
+    [user]="liveStreamer.user"
+    [isLive]="!!liveStreamer.startedAt"
+    class="w-10 h-10"
   />
   <span class="hideable text-white font-semibold px-5 truncate">
     {{ liveStreamer.user.username }}

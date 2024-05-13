@@ -40,6 +40,17 @@ public sealed class InMemoryStreamHubChatRoomService : IStreamHubChatRoomService
         return ValueTask.FromResult(hubConnectionInfo.Users.Values.AsEnumerable());
     }
 
+    public ValueTask<int> GetStreamViewersCountAsync(string streamerName)
+    {
+        if (!_streamViewers.TryGetValue(streamerName, out var hubConnectionInfo))
+        {
+            return ValueTask.FromResult(0);
+        }
+
+        return ValueTask.FromResult(
+            hubConnectionInfo.Users.Count + hubConnectionInfo.AnonymousUserConnectionIds.Count);
+    }
+
     public ValueTask OnJoinedStreamAsync(string streamerName, string connectionId)
     {
         var hubConnectionInfo = _streamViewers.GetOrAdd(streamerName, HubConnectionInfo.Create());
@@ -57,13 +68,13 @@ public sealed class InMemoryStreamHubChatRoomService : IStreamHubChatRoomService
 
         return ValueTask.CompletedTask;
     }
+
     private ValueTask OnAnonymousUserJoinedStreamAsync(HubConnectionInfo hubConnectionInfo, string connectionId)
     {
         hubConnectionInfo.AnonymousUserConnectionIds.Add(connectionId);
 
         return ValueTask.CompletedTask;
     }
-
 
 
     public ValueTask OnLeavedStreamAsync(string streamerName, string connectionId)

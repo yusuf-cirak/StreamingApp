@@ -49,10 +49,11 @@ export class RecommendedStreamersService {
     followingStreamers: FollowingStreamerDto[]
   ) {
     const followedStreamers = liveStreamers.filter((streamer) =>
-      followingStreamers.includes(streamer)
+      followingStreamers.some((fs) => fs.user.id === streamer.user.id)
     );
     const notFollowedStreamers = liveStreamers.filter(
-      (streamer) => !followingStreamers.includes(streamer)
+      (streamer) =>
+        !followingStreamers.some((fs) => fs.user.id === streamer.user.id)
     );
 
     return followedStreamers.concat(notFollowedStreamers);
@@ -64,7 +65,7 @@ export class RecommendedStreamersService {
   ) {
     const filteredFollowingStreamers = followingStreamers.filter((streamer) =>
       liveStreamers.some(
-        (liveStreamer) => liveStreamer.user.id === streamer.user.id
+        (liveStreamer) => liveStreamer.user.id !== streamer.user.id
       )
     );
 

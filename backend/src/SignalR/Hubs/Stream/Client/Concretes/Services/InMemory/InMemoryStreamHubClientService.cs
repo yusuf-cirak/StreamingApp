@@ -35,6 +35,11 @@ public sealed class InMemoryStreamHubClientService : IStreamHubClientService
         return _streamHubChatRoomService.GetStreamViewersAsync(streamerName);
     }
 
+    public ValueTask<int> GetStreamViewersCountAsync(string streamerName)
+    {
+        return _streamHubChatRoomService.GetStreamViewersCountAsync(streamerName);
+    }
+
     public ValueTask OnJoinedStreamAsync(string streamerName, string connectionId)
     {
         return _streamHubChatRoomService.OnJoinedStreamAsync(streamerName, connectionId);

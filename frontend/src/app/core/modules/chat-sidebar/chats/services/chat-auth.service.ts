@@ -32,10 +32,8 @@ export class ChatAuthService {
     }
 
     if (option.mustBeFollower) {
-      const user = this.authService.user();
-      const isFollowing = user?.followingStreamers?.includes(
-        liveStream.user.id
-      );
+      const followingStreamers = this.authService.followingStreamers();
+      const isFollowing = followingStreamers?.includes(liveStream.user.id);
 
       if (!isFollowing) {
         return 'Followers only';

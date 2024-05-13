@@ -1,14 +1,13 @@
 import { inject } from '@angular/core';
 import { ResolveFn, Router } from '@angular/router';
 import { StreamService } from '../services/stream.service';
-import { StreamDto } from '../contracts/stream-dto';
-import { catchError, of, tap } from 'rxjs';
-import { Error } from '../../../../shared/api/error';
+import { EMPTY, forkJoin, of, switchMap, tap } from 'rxjs';
 import { StreamFacade } from '../services/stream.facade';
 import { AuthService } from '@streaming-app/core';
-import { StreamState } from '../models/stream-state';
+import { StreamFollowerService } from '../services/stream-follower.service';
 
-export const streamStateResolver: ResolveFn<StreamState> = (route) => {
+export const streamStateResolver: ResolveFn<unknown> = (route) => {
+  const authService = inject(AuthService);
   let streamerName = route.params['streamerName'];
 
   if (!streamerName) {
@@ -21,14 +20,24 @@ export const streamStateResolver: ResolveFn<StreamState> = (route) => {
   streamFacade.setStreamerName(streamerName);
 
   const streamService = inject(StreamService);
+  const streamFollowerService = inject(StreamFollowerService);
 
   return streamService.getStreamInfo(streamerName).pipe(
     tap((streamDto) => {
       streamFacade.setStream(streamDto);
+    }),
+    switchMap((streamDto) => {
+      const streamer = streamDto.stream?.user;
+      const currentUser = authService.user();
+      if (!streamer || !currentUser) {
+        return of(null);
+      }
+
+      if (streamFacade.canJoinToChatRoom()) {
+        streamFacade.joinStreamRoom(streamer.username);
+      }
+
+      return streamFollowerService.isFollowingStreamer(streamer.id);
     })
-    // catchError((err) => {
-    //   streamFacade.setLiveStreamErrorState(err as Error);
-    //   return of(err as Error);
-    // })
   );
 };

@@ -15,6 +15,14 @@ export class CommunityProxyService {
     });
   }
 
+  getViewersCount(streamerName: string) {
+    return this.httpClient.get<number>({
+      controller: 'streams',
+      action: 'live/viewers',
+      routeParams: [streamerName],
+    });
+  }
+
   blockUser(blockUserDto: StreamBlockUserDto) {
     return this.httpClient.post(
       {

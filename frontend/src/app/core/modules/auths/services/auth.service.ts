@@ -24,6 +24,10 @@ export class AuthService {
 
   readonly user = this.#user.asReadonly();
 
+  #followingStreamers = signal<string[]>([]);
+
+  readonly followingStreamers = this.#followingStreamers.asReadonly();
+
   readonly userId = computed(() => this.user()?.id);
 
   readonly isAuthenticated = computed(() => {
@@ -85,6 +89,7 @@ export class AuthService {
   setUser(userAuthDto: UserAuthDto) {
     if (!userAuthDto) {
       this.#user.set(undefined);
+      localStorage.setItem('user', JSON.stringify(undefined));
       return;
     }
 
@@ -92,6 +97,10 @@ export class AuthService {
     this.#user.set(user);
 
     localStorage.setItem('user', JSON.stringify(userAuthDto));
+  }
+
+  updateFollowingStreamers(followingStreamers: string[]) {
+    this.#followingStreamers.set(followingStreamers);
   }
 
   login(credentials: UserLoginDto) {

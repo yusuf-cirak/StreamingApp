@@ -13,14 +13,13 @@ export class StreamProxyService {
       action: 'live',
       routeParams: [streamerName],
     });
-    // map(
-    //   (res) =>
-    //     ({
-    //       startedAt: res.startedAt,
-    //       options: res.streamOption,
-    //       user: res.user,
-    //     } as StreamDto)
-    // )
-    // catchError((err) => throwError(err.error as Error))
+  }
+
+  getStreamerViewerCount(streamerName: string): Observable<number> {
+    return this.httpClient.get<number>({
+      controller: 'streams',
+      action: 'viewer-count',
+      routeParams: [streamerName],
+    });
   }
 }

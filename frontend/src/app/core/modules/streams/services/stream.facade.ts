@@ -42,7 +42,21 @@ export class StreamFacade {
     () => this.liveStream()?.user.username || this.#streamerName()
   );
 
+  readonly canJoinToChatRoom = computed(
+    () =>
+      this.streamHub.connectedToHub() &&
+      (this.liveStream() || this.streamState()?.error?.statusCode !== 404)
+  );
+
   readonly chatMessages = this.#chatMessages.asReadonly();
+
+  // todo: do this in streamAuthService
+  readonly isFollowingLiveStreamer = computed(() => {
+    const followingStreamers = this.authService.followingStreamers();
+
+    const following = followingStreamers.includes(this.liveStream().user.id);
+    return following;
+  });
 
   // sources
 

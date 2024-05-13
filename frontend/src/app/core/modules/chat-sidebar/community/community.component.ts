@@ -4,8 +4,7 @@ import { CommunityProxyService } from './services/community-proxy.service';
 import { StreamFacade } from '../../streams/services/stream.facade';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CommunityViewService } from './services/community-view.service';
-import { Observable, of } from 'rxjs';
-import { User } from '../../../models';
+import { interval, startWith, switchMap } from 'rxjs';
 import { CommunityViewerListComponent } from './components/community-viewer-list/community-viewer-list.component';
 import { CommunityBlockService } from './services/community-block.service';
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
@@ -32,7 +31,7 @@ export class CommunityComponent {
 
   readonly searchText = signal('');
 
-  readonly viewers = toSignal(this.communityViewService.getCurrentViewers());
+  readonly viewers = toSignal(this.getCurrentViewers());
 
   readonly filteredViewers = signal(this.viewers());
 
@@ -56,6 +55,13 @@ export class CommunityComponent {
         }
       },
       { allowSignalWrites: true }
+    );
+  }
+
+  getCurrentViewers() {
+    return interval(20000).pipe(
+      startWith(0),
+      switchMap(() => this.communityViewService.getCurrentViewers())
     );
   }
 }
