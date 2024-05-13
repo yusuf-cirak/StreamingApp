@@ -38,11 +38,7 @@ export class AuthorizationDirective {
     this.authorize(isAuthenticated);
   }
 
-  checkRoles(isAuthenticated: boolean) {
-    if (!isAuthenticated) {
-      return false;
-    }
-
+  checkRoles() {
     const requiredRoles = this.authorizationParams()?.roles || [];
     const userRoles = this.authService.user()?.roles || [];
 
@@ -58,11 +54,7 @@ export class AuthorizationDirective {
     return hasAnyRequiredRole;
   }
 
-  checkOperationClaims(isAuthenticated: boolean) {
-    if (!isAuthenticated) {
-      return false;
-    }
-
+  checkOperationClaims() {
     const requiredOperationClaims =
       this.authorizationParams()?.operationClaims || [];
     const userOperationClaims = this.authService.user()?.operationClaims || [];
@@ -82,32 +74,28 @@ export class AuthorizationDirective {
   }
 
   authorize(isAuthenticated: boolean) {
-    const hasAnyTrueFlag = this.checkFlags();
+    this.viewContainerRef.clear();
+    if (!isAuthenticated) {
+      return;
+    }
 
-    if (hasAnyTrueFlag || this.checkRolesOrOperationClaims(isAuthenticated)) {
+    const hasAnyTrueFlag = this.checkFlags();
+    const hasAnyRequiredRoleOrOperationClaim =
+      this.checkRolesOrOperationClaims();
+
+    if (hasAnyTrueFlag || hasAnyRequiredRoleOrOperationClaim) {
       this.viewContainerRef.createEmbeddedView(this.templateRef);
-    } else {
-      this.viewContainerRef.clear();
     }
   }
 
   private checkFlags() {
     const flags = this.authorizationParams().flags || [];
 
-    debugger;
-
     return flags.some((flag) => flag);
   }
 
-  private checkRolesOrOperationClaims(isAuthenticated: boolean) {
-    if (!isAuthenticated) {
-      return false;
-    }
-
-    return (
-      this.checkRoles(isAuthenticated) ||
-      this.checkOperationClaims(isAuthenticated)
-    );
+  private checkRolesOrOperationClaims() {
+    return this.checkRoles() || this.checkOperationClaims();
   }
 }
 

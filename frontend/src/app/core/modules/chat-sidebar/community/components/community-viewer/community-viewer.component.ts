@@ -41,11 +41,6 @@ export class CommunityViewerComponent {
     { name: 'BlockUser', value: this.streamerId() },
   ];
 
-  // TODO: Only authorized users can block other users
-  // isHost = computed(
-  //   () => this.authService.user()?.username === this.streamFacade.streamerName()
-  // );
-
   isSelf = computed(
     () => this.viewer().username === this.authService.user()?.username
   );
