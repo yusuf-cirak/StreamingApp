@@ -91,15 +91,6 @@ public sealed class StreamService : IStreamService
         return StreamErrors.StreamIsNotLive;
     }
 
-    public Task<List<GetFollowingStreamDto>> GetFollowingStreamsAsync(Guid userId,
-        CancellationToken cancellationToken = default)
-    {
-        return _efRepository.StreamFollowerUsers
-            .Include(s => s.Streamer)
-            .Where(sfu => sfu.UserId == userId)
-            .Select(sfu => new GetFollowingStreamDto(sfu.Streamer.ToDto())).ToListAsync(cancellationToken);
-    }
-
     public async Task<bool> StartNewStreamAsync(StreamOption streamOption, Stream stream,
         CancellationToken cancellationToken = default)
     {

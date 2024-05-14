@@ -19,7 +19,7 @@ export class StreamFollowerService {
       .pipe(
         tap(() => {
           const followingStreamers =
-            this.authService.followingStreamers() || [];
+            this.authService.followingStreamIds() || [];
           this.authService.updateFollowingStreamers([
             ...followingStreamers,
             followDto.streamerId,
@@ -40,7 +40,7 @@ export class StreamFollowerService {
         tap(() => {
           this.authService.updateFollowingStreamers(
             this.authService
-              .followingStreamers()
+              .followingStreamIds()
               .filter((streamerId) => streamerId !== unfollowDto.streamerId)
           );
         })
@@ -55,7 +55,7 @@ export class StreamFollowerService {
       })
       .pipe(
         tap((isFollowing) => {
-          const followingStreamers = this.authService.followingStreamers();
+          const followingStreamers = this.authService.followingStreamIds();
           if (isFollowing && !followingStreamers.includes(streamerId)) {
             this.authService.updateFollowingStreamers([
               ...followingStreamers,

@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { ResolveFn, Router } from '@angular/router';
 import { StreamService } from '../services/stream.service';
-import { EMPTY, forkJoin, of, switchMap, tap } from 'rxjs';
+import { of, switchMap, tap } from 'rxjs';
 import { StreamFacade } from '../services/stream.facade';
 import { AuthService } from '@streaming-app/core';
 import { StreamFollowerService } from '../services/stream-follower.service';
@@ -28,16 +28,22 @@ export const streamStateResolver: ResolveFn<unknown> = (route) => {
     }),
     switchMap((streamDto) => {
       const streamer = streamDto.stream?.user;
-      const currentUser = authService.user();
-      if (!streamer || !currentUser) {
+
+      if (!streamer) {
         return of(null);
       }
 
-      if (streamFacade.canJoinToChatRoom()) {
-        streamFacade.joinStreamRoom(streamer.username);
-      }
+      // if (streamFacade.canJoinToChatRoom()) {
+      //   streamFacade.joinStreamRoom(streamer.username);
+      // }
 
-      return streamFollowerService.isFollowingStreamer(streamer.id);
+      const currentUser = authService.user();
+
+      const isFollowingStreamer$ = currentUser
+        ? streamFollowerService.isFollowingStreamer(streamer.id)
+        : of(null);
+
+      return isFollowingStreamer$;
     })
   );
 };

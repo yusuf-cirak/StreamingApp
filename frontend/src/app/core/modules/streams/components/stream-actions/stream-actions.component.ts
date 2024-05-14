@@ -8,7 +8,8 @@ import {
   StreamFollowDto,
   StreamFollowerService,
 } from '../../services/stream-follower.service';
-import { tap } from 'rxjs';
+import { filter, forkJoin, switchMap, tap } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-stream-actions',
@@ -31,6 +32,34 @@ export class StreamActionsComponent {
   );
 
   isPendingFollow = signal(false);
+
+  constructor() {
+    this.authService.login$
+      .pipe(
+        takeUntilDestroyed(),
+        filter(() => this.streamFacade.isStreamerExists()),
+        switchMap(() => {
+          this.isPendingFollow.set(true);
+          return forkJoin([
+            this.streamFollowerService.isFollowingStreamer(
+              this.streamFacade.liveStream()?.user.id
+            ),
+            // this.streamFacade.getStreamChatOptions(),
+            //todo: check if user is blocked here?
+          ]);
+        }),
+        tap(([isFollowing]) => {
+          if (isFollowing) {
+            this.authService.updateFollowingStreamers([
+              ...this.authService.followingStreamIds(),
+              this.streamFacade.liveStream()?.user.id,
+            ]);
+          }
+          this.isPendingFollow.set(false);
+        })
+      )
+      .subscribe();
+  }
 
   toggleFollow() {
     this.isPendingFollow.set(true);

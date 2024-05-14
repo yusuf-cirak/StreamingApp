@@ -15,8 +15,6 @@ public interface IStreamService : IDomainService<Stream>
     Result<(GetStreamDto, int), Error> GetLiveStreamerByKeyFromCache(string streamerKey,
         CancellationToken cancellationToken = default);
 
-    Task<List<GetFollowingStreamDto>> GetFollowingStreamsAsync(Guid userId,
-        CancellationToken cancellationToken = default);
 
     Task<bool> StartNewStreamAsync(StreamOption streamOption, Stream stream,
         CancellationToken cancellationToken = default);

@@ -2,7 +2,6 @@
 using Application.Features.Streams.Commands.Update;
 using Application.Features.Streams.Queries.Get;
 using Application.Features.Streams.Queries.GetAll;
-using Application.Features.Streams.Queries.GetFollowing;
 using Application.Features.Streams.Queries.GetViewers;
 using Application.Features.Streams.Queries.GetViewersCount;
 using MediatR;
@@ -31,22 +30,14 @@ public static class StreamEndpoints
                 })
             .WithTags("Streams");
         
-        groupBuilder.MapGet("/live/viewers/{streamerName}",
+        groupBuilder.MapGet("/live/viewers-count/{streamerName}",
                 async (string streamerName, IMediator mediator) =>
                 {
                     return (await mediator.Send(new GetStreamViewersCountQueryRequest(streamerName))).ToHttpResponse();
                 })
             .WithTags("Streams");
 
-        groupBuilder.MapGet("/following",
-                async (IMediator mediator) =>
-                {
-                    return (await mediator.Send(new GetFollowingStreamsQueryRequest())).ToHttpResponse();
-                })
-            .WithTags("Streams");
-
-
-        groupBuilder.MapGet("/viewers/{streamerName}",
+        groupBuilder.MapGet("/live/viewers/{streamerName}",
                 async (string streamerName, IMediator mediator) =>
                 {
                     return (await mediator.Send(new GetStreamViewersQueryRequest(streamerName))).ToHttpResponse();

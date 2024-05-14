@@ -10,7 +10,7 @@ export class CommunityProxyService {
   getViewers(streamerName: string) {
     return this.httpClient.get<User[]>({
       controller: 'streams',
-      action: 'viewers',
+      action: 'live/viewers',
       routeParams: [streamerName],
     });
   }
@@ -18,7 +18,7 @@ export class CommunityProxyService {
   getViewersCount(streamerName: string) {
     return this.httpClient.get<number>({
       controller: 'streams',
-      action: 'live/viewers',
+      action: 'live/viewers-count',
       routeParams: [streamerName],
     });
   }

@@ -4,16 +4,18 @@ import { forkJoin, map, of, tap } from 'rxjs';
 import { StreamDto } from '../../streams/contracts/stream-dto';
 import { FollowingStreamerDto } from '../models/following-stream-dto';
 import { AuthService } from '@streaming-app/core';
+import { UserProxyService } from '../../users/services/user-proxy.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RecommendedStreamersService {
   readonly streamerProxyService = inject(StreamerProxyService);
+  readonly userProxyService = inject(UserProxyService);
   readonly authService = inject(AuthService);
 
   getFollowingStreamers() {
-    return this.streamerProxyService.getFollowingStreamers();
+    return this.userProxyService.getFollowingStreamers();
   }
 
   getLiveStreamers() {

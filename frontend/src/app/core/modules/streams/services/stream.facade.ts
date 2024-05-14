@@ -35,28 +35,30 @@ export class StreamFacade {
   ) as Signal<StreamDto>;
 
   readonly isStreamLive = computed(
-    () => !!this.liveStream().streamOption?.streamKey
+    () => this.streamState()?.error?.statusCode !== 400 && !!this.liveStream()
+  );
+
+  readonly isStreamerExists = computed(
+    () => !!this.liveStream() || this.streamState()?.error?.statusCode !== 404
   );
 
   readonly streamerName = computed(
     () => this.liveStream()?.user.username || this.#streamerName()
   );
 
-  readonly canJoinToChatRoom = computed(
-    () =>
-      this.streamHub.connectedToHub() &&
-      (this.liveStream() || this.streamState()?.error?.statusCode !== 404)
-  );
-
   readonly chatMessages = this.#chatMessages.asReadonly();
 
   // todo: do this in streamAuthService
   readonly isFollowingLiveStreamer = computed(() => {
-    const followingStreamers = this.authService.followingStreamers();
+    const followingStreamers = this.authService.followingStreamIds();
 
     const following = followingStreamers.includes(this.liveStream().user.id);
     return following;
   });
+
+  readonly canJoinToChatRoom = computed(
+    () => this.streamHub.connectedToHub() && this.isStreamerExists()
+  );
 
   // sources
 
@@ -155,12 +157,12 @@ export class StreamFacade {
     this.#chatMessages.set([]);
   }
 
-  joinStreamRoom(userId: string) {
-    this.joinStream$.next(this.streamHub.invokeOnJoinedStream(userId));
+  joinStreamRoom(streamerName: string) {
+    this.joinStream$.next(this.streamHub.invokeOnJoinedStream(streamerName));
   }
 
-  leaveStreamRoom(userId: string) {
-    this.leaveStream$.next(this.streamHub.invokeOnLeavedStream(userId));
+  leaveStreamRoom(streamerName: string) {
+    this.leaveStream$.next(this.streamHub.invokeOnLeavedStream(streamerName));
   }
 
   setStreamerName(streamerName: string) {

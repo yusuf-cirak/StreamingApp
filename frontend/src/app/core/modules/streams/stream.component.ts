@@ -8,6 +8,8 @@ import { StreamHub } from '../../hubs/stream-hub';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services';
+import { filter, forkJoin, switchMap, tap } from 'rxjs';
+import { StreamFollowerService } from './services/stream-follower.service';
 
 @Component({
   selector: 'app-stream',
@@ -24,10 +26,13 @@ export class StreamComponent {
   readonly streamHub = inject(StreamHub);
   readonly streamFacade = inject(StreamFacade);
   readonly authService = inject(AuthService);
+  readonly streamFollowerService = inject(StreamFollowerService);
+  // readonly streamBlockedService = inject(StreamBlockedService);
 
   readonly streamError = computed(() => this.streamFacade.streamState()?.error);
 
   readonly canJoinToChatRoom = this.streamFacade.canJoinToChatRoom;
+
   readonly router = inject(Router);
 
   constructor() {
@@ -56,7 +61,8 @@ export class StreamComponent {
       });
 
     effect(() => {
-      if (this.authService.isAuthenticated() && this.canJoinToChatRoom()) {
+      const isAuthenticated = this.authService.isAuthenticated();
+      if (this.canJoinToChatRoom()) {
         this.streamFacade.joinStreamRoom(this.streamFacade.streamerName());
       }
     });

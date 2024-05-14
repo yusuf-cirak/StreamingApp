@@ -4,7 +4,7 @@ import { CommunityProxyService } from './services/community-proxy.service';
 import { StreamFacade } from '../../streams/services/stream.facade';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CommunityViewService } from './services/community-view.service';
-import { interval, startWith, switchMap } from 'rxjs';
+import { interval, of, startWith, switchMap } from 'rxjs';
 import { CommunityViewerListComponent } from './components/community-viewer-list/community-viewer-list.component';
 import { CommunityBlockService } from './services/community-block.service';
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
@@ -59,9 +59,17 @@ export class CommunityComponent {
   }
 
   getCurrentViewers() {
-    return interval(20000).pipe(
-      startWith(0),
-      switchMap(() => this.communityViewService.getCurrentViewers())
-    );
+    const isStreamerLive = this.streamFacade.isStreamLive();
+
+    return isStreamerLive
+      ? interval(20000).pipe(
+          startWith(0),
+          switchMap(() =>
+            this.communityViewService.getCurrentViewers(
+              this.streamFacade.streamerName()
+            )
+          )
+        )
+      : of(undefined);
   }
 }

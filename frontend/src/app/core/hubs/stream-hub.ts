@@ -31,6 +31,8 @@ export class StreamHub {
       }),
       catchError((err) => {
         console.error(err);
+        this.connectedToHub.set(false);
+
         return EMPTY;
       })
     );
@@ -39,8 +41,8 @@ export class StreamHub {
   disconnect() {
     return from(this._hubConnection.stop()).pipe(
       tap(() => {
-        console.log('Disconnected from stream hub');
         this.connectedToHub.set(false);
+        console.log('Disconnected from stream hub');
       }),
       catchError((err) => {
         console.error(err);
@@ -89,7 +91,9 @@ export class StreamHub {
     return from(
       this._hubConnection.invoke(StreamHubAction.OnJoinedStream, streamerId)
     ).pipe(
-      tap(() => console.log('Joined stream')),
+      tap(() => {
+        console.log('Joined stream');
+      }),
       catchError((err) => {
         console.error(err);
         return EMPTY;

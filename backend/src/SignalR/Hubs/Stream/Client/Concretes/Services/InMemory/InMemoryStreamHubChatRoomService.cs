@@ -37,7 +37,7 @@ public sealed class InMemoryStreamHubChatRoomService : IStreamHubChatRoomService
             return ValueTask.FromResult<IEnumerable<HubUserDto>>([]);
         }
 
-        return ValueTask.FromResult(hubConnectionInfo.Users.Values.AsEnumerable());
+        return ValueTask.FromResult(hubConnectionInfo.Users.Select(kvp => kvp.Value).AsEnumerable());
     }
 
     public ValueTask<int> GetStreamViewersCountAsync(string streamerName)

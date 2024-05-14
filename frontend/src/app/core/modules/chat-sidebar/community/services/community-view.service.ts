@@ -1,17 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { CommunityProxyService } from './community-proxy.service';
-import { StreamFacade } from '../../../streams/services/stream.facade';
 import { map, of } from 'rxjs';
 
 @Injectable()
 export class CommunityViewService {
   private readonly communityProxyService = inject(CommunityProxyService);
 
-  private readonly streamFacade = inject(StreamFacade);
-
-  getCurrentViewers() {
-    const streamerName = this.streamFacade.streamerName() as string;
-
+  getCurrentViewers(streamerName?: string) {
     return streamerName
       ? this.communityProxyService.getViewers(streamerName).pipe(
           map((viewers) => {
@@ -27,11 +22,9 @@ export class CommunityViewService {
       : of([]);
   }
 
-  getCurrentViewerCount() {
-    const streamerName = this.streamFacade.streamerName() as string;
-
+  getCurrentViewerCount(streamerName?: string) {
     return streamerName
       ? this.communityProxyService.getViewersCount(streamerName)
-      : of(0);
+      : of(undefined);
   }
 }
