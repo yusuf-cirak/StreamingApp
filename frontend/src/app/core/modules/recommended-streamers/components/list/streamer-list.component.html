@@ -1,8 +1,0 @@
-<div class="flex flex-col gap-4">
-  @for (liveStreamer of liveStreamers(); track liveStreamers();) {
-  <app-live-streamer [liveStreamer]="liveStreamer" />
-  } @for (followingStreamer of followingStreamers(); track followingStreamers())
-  {
-  <app-following-streamer [followingStreamer]="followingStreamer" />
-  }
-</div>

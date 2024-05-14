@@ -1,7 +1,7 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { StreamFacade } from '../../services/stream.facade';
 import { UserIcon, VerifiedIcon } from '@streaming-app/shared/icons';
-import { StreamerComponent } from '../../../recommended-streamers/components/streamer/streamer.component';
+import { StreamerImageComponent } from '../../../streamers/components/streamer-image/streamer-image.component';
 import { StreamActionsComponent } from '../stream-actions/stream-actions.component';
 import { StreamFollowerService } from '../../services/stream-follower.service';
 import { CommunityViewService } from '../../../chat-sidebar/community/services/community-view.service';
@@ -12,7 +12,12 @@ import { interval, Observable, of, startWith, Subject, switchMap } from 'rxjs';
 @Component({
   selector: 'app-stream-header',
   standalone: true,
-  imports: [StreamerComponent, StreamActionsComponent, VerifiedIcon, UserIcon],
+  imports: [
+    StreamerImageComponent,
+    StreamActionsComponent,
+    VerifiedIcon,
+    UserIcon,
+  ],
   providers: [
     StreamFollowerService,
     CommunityViewService,
@@ -36,13 +41,16 @@ export class StreamHeaderComponent {
   );
 
   constructor() {
-    effect(() => {
-      if (this.streamFacade.isStreamLive()) {
-        this.viewerCount$.next(this.getCurrentViewerCount());
-      } else {
-        this.viewerCount$.next(of(undefined));
-      }
-    });
+    effect(
+      () => {
+        if (this.streamFacade.isStreamLive()) {
+          this.viewerCount$.next(this.getCurrentViewerCount());
+        } else {
+          this.viewerCount$.next(of(undefined));
+        }
+      },
+      { allowSignalWrites: true }
+    );
   }
 
   getCurrentViewerCount() {

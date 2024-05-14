@@ -3,11 +3,11 @@ import { NgClass } from '@angular/common';
 import { StreamDto } from '../../../streams/contracts/stream-dto';
 import { RouterLink } from '@angular/router';
 import { UserImageService } from '../../../../services/user-image.service';
-import { StreamerComponent } from '../streamer/streamer.component';
+import { StreamerImageComponent } from '../streamer-image/streamer-image.component';
 
 @Component({
   standalone: true,
-  imports: [NgClass, RouterLink, StreamerComponent],
+  imports: [NgClass, RouterLink, StreamerImageComponent],
   templateUrl: './live-streamer.component.html',
   selector: 'app-live-streamer',
 })

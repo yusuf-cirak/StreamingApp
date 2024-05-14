@@ -94,7 +94,7 @@ export class AuthService {
   setUser(userAuthDto: UserAuthDto) {
     if (!userAuthDto) {
       this.#user.set(undefined);
-      localStorage.setItem('user', JSON.stringify(undefined));
+      localStorage.removeItem('user');
       return;
     }
 

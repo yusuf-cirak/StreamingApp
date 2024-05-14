@@ -1,0 +1,37 @@
+<section class="streamers">
+  @if (authService.isAuthenticated()) {
+  <div class="following-group min-h-12">
+    <div class="h-10">
+      <span class="hideable text-muted-foreground font-semibold px-4"
+        >Following</span
+      >
+    </div>
+
+    <div class="pt-3 mt-auto">
+      @defer (when streamersFacade.streamers()) {
+      <app-streamers-list
+        [streamers]="streamersFacade.followingStreamers()"
+      ></app-streamers-list>
+      }@placeholder {
+      <app-streamer-skeleton></app-streamer-skeleton>
+      }
+    </div>
+  </div>
+  }
+  <div class="recommended-group min-h-12 pt-4">
+    <div class="h-10">
+      <span class="hideable text-muted-foreground font-semibold px-4"
+        >Recommended</span
+      >
+    </div>
+
+    <div class="pt-3 mt-auto">
+      @defer (when streamersFacade.streamers()){
+      <app-streamers-list
+        [streamers]="streamersFacade.recommendedStreamers()"
+      />}@placeholder {
+      <app-streamer-skeleton></app-streamer-skeleton>
+      }
+    </div>
+  </div>
+</section>

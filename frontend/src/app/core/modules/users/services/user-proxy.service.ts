@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClientService } from '@streaming-app/shared/services';
-import { FollowingStreamerDto } from '../../recommended-streamers/models/following-stream-dto';
-import { BlockedStreamerDto } from '../../recommended-streamers/models/blocked-streamer-dto';
+import { FollowingStreamerDto } from '../../streamers/models/following-stream-dto';
+import { BlockedStreamerDto } from '../../streamers/models/blocked-streamer-dto';
 
 @Injectable({
   providedIn: 'root',

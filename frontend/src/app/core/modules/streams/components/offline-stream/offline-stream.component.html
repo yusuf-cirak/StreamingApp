@@ -1,10 +1,10 @@
 <div
-  class="flex flex-col sm:flex-row w-full h-full overflow-y-auto"
+  class="flex flex-col sm:flex-row w-full h-full overflow-y-auto bg-slate-900"
   [autofocus]="true"
 >
   <div class="w-full sm:w-[80%] h-full">
     <div
-      class="w-full h-[60%] sm:h-[80%] flex flex-col items-center justify-center"
+      class="w-full h-[60%] sm:h-[80%] flex flex-col items-center justify-center border-b border-tw-tertiary"
     >
       <div class="text-center flex flex-col items-center">
         <app-offline-streamer-icon />
@@ -31,11 +31,13 @@
         </p>
       </div>
     </div>
-    <div class="w-full h-fit sm:h-[20%] bg-gray-800">
+    <div class="w-full h-fit sm:h-[20%] border-tw-secondary border-t">
       <app-stream-header />
     </div>
   </div>
-  <div class="chat-sidebar w-full sm:w-[20%] h-full bg-gray-800 pt-4 sm:pt-0">
+  <div
+    class="chat-sidebar w-full sm:w-[20%] h-full pt-4 sm:pt-0 border-l border-tw-secondary"
+  >
     <app-chat-sidebar />
   </div>
 </div>

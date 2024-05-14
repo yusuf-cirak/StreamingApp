@@ -7,9 +7,9 @@ import { NgClass } from '@angular/common';
   selector: 'app-streamer',
   standalone: true,
   imports: [NgClass],
-  templateUrl: './streamer.component.html',
+  templateUrl: './streamer-image.component.html',
 })
-export class StreamerComponent {
+export class StreamerImageComponent {
   readonly userImageService = inject(UserImageService);
 
   readonly isLive = input(false);
