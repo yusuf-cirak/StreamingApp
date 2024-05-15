@@ -1,6 +1,5 @@
 ﻿using Application.Abstractions.Caching;
 using Application.Common.Constants;
-using Application.Common.Mapping;
 
 namespace Application.Features.Streams.Services;
 
@@ -48,18 +47,5 @@ public sealed class StreamCacheService : IStreamCacheService
         LiveStreamers.RemoveAt(index);
 
         return this.SetLiveStreamsAsync(LiveStreamers, cancellationToken);
-    }
-
-    private Func<Task<List<GetStreamDto>>> GetLiveStreamersFromDatabaseAsync(
-        CancellationToken cancellationToken = default)
-    {
-        return () => _efRepository
-            .Streams
-            .AsTracking()
-            .Include(s => s.Streamer.Streams)
-            .Include(s => s.Streamer.StreamOption)
-            .Where(s => s.EndedAt == default)
-            .Select(MappingExtensions.ToGetStreamDto)
-            .ToListAsync(cancellationToken);
     }
 }
