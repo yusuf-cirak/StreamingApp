@@ -1,9 +1,4 @@
 ﻿using Application.Abstractions;
-using Application.Abstractions.Helpers;
-using Application.Abstractions.Repository;
-using Application.Common.Exceptions;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Auths.Rules;
 

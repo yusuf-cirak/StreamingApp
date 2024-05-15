@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Streamers;
-using Stream = Domain.Entities.Stream;
+﻿using Stream = Domain.Entities.Stream;
 
 namespace Application.Common.Mapping;
 

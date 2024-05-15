@@ -1,7 +1,7 @@
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable } from '@angular/core';
 import { StreamersProxyService } from './streamers-proxy.service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { forkJoin, map, merge, of, startWith, switchMap, tap } from 'rxjs';
+import { forkJoin, map, merge, of, switchMap } from 'rxjs';
 import { AuthService, User } from '@streaming-app/core';
 import { StreamDto } from '../../streams/contracts/stream-dto';
 import { StreamerDto } from '../models/streamer-dto';
@@ -20,7 +20,6 @@ export class StreamersFacade {
   readonly streamers = toSignal(
     // todo: onfollow, onunfollow
     merge(this.authenticated$, this.streamStarted$, this.streamEnded$).pipe(
-      startWith(null),
       switchMap(() => this.getStreamers())
     )
   );

@@ -10,12 +10,13 @@ internal static class JsonSerializerSettingExtensions
         JsonSerializerSettings settings = new()
         {
             TypeNameHandling = TypeNameHandling.All,
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
             ContractResolver = new DefaultContractResolver()
             {
                 NamingStrategy = new CamelCaseNamingStrategy(),
                 SerializeCompilerGeneratedMembers = true,
             },
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
         };
 
         JsonConvert.DefaultSettings = () => settings;

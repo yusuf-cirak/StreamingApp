@@ -1,5 +1,5 @@
 <div class="flex flex-col gap-5">
-  @for (_ of skeletonCount(); track skeletonCount()) {
+  @for (_ of skeletonCount(); track $index) {
   <div
     class="flex flex-row justify-center items-center cursor-pointer hover:bg-muted-foreground px-5 h-12 animate-pulse"
   >

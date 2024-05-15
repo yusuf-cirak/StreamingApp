@@ -1,4 +1,4 @@
-import { Component, Input, signal } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
   standalone: true,
@@ -6,11 +6,5 @@ import { Component, Input, signal } from '@angular/core';
   selector: 'app-streamer-skeleton',
 })
 export class StreamerSkeletonComponent {
-  readonly #skeletonCount = signal(Array.from({ length: 5 }).fill(0));
-
-  readonly skeletonCount = this.#skeletonCount.asReadonly();
-
-  @Input('skeletonCount') set skeletonCountSetter(count: number) {
-    this.#skeletonCount.set(Array.from({ length: count }).fill(0));
-  }
+  readonly skeletonCount = input(Array.from({ length: 3 }).fill(0));
 }

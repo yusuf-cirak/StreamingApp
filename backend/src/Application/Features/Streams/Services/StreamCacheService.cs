@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Caching;
 using Application.Common.Constants;
+using Application.Common.Mapping;
 
 namespace Application.Features.Streams.Services;
 
@@ -14,14 +15,16 @@ public sealed class StreamCacheService : IStreamCacheService
     {
         _efRepository = efRepository;
         _cacheService = cacheService;
+        // todo: implement a better solution
         LiveStreamers = this.GetLiveStreamsAsync().GetAwaiter().GetResult();
     }
 
 
-    public Task<List<GetStreamDto>> GetLiveStreamsAsync(CancellationToken cancellationToken = default)
+    private Task<List<GetStreamDto>> GetLiveStreamsAsync(CancellationToken cancellationToken = default)
     {
         return _cacheService.GetOrAddAsync(RedisConstant.Key.LiveStreamers,
-            factory: _efRepository.GetLiveStreamers(cancellationToken), cancellationToken: cancellationToken);
+            factory: _efRepository.GetLiveStreamersAsync(cancellationToken),
+            cancellationToken: cancellationToken);
     }
 
     public Task<bool> SetLiveStreamsAsync(List<GetStreamDto> liveStreams, CancellationToken cancellationToken = default)
@@ -41,9 +44,22 @@ public sealed class StreamCacheService : IStreamCacheService
 
     public Task<bool> RemoveStreamFromCacheAsync(int index, CancellationToken cancellationToken = default)
     {
-        Console.WriteLine($"Index is: ${index}");
+        Console.WriteLine($"Index is: {index}");
         LiveStreamers.RemoveAt(index);
 
         return this.SetLiveStreamsAsync(LiveStreamers, cancellationToken);
+    }
+
+    private Func<Task<List<GetStreamDto>>> GetLiveStreamersFromDatabaseAsync(
+        CancellationToken cancellationToken = default)
+    {
+        return () => _efRepository
+            .Streams
+            .AsTracking()
+            .Include(s => s.Streamer.Streams)
+            .Include(s => s.Streamer.StreamOption)
+            .Where(s => s.EndedAt == default)
+            .Select(MappingExtensions.ToGetStreamDto)
+            .ToListAsync(cancellationToken);
     }
 }

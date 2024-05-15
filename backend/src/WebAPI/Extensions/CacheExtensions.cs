@@ -2,7 +2,7 @@
 using StackExchange.Redis.Extensions.Core.Configuration;
 using StackExchange.Redis.Extensions.Core.Abstractions;
 using StackExchange.Redis.Extensions.Core.Implementations;
-using StackExchange.Redis.Extensions.MsgPack;
+using StackExchange.Redis.Extensions.Newtonsoft;
 
 namespace WebAPI.Extensions;
 
@@ -25,7 +25,7 @@ public static class CacheExtensions
 
         services.AddSingleton<IRedisClient, RedisClient>();
         services.AddSingleton<IRedisConnectionPoolManager, RedisConnectionPoolManager>();
-        services.AddSingleton<ISerializer, MsgPackObjectSerializer>();
+        services.AddSingleton<ISerializer, NewtonsoftSerializer>();
 
         services.AddSingleton<IRedisDatabase>((provider) =>
             (provider.GetRequiredService<IRedisClient>().GetDefaultDatabase()));

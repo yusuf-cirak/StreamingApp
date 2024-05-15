@@ -1,6 +1,4 @@
 ﻿using Application.Abstractions;
-using Application.Abstractions.Repository;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.OperationClaims.Rules;
 

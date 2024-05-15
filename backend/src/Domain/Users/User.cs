@@ -15,6 +15,8 @@ public class User : AuditableEntity
     
     public virtual ICollection<Stream> Streams { get; }
     
+    public virtual StreamOption StreamOption { get; }
+    
 
     public User()
     {
