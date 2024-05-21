@@ -31,6 +31,10 @@
     <PackageReference Include="StackExchange.Redis.Extensions.Newtonsoft" Version="10.2.0" />
 
     <PackageReference Include="StackExchange.Redis.Extensions.Protobuf" Version="10.2.0" />
+
+    <PackageReference Include="StackExchange.Redis.Extensions.System.Text.Json" Version="10.2.0" />
+
+    <PackageReference Include="StackExchange.Redis.Extensions.Utf8Json" Version="10.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.1" />
   </ItemGroup>
 

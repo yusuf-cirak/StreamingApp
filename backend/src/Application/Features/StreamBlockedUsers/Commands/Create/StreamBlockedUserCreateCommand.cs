@@ -1,5 +1,6 @@
 ﻿using Application.Features.StreamBlockedUsers.Abstractions;
 using Application.Features.StreamBlockedUsers.Rules;
+using Application.Features.StreamBlockedUsers.Services;
 
 namespace Application.Features.StreamBlockedUsers.Commands.Create;
 
@@ -28,12 +29,14 @@ public sealed class
 {
     private readonly IEfRepository _efRepository;
     private readonly StreamBlockedUserBusinessRules _streamBlockedUserBusinessRules;
+    private readonly IStreamBlockUserService _streamBlockUserService;
 
     public CreateStreamBlockedUserCreateHandler(IEfRepository efRepository,
-        StreamBlockedUserBusinessRules streamBlockedUserBusinessRules)
+        StreamBlockedUserBusinessRules streamBlockedUserBusinessRules, IStreamBlockUserService streamBlockUserService)
     {
         _efRepository = efRepository;
         _streamBlockedUserBusinessRules = streamBlockedUserBusinessRules;
+        _streamBlockUserService = streamBlockUserService;
     }
 
     public async Task<HttpResult> Handle(CreateStreamBlockedUserCreateCommandRequest request,
@@ -48,11 +51,13 @@ public sealed class
             return streamBlockedUserExistResult.Error;
         }
 
-        var streamBlockedUser = StreamBlockedUser.Create(request.StreamerId, request.BlockedUserId);
+        var result = await _streamBlockUserService.BlockUserFromStreamAsync(request.StreamerId, request.BlockedUserId,
+            cancellationToken);
 
-        _efRepository.StreamBlockedUsers.Add(streamBlockedUser);
 
-        var result = await _efRepository.SaveChangesAsync(cancellationToken);
+        _ = _streamBlockUserService.SendBlockNotificationToUserAsync(request.StreamerId, request.BlockedUserId,
+            isBlocked: true);
+
 
         return result > 0
             ? HttpResult.Success(StatusCodes.Status204NoContent)

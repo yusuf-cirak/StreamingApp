@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
 
 namespace Application.Common.Models;
 
@@ -20,12 +20,12 @@ public sealed class OutboxMessage
         Id = Guid.NewGuid();
         OccuredOnUtc = DateTime.UtcNow;
         Type = domainEvent.GetType().Name;
-        Content = JsonConvert.SerializeObject(domainEvent);
+        Content = JsonSerializer.Serialize(domainEvent);
     }
 
     public static OutboxMessage Create(IDomainEvent domainEvent) => new(domainEvent);
 
     public void MarkAsProcessed() => ProcessedOnUtc = DateTime.UtcNow;
-    
+
     public void MarkAsFailed(string error) => Error = error;
 }

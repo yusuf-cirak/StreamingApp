@@ -19,6 +19,6 @@ internal static class JsonSerializerSettingExtensions
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
         };
 
-        JsonConvert.DefaultSettings = () => settings;
+        // JsonConvert.DefaultSettings = () => settings;
     }
 }

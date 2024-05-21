@@ -1,5 +1,4 @@
 ﻿using Application.Abstractions.Caching;
-using Microsoft.Extensions.Configuration;
 using StackExchange.Redis;
 using StackExchange.Redis.Extensions.Core.Abstractions;
 
@@ -33,7 +32,7 @@ namespace Infrastructure.Services.Cache
             if (value == null)
             {
                 value = await factory();
-                await SetAsync(key, value, expiresIn, cancellationToken: cancellationToken);
+                await SetAsync<T>(key, value, expiresIn, cancellationToken: cancellationToken);
             }
 
             return value;

@@ -5,6 +5,8 @@ namespace SignalR.Hubs.Stream.Client.Abstractions.Services;
 public interface IStreamHubChatRoomService
 {
     ValueTask<IEnumerable<string>> GetStreamViewerConnectionIds(string streamerName);
+    ValueTask<string?> GetStreamViewerConnectionId(string streamerName, Guid userId);
+
     ValueTask<IEnumerable<HubUserDto>> GetStreamViewersAsync(string streamerName);
     ValueTask<int> GetStreamViewersCountAsync(string streamerName);
     ValueTask OnJoinedStreamAsync(string streamerName, string connectionId);

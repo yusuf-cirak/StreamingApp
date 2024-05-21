@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.StreamOptions;
 using Application.Contracts.Streams;
+using Application.Contracts.Users;
 using Microsoft.AspNetCore.SignalR;
 using SignalR.Constants;
 using SignalR.Contracts;
@@ -57,5 +58,19 @@ public sealed class InMemoryStreamHubServerService : IStreamHubServerService
 
         await _hubContext.Clients.Clients(streamViewerConnectionIds)
             .SendAsync(StreamHubConstant.Method.OnStreamChatMessageSendAsync, streamChatMessageDto);
+    }
+
+    public async Task OnBlockFromStreamAsync(GetUserDto streamer, Guid blockUserId, bool isBlocked)
+    {
+        var streamViewerConnectionId =
+            await _hubChatRoomService.GetStreamViewerConnectionId(streamer.Username, blockUserId);
+
+        if (streamViewerConnectionId is null)
+        {
+            return;
+        }
+
+        await _hubContext.Clients.Client(streamViewerConnectionId)
+            .SendAsync(StreamHubConstant.Method.OnBlockFromStreamAsync, new StreamBlockUserDto(streamer.Id, isBlocked));
     }
 }

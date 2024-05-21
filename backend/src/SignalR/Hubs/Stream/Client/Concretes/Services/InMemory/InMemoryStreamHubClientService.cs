@@ -30,6 +30,11 @@ public sealed class InMemoryStreamHubClientService : IStreamHubClientService
         return _streamHubChatRoomService.GetStreamViewerConnectionIds(streamerName);
     }
 
+    public ValueTask<string> GetStreamViewerConnectionId(string streamerName, Guid userId)
+    {
+        return _streamHubChatRoomService.GetStreamViewerConnectionId(streamerName, userId);
+    }
+
     public ValueTask<IEnumerable<HubUserDto>> GetStreamViewersAsync(string streamerName)
     {
         return _streamHubChatRoomService.GetStreamViewersAsync(streamerName);

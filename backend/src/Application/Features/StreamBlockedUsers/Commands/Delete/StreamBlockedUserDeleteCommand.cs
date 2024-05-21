@@ -1,5 +1,6 @@
 ﻿using Application.Features.StreamBlockedUsers.Abstractions;
 using Application.Features.StreamBlockedUsers.Rules;
+using Application.Features.StreamBlockedUsers.Services;
 
 namespace Application.Features.StreamBlockedUsers.Commands.Delete;
 
@@ -27,19 +28,24 @@ public sealed class
     StreamBlockedUserDeleteCommandHandler : IRequestHandler<StreamBlockedUserDeleteCommandRequest, HttpResult>
 {
     private readonly IEfRepository _efRepository;
+    private readonly IStreamBlockUserService _streamBlockUserService;
 
-    public StreamBlockedUserDeleteCommandHandler(IEfRepository efRepository)
+    public StreamBlockedUserDeleteCommandHandler(IEfRepository efRepository,
+        IStreamBlockUserService streamBlockUserService)
     {
         _efRepository = efRepository;
+        _streamBlockUserService = streamBlockUserService;
     }
 
     public async Task<HttpResult> Handle(StreamBlockedUserDeleteCommandRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _efRepository
-            .StreamBlockedUsers
-            .Where(sbu => sbu.UserId == request.BlockedUserId && sbu.StreamerId == request.StreamerId)
-            .ExecuteDeleteAsync(cancellationToken);
+        var result =
+            await _streamBlockUserService.UnblockUserFromStreamAsync(request.StreamerId, request.BlockedUserId,
+                cancellationToken);
+
+        _ = _streamBlockUserService.SendBlockNotificationToUserAsync(request.StreamerId, request.BlockedUserId,
+            isBlocked: false);
 
         return result > 0
             ? HttpResult.Success(StatusCodes.Status204NoContent)

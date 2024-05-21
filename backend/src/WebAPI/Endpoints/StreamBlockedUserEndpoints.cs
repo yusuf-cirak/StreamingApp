@@ -13,12 +13,12 @@ public static class StreamBlockedUserEndpoints
     {
         var groupBuilder = builder.MapGroup("api/stream-blocked-users");
 
-        groupBuilder.MapGet("/",
+        groupBuilder.MapGet("/{streamerId}",
                 async (
-                    [FromBody] GetIsUserBlockedFromStreamQueryRequest getIsUserBlockedFromStreamQueryRequest,
+                    Guid streamerId,
                     IMediator mediator) =>
                 {
-                    return await mediator.Send(getIsUserBlockedFromStreamQueryRequest);
+                    return await mediator.Send(new GetIsUserBlockedFromStreamQueryRequest(streamerId));
                 })
             .WithTags("StreamBlockedUsers");
 

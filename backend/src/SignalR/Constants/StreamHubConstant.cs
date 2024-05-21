@@ -10,5 +10,6 @@ public static class StreamHubConstant
         public const string OnStreamEndAsync = "OnStreamEndAsync";
         public const string OnStreamChatOptionsChangedAsync = "OnStreamChatOptionsChangedAsync";
         public const string OnStreamChatMessageSendAsync = "OnStreamChatMessageSendAsync";
+        public const string OnBlockFromStreamAsync = "OnBlockFromStreamAsync";
     }
 }
