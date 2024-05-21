@@ -28,5 +28,3 @@ export class ChatComponent {
     this.messageSend.emit(message);
   }
 }
-
-// todo: make chat available even if streamer is offline

@@ -3,10 +3,10 @@ import { StreamService } from './stream.service';
 import { Error } from '../../../../shared/api/error';
 import { AuthService } from '@streaming-app/core';
 import { StreamHub } from '../../../hubs/stream-hub';
-import { StreamChatOptionsDto } from '../contracts/stream-options-dto';
+import { StreamChatOptionsDto } from '../../../hubs/dtos/stream-options-dto';
 import { Observable, Subject, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { StreamChatMessageDto } from '../contracts/stream-chat-message-dto';
+import { StreamChatMessageDto } from '../../../hubs/dtos/stream-chat-message-dto';
 import { ChatMessage } from '../../chat-sidebar/chats/models/chat-message';
 import { StreamState } from '../models/stream-state';
 import { StreamOptions } from '../../../models/stream-options';
@@ -96,6 +96,19 @@ export class StreamFacade {
               ...messages,
             ];
           });
+        })
+      )
+      .subscribe();
+
+    this.streamHub.streamBlockUserOccured$
+      .pipe(
+        takeUntilDestroyed(),
+        tap((blockUserDto) => {
+          const blockedStreamerIds = this.authService.blockedStreamIds();
+          const updatedBlockedStreamers = blockUserDto.isBlocked
+            ? [...blockedStreamerIds, blockUserDto.streamerId]
+            : blockedStreamerIds.filter((id) => id !== blockUserDto.streamerId);
+          this.authService.updateBlockedStreamers(updatedBlockedStreamers);
         })
       )
       .subscribe();

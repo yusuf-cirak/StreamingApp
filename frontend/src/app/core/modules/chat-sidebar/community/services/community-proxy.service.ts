@@ -3,7 +3,7 @@ import { HttpClientService } from '../../../../../shared/services/http-client.se
 import { User } from '../../../../models';
 import { StreamBlockUserDto } from '../../models/stream-block-user-dto';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class CommunityProxyService {
   private readonly httpClient = inject(HttpClientService);
 
@@ -21,6 +21,15 @@ export class CommunityProxyService {
       action: 'live/viewers-count',
       routeParams: [streamerName],
     });
+  }
+
+  isUserBlocked(streamerId: string) {
+    return this.httpClient.get<boolean>(
+      {
+        controller: 'stream-blocked-users',
+      },
+      streamerId
+    );
   }
 
   blockUser(blockUserDto: StreamBlockUserDto) {

@@ -108,6 +108,10 @@ export class AuthService {
     this.#followingStreamIds.set(followingStreamers);
   }
 
+  updateBlockedStreamers(blockedStreamerIds: string[]) {
+    this.#blockedStreamIds.set(blockedStreamerIds);
+  }
+
   login(credentials: UserLoginDto) {
     return this.authProxyService.login(credentials).pipe(
       tap((userAuthDto) => this.setUser(userAuthDto)),

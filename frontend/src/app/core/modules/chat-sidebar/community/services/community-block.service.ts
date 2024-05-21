@@ -1,5 +1,4 @@
 import { inject, Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
 import { StreamBlockUserDto } from '../../models/stream-block-user-dto';
 import { CommunityProxyService } from './community-proxy.service';
 
@@ -7,6 +6,9 @@ import { CommunityProxyService } from './community-proxy.service';
 export class CommunityBlockService {
   private readonly communityProxyService = inject(CommunityProxyService);
 
+  isBlocked(streamerId: string) {
+    return this.communityProxyService.isUserBlocked(streamerId);
+  }
   block(blockedUserDto: StreamBlockUserDto) {
     return this.communityProxyService.blockUser(blockedUserDto);
   }

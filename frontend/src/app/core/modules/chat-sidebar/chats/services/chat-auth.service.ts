@@ -21,14 +21,18 @@ export class ChatAuthService {
   );
 
   canUserSendMessage(liveStream: StreamDto): string | null {
+    const authenticated = this.authService.isAuthenticated();
+    if (!authenticated) {
+      return 'You must be logged in to use chat';
+    }
+
     const option = liveStream.streamOption;
     if (option.chatDisabled) {
       return 'Chat is disabled';
     }
 
-    const authenticated = this.authService.isAuthenticated();
-    if (!authenticated) {
-      return 'You must be logged in to use chat';
+    if (this.authService.blockedStreamIds().includes(liveStream.user.id)) {
+      return 'You are blocked from this stream chat';
     }
 
     if (option.mustBeFollower) {

@@ -4,9 +4,10 @@ import { catchError, EMPTY, from, Subject, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { StreamHubAction } from './stream-hub-action';
 import { StreamDto } from '../modules/streams/contracts/stream-dto';
-import { StreamInfoDto } from '../modules/streams/contracts/stream-info-dto';
-import { StreamChatOptionsDto } from '../modules/streams/contracts/stream-options-dto';
-import { StreamChatMessageDto } from '../modules/streams/contracts/stream-chat-message-dto';
+import { StreamInfoDto } from './dtos/stream-info-dto';
+import { StreamChatOptionsDto } from './dtos/stream-options-dto';
+import { StreamChatMessageDto } from './dtos/stream-chat-message-dto';
+import { StreamBlockUserActionDto } from './dtos/stream-block-user-action-dto';
 
 @Injectable({ providedIn: 'root' })
 export class StreamHub {
@@ -20,6 +21,8 @@ export class StreamHub {
   streamChatOptionsChanged$ = new Subject<StreamChatOptionsDto>();
 
   streamChatMessageReceived$ = new Subject<StreamChatMessageDto>();
+
+  streamBlockUserOccured$ = new Subject<StreamBlockUserActionDto>();
 
   connect() {
     return from(this._hubConnection.start()).pipe(
@@ -84,6 +87,12 @@ export class StreamHub {
       (streamChatMessageDto: StreamChatMessageDto) => {
         this.streamChatMessageReceived$.next(streamChatMessageDto);
       }
+    );
+
+    this._hubConnection.on(
+      StreamHubAction.OnBlockFromStream,
+      (streamBlockUserDto: StreamBlockUserActionDto) =>
+        this.streamBlockUserOccured$.next(streamBlockUserDto)
     );
   }
 
