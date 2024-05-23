@@ -30,7 +30,7 @@ public sealed class InMemoryStreamHubChatRoomService : IStreamHubChatRoomService
         return ValueTask.FromResult(hubConnectionInfo!.GetAllConnectionIds());
     }
 
-    public ValueTask<string?> GetStreamViewerConnectionId(string streamerName, Guid userId)
+    public ValueTask<string> GetStreamViewerConnectionId(string streamerName, Guid userId)
     {
         if (!_streamViewers.TryGetValue(streamerName, out var hubConnectionInfo))
         {

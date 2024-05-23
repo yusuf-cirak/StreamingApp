@@ -23,6 +23,6 @@ public sealed class UserService : IUserService
     public IEnumerable<GetBlockedStreamDto> GetBlockedStreamsEnumerable(Guid currentUserId)
     {
         return _efRepository.StreamBlockedUsers.Where(sbu => sbu.UserId == currentUserId)
-            .Select(sbu => new GetBlockedStreamDto(sbu.User.ToDto())).AsEnumerable();
+            .Select(sbu => new GetBlockedStreamDto(sbu.Streamer.ToDto())).AsEnumerable();
     }
 }

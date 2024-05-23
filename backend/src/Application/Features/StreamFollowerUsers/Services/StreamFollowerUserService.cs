@@ -17,4 +17,12 @@ public sealed class StreamFollowerUserService : IStreamFollowerUserService
             .StreamFollowerUsers
             .AnyAsync(sbu => sbu.StreamerId == streamerId && sbu.UserId == userId, cancellationToken);
     }
+
+    public Task<int> GetStreamerFollowersCountAsync(Guid streamerId, CancellationToken cancellationToken = default)
+    {
+        return _efRepository
+            .StreamFollowerUsers
+            .Where(sfu => sfu.StreamerId == streamerId)
+            .CountAsync(cancellationToken);
+    }
 }

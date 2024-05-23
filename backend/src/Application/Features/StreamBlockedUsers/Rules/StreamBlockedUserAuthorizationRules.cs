@@ -45,7 +45,7 @@ public static class StreamBlockedUserAuthorizationRules
     {
         string streamerIdString = ((IStreamBlockedUserRequest)request).StreamerId.ToString();
 
-        string rolesString = claims.First(c => c.Type == "Roles").Value;
+        string rolesString = claims.FirstOrDefault(c => c.Type == "roles") ?? string.Empty;
         List<GetUserRoleDto> roleClaims = JsonSerializer.Deserialize<List<GetUserRoleDto>>(rolesString);
 
         return roleClaims.Exists(rc =>
@@ -56,7 +56,7 @@ public static class StreamBlockedUserAuthorizationRules
     {
         string streamerIdString = ((IStreamBlockedUserRequest)request).StreamerId.ToString();
 
-        string operationClaimsString = claims.First(c => c.Type == "OperationClaims").Value;
+        string operationClaimsString = claims.FirstOrDefault(c => c.Type == "OperationClaims")?.Value ?? string.Empty;
 
         List<GetUserOperationClaimDto> operationClaims =
             JsonSerializer.Deserialize<List<GetUserOperationClaimDto>>(operationClaimsString);

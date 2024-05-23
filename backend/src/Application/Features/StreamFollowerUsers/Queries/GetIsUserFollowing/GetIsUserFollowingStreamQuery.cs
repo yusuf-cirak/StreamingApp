@@ -1,7 +1,7 @@
 using Application.Common.Extensions;
 using Application.Features.StreamFollowerUsers.Services;
 
-namespace Application.Features.StreamFollowerUsers.Queries.GetIsUserFollowingStream;
+namespace Application.Features.StreamFollowerUsers.Queries.GetIsUserFollowing;
 
 public readonly record struct GetIsUserFollowingStreamQueryRequest(Guid StreamerId)
     : ISecuredRequest, IRequest<HttpResult<bool>>

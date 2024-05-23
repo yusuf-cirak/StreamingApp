@@ -30,6 +30,13 @@ public static class StreamEndpoints
                 })
             .WithTags("Streams");
         
+        groupBuilder.MapGet("/live/viewers/{streamerName}",
+                async (string streamerName, IMediator mediator) =>
+                {
+                    return (await mediator.Send(new GetStreamViewersQueryRequest(streamerName))).ToHttpResponse();
+                })
+            .WithTags("Streams");
+        
         groupBuilder.MapGet("/live/viewers-count/{streamerName}",
                 async (string streamerName, IMediator mediator) =>
                 {
@@ -37,12 +44,6 @@ public static class StreamEndpoints
                 })
             .WithTags("Streams");
 
-        groupBuilder.MapGet("/live/viewers/{streamerName}",
-                async (string streamerName, IMediator mediator) =>
-                {
-                    return (await mediator.Send(new GetStreamViewersQueryRequest(streamerName))).ToHttpResponse();
-                })
-            .WithTags("Streams");
 
         groupBuilder.MapPost("/",
                 async ([FromBody] CreateStreamCommandRequest createStreamCommandRequest,

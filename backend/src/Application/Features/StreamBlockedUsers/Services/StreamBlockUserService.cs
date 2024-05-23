@@ -1,4 +1,5 @@
-﻿using Application.Features.Streams.Services;
+﻿using Application.Common.Mapping;
+using Application.Features.Streams.Services;
 using SignalR.Hubs.Stream.Server.Abstractions;
 
 namespace Application.Features.StreamBlockedUsers.Services;
@@ -50,13 +51,14 @@ public sealed class StreamBlockUserService : IStreamBlockUserService
 
     public async Task SendBlockNotificationToUserAsync(Guid streamerId, Guid userId, bool isBlocked)
     {
-        var streamerDto = _streamCacheService.LiveStreamers.SingleOrDefault(ls => ls.User.Id == streamerId);
+        var streamer = _streamCacheService.LiveStreamers.SingleOrDefault(ls => ls.User.Id == streamerId)?.User ??
+                       await _efRepository.Users.Select(u => u.ToDto()).SingleOrDefaultAsync(u => u.Id == streamerId);
 
-        if (streamerDto is null)
+        if (streamer is null)
         {
             return;
         }
 
-        await _streamHubServerService.OnBlockFromStreamAsync(streamerDto.User, userId, isBlocked);
+        await _streamHubServerService.OnBlockFromStreamAsync(streamer, userId, isBlocked);
     }
 }
