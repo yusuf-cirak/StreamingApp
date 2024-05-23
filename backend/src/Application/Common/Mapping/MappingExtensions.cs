@@ -19,7 +19,8 @@ public static class MappingExtensions
         string streamKey = null) =>
         new(streamOption.StreamTitle, streamOption.StreamDescription, streamOption.ChatDisabled,
             streamOption.MustBeFollower,
-            streamOption.ChatDelaySecond, withoutKey is false ? streamKey ?? streamOption.StreamKey : null);
+            streamOption.ChatDelaySecond, withoutKey is false ? streamKey ?? streamOption.StreamKey : null,
+            streamOption.ThumbnailUrl);
 
     public static GetStreamChatSettingsDto ToStreamChatSettingsDto(this StreamOption streamOption) =>
         new(streamOption.ChatDisabled, streamOption.MustBeFollower, streamOption.ChatDelaySecond);

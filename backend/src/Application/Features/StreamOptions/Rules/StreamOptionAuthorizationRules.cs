@@ -56,7 +56,7 @@ public static class StreamOptionAuthorizationRules
     {
         string streamerIdString = ((IStreamOptionRequest)request).StreamerId.ToString();
 
-        string rolesString = claims.First(c => c.Type == "Roles").Value;
+        string rolesString = claims.First(c => c.Type == ClaimTypes.Role || c.Type=="roles").Value;
         List<GetUserRoleDto> roleClaims = JsonSerializer.Deserialize<List<GetUserRoleDto>>(rolesString);
 
         return roleClaims.Exists(rc =>

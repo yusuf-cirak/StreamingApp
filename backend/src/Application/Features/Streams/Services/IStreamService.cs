@@ -15,7 +15,6 @@ public interface IStreamService : IDomainService<Stream>
     Result<(GetStreamDto, int), Error> GetLiveStreamerByKeyFromCache(string streamerKey,
         CancellationToken cancellationToken = default);
 
-
     Task<bool> StartNewStreamAsync(StreamOption streamOption, Stream stream,
         CancellationToken cancellationToken = default);
 
@@ -24,11 +23,6 @@ public interface IStreamService : IDomainService<Stream>
     Task AddToCacheAndSendNotificationAsync(GetStreamDto streamDto);
 
     Task<bool> AddToCacheAsync(GetStreamDto streamDto);
-
-    Task UpdateStreamOptionCacheAndSendNotificationAsync(StreamOption streamOption,
-        CancellationToken cancellationToken = default);
-
-    Task SendChatOptionsUpdatedNotificationAsync(GetStreamDto streamDto, CancellationToken cancellationToken = default);
 
     string GenerateStreamKey(User user);
 }

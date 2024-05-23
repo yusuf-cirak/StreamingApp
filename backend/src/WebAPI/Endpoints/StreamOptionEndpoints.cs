@@ -37,21 +37,22 @@ public static class StreamOptionEndpoints
                 async (Guid streamerId,
                     IMediator mediator) =>
                 {
-                    return (await mediator.Send(new GetStreamTitleDescriptionQueryRequest(streamerId))).ToHttpResponse();
+                    return (await mediator.Send(new GetStreamTitleDescriptionQueryRequest(streamerId)))
+                        .ToHttpResponse();
                 })
             .WithTags("StreamOptions");
 
 
         groupBuilder.MapPatch("/title-description",
-                async ([FromBody] UpdateStreamTitleDescriptionCommandRequest updateStreamTitleDescriptionCommandRequest,
+                async ([FromForm] UpdateStreamTitleDescriptionCommandRequest updateStreamTitleDescriptionCommandRequest,
                     IMediator mediator) =>
                 {
                     return (await mediator.Send(updateStreamTitleDescriptionCommandRequest)).ToHttpResponse();
                 })
-            .WithTags("StreamOptions");
-        
-        
-        
+            .WithTags("StreamOptions")
+            .DisableAntiforgery();
+
+
         groupBuilder.MapGet("/key/{streamerId}",
                 async (Guid streamerId, IMediator mediator) =>
                 {

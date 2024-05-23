@@ -1,6 +1,8 @@
 ﻿using Application.Abstractions.Caching;
 using Application.Abstractions.Helpers;
+using Application.Abstractions.Image;
 using Application.Abstractions.Repository;
+using CloudinaryDotNet;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.Helpers.Hashing;
 using Infrastructure.Helpers.JWT;
@@ -9,16 +11,11 @@ using Infrastructure.Persistence.EntityFramework.Contexts;
 using Infrastructure.Persistence.EntityFramework.Interceptors;
 using Infrastructure.Persistence.EntityFramework.Repositories;
 using Infrastructure.Services.Cache;
+using Infrastructure.Services.Image;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
-using SignalR.Hubs.Stream.Client.Abstractions.Services;
-using SignalR.Hubs.Stream.Client.Concretes.Services.InMemory;
-using SignalR.Hubs.Stream.Server.Abstractions;
-using SignalR.Hubs.Stream.Server.Concretes;
-using SignalR.Hubs.Stream.Shared;
-using SignalR.Hubs.Stream.Shared.InMemory;
 
 namespace Infrastructure;
 
@@ -53,6 +50,8 @@ public static class ServiceRegistration
         services.AddSingleton<ICacheService, RedisCacheService>();
 
         services.AddCacheServices();
+
+        services.AddImageServices(configuration);
     }
 
 
@@ -77,5 +76,14 @@ public static class ServiceRegistration
     private static void AddCacheServices(this IServiceCollection services)
     {
         services.AddScoped<ICacheService, RedisCacheService>();
+    }
+
+
+    private static void AddImageServices(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddSingleton(_ =>
+            new Cloudinary(account: configuration.GetSection("CloudinarySettings").Get<Account>()));
+
+        services.AddScoped<IImageService, CloudinaryImageService>();
     }
 }

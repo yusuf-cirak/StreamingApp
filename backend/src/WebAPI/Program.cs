@@ -16,7 +16,7 @@ builder.Services.Configure<TokenOptions>(builder.Configuration.GetSection("Token
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
     policy.SetIsOriginAllowed(_ => true).AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
 
-builder.Services.AddNewtonsoftJsonSerializerSettings();
+// builder.Services.AddNewtonsoftJsonSerializerSettings();
 
 builder.Services.AddResponseCompressionServices(); // From WebAPI\Extensions\ResponseCompressionExtensions.cs
 builder.Services.AddHealthCheckServices(builder.Configuration); // From WebAPI\Extensions\HealthCheckExtensions.cs

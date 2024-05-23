@@ -1,6 +1,7 @@
 ﻿using Application.Common.Extensions;
 using Application.Features.StreamOptions.Abstractions;
 using Application.Features.StreamOptions.Rules;
+using Application.Features.StreamOptions.Services;
 using Application.Features.Streams.Services;
 
 namespace Application.Features.StreamOptions.Commands.Update;
@@ -38,14 +39,14 @@ public sealed class
 {
     private readonly IEfRepository _efRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IStreamService _streamService;
+    private readonly IStreamOptionService _streamOptionService;
 
     public UpdateChatSettingsCommandHandler(IEfRepository efRepository, IHttpContextAccessor httpContextAccessor,
-        IStreamService streamService)
+        IStreamOptionService streamOptionService)
     {
         _efRepository = efRepository;
         _httpContextAccessor = httpContextAccessor;
-        _streamService = streamService;
+        _streamOptionService = streamOptionService;
     }
 
     public async Task<HttpResult> Handle(UpdateStreamChatSettingsCommandRequest request,
@@ -74,7 +75,7 @@ public sealed class
         }
 
 
-        _ = _streamService.UpdateStreamOptionCacheAndSendNotificationAsync(streamOptions,
+        _ = _streamOptionService.UpdateStreamOptionCacheAndSendNotificationAsync(streamOptions,
             cancellationToken: cancellationToken);
 
         return HttpResult.Success(StatusCodes.Status204NoContent);

@@ -163,35 +163,6 @@ public sealed class StreamService : IStreamService
         return _streamCacheService.AddNewStreamToCacheAsync(streamDto);
     }
 
-    public async Task
-        UpdateStreamOptionCacheAndSendNotificationAsync(StreamOption streamOption, CancellationToken cancellationToken =
-            default)
-    {
-        var index = LiveStreamers.FindIndex(ls => ls.User.Id == streamOption.Streamer.Id);
-
-        if (index is -1)
-        {
-            return;
-        }
-
-        var currentState = LiveStreamers[index].StreamOption!.Value;
-
-        LiveStreamers[index].StreamOption = streamOption.ToDto(streamKey: currentState.StreamKey);
-
-        var updateCacheTask = _streamCacheService.SetLiveStreamsAsync(LiveStreamers, cancellationToken);
-        var sendNotificationTask =
-            this.SendChatOptionsUpdatedNotificationAsync(LiveStreamers[index], cancellationToken);
-
-        await Task.WhenAll(updateCacheTask, sendNotificationTask);
-    }
-
-    public Task SendChatOptionsUpdatedNotificationAsync(GetStreamDto streamDto,
-        CancellationToken cancellationToken = default)
-    {
-        return _hubServerService.OnStreamChatOptionsChangedAsync(
-            streamDto.StreamOption!.Value.ToStreamChatSettingsDto(), streamDto.User.Username);
-    }
-
     static string GenerateRandomText()
     {
         const int length = 5;

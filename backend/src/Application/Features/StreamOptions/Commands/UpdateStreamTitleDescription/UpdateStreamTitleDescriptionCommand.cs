@@ -1,31 +1,31 @@
-﻿using Application.Common.Extensions;
+﻿using Application.Abstractions.Image;
+using Application.Common.Extensions;
 using Application.Features.StreamOptions.Abstractions;
 using Application.Features.StreamOptions.Rules;
-using Application.Features.Streams.Services;
+using Application.Features.StreamOptions.Services;
 
 namespace Application.Features.StreamOptions.Commands.Update;
 
-//TODO: Send notification to all current viewers
 public readonly record struct UpdateStreamTitleDescriptionCommandRequest
     : IStreamOptionRequest, IRequest<HttpResult>, ISecuredRequest
 {
     public Guid StreamerId { get; init; }
+
+    public IFormFile? Thumbnail { get; init; }
+
+    public string ThumbnailUrl { get; init; }
+
     public string StreamTitle { get; init; }
+
     public string StreamDescription { get; init; }
+
+
     public AuthorizationFunctions AuthorizationFunctions { get; }
 
     public UpdateStreamTitleDescriptionCommandRequest()
     {
         AuthorizationFunctions =
             [StreamOptionAuthorizationRules.CanUserGetOrUpdateStreamOptions];
-    }
-
-    public UpdateStreamTitleDescriptionCommandRequest(Guid streamerId, string streamTitle, string streamDescription) :
-        this()
-    {
-        StreamerId = streamerId;
-        StreamTitle = streamTitle;
-        StreamDescription = streamDescription;
     }
 }
 
@@ -34,14 +34,14 @@ public sealed class
 {
     private readonly IEfRepository _efRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IStreamService _streamService;
+    private readonly IStreamOptionService _streamOptionService;
 
     public UpdateStreamTitleDescriptionCommandHandler(IEfRepository efRepository,
-        IHttpContextAccessor httpContextAccessor, IStreamService streamService)
+        IHttpContextAccessor httpContextAccessor, IStreamOptionService streamOptionService)
     {
         _efRepository = efRepository;
         _httpContextAccessor = httpContextAccessor;
-        _streamService = streamService;
+        _streamOptionService = streamOptionService;
     }
 
     public async Task<HttpResult> Handle(UpdateStreamTitleDescriptionCommandRequest request,
@@ -49,34 +49,25 @@ public sealed class
     {
         var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.GetUserId());
 
-        // var result = await _efRepository.StreamOptions
-        //     .Where(st => st.Id == userId)
-        //     .ExecuteUpdateAsync(
-        //         streamer => streamer
-        //             .SetProperty(x => x.StreamTitle, x => request.StreamTitle)
-        //             .SetProperty(x => x.StreamDescription, x => request.StreamDescription),
-        //         cancellationToken: cancellationToken);
+        var streamOptionsResult = await _streamOptionService.GetStreamOptionAsync(userId, cancellationToken);
 
+        if (streamOptionsResult.IsFailure)
+        {
+            return streamOptionsResult.Error;
+        }
 
-        var streamOptions = await
-            _efRepository
-                .StreamOptions
-                .Include(so => so.Streamer)
-                .ThenInclude(user => user.Streams)
-                .AsTracking()
-                .SingleOrDefaultAsync(so => so.Id == userId,
-                    cancellationToken: cancellationToken);
+        var streamOptions = streamOptionsResult.Value;
 
+        string thumbnailUrl = await
+            _streamOptionService.UploadStreamThumbnailImageAsync(streamOptions, request.Thumbnail,
+                request.ThumbnailUrl);
 
-        streamOptions.Update(request.StreamTitle, request.StreamDescription);
+        streamOptions.Update(request.StreamTitle, request.StreamDescription, thumbnailUrl);
 
+        await _efRepository.SaveChangesAsync(cancellationToken);
 
-        var result = await _efRepository.SaveChangesAsync(cancellationToken);
+        _ = _streamOptionService.UpdateStreamOptionCacheAndSendNotificationAsync(streamOptions, cancellationToken);
 
-        _ = _streamService.UpdateStreamOptionCacheAndSendNotificationAsync(streamOptions, cancellationToken);
-
-        return result > 0
-            ? HttpResult.Success(StatusCodes.Status204NoContent)
-            : HttpResult.Failure(StreamOptionErrors.CannotBeUpdated);
+        return HttpResult.Success(StatusCodes.Status204NoContent);
     }
 }

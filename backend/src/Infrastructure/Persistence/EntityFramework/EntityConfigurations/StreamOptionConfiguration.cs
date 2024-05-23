@@ -19,6 +19,8 @@ namespace Infrastructure.Persistence.EntityFramework.EntityConfigurations
 
             builder.Property(u => u.StreamDescription).HasColumnName("StreamDescription").IsRequired(false);
 
+            builder.Property(u => u.ThumbnailUrl).HasColumnName("ThumbnailUrl").IsRequired();
+
             builder.Property(u => u.ChatDisabled).HasColumnName("ChatDisabled").IsRequired().HasDefaultValue(false);
 
             builder.Property(u => u.MustBeFollower).HasColumnName("MustBeFollower").IsRequired().HasDefaultValue(false);
