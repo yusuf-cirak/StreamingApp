@@ -15,3 +15,4 @@ export * from './block.icon';
 export * from './verified-icon';
 export * from './user-icon';
 export * from './heart-icon';
+export * from './pencil-icon';

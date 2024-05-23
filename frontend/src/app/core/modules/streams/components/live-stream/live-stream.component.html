@@ -1,10 +1,10 @@
 <div
-  class="flex flex-col sm:flex-row w-full h-full overflow-y-auto bg-slate-900"
+  class="flex flex-col sm:flex-row w-full h-full overflow-y-auto bg-slate-900 overflow-hidden"
   [autofocus]="true"
 >
-  <div class="w-full sm:w-[80%] h-full">
+  <div class="w-full sm:w-[80%] h-full overflow-y-auto scroller-none">
     <div
-      class="w-full h-[60%] sm:h-[80%] flex flex-col items-center justify-center border-b border-tw-tertiary"
+      class="w-full h-[60%] sm:h-[70%] flex flex-col items-center justify-center border-b border-tw-tertiary"
     >
       <vg-player #player (onPlayerReady)="onPlayerReady($event)">
         <vg-overlay-play vgFor="stream"></vg-overlay-play>
@@ -35,8 +35,13 @@
         ></video>
       </vg-player>
     </div>
-    <div class="w-full h-max sm:h-[20%] bg-tw-primary">
+    <div class="w-full h-max sm:h-[30%] bg-tw-primary">
       <app-stream-header />
+
+      @if (streamFacade.isHost(); as isHost) { @defer(when isHost){
+      <app-stream-option-card />
+
+      } }
     </div>
   </div>
   <div

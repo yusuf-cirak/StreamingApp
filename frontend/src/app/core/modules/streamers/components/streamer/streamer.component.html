@@ -17,7 +17,7 @@
     type="button"
   >
     <img
-      [src]="userImageService.getProfileImageUrl(liveStreamer.user)"
+      [src]="imageService.getProfilePictureUrl(liveStreamer.user)"
       class="w-10 h-10 rounded-full ring-2 ring-rose-500 border border-background"
       alt="user image"
     />
@@ -40,7 +40,7 @@
     type="button"
   >
     <img
-      [src]="userImageService.getProfileImageUrl(streamer)"
+      [src]="imageService.getProfilePictureUrl(streamer)"
       class="w-10 h-10 rounded-full"
       alt="user image"
     />

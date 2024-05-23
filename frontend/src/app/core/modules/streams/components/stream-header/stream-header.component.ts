@@ -30,6 +30,10 @@ export class StreamHeaderComponent {
 
   readonly communityViewerService = inject(CommunityViewService);
 
+  readonly streamTitle = computed(
+    () => this.streamFacade.liveStream().streamOption.title
+  );
+
   readonly streamDescription = computed(
     () => this.streamFacade.liveStream().streamOption.description
   );

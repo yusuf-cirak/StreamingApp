@@ -1,7 +1,7 @@
 import { Injectable, Signal, computed, inject, signal } from '@angular/core';
 import { StreamService } from './stream.service';
 import { Error } from '../../../../shared/api/error';
-import { AuthService } from '@streaming-app/core';
+import { AuthService, User } from '@streaming-app/core';
 import { StreamHub } from '../../../hubs/stream-hub';
 import { StreamChatOptionsDto } from '../../../hubs/dtos/stream-options-dto';
 import { Observable, Subject, switchMap, tap } from 'rxjs';
@@ -23,15 +23,28 @@ export class StreamFacade {
 
   // states
 
-  #streamState = signal<StreamState | undefined>(undefined);
+  #streamer = signal<User | null>(null);
+
+  #streamOptions = signal<StreamOptions | null>(null);
+
+  stream = computed(() => ({
+    user: this.#streamer(),
+    streamOption: this.#streamOptions(),
+  })) as Signal<StreamDto>;
+
+  #error = signal<Error | null>(null);
+
   #chatMessages = signal<ChatMessage[]>([]);
 
   #streamerName = signal<string>('');
 
-  readonly streamState = this.#streamState.asReadonly();
+  streamState = computed(() => ({
+    stream: this.stream(),
+    error: this.#error(),
+  })) as Signal<StreamState>;
 
   readonly liveStream = computed(
-    () => this.#streamState()?.stream
+    () => this.streamState()?.stream
   ) as Signal<StreamDto>;
 
   readonly isStreamLive = computed(
@@ -44,6 +57,10 @@ export class StreamFacade {
 
   readonly streamerName = computed(
     () => this.liveStream()?.user.username || this.#streamerName()
+  );
+
+  readonly isHost = computed(
+    () => this.liveStream().user.username === this.authService.user()?.username
   );
 
   readonly chatMessages = this.#chatMessages.asReadonly();
@@ -120,53 +137,46 @@ export class StreamFacade {
     );
   }
 
-  setStream(liveStream: StreamState | undefined) {
-    this.#streamState.update(() => liveStream);
+  setStream(streamState: StreamState | undefined) {
+    this.#streamer.set(streamState?.stream?.user || null);
+    this.#streamOptions.set(streamState?.stream?.streamOption || null);
+
+    this.#error.set(streamState?.error || null);
   }
 
   updateStream(streamDto: StreamDto) {
-    this.#streamState.set({
-      stream: streamDto,
-      error: null,
-    });
+    this.#streamer.update(() => streamDto.user);
+    this.#streamOptions.update(() => streamDto.streamOption);
+
+    this.#error.set(null);
   }
   setStreamChatOptions(chatOptions: StreamChatOptionsDto) {
-    const streamState = this.#streamState() as StreamState;
+    const streamState = this.streamState() as StreamState;
     const stream = streamState.stream;
     const newOptions = {
       ...stream?.streamOption,
       ...chatOptions,
     } as StreamOptions;
 
-    this.#streamState.set({
-      stream: { ...stream, streamOption: newOptions } as StreamDto,
-      error: null,
-    });
+    this.#streamOptions.set(newOptions);
+    this.#error.set(null);
   }
 
   setLiveStreamErrorState(error: Error) {
-    this.#streamState.update((state) => {
-      return {
-        ...state,
-        error,
-      } as StreamState;
-    });
+    this.#error.set(error);
   }
 
   endStream() {
-    this.#streamState.update((state) => {
-      return {
-        ...state,
-        error: {
-          statusCode: 400,
-          message: 'Stream is now offline',
-        },
-      } as StreamState;
+    this.#error.set({
+      statusCode: 400,
+      message: 'Stream is now offline',
     });
   }
 
   leaveStream() {
-    this.#streamState.set(undefined);
+    this.#error.set(null);
+    this.#streamer.set(null);
+    this.#streamOptions.set(null);
     this.#chatMessages.set([]);
   }
 

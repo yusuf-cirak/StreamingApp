@@ -1,7 +1,7 @@
 import { Component, inject, input } from '@angular/core';
-import { UserImageService } from '../../../../services/user-image.service';
 import { User } from '../../../../models';
 import { NgClass } from '@angular/common';
+import { ImageService } from '../../../../services/image.service';
 
 @Component({
   selector: 'app-streamer',
@@ -10,7 +10,7 @@ import { NgClass } from '@angular/common';
   templateUrl: './streamer-image.component.html',
 })
 export class StreamerImageComponent {
-  readonly userImageService = inject(UserImageService);
+  readonly imageService = inject(ImageService);
 
   readonly isLive = input(false);
 

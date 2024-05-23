@@ -27,6 +27,7 @@ export const appConfig: ApplicationConfig = {
       preventDuplicates: true,
       easing: 'ease-in',
       easeTime: 300,
+      positionClass: 'toast-bottom-center',
     }),
     PRIMENG_CONFIG_PROVIDER,
     INITIALIZE_USER_PROVIDER,

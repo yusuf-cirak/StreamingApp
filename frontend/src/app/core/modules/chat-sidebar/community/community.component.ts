@@ -59,17 +59,13 @@ export class CommunityComponent {
   }
 
   getCurrentViewers() {
-    const isStreamerLive = this.streamFacade.isStreamLive();
-
-    return isStreamerLive
-      ? interval(20000).pipe(
-          startWith(0),
-          switchMap(() =>
-            this.communityViewService.getCurrentViewers(
-              this.streamFacade.streamerName()
-            )
-          )
+    return interval(20000).pipe(
+      startWith(0),
+      switchMap(() =>
+        this.communityViewService.getCurrentViewers(
+          this.streamFacade.streamerName()
         )
-      : of(undefined);
+      )
+    );
   }
 }

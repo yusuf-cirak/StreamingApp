@@ -6,4 +6,5 @@ export interface StreamOptions {
   mustBeFollower: boolean;
   chatDelaySecond: number;
   streamKey?: string;
+  thumbnailUrl: string;
 }

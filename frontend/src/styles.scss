@@ -69,7 +69,8 @@ body {
 }
 
 div.scroller-none {
-  scrollbar-width: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 @media screen and (min-width: 640px) {
@@ -150,7 +151,7 @@ input:enabled:focus-visible {
 }
 
 .modal-container-body {
-  padding: 24px 32px 51px;
+  padding: 24px 32px 24px;
   overflow-y: auto;
 }
 

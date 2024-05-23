@@ -8,6 +8,7 @@ import { StreamDto } from '../../contracts/stream-dto';
 import { StreamFacade } from '../../services/stream.facade';
 import { ChatSidebarComponent } from '../../../chat-sidebar/chat-sidebar.component';
 import { StreamHeaderComponent } from '../stream-header/stream-header.component';
+import { StreamOptionCardComponent } from '../stream-option-card/stream-option-card.component';
 
 @Component({
   selector: 'app-live-stream',
@@ -21,6 +22,7 @@ import { StreamHeaderComponent } from '../stream-header/stream-header.component'
     VgStreamingModule,
     ChatSidebarComponent,
     StreamHeaderComponent,
+    StreamOptionCardComponent
   ],
 })
 export class LiveStreamComponent {

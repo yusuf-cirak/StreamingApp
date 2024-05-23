@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { fadeAnimation } from '../../../../../shared/animations/fade-animation';
 import { AuthService } from '@streaming-app/core';
-import { UserImageService } from '../../../../services/user-image.service';
+import { ImageService } from '../../../../services/image.service';
 
 @Component({
   selector: 'app-main-profilebar',
@@ -20,7 +20,7 @@ import { UserImageService } from '../../../../services/user-image.service';
 })
 export class ProfilebarComponent {
   readonly authService = inject(AuthService);
-  readonly userImageService = inject(UserImageService);
+  readonly imageService = inject(ImageService);
   #profileMenuOpen = signal(false);
 
   readonly profileMenuOpen = this.#profileMenuOpen.asReadonly();

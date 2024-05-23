@@ -3,7 +3,7 @@
 >
   <div class="flex items-center gap-x-3">
     <app-streamer
-      [user]="streamFacade.streamState()?.stream?.user!"
+      [user]="streamFacade.liveStream().user"
       [isLive]="streamFacade.isStreamLive()"
       class="w-12 h-12"
     />
@@ -15,7 +15,7 @@
         <app-verified-icon />
       </div>
       <p class="text-sm font-semibold">
-        {{ streamDescription() }}
+        {{ streamFacade.liveStream().streamOption.title }}
       </p>
       @if (streamFacade.isStreamLive()) {
       <div
