@@ -36,12 +36,13 @@
 
       @if (streamFacade.isHost(); as isHost) { @defer(when isHost){
       <app-stream-option-card />
-
       } }
+
+      <app-stream-about></app-stream-about>
     </div>
   </div>
   <div
-    class="chat-sidebar w-full sm:w-[20%] h-full pt-4 sm:pt-0 border-l border-tw-secondary"
+    class="chat-sidebar w-full sm:w-[20%] h-full pt-2 sm:pt-0 border-l border-tw-secondary"
   >
     <app-chat-sidebar />
   </div>

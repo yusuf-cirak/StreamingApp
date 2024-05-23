@@ -9,6 +9,7 @@ import { StreamFacade } from '../../services/stream.facade';
 import { ChatSidebarComponent } from '../../../chat-sidebar/chat-sidebar.component';
 import { StreamHeaderComponent } from '../stream-header/stream-header.component';
 import { StreamOptionCardComponent } from '../stream-option-card/stream-option-card.component';
+import { StreamAboutComponent } from '../stream-about/stream-about.component';
 
 @Component({
   selector: 'app-live-stream',
@@ -22,7 +23,8 @@ import { StreamOptionCardComponent } from '../stream-option-card/stream-option-c
     VgStreamingModule,
     ChatSidebarComponent,
     StreamHeaderComponent,
-    StreamOptionCardComponent
+    StreamOptionCardComponent,
+    StreamAboutComponent,
   ],
 })
 export class LiveStreamComponent {

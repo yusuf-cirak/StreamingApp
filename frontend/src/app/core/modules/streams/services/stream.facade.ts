@@ -121,6 +121,7 @@ export class StreamFacade {
       .pipe(
         takeUntilDestroyed(),
         tap((blockUserDto) => {
+          console.log('stream block user!');
           const blockedStreamerIds = this.authService.blockedStreamIds();
           const updatedBlockedStreamers = blockUserDto.isBlocked
             ? [...blockedStreamerIds, blockUserDto.streamerId]

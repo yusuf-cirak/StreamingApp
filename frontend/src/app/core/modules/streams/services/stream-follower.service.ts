@@ -69,6 +69,14 @@ export class StreamFollowerService {
         })
       );
   }
+
+  getFollowersCount(streamerId: string) {
+    return this.httpClient.get<number>({
+      controller: 'stream-follower-users',
+      action: 'count',
+      routeParams: [streamerId],
+    });
+  }
 }
 
 export type StreamFollowDto = {

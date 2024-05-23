@@ -77,7 +77,6 @@ export class StreamOptionCardComponent {
       ...this.form.value,
       thumbnail: this.isThumbnailUpdated() ? this.form.value.thumbnail : null,
     };
-    debugger;
 
     this.streamOptionService
       .updateOption(streamOptionUpdateDto as unknown as StreamOptionUpdateDto)

@@ -11,9 +11,11 @@ export class ImageService {
     return `${environment.cloudinary.baseUrl}/stream_thumbnails/${thumbnail}`;
   }
 
-  getProfilePictureUrl(user: CurrentUser | User): string {
-    return user.profileImageUrl
-      ? `${environment.cloudinary.baseUrl}/${environment.cloudinary.folderNames.profileImages}/${user.profileImageUrl}`
-      : `${environment.defaultProfileImageApiUrl}/?background=a0a0a0&name=${user.username}`;
+  getProfilePictureUrl(user: CurrentUser | User | undefined): string {
+    return user
+      ? user.profileImageUrl
+        ? `${environment.cloudinary.baseUrl}/${environment.cloudinary.folderNames.profileImages}/${user.profileImageUrl}`
+        : `${environment.defaultProfileImageApiUrl}/?background=a0a0a0&name=${user.username}`
+      : '';
   }
 }

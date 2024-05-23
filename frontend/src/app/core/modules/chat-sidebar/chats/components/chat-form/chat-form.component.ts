@@ -48,13 +48,14 @@ export class ChatFormComponent {
   canSendMessage = computed(() => {
     return (
       !this.chatDisabled() &&
-      !this.chatAuthService.canUserSendMessage(this.liveStream())
+      !this.chatAuthService.chatErrorMessage() &&
+      !this.authService.blockedStreamIds().includes(this.liveStream().user.id)
     );
   });
 
   readonly chatHintMessage = computed(
     () =>
-      this.chatAuthService.canUserSendMessage(this.liveStream()) ??
+      this.chatAuthService.chatErrorMessage() ??
       this.chatAuthService.chatDelayMessage() ??
       ''
   );
@@ -87,7 +88,7 @@ export class ChatFormComponent {
     const message = this.message();
     const chatDelaySecond = this.chatOptions().chatDelaySecond;
     return of(message).pipe(
-      filter((message) => !!message),
+      filter((message) => !!message && this.canSendMessage()),
       tap(() => {
         this.sendingMessage.set(chatDelaySecond > 0);
       }),

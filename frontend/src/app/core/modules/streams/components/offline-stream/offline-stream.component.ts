@@ -6,6 +6,7 @@ import { RouterLink } from '@angular/router';
 import { StreamHeaderComponent } from '../stream-header/stream-header.component';
 import { StreamOptionCardComponent } from '../stream-option-card/stream-option-card.component';
 import { StreamFacade } from '../../services/stream.facade';
+import { StreamAboutComponent } from '../stream-about/stream-about.component';
 
 @Component({
   selector: 'app-offline-stream',
@@ -17,6 +18,7 @@ import { StreamFacade } from '../../services/stream.facade';
     RouterLink,
     StreamHeaderComponent,
     StreamOptionCardComponent,
+    StreamAboutComponent,
   ],
 })
 export class OfflineStreamComponent {

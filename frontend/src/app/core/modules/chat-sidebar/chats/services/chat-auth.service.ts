@@ -1,6 +1,5 @@
 import { Injectable, computed, inject } from '@angular/core';
 import { AuthService } from '@streaming-app/core';
-import { StreamDto } from '../../../streams/contracts/stream-dto';
 import { StreamFacade } from '../../../streams/services/stream.facade';
 
 @Injectable({
@@ -16,22 +15,23 @@ export class ChatAuthService {
     return second ? `Slow mode with ${second} second delay` : null;
   });
 
-  chatErrorMessage = computed(() =>
-    this.canUserSendMessage(this.streamFacade.liveStream()!)
-  );
+  chatErrorMessage = computed(() => {
+    const isAuth = this.authService.isAuthenticated();
 
-  canUserSendMessage(liveStream: StreamDto): string | null {
-    const authenticated = this.authService.isAuthenticated();
-    if (!authenticated) {
+    if (!isAuth) {
       return 'You must be logged in to use chat';
     }
 
+    const liveStream = this.streamFacade.liveStream();
     const option = liveStream.streamOption;
+
     if (option.chatDisabled) {
       return 'Chat is disabled';
     }
 
-    if (this.authService.blockedStreamIds().includes(liveStream.user.id)) {
+    const blockedStreamerIds = this.authService.blockedStreamIds();
+
+    if (blockedStreamerIds.includes(liveStream.user.id)) {
       return 'You are blocked from this stream chat';
     }
 
@@ -45,5 +45,5 @@ export class ChatAuthService {
     }
 
     return null;
-  }
+  });
 }

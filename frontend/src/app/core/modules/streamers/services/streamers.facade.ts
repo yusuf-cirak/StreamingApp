@@ -43,6 +43,8 @@ export class StreamersFacade {
         );
         const followerStreamerIds = allFollowingStreamers.map((fs) => fs.id);
 
+        this.authService.updateFollowingStreamers(followerStreamerIds);
+
         const recommendedStreamers = recommendedLiveStreamersResult.filter(
           (ls) => !followerStreamerIds.includes(ls.user.id)
         );
