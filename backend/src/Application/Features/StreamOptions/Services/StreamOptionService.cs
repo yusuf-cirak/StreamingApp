@@ -9,19 +9,35 @@ namespace Application.Features.StreamOptions.Services;
 public sealed class StreamOptionService : IStreamOptionService
 {
     private readonly IEfRepository _efRepository;
+    private readonly IStreamService _streamService;
     private readonly IStreamCacheService _streamCacheService;
     private readonly IStreamHubServerService _streamHubServerService;
     private readonly IImageService _imageService;
     private readonly List<GetStreamDto> LiveStreamers;
 
     public StreamOptionService(IEfRepository efRepository, IStreamCacheService streamCacheService,
-        IStreamHubServerService streamHubServerService, IImageService imageService)
+        IStreamHubServerService streamHubServerService, IImageService imageService, IStreamService streamService)
     {
         _efRepository = efRepository;
         _streamCacheService = streamCacheService;
         _streamHubServerService = streamHubServerService;
         _imageService = imageService;
+        _streamService = streamService;
         LiveStreamers = streamCacheService.LiveStreamers;
+    }
+
+    public StreamOption CreateStreamOption(User user)
+    {
+        // All users are also streamers, so we create a streamer for the user
+        var streamerKey = _streamService.GenerateStreamKey(user);
+        var streamerTitle = $"{user.Username}'s stream";
+        var streamerDescription = $"{user.Username}'s stream description";
+
+        var streamOption = StreamOption.Create(user.Id, streamerKey, streamerTitle, streamerDescription);
+
+        _efRepository.StreamOptions.Add(streamOption);
+
+        return streamOption;
     }
 
     public async Task<Result<StreamOption, Error>> GetStreamOptionAsync(Guid streamerId,

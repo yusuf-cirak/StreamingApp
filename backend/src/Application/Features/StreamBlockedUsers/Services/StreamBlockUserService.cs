@@ -51,14 +51,15 @@ public sealed class StreamBlockUserService : IStreamBlockUserService
 
     public async Task SendBlockNotificationToUserAsync(Guid streamerId, Guid userId, bool isBlocked)
     {
-        var streamer = _streamCacheService.LiveStreamers.SingleOrDefault(ls => ls.User.Id == streamerId)?.User ??
-                       await _efRepository.Users.Select(u => u.ToDto()).SingleOrDefaultAsync(u => u.Id == streamerId);
+        var streamerDto = _streamCacheService.LiveStreamers.SingleOrDefault(ls => ls.User.Id == streamerId)?.User ??
+                          await _efRepository.Users.Where(u => u.Id == streamerId).Select(u => u.ToDto())
+                              .SingleOrDefaultAsync();
 
-        if (streamer is null)
+        if (streamerDto is null)
         {
             return;
         }
 
-        await _streamHubServerService.OnBlockFromStreamAsync(streamer, userId, isBlocked);
+        await _streamHubServerService.OnBlockFromStreamAsync(streamerDto, userId, isBlocked);
     }
 }

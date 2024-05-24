@@ -1,5 +1,4 @@
-﻿using Application.Common.Extensions;
-using Application.Features.Users.Services;
+﻿using Application.Features.Users.Services;
 
 namespace Application.Features.Users.Queries.GetBlocked;
 

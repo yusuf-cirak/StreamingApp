@@ -1,4 +1,3 @@
-using Application.Common.Extensions;
 using Application.Features.StreamFollowerUsers.Services;
 
 namespace Application.Features.StreamFollowerUsers.Queries.GetIsUserFollowing;

@@ -1,4 +1,3 @@
-using Application.Common.Extensions;
 using Application.Features.StreamBlockedUsers.Services;
 
 namespace Application.Features.StreamBlockedUsers.Queries.GetIsBlockedFromStream;

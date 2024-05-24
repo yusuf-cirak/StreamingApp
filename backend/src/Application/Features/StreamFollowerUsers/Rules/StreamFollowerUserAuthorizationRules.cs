@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using Application.Common.Errors;
+﻿using Application.Common.Errors;
 using Application.Features.StreamFollowerUsers.Abstractions;
 
 namespace Application.Features.StreamFollowerUsers.Rules;

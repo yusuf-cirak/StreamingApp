@@ -1,14 +1,54 @@
-﻿namespace Application.Features.Auths.Services;
+﻿using Application.Common.Mapping;
+using Application.Common.Models;
+
+namespace Application.Features.Auths.Services;
 
 public sealed class AuthService : IAuthService
 {
     private readonly IEfRepository _efRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IHashingHelper _hashingHelper;
+    private readonly IJwtHelper _jwtHelper;
 
-    public AuthService(IEfRepository efRepository, IHttpContextAccessor httpContextAccessor)
+    private static readonly Guid StreamerRoleId =
+        GuidExtensions.GenerateGuidFromString(RoleConstants.Streamer);
+
+    public AuthService(IEfRepository efRepository, IHttpContextAccessor httpContextAccessor,
+        IHashingHelper hashingHelper, IJwtHelper jwtHelper)
     {
         _efRepository = efRepository;
         _httpContextAccessor = httpContextAccessor;
+        _hashingHelper = hashingHelper;
+        _jwtHelper = jwtHelper;
+    }
+
+    public User RegisterUser(string username, string password, out AccessToken accessToken,
+        out RefreshToken refreshToken, out Dictionary<string, object> claims)
+    {
+        _hashingHelper.CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
+
+        User user = User.Create(username, passwordHash, passwordSalt);
+
+        var userRoleClaim = UserRoleClaim.Create(user.Id, StreamerRoleId,
+            user.Id.ToString());
+        user.UserRoleClaims.Add(userRoleClaim);
+
+        var userIpAddress = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString();
+
+
+        claims = new()
+        {
+            ["roles"] = new List<GetUserRoleDto>() { userRoleClaim.ToDto(RoleConstants.Streamer) },
+            ["operationClaims"] = Enumerable.Empty<GetUserOperationClaimDto>()
+        };
+
+        accessToken = _jwtHelper.CreateAccessToken(user, claims);
+        refreshToken = _jwtHelper.CreateRefreshToken(user, userIpAddress);
+
+        _efRepository.Users.Add(user);
+        _efRepository.RefreshTokens.Add(refreshToken);
+
+        return user;
     }
 
     public async Task<GetUserRolesAndOperationClaimsDto> GetUserRolesAndOperationClaimsAsync(Guid userId,

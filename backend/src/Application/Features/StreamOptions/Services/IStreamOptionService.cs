@@ -2,6 +2,8 @@
 
 public interface IStreamOptionService : IDomainService<StreamOption>
 {
+
+    StreamOption CreateStreamOption(User user);
     Task<Result<StreamOption, Error>> GetStreamOptionAsync(Guid streamerId,
         CancellationToken cancellationToken = default);
 

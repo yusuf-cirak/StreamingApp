@@ -1,18 +1,28 @@
-﻿using System.Security.Claims;
-using Microsoft.IdentityModel.JsonWebTokens;
+﻿using System.Text.Json;
 
 namespace Application.Common.Extensions;
 
-public static class ClaimExtensions
+public static partial class ClaimsPrincipalExtensions
 {
-    public static void AddEmail(this ICollection<Claim> claims, string email) =>
-        claims.Add(new Claim(JwtRegisteredClaimNames.Email, email));
+    private static readonly string EmptyStringArray = "[]";
 
-    public static void AddName(this ICollection<Claim> claims, string name) => claims.Add(new Claim(ClaimTypes.Name, name));
+    public static string GetClaim(this IEnumerable<Claim> claims, string claimType,
+        StringComparison comparison = StringComparison.OrdinalIgnoreCase)
+    {
+        return claims.FirstOrDefault(c => c.Type.Equals(claimType, comparison))?.Value;
+    }
 
-    public static void AddNameIdentifier(this ICollection<Claim> claims, string nameIdentifier) =>
-        claims.Add(new Claim(ClaimTypes.NameIdentifier, nameIdentifier));
+    public static IEnumerable<Claim> GetClaims(this IEnumerable<Claim> claims, string claimType,
+        StringComparison comparison = StringComparison.OrdinalIgnoreCase)
+    {
+        return claims
+            .Where(c => c.Type.Equals(claimType, comparison));
+    }
 
-    public static void AddRoles(this ICollection<Claim> claims, string[] roles) =>
-        roles.ToList().ForEach(role => claims.Add(new Claim(ClaimTypes.Role, role)));
+    public static IEnumerable<GetUserRoleDto> GetRoles(this IEnumerable<Claim> claims) =>
+        JsonSerializer.Deserialize<IEnumerable<GetUserRoleDto>>(claims.GetClaim("roles") ?? EmptyStringArray);
+
+    public static IEnumerable<GetUserOperationClaimDto> GetOperationClaims(this IEnumerable<Claim> claims) =>
+        JsonSerializer.Deserialize<IEnumerable<GetUserOperationClaimDto>>(claims.GetClaim("operationClaims") ??
+                                                                          EmptyStringArray);
 }

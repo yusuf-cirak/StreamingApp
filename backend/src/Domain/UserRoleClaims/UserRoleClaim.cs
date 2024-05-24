@@ -20,9 +20,9 @@ public class UserRoleClaim : BaseEntity
         Value = value;
     }
 
-    public static UserRoleClaim Create(Guid userId, Guid roleOperationClaimId, string value)
+    public static UserRoleClaim Create(Guid userId, Guid roleId, string value)
     {
-        UserRoleClaim userOperationClaim = new(userId, roleOperationClaimId, value);
-        return userOperationClaim;
+        UserRoleClaim userRoleClaim = new(userId, roleId, value);
+        return userRoleClaim;
     }
 }

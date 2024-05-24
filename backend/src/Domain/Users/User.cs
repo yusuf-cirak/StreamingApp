@@ -36,7 +36,7 @@ public class User : AuditableEntity
     public static User Create(string userName, byte[] passwordHash, byte[] passwordSalt)
     {
         User user = new(userName, passwordHash, passwordSalt);
-
+        
         user.Raise(new UserCreatedEvent(user));
 
         return user;

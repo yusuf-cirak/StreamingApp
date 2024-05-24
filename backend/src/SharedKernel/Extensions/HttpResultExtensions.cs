@@ -2,7 +2,7 @@
 
 namespace SharedKernel;
 
-public static class HttpResultExtensions
+public static partial class HttpResultExtensions
 {
     public static IResult ToHttpResponse<TValue>(this HttpResult<TValue> httpResult)
     {

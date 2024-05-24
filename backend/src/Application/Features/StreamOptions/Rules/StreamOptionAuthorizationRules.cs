@@ -1,5 +1,5 @@
-﻿using System.Text.Json;
-using Application.Common.Errors;
+﻿using Application.Common.Errors;
+using Application.Common.Extensions;
 using Application.Features.StreamOptions.Abstractions;
 
 namespace Application.Features.StreamOptions.Rules;
@@ -56,10 +56,9 @@ public static class StreamOptionAuthorizationRules
     {
         string streamerIdString = ((IStreamOptionRequest)request).StreamerId.ToString();
 
-        string rolesString = claims.First(c => c.Type == ClaimTypes.Role || c.Type=="roles").Value;
-        List<GetUserRoleDto> roleClaims = JsonSerializer.Deserialize<List<GetUserRoleDto>>(rolesString);
+        var roles = claims.GetRoles();
 
-        return roleClaims.Exists(rc =>
+        return roles.Any(rc =>
             rc.Name == RoleConstants.StreamSuperModerator && rc.Value == streamerIdString);
     }
 
@@ -67,12 +66,9 @@ public static class StreamOptionAuthorizationRules
     {
         string streamerIdString = ((IStreamOptionRequest)request).StreamerId.ToString();
 
-        string operationClaimsString = claims.First(c => c.Type == "OperationClaims").Value;
+        var operationClaims = claims.GetOperationClaims();
 
-        List<GetUserOperationClaimDto> operationClaims =
-            JsonSerializer.Deserialize<List<GetUserOperationClaimDto>>(operationClaimsString);
-
-        return operationClaims.Exists(oc =>
+        return operationClaims.Any(oc =>
             oc.Value == streamerIdString &&
             oc.Name == OperationClaimConstants.StreamUpdateTitleDescription);
     }

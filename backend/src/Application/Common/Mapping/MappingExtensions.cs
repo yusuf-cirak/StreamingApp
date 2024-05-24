@@ -12,6 +12,14 @@ public static class MappingExtensions
     public static GetRoleOperationClaimDto ToDto(this RoleOperationClaim roleOperationClaim) =>
         new(roleOperationClaim.RoleId, roleOperationClaim.OperationClaimId);
 
+    public static GetUserRoleDto ToDto(this UserRoleClaim userRoleClaim, string roleName = null) =>
+        new(roleName ?? userRoleClaim.Role.Name, userRoleClaim.Value);
+
+    public static GetUserOperationClaimDto
+        ToDto(this UserOperationClaim userOperationClaim, string roleName = null) =>
+        new(roleName ?? userOperationClaim.OperationClaim.Name,
+            userOperationClaim.Value);
+
     public static GetUserDto ToDto(this User user) =>
         new(user.Id, user.Username, user.ProfileImageUrl);
 

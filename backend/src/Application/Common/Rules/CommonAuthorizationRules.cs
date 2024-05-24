@@ -1,6 +1,5 @@
-﻿using System.Text.Json;
-using Application.Common.Errors;
-using Application.Contracts.Roles;
+﻿using Application.Common.Errors;
+using Application.Common.Extensions;
 
 namespace Application.Common.Rules;
 
@@ -8,14 +7,7 @@ public static class CommonAuthorizationRules
 {
     public static Result UserMustBeAdmin(HttpContext context, ICollection<Claim> claims, object request)
     {
-        var rolesString = claims.FirstOrDefault(claim => claim.Type == "Roles")?.Value ?? String.Empty;
-
-        if (string.IsNullOrEmpty(rolesString))
-        {
-            return Result.Failure(RoleErrors.DoesNotExist);
-        }
-
-        var roles = JsonSerializer.Deserialize<List<GetUserRoleDto>>(rolesString);
+        var roles = claims.GetRoles().ToList();
 
         if (!roles.Exists(r => r.Name == RoleConstants.SystemAdmin))
         {

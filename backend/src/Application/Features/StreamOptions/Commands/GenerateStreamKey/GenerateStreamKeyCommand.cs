@@ -1,5 +1,4 @@
-﻿using Application.Common.Extensions;
-using Application.Features.StreamOptions.Abstractions;
+﻿using Application.Features.StreamOptions.Abstractions;
 using Application.Features.StreamOptions.Rules;
 using Application.Features.Streams.Services;
 

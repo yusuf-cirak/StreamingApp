@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Application.Common.Errors;
+using Application.Common.Extensions;
 using Application.Contracts.Roles;
 using Application.Features.Users.Abstractions;
 
@@ -19,8 +20,7 @@ public static class UserAuthorizationRules
 
     private static bool IsAdmin(ICollection<Claim> claims, object request)
     {
-        var rolesString = claims.FirstOrDefault(c => c.Type == "Roles")?.Value ?? string.Empty;
-        var roles = JsonSerializer.Deserialize<List<GetUserRoleDto>>(rolesString);
+        var roles = claims.GetRoles();
         return roles.Any(ur => ur.Name == RoleConstants.SystemAdmin);
     }
 

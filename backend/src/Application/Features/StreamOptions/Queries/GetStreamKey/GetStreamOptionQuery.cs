@@ -1,5 +1,4 @@
-﻿using Application.Common.Extensions;
-using Application.Features.StreamOptions.Abstractions;
+﻿using Application.Features.StreamOptions.Abstractions;
 using Application.Features.StreamOptions.Rules;
 
 namespace Application.Features.StreamOptions.Queries.GetStreamKey;
