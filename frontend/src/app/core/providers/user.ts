@@ -1,4 +1,4 @@
-import { from, tap, catchError, of, concatMap, forkJoin } from 'rxjs';
+import { from, catchError, of, forkJoin, EMPTY, switchMap } from 'rxjs';
 import { AuthService } from '..';
 import { StreamHub } from '../hubs/stream-hub';
 import { APP_INITIALIZER, Provider } from '@angular/core';
@@ -17,18 +17,28 @@ function initializeUserFactory(
   userService: UserService
 ) {
   return () => {
-    return from(authService.initializeUser()).pipe(
-      tap(() => console.log('User initialized')),
-      concatMap(() =>
-        forkJoin([
-          from(streamHub.buildAndConnect(authService.user()?.accessToken)),
-          userService.getBlockedStreamers(),
-        ])
-      ),
+    const location = window.location.pathname;
+    const isCreatorRoute = location.includes('/creator');
+    var initializer$ = from(authService.initializeUser()).pipe(
       catchError((error) => {
         console.error('Error initializing user', error);
-        return of(null);
+        return EMPTY;
+      }),
+      switchMap(() => {
+        const isAuthenticated = authService.isAuthenticated();
+        return forkJoin([
+          from(streamHub.buildAndConnect(authService.user()?.accessToken)),
+          ...(isAuthenticated
+            ? [
+                userService.getBlockedStreamers(),
+                isCreatorRoute ? userService.getFollowingStreamers() : of([]),
+              ]
+            : []),
+        ]);
       })
     );
+
+    initializer$.subscribe();
+    return Promise.resolve();
   };
 }

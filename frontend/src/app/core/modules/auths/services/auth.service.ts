@@ -5,7 +5,15 @@ import { UserLoginDto } from '../../../dtos/user-login-dto';
 import { UserRegisterDto } from '../../../dtos/user-register-dto';
 import { UserRefreshTokenDto } from '../../../dtos/user-refresh-token-dto';
 import { UserAuthDto } from '../dtos/user-auth-dto';
-import { lastValueFrom, map, Subject, switchMap, tap, throwError } from 'rxjs';
+import {
+  EMPTY,
+  lastValueFrom,
+  map,
+  Subject,
+  switchMap,
+  tap,
+  throwError,
+} from 'rxjs';
 import { LocalStorageEventService, User } from '@streaming-app/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { StreamHub } from '../../../hubs/stream-hub';
@@ -75,7 +83,7 @@ export class AuthService {
     const userAuthDto = this.getUserFromLocalStorage();
 
     if (!userAuthDto) {
-      return;
+      return throwError('User is not authenticated');
     }
 
     const tokenExpiration = new Date(userAuthDto.tokenExpiration);
@@ -85,10 +93,12 @@ export class AuthService {
     this.setUser(userAuthDto);
 
     if (tokenExpiration < new Date(Date.now())) {
-      await lastValueFrom(
+      return await lastValueFrom(
         this.refreshToken(this.mapToCurrentUser(userAuthDto))
       ).catch(() => localStorage.removeItem('user'));
     }
+
+    return EMPTY;
   }
 
   setUser(userAuthDto: UserAuthDto) {

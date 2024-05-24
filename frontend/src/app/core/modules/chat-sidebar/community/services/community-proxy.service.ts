@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClientService } from '../../../../../shared/services/http-client.service';
 import { User } from '../../../../models';
 import { StreamBlockUserDto } from '../../models/stream-block-user-dto';
+import { HttpHeaders } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class CommunityProxyService {
@@ -36,6 +37,7 @@ export class CommunityProxyService {
     return this.httpClient.post(
       {
         controller: 'stream-blocked-users',
+        headers: new HttpHeaders().set('SkipInterceptor', 'true'),
       },
       blockUserDto
     );
@@ -45,6 +47,7 @@ export class CommunityProxyService {
     return this.httpClient.put(
       {
         controller: 'stream-blocked-users',
+        headers: new HttpHeaders().set('SkipInterceptor', 'true'),
       },
       unblockUserDto
     );

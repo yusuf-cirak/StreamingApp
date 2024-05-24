@@ -34,16 +34,13 @@ export class CommunityViewerComponent {
 
   roles: UserRoleDto[] = [
     { name: 'Admin' },
+    { name: 'Streamer', value: this.streamerId() },
     { name: 'SuperModerator', value: this.streamerId() },
   ];
 
   operationClaims: UserOperationClaimDto[] = [
     { name: 'BlockUser', value: this.streamerId() },
   ];
-
-  isSelf = computed(
-    () => this.viewer().username === this.authService.user()?.username
-  );
 
   blockViewer = output<StreamBlockUserDto>();
 
