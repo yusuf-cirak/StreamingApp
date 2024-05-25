@@ -1,5 +1,6 @@
-﻿using Application.Contracts.Users;
+﻿using Application.Contracts.StreamOptions;
+using Application.Contracts.Users;
 
 namespace Application.Contracts.Streams;
 
-public sealed record GetFollowingStreamDto(GetUserDto User);
+public sealed record GetFollowingStreamDto(GetUserDto User,GetStreamOptionDto StreamOption);

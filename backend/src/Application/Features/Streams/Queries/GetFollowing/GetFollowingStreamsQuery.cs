@@ -2,7 +2,7 @@
 
 namespace Application.Features.Streams.Queries.GetFollowing;
 
-public readonly record struct GetFollowingStreamsQueryRequest : IRequest<HttpResult<List<GetFollowingStreamDto>>>,
+public readonly record struct GetFollowingStreamsQueryRequest : IRequest<HttpResult<List<GetStreamDto>>>,
     ISecuredRequest
 {
     public AuthorizationFunctions AuthorizationFunctions { get; }
@@ -14,7 +14,7 @@ public readonly record struct GetFollowingStreamsQueryRequest : IRequest<HttpRes
 }
 
 public sealed class
-    GetFollowingStreamsQueryHandler : IRequestHandler<GetFollowingStreamsQueryRequest, HttpResult<List<GetFollowingStreamDto>>>
+    GetFollowingStreamsQueryHandler : IRequestHandler<GetFollowingStreamsQueryRequest, HttpResult<List<GetStreamDto>>>
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IUserService _userService;
@@ -25,7 +25,7 @@ public sealed class
         _userService = userService;
     }
 
-    public async Task<HttpResult<List<GetFollowingStreamDto>>> Handle(GetFollowingStreamsQueryRequest request, CancellationToken cancellationToken)
+    public async Task<HttpResult<List<GetStreamDto>>> Handle(GetFollowingStreamsQueryRequest request, CancellationToken cancellationToken)
     {
         var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.GetUserId());
 

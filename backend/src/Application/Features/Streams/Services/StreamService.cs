@@ -49,7 +49,7 @@ public sealed class StreamService : IStreamService
                 user => user.Id,
                 s => s.StreamerId,
                 (user, _) => user)
-            .Select(user => ResolveGetStreamDto(liveStreamers, user));
+            .Select(user => user.ResolveGetStreamDto(liveStreamers));
 
         return streamers.AsAsyncEnumerable();
     }
@@ -206,15 +206,5 @@ public sealed class StreamService : IStreamService
         }
 
         return new string(randomChars);
-    }
-
-
-    private static GetStreamDto ResolveGetStreamDto(List<GetStreamDto> liveStreamers, User user)
-    {
-        var index = liveStreamers.FindIndex(ls => ls.User.Id == user.Id);
-
-        return new GetStreamDto(user.ToDto(),
-            user.StreamOption.ToDto(index is -1,
-                index is not -1 ? liveStreamers[index].StreamOption!.Value.StreamKey : null));
     }
 }

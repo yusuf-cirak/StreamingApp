@@ -45,4 +45,14 @@ public static class MappingExtensions
 
     public static GetStreamDto ToDtoWithoutStream(this StreamOption streamOption) =>
         new(streamOption.Streamer.ToDto(), streamOption.ToDto(true));
+
+
+    public static GetStreamDto ResolveGetStreamDto(this User user, List<GetStreamDto> liveStreamers)
+    {
+        var index = liveStreamers.FindIndex(ls => ls.User.Id == user.Id);
+
+        return new GetStreamDto(user.ToDto(),
+            user.StreamOption.ToDto(index is -1,
+                index is not -1 ? liveStreamers[index].StreamOption!.Value.StreamKey : null));
+    }
 }
