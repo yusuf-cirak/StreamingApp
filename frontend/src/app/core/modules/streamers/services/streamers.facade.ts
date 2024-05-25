@@ -2,10 +2,10 @@ import { computed, inject, Injectable } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { forkJoin, map, merge, of, switchMap } from 'rxjs';
 import { AuthService } from '@streaming-app/core';
-import { StreamerDto } from '../models/streamer-dto';
 import { StreamHub } from '../../../hubs/stream-hub';
 import { StreamProxyService } from '../../streams/services/stream-proxy.service';
 import { StreamFollowerService } from '../../streams/services/stream-follower.service';
+import { StreamDto } from '../../streams/contracts/stream-dto';
 
 @Injectable({ providedIn: 'root' })
 export class StreamersFacade {
@@ -13,16 +13,13 @@ export class StreamersFacade {
   private readonly authService = inject(AuthService);
   private readonly streamHub = inject(StreamHub);
 
-  readonly authenticated$ = toObservable(this.authService.isAuthenticated);
-  readonly streamStarted$ = this.streamHub.streamStarted$;
-  readonly streamEnded$ = this.streamHub.streamEnd$;
   readonly follow$ = inject(StreamFollowerService).follow$;
 
   readonly streamers = toSignal(
     merge(
-      this.authenticated$,
-      this.streamStarted$,
-      this.streamEnded$,
+      toObservable(this.authService.isAuthenticated),
+      this.streamHub.streamStarted$,
+      this.streamHub.streamEnd$,
       this.follow$ // todo: fix this
     ).pipe(switchMap(() => this.getStreamers()))
   );
@@ -52,8 +49,9 @@ export class StreamersFacade {
           const liveStreamerIds = liveStreamersResult.map((ls) => ls.user.id);
           const allFollowingStreamerIds = Array.from(
             new Set([
-              ...liveStreamerIds,
-              ...followingStreamersResult.map((fs) => fs.user.id),
+              ...followingStreamersResult
+                .filter((fs) => !liveStreamerIds.includes(fs.user.id))
+                .map((fs) => fs.user.id),
             ])
           );
 
@@ -75,9 +73,11 @@ export class StreamersFacade {
           const recommendedStreamers = recommendedStreamersResult.filter((rs) =>
             allRecommendedStreamerIds.includes(rs.user.id)
           );
+
           return {
             recommendedStreamers,
             followingStreamers,
+            allStreamers: [...followingStreamers, ...recommendedStreamers],
           };
         }
       )
@@ -98,6 +98,6 @@ export class StreamersFacade {
 }
 
 export type AllStreamersDto = {
-  recommendedStreamers: StreamerDto[];
-  followingStreamers: StreamerDto[];
+  recommendedStreamers: StreamDto[];
+  followingStreamers: StreamDto[];
 };

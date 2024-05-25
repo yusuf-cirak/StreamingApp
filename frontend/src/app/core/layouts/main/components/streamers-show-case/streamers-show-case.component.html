@@ -1,0 +1,35 @@
+<div class="text-white gap-4">
+  @defer (when allStreamers()) {
+  <h2 class="text-lg font-semibold mb-4">Streams we think you&apos;ll like</h2>
+  <div
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4"
+  >
+    @for (streamer of allStreamers(); track $index) {
+    <app-streamer-show-card [streamer]="streamer"></app-streamer-show-card>
+    } @empty {
+    <div class="text-sm">No streams found</div>
+    }
+  </div>
+  }@placeholder {
+  <ng-container
+    *ngTemplateOutlet="
+      skeletonTemplate;
+      context: { skeleton: [0, 0, 0, 0, 0, 0] }
+    "
+  ></ng-container>
+
+  }
+</div>
+
+<ng-template #skeletonTemplate let-skeleton="skeleton">
+  <div>
+    <div class="h-8 w-[290px] mb-4 animate-pulse bg-white rounded-md"></div>
+    <div
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4"
+    >
+      @for (_ of skeleton; track $index) {
+      <app-streamer-show-case-skeleton></app-streamer-show-case-skeleton>
+      }
+    </div>
+  </div>
+</ng-template>

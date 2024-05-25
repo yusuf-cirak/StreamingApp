@@ -1,19 +1,19 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { StreamFacade } from '../../services/stream.facade';
 import { UserIcon, VerifiedIcon } from '@streaming-app/shared/icons';
-import { StreamerImageComponent } from '../../../streamers/components/streamer-image/streamer-image.component';
 import { StreamActionsComponent } from '../stream-actions/stream-actions.component';
 import { StreamFollowerService } from '../../services/stream-follower.service';
 import { CommunityViewService } from '../../../chat-sidebar/community/services/community-view.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CommunityProxyService } from '../../../chat-sidebar/community/services/community-proxy.service';
 import { interval, Observable, of, startWith, Subject, switchMap } from 'rxjs';
+import { StreamerAvatarComponent } from '../../../streamers/components/streamer-avatar/streamer-avatar.component';
 
 @Component({
   selector: 'app-stream-header',
   standalone: true,
   imports: [
-    StreamerImageComponent,
+    StreamerAvatarComponent,
     StreamActionsComponent,
     VerifiedIcon,
     UserIcon,

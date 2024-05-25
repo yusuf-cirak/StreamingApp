@@ -1,0 +1,7 @@
+@if (streamer(); as streamer) {
+<a [routerLink]="['', streamer.user.username]">
+  <div class="h-full w-full space-y-4">
+    <app-thumbnail [streamer]="streamer" />
+  </div>
+</a>
+}

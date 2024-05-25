@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
-import { StreamerDto } from '../../models/streamer-dto';
 import { StreamerComponent } from '../streamer/streamer.component';
+import { StreamDto } from '../../../streams/contracts/stream-dto';
 
 @Component({
   selector: 'app-streamers-list',
@@ -9,5 +9,5 @@ import { StreamerComponent } from '../streamer/streamer.component';
   templateUrl: './streamers-list.component.html',
 })
 export class StreamersListComponent {
-  readonly streamers = input.required<StreamerDto[]>();
+  readonly streamers = input.required<StreamDto[]>();
 }

@@ -2,7 +2,6 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClientService } from '../../../../shared/services/http-client.service';
 import { Observable } from 'rxjs';
 import { StreamState } from '../models/stream-state';
-import { FollowingStreamerDto } from '../../streamers/models/following-stream-dto';
 import { StreamDto } from '../contracts/stream-dto';
 import { BlockedStreamerDto } from '../../streamers/models/blocked-streamer-dto';
 
@@ -34,7 +33,7 @@ export class StreamProxyService {
   }
 
   getFollowing() {
-    return this.httpClient.get<FollowingStreamerDto[]>({
+    return this.httpClient.get<StreamDto[]>({
       controller: 'streams',
       action: 'following',
     });
