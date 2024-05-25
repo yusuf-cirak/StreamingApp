@@ -12,18 +12,47 @@ public sealed class StreamService : IStreamService
     private readonly IEfRepository _efRepository;
     private readonly IStreamCacheService _streamCacheService;
     private readonly IStreamHubServerService _hubServerService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
 
     public StreamService(IEncryptionHelper encryptionHelper, IEfRepository efRepository,
-        IStreamCacheService streamCacheService, IStreamHubServerService hubServerService)
+        IStreamCacheService streamCacheService, IStreamHubServerService hubServerService,
+        IHttpContextAccessor httpContextAccessor)
     {
         _encryptionHelper = encryptionHelper;
         _efRepository = efRepository;
         _streamCacheService = streamCacheService;
         _hubServerService = hubServerService;
+        _httpContextAccessor = httpContextAccessor;
         LiveStreamers = streamCacheService.LiveStreamers;
     }
 
+
+    public IAsyncEnumerable<GetStreamDto> GetRecommendedStreamersAsyncEnumerable()
+    {
+        var liveStreamers = LiveStreamers;
+        var streamersByMostFollowers = _efRepository
+            .StreamFollowerUsers
+            .GroupBy(sfu => sfu.StreamerId)
+            .Select(g => new
+            {
+                StreamerId = g.Key,
+                FollowerCount = g.Count()
+            })
+            .OrderByDescending(g => g.FollowerCount)
+            .Take(10);
+
+        var streamers = _efRepository
+            .Users
+            .Include(u => u.StreamOption)
+            .Join(streamersByMostFollowers,
+                user => user.Id,
+                s => s.StreamerId,
+                (user, _) => user)
+            .Select(user => ResolveGetStreamDto(liveStreamers, user));
+
+        return streamers.AsAsyncEnumerable();
+    }
 
     public async Task<Result<StreamOption, Error>> StreamerExistsAsync(string streamKey,
         CancellationToken cancellationToken = default)
@@ -177,5 +206,15 @@ public sealed class StreamService : IStreamService
         }
 
         return new string(randomChars);
+    }
+
+
+    private static GetStreamDto ResolveGetStreamDto(List<GetStreamDto> liveStreamers, User user)
+    {
+        var index = liveStreamers.FindIndex(ls => ls.User.Id == user.Id);
+
+        return new GetStreamDto(user.ToDto(),
+            user.StreamOption.ToDto(index is -1,
+                index is not -1 ? liveStreamers[index].StreamOption!.Value.StreamKey : null));
     }
 }

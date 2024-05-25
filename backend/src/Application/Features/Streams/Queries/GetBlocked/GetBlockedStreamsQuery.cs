@@ -1,6 +1,6 @@
 ﻿using Application.Features.Users.Services;
 
-namespace Application.Features.Users.Queries.GetBlocked;
+namespace Application.Features.Streams.Queries.GetBlocked;
 
 public sealed record GetBlockedStreamsQueryRequest : IRequest<HttpResult<IEnumerable<GetBlockedStreamDto>>>,
     ISecuredRequest

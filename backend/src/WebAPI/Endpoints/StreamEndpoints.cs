@@ -2,6 +2,9 @@
 using Application.Features.Streams.Commands.Update;
 using Application.Features.Streams.Queries.Get;
 using Application.Features.Streams.Queries.GetAll;
+using Application.Features.Streams.Queries.GetBlocked;
+using Application.Features.Streams.Queries.GetFollowing;
+using Application.Features.Streams.Queries.GetRecommended;
 using Application.Features.Streams.Queries.GetViewers;
 using Application.Features.Streams.Queries.GetViewersCount;
 using MediatR;
@@ -29,18 +32,39 @@ public static class StreamEndpoints
                     return (await mediator.Send(new GetStreamQueryRequest(streamerName))).ToHttpResponse();
                 })
             .WithTags("Streams");
-        
+
         groupBuilder.MapGet("/live/viewers/{streamerName}",
                 async (string streamerName, IMediator mediator) =>
                 {
                     return (await mediator.Send(new GetStreamViewersQueryRequest(streamerName))).ToHttpResponse();
                 })
             .WithTags("Streams");
-        
+
         groupBuilder.MapGet("/live/viewers-count/{streamerName}",
                 async (string streamerName, IMediator mediator) =>
                 {
                     return (await mediator.Send(new GetStreamViewersCountQueryRequest(streamerName))).ToHttpResponse();
+                })
+            .WithTags("Streams");
+
+        groupBuilder.MapGet("/recommended",
+                async (IMediator mediator) =>
+                {
+                    return (await mediator.Send(new GetRecommendedStreamersQueryRequest())).ToHttpResponse();
+                })
+            .WithTags("Streams");
+
+        groupBuilder.MapGet("/following",
+                async (IMediator mediator) =>
+                {
+                    return (await mediator.Send(new GetFollowingStreamsQueryRequest())).ToHttpResponse();
+                })
+            .WithTags("Streams");
+
+        groupBuilder.MapGet("/blocked",
+                async (IMediator mediator) =>
+                {
+                    return (await mediator.Send(new GetBlockedStreamsQueryRequest())).ToHttpResponse();
                 })
             .WithTags("Streams");
 

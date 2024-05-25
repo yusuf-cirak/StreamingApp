@@ -1,6 +1,6 @@
 ﻿using Application.Features.Users.Services;
 
-namespace Application.Features.Users.Queries.GetFollowing;
+namespace Application.Features.Streams.Queries.GetFollowing;
 
 public readonly record struct GetFollowingStreamsQueryRequest : IRequest<HttpResult<List<GetFollowingStreamDto>>>,
     ISecuredRequest
