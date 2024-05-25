@@ -2,12 +2,22 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClientService } from '../../../../shared/services/http-client.service';
 import { Observable } from 'rxjs';
 import { StreamState } from '../models/stream-state';
+import { FollowingStreamerDto } from '../../streamers/models/following-stream-dto';
+import { StreamDto } from '../contracts/stream-dto';
+import { BlockedStreamerDto } from '../../streamers/models/blocked-streamer-dto';
 
 @Injectable({ providedIn: 'root' })
 export class StreamProxyService {
   readonly httpClient = inject(HttpClientService);
 
-  getStreamInfo(streamerName: string): Observable<StreamState> {
+  getLive() {
+    return this.httpClient.get<StreamDto[]>({
+      controller: 'streams',
+      action: 'live',
+    });
+  }
+
+  getInfo(streamerName: string): Observable<StreamState> {
     return this.httpClient.get<StreamState>({
       controller: 'streams',
       action: 'live',
@@ -15,11 +25,32 @@ export class StreamProxyService {
     });
   }
 
-  getStreamerViewerCount(streamerName: string): Observable<number> {
+  getViewerCount(streamerName: string): Observable<number> {
     return this.httpClient.get<number>({
       controller: 'streams',
       action: 'viewer-count',
       routeParams: [streamerName],
+    });
+  }
+
+  getFollowing() {
+    return this.httpClient.get<FollowingStreamerDto[]>({
+      controller: 'streams',
+      action: 'following',
+    });
+  }
+
+  getBlocked() {
+    return this.httpClient.get<BlockedStreamerDto[]>({
+      controller: 'streams',
+      action: 'blocked',
+    });
+  }
+
+  getRecommended() {
+    return this.httpClient.get<StreamDto[]>({
+      controller: 'streams',
+      action: 'recommended',
     });
   }
 }

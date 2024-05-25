@@ -1,4 +1,4 @@
-import { User } from '../../../models';
 import { StreamDto } from '../../streams/contracts/stream-dto';
+import { FollowingStreamerDto } from './following-stream-dto';
 
-export type StreamerDto = StreamDto | User;
+export type StreamerDto = StreamDto | FollowingStreamerDto;

@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { StreamerDto } from '../../models/streamer-dto';
 import { NgTemplateOutlet } from '@angular/common';
 import { ImageService } from '../../../../services/image.service';
+import { User } from '../../../../models';
 
 @Component({
   selector: 'app-streamer',
@@ -12,11 +13,18 @@ import { ImageService } from '../../../../services/image.service';
   templateUrl: './streamer.component.html',
 })
 export class StreamerComponent {
-  readonly user = input.required<StreamerDto>();
+  readonly streamer = input.required<StreamerDto>();
 
   readonly imageService = inject(ImageService);
 
   isLive = computed(() => {
-    return (this.user() as StreamDto)?.streamOption?.streamKey !== undefined;
+    const stream = this.streamer() as StreamDto;
+    return !!stream?.streamOption?.streamKey;
+  });
+
+  getUser = computed(() => {
+    const streamer = this.streamer();
+
+    return streamer?.user || streamer;
   });
 }

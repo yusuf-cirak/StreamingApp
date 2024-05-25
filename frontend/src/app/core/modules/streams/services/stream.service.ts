@@ -7,11 +7,11 @@ export class StreamService {
   readonly streamProxyService = inject(StreamProxyService);
 
   getStreamInfo(streamerName: string) {
-    return this.streamProxyService.getStreamInfo(streamerName);
+    return this.streamProxyService.getInfo(streamerName);
   }
 
   getStreamerViewerCount(streamerName: string) {
-    return this.streamProxyService.getStreamerViewerCount(streamerName);
+    return this.streamProxyService.getViewerCount(streamerName);
   }
 
   getHlsUrl(streamKey: string) {

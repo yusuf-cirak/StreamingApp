@@ -4,12 +4,9 @@ import { AuthService } from '../../../../services';
 import { HeartIcon } from '../../../../../shared/icons/heart-icon';
 import { NgClass } from '@angular/common';
 import { RippleModule } from 'primeng/ripple';
-import {
-  StreamFollowDto,
-  StreamFollowerService,
-} from '../../services/stream-follower.service';
-import { filter, forkJoin, switchMap, tap } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { StreamFollowerService } from '../../services/stream-follower.service';
+import { StreamFollowDto } from '../../services/stream-follower-proxy.service';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-stream-actions',
@@ -32,34 +29,6 @@ export class StreamActionsComponent {
   );
 
   isPendingFollow = signal(false);
-
-  constructor() {
-    this.authService.login$
-      .pipe(
-        takeUntilDestroyed(),
-        filter(() => this.streamFacade.isStreamerExists()),
-        switchMap(() => {
-          this.isPendingFollow.set(true);
-          return forkJoin([
-            this.streamFollowerService.isFollowingStreamer(
-              this.streamFacade.liveStream()?.user.id
-            ),
-            // this.streamFacade.getStreamChatOptions(),
-            //todo: check if user is blocked here?
-          ]);
-        }),
-        tap(([isFollowing]) => {
-          if (isFollowing) {
-            this.authService.updateFollowingStreamers([
-              ...this.authService.followingStreamIds(),
-              this.streamFacade.liveStream()?.user.id,
-            ]);
-          }
-          this.isPendingFollow.set(false);
-        })
-      )
-      .subscribe();
-  }
 
   toggleFollow() {
     this.isPendingFollow.set(true);

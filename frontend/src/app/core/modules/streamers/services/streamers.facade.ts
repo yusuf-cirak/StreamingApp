@@ -1,27 +1,30 @@
 import { computed, inject, Injectable } from '@angular/core';
-import { StreamersProxyService } from './streamers-proxy.service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { forkJoin, map, merge, of, switchMap } from 'rxjs';
-import { AuthService, User } from '@streaming-app/core';
-import { StreamDto } from '../../streams/contracts/stream-dto';
+import { AuthService } from '@streaming-app/core';
 import { StreamerDto } from '../models/streamer-dto';
 import { StreamHub } from '../../../hubs/stream-hub';
+import { StreamProxyService } from '../../streams/services/stream-proxy.service';
+import { StreamFollowerService } from '../../streams/services/stream-follower.service';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class StreamersFacade {
-  private readonly streamersProxyService = inject(StreamersProxyService);
+  private readonly streamProxyService = inject(StreamProxyService);
   private readonly authService = inject(AuthService);
   private readonly streamHub = inject(StreamHub);
 
   readonly authenticated$ = toObservable(this.authService.isAuthenticated);
   readonly streamStarted$ = this.streamHub.streamStarted$;
   readonly streamEnded$ = this.streamHub.streamEnd$;
+  readonly follow$ = inject(StreamFollowerService).follow$;
 
   readonly streamers = toSignal(
-    // todo: onfollow, onunfollow
-    merge(this.authenticated$, this.streamStarted$, this.streamEnded$).pipe(
-      switchMap(() => this.getStreamers())
-    )
+    merge(
+      this.authenticated$,
+      this.streamStarted$,
+      this.streamEnded$,
+      this.follow$ // todo: fix this
+    ).pipe(switchMap(() => this.getStreamers()))
   );
 
   readonly followingStreamers = computed(
@@ -34,48 +37,62 @@ export class StreamersFacade {
 
   private getStreamers() {
     return forkJoin([
-      this.streamersProxyService.getLive(),
+      this.streamProxyService.getLive(),
       this.getFollowingStreamers(),
+      this.streamProxyService.getRecommended(),
+      this.getBlockedStreamers(),
     ]).pipe(
-      map(([recommendedLiveStreamersResult, followingStreamersResult]) => {
-        const allFollowingStreamers: User[] = followingStreamersResult.map(
-          (fs) => fs.user
-        );
-        const followerStreamerIds = allFollowingStreamers.map((fs) => fs.id);
+      map(
+        ([
+          liveStreamersResult,
+          followingStreamersResult,
+          recommendedStreamersResult,
+        ]) => {
+          // prevent duplicates
+          const liveStreamerIds = liveStreamersResult.map((ls) => ls.user.id);
+          const allFollowingStreamerIds = Array.from(
+            new Set([
+              ...liveStreamerIds,
+              ...followingStreamersResult.map((fs) => fs.user.id),
+            ])
+          );
 
-        this.authService.updateFollowingStreamers(followerStreamerIds);
+          this.authService.updateFollowingStreamers(allFollowingStreamerIds);
 
-        const recommendedStreamers = recommendedLiveStreamersResult.filter(
-          (ls) => !followerStreamerIds.includes(ls.user.id)
-        );
+          const allRecommendedStreamerIds = Array.from(
+            new Set([
+              ...liveStreamerIds,
+              ...recommendedStreamersResult
+                .filter((rs) => !allFollowingStreamerIds.includes(rs.user.id))
+                .map((rs) => rs.user.id),
+            ])
+          );
 
-        // Filter following streamers into live and offline
-        const liveFollowingStreamers = recommendedLiveStreamersResult.filter(
-          (ls) => followerStreamerIds.includes(ls.user.id)
-        );
-        const offlineFollowingStreamers = allFollowingStreamers.filter(
-          (fs) =>
-            !liveFollowingStreamers.some(
-              (lfs: StreamDto) => lfs.user.id === fs.id
-            )
-        );
+          const followingStreamers = followingStreamersResult.filter((fs) =>
+            allFollowingStreamerIds.includes(fs.user.id)
+          );
 
-        const followingStreamers: StreamerDto[] = [
-          ...liveFollowingStreamers,
-          ...offlineFollowingStreamers,
-        ];
-
-        return {
-          recommendedStreamers,
-          followingStreamers,
-        };
-      })
+          const recommendedStreamers = recommendedStreamersResult.filter((rs) =>
+            allRecommendedStreamerIds.includes(rs.user.id)
+          );
+          return {
+            recommendedStreamers,
+            followingStreamers,
+          };
+        }
+      )
     );
   }
 
   private getFollowingStreamers() {
     return this.authService.isAuthenticated()
-      ? this.streamersProxyService.getFollowing()
+      ? this.streamProxyService.getFollowing()
+      : of([]);
+  }
+
+  private getBlockedStreamers() {
+    return this.authService.isAuthenticated()
+      ? this.streamProxyService.getBlocked()
       : of([]);
   }
 }

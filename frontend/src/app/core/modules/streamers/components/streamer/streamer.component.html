@@ -1,12 +1,11 @@
 @if (isLive()) {
-
 <ng-container
-  *ngTemplateOutlet="liveTemplate; context: { liveStreamer: user() }"
+  *ngTemplateOutlet="liveTemplate; context: { liveStreamer: streamer() }"
 ></ng-container>
 
 } @else {
 <ng-container
-  *ngTemplateOutlet="offlineTemplate; context: { streamer: user() }"
+  *ngTemplateOutlet="offlineTemplate; context: { streamer: streamer() }"
 ></ng-container>
 }
 
@@ -34,19 +33,21 @@
 </ng-template>
 
 <ng-template #offlineTemplate let-streamer="streamer">
+  @if (getUser(); as user) {
   <a
     class="flex flex-row justify-start items-center cursor-pointer hover:bg-muted-foreground px-5 h-12 hover:bg-gray-600"
-    [routerLink]="['/', streamer.username]"
+    [routerLink]="['/', user.username]"
     type="button"
   >
     <img
-      [src]="imageService.getProfilePictureUrl(streamer)"
+      [src]="imageService.getProfilePictureUrl(user)"
       class="w-10 h-10 rounded-full"
       alt="user image"
     />
 
     <span class="hideable text-white font-semibold px-5 truncate">
-      {{ streamer.username }}
+      {{ user.username }}
     </span>
   </a>
+  }
 </ng-template>

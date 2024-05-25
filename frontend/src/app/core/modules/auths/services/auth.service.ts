@@ -90,14 +90,13 @@ export class AuthService {
 
     userAuthDto.tokenExpiration = tokenExpiration;
 
-    this.setUser(userAuthDto);
-
     if (tokenExpiration < new Date(Date.now())) {
       return await lastValueFrom(
         this.refreshToken(this.mapToCurrentUser(userAuthDto))
       ).catch(() => localStorage.removeItem('user'));
     }
 
+    this.setUser(userAuthDto);
     return EMPTY;
   }
 
@@ -166,6 +165,8 @@ export class AuthService {
 
   logout() {
     this.#user.set(undefined);
+    this.#followingStreamIds.set([]);
+    this.#blockedStreamIds.set([]);
     localStorage.removeItem('user');
     this.streamHub
       .disconnect()
