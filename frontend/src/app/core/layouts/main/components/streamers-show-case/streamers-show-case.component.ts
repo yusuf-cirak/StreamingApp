@@ -18,6 +18,6 @@ export class StreamersShowCaseComponent {
   readonly streamersFacade = inject(StreamersFacade);
 
   readonly allStreamers = computed(
-    () => this.streamersFacade.streamers()?.allStreamers || []
+    () => this.streamersFacade.streamers()?.allStreamers
   );
 }
