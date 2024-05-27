@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { User } from '../../../../models';
 import { NgClass } from '@angular/common';
 import { ImageService } from '../../../../services/image.service';

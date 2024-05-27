@@ -14,6 +14,8 @@ public interface IStreamService : IDomainService<Stream>
     Task<GetStreamInfoDto> GetLiveStreamerByNameAsync(string streamerName,
         CancellationToken cancellationToken = default);
 
+    IAsyncEnumerable<GetStreamDto> FindStreamersByNameAsyncEnumerable(string term);
+
     Result<(GetStreamDto, int), Error> GetLiveStreamerByKeyFromCache(string streamerKey,
         CancellationToken cancellationToken = default);
 

@@ -105,6 +105,19 @@ public sealed class StreamService : IStreamService
         return new GetStreamInfoDto(streamerOption.ToDtoWithoutStream(), StreamErrors.StreamIsNotLive);
     }
 
+    public IAsyncEnumerable<GetStreamDto> FindStreamersByNameAsyncEnumerable(string term)
+    {
+        var liveStreamers = LiveStreamers;
+
+        var streamers = _efRepository
+            .Users
+            .Include(u => u.StreamOption)
+            .Where(u => EF.Functions.Like(u.Username, $"%{term}%"))
+            .Select(user => user.ResolveGetStreamDto(liveStreamers));
+
+        return streamers.AsAsyncEnumerable();
+    }
+
 
     public Result<(GetStreamDto, int), Error> GetLiveStreamerByKeyFromCache(string streamerKey,
         CancellationToken cancellationToken = default)

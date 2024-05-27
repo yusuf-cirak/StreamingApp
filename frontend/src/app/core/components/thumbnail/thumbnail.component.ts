@@ -4,6 +4,7 @@ import { StreamerAvatarComponent } from '../../modules/streamers/components/stre
 import { NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
 import { ImageService } from '../../services/image.service';
 import { ThumbnailSkeletonComponent } from './thumbnail-skeleton/thumbnail-skeleton.component';
+import { StreamerService } from '../../modules/streamers/services/streamer.service';
 
 @Component({
   selector: 'app-thumbnail',
@@ -18,12 +19,9 @@ import { ThumbnailSkeletonComponent } from './thumbnail-skeleton/thumbnail-skele
 })
 export class ThumbnailComponent {
   streamer = input.required<StreamDto>();
+  readonly streamerService = inject(StreamerService);
 
-  isLive = computed(() =>
-    !!this.streamer()?.user
-      ? !!(this.streamer() as StreamDto).streamOption?.streamKey
-      : false
-  );
+  isLive = computed(() => this.streamerService.isLive(this.streamer()));
 
   readonly imageService = inject(ImageService);
 }

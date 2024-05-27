@@ -1,0 +1,57 @@
+<div class="w-full flex flex-row items-center gap-3">
+  <form
+    class="w-full flex flex-row items-center justify-evenly text-white rounded-lg bg-tw-tertiary group relative"
+  >
+    <input
+      #searchInput
+      type="text"
+      placeholder="Search"
+      class="w-full border-none rounded-md text-white px-4 py-2 bg-tw-tertiary"
+      (input)="setSearch($any($event.target).value)"
+      [value]="term()"
+      [autofocus]="true"
+    />
+    @if (this.term()) {
+    <i
+      class="pi pi-times cursor-pointer hover:opacity-50 text-muted pr-2"
+      (click)="clearSearch()"
+    ></i>
+    } @if (dropdownVisible()) {
+    <div
+      class="suggestions-dropdown disabled:pointer-events-none"
+      #suggestionsDropdown
+    >
+      @for (streamer of searchResults(); track $index) {
+      <div class="suggestions-dropdown-item">
+        <div
+          class="item-text flex flex-row px-2 gap-3 items-center"
+          (click)="searchBarService.onStreamerClick(streamer)"
+        >
+          <app-streamer-avatar
+            [user]="streamer.user"
+            class="w-8 h-8"
+          ></app-streamer-avatar>
+          <span>
+            {{ streamer.user.username }}
+          </span>
+
+          @if (streamerService.isLive(streamer)) {
+          <span
+            class="hideable text-white bg-rose-500 text-center p-0.5 px-1.5 rounded-md text-[10px] border border-background font-semibold tracking-wide w-10 absolute right-4"
+            >LIVE</span
+          >
+          }
+        </div>
+      </div>
+      } @empty { @if (term().length) {
+      <div class="suggestions-dropdown-item">
+        <div class="item-text">No results found</div>
+      </div>
+      } }
+    </div>
+    }
+  </form>
+  <i
+    class="pi pi-search cursor-pointer text-primary-foreground hidden sm:block"
+  ></i>
+</div>

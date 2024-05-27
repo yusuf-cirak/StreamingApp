@@ -31,15 +31,22 @@ export class HttpClientService {
             ''
           )
         : '';
-
-      url += `${idParam ? `/${idParam}` : ''}${
-        requestParameter.queryString ? `?${requestParameter.queryString}` : ''
-      }`;
-      /*
-    1. ternany operator: id değeri varsa /id şeklinde endpoint'i genişlet, yoksa boş string dön
-    2. ternany operator: queryString varsa ?queryString şeklinde dön, yoksa boş string dön
-    */
     }
+
+    const queryStringsLength = requestParameter?.queryStrings?.length ?? 0;
+
+    const queryString = requestParameter.queryStrings?.reduce(
+      (queryString, current, index) => {
+        queryString += `${current.queryName}=${current.query}${
+          index !== 0 || index !== queryStringsLength - 1 ? '&' : ''
+        }`;
+        return queryString;
+      },
+      ''
+    );
+
+    url += queryString?.length ? '?' + queryString : '';
+
     return url;
   }
 
@@ -97,7 +104,7 @@ export interface RequestParameter {
   action?: string;
 
   // Http header,query string, baseUrl
-  queryString: string;
+  queryStrings: QueryString[];
   routeParams: string[];
   headers: HttpHeaders;
   baseUrl: string;
@@ -105,4 +112,9 @@ export interface RequestParameter {
   // Other services (might have different routes)
   fullEndPoint: string; // Dış dünyayla iletişime geçmemiz gerekebilir, dış dünyadaki servisin route'ı bizimkiyle uyuşmayabilir.
   withCredentials: boolean;
+}
+
+export interface QueryString {
+  queryName: string;
+  query: string;
 }

@@ -1,5 +1,6 @@
 ﻿using Application.Features.Streams.Commands.Create;
 using Application.Features.Streams.Commands.Update;
+using Application.Features.Streams.Queries.FindByName;
 using Application.Features.Streams.Queries.Get;
 using Application.Features.Streams.Queries.GetAll;
 using Application.Features.Streams.Queries.GetBlocked;
@@ -18,6 +19,14 @@ public static class StreamEndpoints
     public static void MapStreamEndpoints(this IEndpointRouteBuilder builder)
     {
         var groupBuilder = builder.MapGroup("api/streams");
+
+
+        groupBuilder.MapGet("/search",
+                async (IMediator mediator, [FromQuery] string term) =>
+                {
+                    return (await mediator.Send(new FindStreamersByNameQueryRequest(term))).ToHttpResponse();
+                })
+            .WithTags("Streams");
 
         groupBuilder.MapGet("/live",
                 async (IMediator mediator) =>

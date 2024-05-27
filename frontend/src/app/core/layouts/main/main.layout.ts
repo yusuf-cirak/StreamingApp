@@ -1,4 +1,4 @@
-import { Component, Input, input } from '@angular/core';
+import { Component } from '@angular/core';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { StreamComponent } from '../../modules/streams/stream.component';
@@ -15,6 +15,4 @@ import { StreamersShowCaseComponent } from './components/streamers-show-case/str
   ],
   templateUrl: './main.layout.html',
 })
-export class MainLayout {
-  streamerName = input<string>();
-}
+export class MainLayout {}
