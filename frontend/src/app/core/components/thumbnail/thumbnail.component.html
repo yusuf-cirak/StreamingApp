@@ -36,7 +36,15 @@
     fill
     alt="Thumbnail"
     class="object-cover transition-transform group-hover:translate-x-2 group-hover:-translate-y-2 rounded-md"
+    [hidden]="!isLoaded()"
+    (load)="setIsLoaded(true)"
   />
+
+  @if (!isLoaded()) {
+  <div
+    class="object-cover transition-transform group-hover:translate-x-2 group-hover:-translate-y-2 rounded-md animate-pulse bg-gray-400 w-full h-full"
+  ></div>
+  }
 </ng-template>
 
 <ng-template #defaultThumbnailContent>

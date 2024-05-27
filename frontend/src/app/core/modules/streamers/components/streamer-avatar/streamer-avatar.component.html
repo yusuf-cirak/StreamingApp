@@ -2,7 +2,12 @@
   [src]="imageService.getProfilePictureUrl(user())"
   class="rounded-full"
   alt="user image"
+  [hidden]="!isLoaded()"
+  (load)="setIsLoaded(true)"
   [ngClass]="{
     'ring-2 ring-rose-500 border border-rose-500': isLive()
   }"
 />
+@if (!isLoaded()) {
+<div class="w-full h-full bg-gray-400 animate-pulse rounded-full"></div>
+}

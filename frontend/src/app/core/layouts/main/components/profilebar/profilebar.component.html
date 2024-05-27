@@ -1,9 +1,10 @@
 <div #profileMenuWrapperRef>
-  <img
-    [src]="imageService.getProfilePictureUrl(authService.user()!)"
-    class="w-10 h-10 rounded-full cursor-pointer"
+  <app-streamer-avatar
+    [user]="authService.user()!"
+    class="flex w-12 h-12 rounded-full cursor-pointer"
     (click)="toggleProfileMenu()"
-  />
+  ></app-streamer-avatar>
+
   @if(isProfileMenuOpen()) {
   <ul
     [@fadeAnimation]

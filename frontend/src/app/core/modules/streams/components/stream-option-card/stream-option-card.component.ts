@@ -58,6 +58,8 @@ export class StreamOptionCardComponent {
 
   thumbnailUrl = signal<string>(this.form.value.thumbnail as string);
 
+  thumbnailLoaded = signal(false);
+
   isThumbnailUpdated = signal(false);
 
   submit() {

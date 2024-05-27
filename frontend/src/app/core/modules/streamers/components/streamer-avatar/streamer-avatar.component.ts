@@ -13,7 +13,14 @@ import { StreamerAvatarSkeletonComponent } from './streamer-avatar-skeleton/stre
 export class StreamerAvatarComponent {
   readonly imageService = inject(ImageService);
 
+  readonly user = input.required<User>();
+
   readonly isLive = input(false);
 
-  readonly user = input.required<User>();
+  readonly #isLoaded = signal(false);
+  readonly isLoaded = this.#isLoaded.asReadonly();
+
+  setIsLoaded(value: boolean) {
+    this.#isLoaded.set(value);
+  }
 }

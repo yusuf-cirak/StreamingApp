@@ -1,4 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { StreamDto } from '../../modules/streams/contracts/stream-dto';
 import { StreamerAvatarComponent } from '../../modules/streamers/components/streamer-avatar/streamer-avatar.component';
 import { NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
@@ -24,4 +24,11 @@ export class ThumbnailComponent {
   isLive = computed(() => this.streamerService.isLive(this.streamer()));
 
   readonly imageService = inject(ImageService);
+
+  #isLoaded = signal(false);
+  readonly isLoaded = this.#isLoaded.asReadonly();
+
+  setIsLoaded(value: boolean) {
+    this.#isLoaded.set(value);
+  }
 }

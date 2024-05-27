@@ -10,11 +10,12 @@ import {
 import { fadeAnimation } from '../../../../../shared/animations/fade-animation';
 import { AuthService } from '@streaming-app/core';
 import { ImageService } from '../../../../services/image.service';
+import { StreamerAvatarComponent } from '../../../../modules/streamers/components/streamer-avatar/streamer-avatar.component';
 
 @Component({
   selector: 'app-main-profilebar',
   standalone: true,
-  imports: [],
+  imports: [StreamerAvatarComponent],
   templateUrl: './profilebar.component.html',
   animations: [fadeAnimation],
 })

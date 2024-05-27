@@ -34,7 +34,7 @@ export class InputComponent {
 
   @Input() inputType?: 'text' | 'number' | 'password';
 
-  @Input() inputClass?: string = '';
+  @Input() inputClass?: string;
 
   @Input() dropdownVisible = false;
 

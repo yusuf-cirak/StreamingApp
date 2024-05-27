@@ -66,8 +66,16 @@
             <app-trash-icon />
           </button>
         </div>
-        <img [src]="thumbnailUrl" class="w-full h-full" />
-        }@else {
+        <img
+          [src]="thumbnailUrl"
+          class="w-full h-full"
+          [hidden]="!thumbnailLoaded()"
+          (load)="thumbnailLoaded.set(true)"
+        />
+
+        @if (!thumbnailLoaded()) {
+        <div class="w-full h-full bg-gray-200 animate-pulse"></div>
+        } }@else {
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class="w-11 mb-2 fill-gray-500"
