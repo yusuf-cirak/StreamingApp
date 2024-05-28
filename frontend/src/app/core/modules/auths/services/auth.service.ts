@@ -6,6 +6,7 @@ import { UserRegisterDto } from '../../../dtos/user-register-dto';
 import { UserRefreshTokenDto } from '../../../dtos/user-refresh-token-dto';
 import { UserAuthDto } from '../dtos/user-auth-dto';
 import {
+  catchError,
   EMPTY,
   lastValueFrom,
   map,
@@ -91,9 +92,12 @@ export class AuthService {
     userAuthDto.tokenExpiration = tokenExpiration;
 
     if (tokenExpiration < new Date(Date.now())) {
-      return await lastValueFrom(
-        this.refreshToken(this.mapToCurrentUser(userAuthDto))
-      ).catch(() => localStorage.removeItem('user'));
+      return this.refreshToken(this.mapToCurrentUser(userAuthDto)).pipe(
+        catchError(() => {
+          localStorage.removeItem('user');
+          return EMPTY;
+        })
+      );
     }
 
     this.setUser(userAuthDto);

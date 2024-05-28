@@ -1,0 +1,167 @@
+@defer (when isLoaded()) {
+<div
+  class="chat-settings p-6 text-white w-full flex flex-col items-center justify-center"
+>
+  <div class="mb-4">
+    <h1 class="text-2xl font-bold">Community Settings</h1>
+  </div>
+
+  <section class="bg-gray-50 dark:bg-gray-900 py-3 sm:py-5 w-full h-full">
+    <div class="px-4 mx-auto max-w-screen-2xl lg:px-12">
+      <div
+        class="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg"
+      >
+        <div
+          class="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4"
+        >
+          <span class="font-semibold text-lg text-gray-400">Blocked Users</span>
+          <!-- <div class="flex items-center">
+            <label for="simple-search" class="sr-only">Search</label>
+            <div class="relative w-full">
+              <div
+                class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="w-5 h-5 text-gray-500 dark:text-gray-400"
+                  fill="currentColor"
+                  viewbox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <input
+                type="text"
+                id="simple-search"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                placeholder="Search keyword"
+                (input)="filterKeyword.set($any($event).target.value)"
+              />
+
+            </div>
+          </div> -->
+          <button
+            class="flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            [disabled]="!selectedRows()?.length"
+            (click)="dialogVisible.set(true)"
+          >
+            Unblock Selected
+          </button>
+        </div>
+        <div class="overflow-x-auto">
+          <table
+            class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
+          >
+            <thead
+              class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+            >
+              <tr>
+                <th scope="col" class="p-4">
+                  <div class="flex items-center">
+                    <input
+                      id="checkbox-all"
+                      type="checkbox"
+                      class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                      (click)="selectAll($any($event).target.checked)"
+                      [checked]="isAllSelected()"
+                    />
+                    <label for="checkbox-all" class="sr-only">checkbox</label>
+                  </div>
+                </th>
+                <th scope="col" class="px-4 py-3">User</th>
+                <th scope="col" class="px-4 py-3">Blocked At</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of filteredRows(); track $index) {
+
+              <tr
+                class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <td class="w-4 px-4 py-3">
+                  <div class="flex items-center">
+                    <input
+                      id="checkbox-table-search-1"
+                      type="checkbox"
+                      (click)="selectRow($index, $any($event).target.checked)"
+                      [checked]="isSelected(item)"
+                      class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <label for="checkbox-table-search-1" class="sr-only"
+                      >checkbox</label
+                    >
+                  </div>
+                </td>
+                <td class="px-4 py-2">
+                  <div
+                    class="flex items-center text-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  >
+                    <app-streamer-avatar
+                      [user]="item"
+                      class="w-8 h-8 mr-3"
+                    ></app-streamer-avatar>
+                    <span>{{ item.username }}</span>
+                  </div>
+                </td>
+                <td class="px-4 py-2">
+                  <span
+                    class="text-white text-sm font-medium px-2 py-0.5 rounded"
+                    ><p>
+                      {{
+                        toDate(item.blockedAt) | date : "dd/MM/yyyy HH:mm:ss"
+                      }}
+                    </p>
+                  </span>
+                </td>
+              </tr>
+              }@empty { @if (isLoaded()) {
+
+              <span
+                class="w-full h-10 flex flex-col text-center justify-center items-center text-sm font-semibold"
+              >
+                No results found.
+              </span>
+              } }
+            </tbody>
+          </table>
+        </div>
+
+        @if (isLoaded()) {
+        <p-paginator
+          (onPageChange)="onPageChange($event)"
+          styleClass="bg-gray-800 text-white"
+          [first]="startIndex()"
+          [rows]="rowCount()"
+          [totalRecords]="rowsLength()"
+          [showCurrentPageReport]="true"
+          [showPageLinks]="true"
+          [showJumpToPageDropdown]="false"
+          currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
+        />
+        }
+      </div>
+    </div>
+  </section>
+</div>
+}@placeholder {
+<app-community-settings-skeleton></app-community-settings-skeleton>
+}@error {
+<div class="flex items-center justify-center w-full h-full">
+  <div class="text-center">
+    <h1 class="text-2xl font-bold">Error</h1>
+    <p class="text-gray-500 dark:text-gray-400">
+      An error occurred while fetching the data.
+    </p>
+  </div>
+</div>
+}
+
+<app-dialog
+  [(visible)]="dialogVisible"
+  [onConfirm]="onUnblockConfirm"
+></app-dialog>

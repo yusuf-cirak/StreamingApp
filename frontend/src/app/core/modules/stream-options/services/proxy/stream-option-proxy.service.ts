@@ -14,13 +14,11 @@ export class StreamOptionProxyService {
   private readonly authService = inject(AuthService);
 
   getChatSettings(streamerId: string) {
-    return this.httpClient.get<GetChatSettingsDto>(
-      {
-        controller: 'stream-options',
-        action: 'chat-settings',
-      },
-      streamerId
-    );
+    return this.httpClient.get<GetChatSettingsDto>({
+      controller: 'stream-options',
+      action: 'chat-settings',
+      routeParams: [streamerId],
+    });
   }
 
   patchChatSettings(chatSettingsDto: PatchStreamChatSettingsDto) {

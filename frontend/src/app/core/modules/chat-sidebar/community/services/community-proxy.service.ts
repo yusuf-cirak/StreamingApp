@@ -37,7 +37,6 @@ export class CommunityProxyService {
     return this.httpClient.post(
       {
         controller: 'stream-blocked-users',
-        headers: new HttpHeaders().set('SkipInterceptor', 'true'),
       },
       blockUserDto
     );
@@ -47,7 +46,6 @@ export class CommunityProxyService {
     return this.httpClient.put(
       {
         controller: 'stream-blocked-users',
-        headers: new HttpHeaders().set('SkipInterceptor', 'true'),
       },
       unblockUserDto
     );

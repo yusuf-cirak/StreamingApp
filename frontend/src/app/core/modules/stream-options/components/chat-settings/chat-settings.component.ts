@@ -85,7 +85,7 @@ export class ChatSettingsComponent {
     const formValues = {
       ...rest,
       chatDisabled: !chatEnabled,
-      streamerId: this.authService.userId()!,
+      streamerId: this.authService.userId()!, // todo: change this
     } as PatchStreamChatSettingsDto;
 
     this.streamOptionProxyService
