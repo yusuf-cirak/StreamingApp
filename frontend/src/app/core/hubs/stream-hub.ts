@@ -1,6 +1,6 @@
 import { inject, Injectable, signal, Signal } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
-import { catchError, EMPTY, from, Subject, tap } from 'rxjs';
+import { catchError, EMPTY, from, Subject, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { StreamHubAction } from './stream-hub-action';
 import { StreamDto } from '../modules/streams/contracts/stream-dto';
@@ -36,7 +36,7 @@ export class StreamHub {
         console.error(err);
         this.connectedToHub.set(false);
 
-        return EMPTY;
+        return throwError(err);
       })
     );
   }
@@ -49,7 +49,7 @@ export class StreamHub {
       }),
       catchError((err) => {
         console.error(err);
-        return EMPTY;
+        return throwError(err);
       })
     );
   }
@@ -105,7 +105,7 @@ export class StreamHub {
       }),
       catchError((err) => {
         console.error(err);
-        return EMPTY;
+        return throwError(err);
       })
     );
   }
@@ -117,7 +117,7 @@ export class StreamHub {
       tap(() => console.log('Leaved stream')),
       catchError((err) => {
         console.error(err);
-        return EMPTY;
+        return throwError(err);
       })
     );
   }
@@ -136,7 +136,7 @@ export class StreamHub {
       tap(() => console.log('Message sent')),
       catchError((err) => {
         console.error(err);
-        return err;
+        return throwError(err);
       })
     );
   }

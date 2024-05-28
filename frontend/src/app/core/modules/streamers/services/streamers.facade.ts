@@ -1,27 +1,29 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { forkJoin, map, merge, of, switchMap } from 'rxjs';
+import { concatMap, forkJoin, map, merge, of, switchMap } from 'rxjs';
 import { AuthService } from '@streaming-app/core';
 import { StreamHub } from '../../../hubs/stream-hub';
 import { StreamProxyService } from '../../streams/services/stream-proxy.service';
 import { StreamFollowerService } from '../../streams/services/stream-follower.service';
 import { StreamDto } from '../../streams/contracts/stream-dto';
+import { StreamOptionService } from '../../streams/services/stream-option.service';
 
 @Injectable({ providedIn: 'root' })
 export class StreamersFacade {
   private readonly streamProxyService = inject(StreamProxyService);
+  private readonly streamOptionService = inject(StreamOptionService);
+  private readonly streamFollowerService = inject(StreamFollowerService);
   private readonly authService = inject(AuthService);
   private readonly streamHub = inject(StreamHub);
-
-  readonly follow$ = inject(StreamFollowerService).follow$;
 
   readonly streamers = toSignal(
     merge(
       toObservable(this.authService.isAuthenticated),
       this.streamHub.streamStarted$,
       this.streamHub.streamEnd$,
-      this.follow$ // todo: fix this
-    ).pipe(switchMap(() => this.getStreamers()))
+      this.streamFollowerService.follow$, // todo: fix this
+      this.streamOptionService.optionUpdate$
+    ).pipe(concatMap(() => this.getStreamers()))
   );
 
   readonly followingStreamers = computed(

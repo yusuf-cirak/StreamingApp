@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { AuthService } from '@streaming-app/core';
 import { Subject, tap } from 'rxjs';
 import {
@@ -13,12 +13,12 @@ export class StreamFollowerService {
   );
   private readonly authService = inject(AuthService);
 
-  readonly follow$ = new Subject<void>();
+  readonly follow$ = new Subject<boolean>();
 
   follow(followDto: StreamFollowDto) {
     return this.streamFollowerProxyService.follow(followDto).pipe(
       tap(() => {
-        this.follow$.next();
+        this.follow$.next(true);
         const followingStreamers = this.authService.followingStreamIds() || [];
         this.authService.updateFollowingStreamers([
           ...followingStreamers,
@@ -31,7 +31,7 @@ export class StreamFollowerService {
   unfollow(unfollowDto: StreamFollowDto) {
     return this.streamFollowerProxyService.unfollow(unfollowDto).pipe(
       tap(() => {
-        this.follow$.next();
+        this.follow$.next(false);
         this.authService.updateFollowingStreamers(
           this.authService
             .followingStreamIds()

@@ -7,9 +7,10 @@ import { UserRefreshTokenDto } from '../../../dtos/user-refresh-token-dto';
 import { UserAuthDto } from '../dtos/user-auth-dto';
 import {
   catchError,
-  EMPTY,
-  lastValueFrom,
+  concatMap,
   map,
+  mergeMap,
+  of,
   Subject,
   switchMap,
   tap,
@@ -80,34 +81,47 @@ export class AuthService {
     };
   }
 
-  async initializeUser() {
+  /**
+   * Initializes the user from local storage. If the user data is found but the token has expired,
+   * it attempts to refresh the token. If the token is still valid, it sets the user.
+   *
+   * @returns {Observable<boolean>} An observable that emits `true` if user connected to the hub successfully,
+   *                                or `false`.
+   */
+  initializeUser() {
     const userAuthDto = this.getUserFromLocalStorage();
 
     if (!userAuthDto) {
-      return throwError('User is not authenticated');
+      this.setUser(undefined);
+      return of(false);
     }
 
-    const tokenExpiration = new Date(userAuthDto.tokenExpiration);
-
-    userAuthDto.tokenExpiration = tokenExpiration;
-
-    if (tokenExpiration < new Date(Date.now())) {
-      return this.refreshToken(this.mapToCurrentUser(userAuthDto)).pipe(
-        catchError(() => {
-          localStorage.removeItem('user');
-          return EMPTY;
-        })
-      );
-    }
-
-    this.setUser(userAuthDto);
-    return EMPTY;
+    return of(userAuthDto).pipe(
+      map((userAuthDto) => {
+        userAuthDto.tokenExpiration = new Date(userAuthDto.tokenExpiration);
+        return userAuthDto;
+      }),
+      concatMap((userAuthDto) => {
+        if (userAuthDto.tokenExpiration < new Date(Date.now())) {
+          return this.refreshToken(this.mapToCurrentUser(userAuthDto)).pipe(
+            catchError(() => {
+              localStorage.removeItem('user');
+              return of(false);
+            }),
+            map(() => of(true))
+          );
+        } else {
+          this.setUser(userAuthDto);
+          return of(false);
+        }
+      })
+    );
   }
 
-  setUser(userAuthDto: UserAuthDto) {
+  setUser(userAuthDto: UserAuthDto | undefined) {
     if (!userAuthDto) {
-      this.#user.set(undefined);
       localStorage.removeItem('user');
+      this.#user.set(undefined);
       return;
     }
 
@@ -128,8 +142,8 @@ export class AuthService {
   login(credentials: UserLoginDto) {
     return this.authProxyService.login(credentials).pipe(
       tap((userAuthDto) => this.setUser(userAuthDto)),
-      switchMap(() => this.streamHub.disconnect()),
-      switchMap(() => this.streamHub.buildAndConnect(this.user()?.accessToken)),
+      concatMap(() => this.streamHub.disconnect()),
+      concatMap(() => this.streamHub.buildAndConnect(this.user()?.accessToken)),
       tap(() => this.login$.next())
     );
   }
@@ -137,8 +151,8 @@ export class AuthService {
   register(credentials: UserRegisterDto) {
     return this.authProxyService.register(credentials).pipe(
       tap((userAuthDto) => this.setUser(userAuthDto)),
-      switchMap(() => this.streamHub.disconnect()),
-      switchMap(() => this.streamHub.buildAndConnect(this.user()?.accessToken)),
+      concatMap(() => this.streamHub.disconnect()),
+      concatMap(() => this.streamHub.buildAndConnect(this.user()?.accessToken)),
       tap(() => this.login$.next())
     );
   }
@@ -156,14 +170,26 @@ export class AuthService {
     };
 
     return this.authProxyService.refreshToken(userRefreshTokenDto).pipe(
-      tap((userAuthDto) => this.setUser(userAuthDto)),
-      switchMap(() => this.streamHub.disconnect()),
-      switchMap(() =>
-        this.streamHub.buildAndConnect(this.user()?.accessToken).pipe(
-          map(() => this.user()!),
-          tap(() => this.login$.next())
-        )
-      )
+      tap((userAuthDto) => {
+        this.setUser(userAuthDto);
+      }),
+      concatMap(() => {
+        const connectAndSetUser$ = this.streamHub
+          .buildAndConnect(this.user()?.accessToken)
+          .pipe(
+            map(() => this.user()!),
+            tap(() => this.login$.next())
+          );
+
+        return this.streamHub.connectedToHub()
+          ? this.streamHub.disconnect().pipe(
+              catchError(() => this.streamHub.buildAndConnect()),
+              concatMap(() => {
+                return connectAndSetUser$;
+              })
+            )
+          : connectAndSetUser$;
+      })
     );
   }
 

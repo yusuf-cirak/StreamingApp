@@ -40,7 +40,7 @@ export function authInterceptor(
             router.navigateByUrl('');
             return throwError(() => error);
           }),
-          switchMap((user) => {
+          mergeMap((user) => {
             const newRequest = request.clone({
               headers: request.headers.set(
                 'Authorization',
