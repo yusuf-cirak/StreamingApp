@@ -1,4 +1,5 @@
-﻿using Stream = Domain.Entities.Stream;
+﻿using Application.Features.Streams.Dtos;
+using Stream = Domain.Entities.Stream;
 
 namespace Application.Common.Mapping;
 
@@ -55,4 +56,9 @@ public static class MappingExtensions
             user.StreamOption.ToDto(index is -1,
                 index is not -1 ? liveStreamers[index].StreamOption!.Value.StreamKey : null));
     }
+
+
+    public static GetStreamBlockedUserDto ToStreamBlockedUserDto(this User user, DateTime blockedAt) =>
+        new(user.Id, user.Username, user.ProfileImageUrl, blockedAt);
+
 }

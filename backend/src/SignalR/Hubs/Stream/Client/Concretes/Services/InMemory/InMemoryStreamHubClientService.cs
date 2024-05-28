@@ -25,6 +25,12 @@ public sealed class InMemoryStreamHubClientService : IStreamHubClientService
         return _streamHubUserService.OnDisconnectedFromHubAsync(connectionId);
     }
 
+    public ValueTask<IEnumerable<HubConnectionId>> GetStreamViewerConnectionIds(string streamerName,
+        IEnumerable<string> userIds)
+    {
+        return _streamHubChatRoomService.GetStreamViewerConnectionIds(streamerName, userIds);
+    }
+
     public ValueTask<IEnumerable<string>> GetStreamViewerConnectionIds(string streamerName)
     {
         return _streamHubChatRoomService.GetStreamViewerConnectionIds(streamerName);

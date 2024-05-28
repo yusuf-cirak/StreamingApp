@@ -20,6 +20,32 @@ public sealed class InMemoryStreamHubChatRoomService : IStreamHubChatRoomService
         _streamViewers = hubState.StreamViewers;
     }
 
+    public ValueTask<HubConnectionInfo?> GetStreamViewers(string streamerName)
+    {
+        if (!_streamViewers.TryGetValue(streamerName, out var hubConnectionInfo))
+        {
+            return ValueTask.FromResult<HubConnectionInfo?>(null);
+        }
+
+        return ValueTask.FromResult(hubConnectionInfo)!;
+    }
+
+    public ValueTask<IEnumerable<HubConnectionId>> GetStreamViewerConnectionIds(string streamerName,
+        IEnumerable<string> userIds)
+    {
+        if (!_streamViewers.TryGetValue(streamerName, out var hubConnectionInfo))
+        {
+            return ValueTask.FromResult<IEnumerable<string>>([]);
+        }
+
+        var connectionIds = hubConnectionInfo!
+            .Users
+            .Where(kvp => userIds.Any(id => id == kvp.Value.Id))
+            .Select(kvp => kvp.Key);
+
+        return ValueTask.FromResult(connectionIds);
+    }
+
     public ValueTask<IEnumerable<string>> GetStreamViewerConnectionIds(string streamerName)
     {
         if (!_streamViewers.TryGetValue(streamerName, out var hubConnectionInfo))

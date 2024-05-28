@@ -9,7 +9,7 @@ public readonly record struct StreamBlockedUserDeleteCommandRequest
 {
     public Guid StreamerId { get; init; }
 
-    public Guid BlockedUserId { get; init; }
+    public List<Guid> BlockedUserIds { get; init; }
     public AuthorizationFunctions AuthorizationFunctions { get; }
 
     public StreamBlockedUserDeleteCommandRequest()
@@ -17,10 +17,10 @@ public readonly record struct StreamBlockedUserDeleteCommandRequest
         AuthorizationFunctions = [StreamBlockedUserAuthorizationRules.CanUserBlockOrUnblockAUserFromStream];
     }
 
-    public StreamBlockedUserDeleteCommandRequest(Guid streamerId, Guid blockedUserId) : this()
+    public StreamBlockedUserDeleteCommandRequest(Guid streamerId, List<Guid> blockedUserIds) : this()
     {
         StreamerId = streamerId;
-        BlockedUserId = blockedUserId;
+        BlockedUserIds = blockedUserIds;
     }
 }
 
@@ -41,11 +41,11 @@ public sealed class
         CancellationToken cancellationToken)
     {
         var result =
-            await _streamBlockUserService.UnblockUserFromStreamAsync(request.StreamerId, request.BlockedUserId,
+            await _streamBlockUserService.UnblockUsersFromStreamAsync(request.StreamerId, request.BlockedUserIds,
                 cancellationToken);
 
-        _ = _streamBlockUserService.SendBlockNotificationToUserAsync(request.StreamerId, request.BlockedUserId,
-            isBlocked: false);
+        _ = Task.Run(()=>_streamBlockUserService.SendBlockNotificationToUsersAsync(request.StreamerId, request.BlockedUserIds,
+            isBlocked: false));
 
         return result > 0
             ? HttpResult.Success(StatusCodes.Status204NoContent)

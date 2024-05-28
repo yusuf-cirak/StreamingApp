@@ -27,14 +27,12 @@ public readonly record struct CreateStreamBlockedUserCreateCommandRequest
 public sealed class
     CreateStreamBlockedUserCreateHandler : IRequestHandler<CreateStreamBlockedUserCreateCommandRequest, HttpResult>
 {
-    private readonly IEfRepository _efRepository;
     private readonly StreamBlockedUserBusinessRules _streamBlockedUserBusinessRules;
     private readonly IStreamBlockUserService _streamBlockUserService;
 
-    public CreateStreamBlockedUserCreateHandler(IEfRepository efRepository,
+    public CreateStreamBlockedUserCreateHandler(
         StreamBlockedUserBusinessRules streamBlockedUserBusinessRules, IStreamBlockUserService streamBlockUserService)
     {
-        _efRepository = efRepository;
         _streamBlockedUserBusinessRules = streamBlockedUserBusinessRules;
         _streamBlockUserService = streamBlockUserService;
     }
@@ -55,8 +53,9 @@ public sealed class
             cancellationToken);
 
 
-        _ = _streamBlockUserService.SendBlockNotificationToUserAsync(request.StreamerId, request.BlockedUserId,
-            isBlocked: true);
+
+        _ = Task.Run(() => _streamBlockUserService.SendBlockNotificationToUsersAsync(request.StreamerId, [request.BlockedUserId],
+            isBlocked: true), cancellationToken);
 
 
         return result > 0

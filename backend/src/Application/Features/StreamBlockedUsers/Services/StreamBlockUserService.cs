@@ -1,4 +1,5 @@
 ﻿using Application.Common.Mapping;
+using Application.Features.Streams.Dtos;
 using Application.Features.Streams.Services;
 using SignalR.Hubs.Stream.Server.Abstractions;
 
@@ -30,12 +31,12 @@ public sealed class StreamBlockUserService : IStreamBlockUserService
         return _efRepository.SaveChangesAsync(cancellationToken);
     }
 
-    public Task<int> UnblockUserFromStreamAsync(Guid streamerId, Guid userId,
+    public Task<int> UnblockUsersFromStreamAsync(Guid streamerId, List<Guid> userIds,
         CancellationToken cancellationToken = default)
     {
         return _efRepository
             .StreamBlockedUsers
-            .Where(sbu => sbu.UserId == userId && sbu.StreamerId == streamerId)
+            .Where(sbu => sbu.StreamerId == streamerId && userIds.Contains(sbu.UserId))
             .ExecuteDeleteAsync(cancellationToken);
     }
 
@@ -49,7 +50,7 @@ public sealed class StreamBlockUserService : IStreamBlockUserService
         return isBlocked;
     }
 
-    public async Task SendBlockNotificationToUserAsync(Guid streamerId, Guid userId, bool isBlocked)
+    public async Task SendBlockNotificationToUsersAsync(Guid streamerId, List<Guid> userIds, bool isBlocked)
     {
         var streamerDto = _streamCacheService.LiveStreamers.SingleOrDefault(ls => ls.User.Id == streamerId)?.User ??
                           await _efRepository.Users.Where(u => u.Id == streamerId).Select(u => u.ToDto())
@@ -60,6 +61,16 @@ public sealed class StreamBlockUserService : IStreamBlockUserService
             return;
         }
 
-        await _streamHubServerService.OnBlockFromStreamAsync(streamerDto, userId, isBlocked);
+        await _streamHubServerService.OnBlockFromStreamAsync(streamerDto, userIds, isBlocked);
+    }
+
+    public IAsyncEnumerable<GetStreamBlockedUserDto> GetBlockedUsersOfStreamAsyncEnumerable(Guid streamerId)
+    {
+        return _efRepository
+            .StreamBlockedUsers
+            .Include(sbu => sbu.User)
+            .Where(sbu => sbu.StreamerId == streamerId)
+            .Select(sbu => sbu.User.ToStreamBlockedUserDto(sbu.CreatedDate))
+            .AsAsyncEnumerable();
     }
 }

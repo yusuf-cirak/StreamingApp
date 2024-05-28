@@ -1,5 +1,6 @@
 ﻿using Application.Features.StreamBlockedUsers.Commands.Create;
 using Application.Features.StreamBlockedUsers.Commands.Delete;
+using Application.Features.StreamBlockedUsers.Queries.GetBlockedUsers;
 using Application.Features.StreamBlockedUsers.Queries.GetIsBlockedFromStream;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,16 @@ public static class StreamBlockedUserEndpoints
     public static void MapStreamBlockedUserEndpoints(this IEndpointRouteBuilder builder)
     {
         var groupBuilder = builder.MapGroup("api/stream-blocked-users");
+
+        groupBuilder.MapGet("/all/{streamerId}",
+                async (
+                    Guid streamerId,
+                    IMediator mediator) =>
+                {
+                    return (await mediator.Send(new GetBlockedUsersFromStreamQueryRequest(streamerId)))
+                        .ToHttpResponse();
+                })
+            .WithTags("StreamBlockedUsers");
 
         groupBuilder.MapGet("/{streamerId}",
                 async (

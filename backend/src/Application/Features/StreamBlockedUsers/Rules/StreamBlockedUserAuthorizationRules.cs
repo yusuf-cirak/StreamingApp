@@ -48,7 +48,8 @@ public static class StreamBlockedUserAuthorizationRules
         var roles = claims.GetRoles();
 
         return roles.Any(rc =>
-            rc.Name == RoleConstants.StreamSuperModerator && rc.Value == streamerIdString);
+            rc.Name == RoleConstants.StreamSuperModerator ||
+            rc.Name == RoleConstants.StreamModerator && rc.Value == streamerIdString);
     }
 
     private static bool IsUserModeratorOfStreamByOperationClaim(ICollection<Claim> claims, object request)

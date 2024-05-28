@@ -60,17 +60,20 @@ public sealed class InMemoryStreamHubServerService : IStreamHubServerService
             .SendAsync(StreamHubConstant.Method.OnStreamChatMessageSendAsync, streamChatMessageDto);
     }
 
-    public async Task OnBlockFromStreamAsync(GetUserDto streamer, Guid blockUserId, bool isBlocked)
+    public async Task OnBlockFromStreamAsync(GetUserDto streamer, List<Guid> blockUserIds, bool isBlocked)
     {
-        var streamViewerConnectionId =
-            await _hubChatRoomService.GetStreamViewerConnectionId(streamer.Username, blockUserId);
+        var ids = blockUserIds.Select(id => id.ToString());
+        var streamViewerConnectionIds = (await _hubChatRoomService
+            .GetStreamViewerConnectionIds(streamer.Username, ids));
 
-        if (streamViewerConnectionId is null)
+
+        var viewerConnectionIds = streamViewerConnectionIds as HubConnectionId[] ?? streamViewerConnectionIds.ToArray();
+        
+        if (!viewerConnectionIds.Any())
         {
             return;
         }
-
-        await _hubContext.Clients.Client(streamViewerConnectionId)
-            .SendAsync(StreamHubConstant.Method.OnBlockFromStreamAsync, new StreamBlockUserDto(streamer.Id, isBlocked));
+        
+        await _hubContext.Clients.Clients(viewerConnectionIds).SendAsync(StreamHubConstant.Method.OnBlockFromStreamAsync, new StreamBlockUserDto(streamer.Id, isBlocked));
     }
 }
