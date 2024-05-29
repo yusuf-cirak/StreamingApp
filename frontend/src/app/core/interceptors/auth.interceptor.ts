@@ -4,7 +4,7 @@ import {
   HttpHandlerFn,
   HttpErrorResponse,
 } from '@angular/common/http';
-import { catchError, tap, throwError, mergeMap, switchMap } from 'rxjs';
+import { catchError, throwError, mergeMap, EMPTY } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthService } from '../services';
 
@@ -38,7 +38,7 @@ export function authInterceptor(
         return authService.refreshToken().pipe(
           catchError((_) => {
             router.navigateByUrl('');
-            return throwError(() => error);
+            return throwError(error);
           }),
           mergeMap((user) => {
             const newRequest = request.clone({

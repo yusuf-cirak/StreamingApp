@@ -1,4 +1,4 @@
-import { tap } from 'rxjs';
+import { catchError, EMPTY, tap } from 'rxjs';
 import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -13,6 +13,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '@streaming-app/core';
 import { finalize } from 'rxjs';
 import { PatchStreamChatSettingsDto } from '../../dtos/patch-stream-chat-settings-dto';
+import { ToastrService } from 'ngx-toastr';
 @Component({
   standalone: true,
   selector: 'app-chat-settings',
@@ -28,11 +29,12 @@ import { PatchStreamChatSettingsDto } from '../../dtos/patch-stream-chat-setting
   providers: [StreamOptionProxyService],
 })
 export class ChatSettingsComponent {
+  readonly toastr = inject(ToastrService);
   readonly destroyRef = inject(DestroyRef);
   readonly fb = inject(NonNullableFormBuilder);
   readonly route = inject(ActivatedRoute);
 
-  readonly #loaded = signal<boolean>(true);
+  readonly #loaded = signal(false);
   readonly loaded = this.#loaded.asReadonly();
 
   readonly streamOptionProxyService = inject(StreamOptionProxyService);
@@ -92,6 +94,16 @@ export class ChatSettingsComponent {
       .patchChatSettings(formValues)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
+        catchError((error) => {
+          this.toastr.error(
+            error?.error?.message || 'Something went wrong',
+            'Error'
+          );
+          return EMPTY;
+        }),
+        tap(() => {
+          this.toastr.success('Chat settings updated', 'Success');
+        }),
         finalize(() => {
           this.form.enable();
           this.form.markAsUntouched();

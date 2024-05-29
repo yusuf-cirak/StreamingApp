@@ -48,8 +48,9 @@ export class StreamHub {
         console.log('Disconnected from stream hub');
       }),
       catchError((err) => {
-        console.error(err);
-        return throwError(err);
+        console.log('error when disconnecting');
+        console.log(err);
+        return EMPTY;
       })
     );
   }
@@ -152,5 +153,7 @@ export class StreamHub {
         accessTokenFactory: () => accessToken!,
       })
       .build();
+
+    console.log('builded new connection!');
   }
 }

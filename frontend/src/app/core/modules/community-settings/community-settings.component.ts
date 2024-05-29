@@ -131,7 +131,6 @@ export class CommunitySettingsComponent {
       return;
     }
     this.dialogVisible.set(false);
-    debugger;
     this.communitySettingsService
       .unblockUsers(
         this.streamerId()!,

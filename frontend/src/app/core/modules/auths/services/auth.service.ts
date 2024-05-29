@@ -8,6 +8,8 @@ import { UserAuthDto } from '../dtos/user-auth-dto';
 import {
   catchError,
   concatMap,
+  EMPTY,
+  from,
   map,
   mergeMap,
   of,
@@ -174,21 +176,24 @@ export class AuthService {
         this.setUser(userAuthDto);
       }),
       concatMap(() => {
-        const connectAndSetUser$ = this.streamHub
-          .buildAndConnect(this.user()?.accessToken)
-          .pipe(
-            map(() => this.user()!),
-            tap(() => this.login$.next())
-          );
+        const connectAndReturnUser$ = of(
+          this.streamHub.buildAndConnect(this.user()?.accessToken)
+        ).pipe(
+          map(() => this.user()!),
+          tap(() => this.login$.next())
+        );
 
         return this.streamHub.connectedToHub()
           ? this.streamHub.disconnect().pipe(
-              catchError(() => this.streamHub.buildAndConnect()),
+              catchError((error) => {
+                console.log(error);
+                return throwError(error);
+              }),
               concatMap(() => {
-                return connectAndSetUser$;
+                return connectAndReturnUser$;
               })
             )
-          : connectAndSetUser$;
+          : connectAndReturnUser$;
       })
     );
   }
