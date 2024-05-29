@@ -1,4 +1,5 @@
 ﻿using Application.Features.Users.Commands.Update;
+using Application.Features.Users.Commands.UpdateProfileImage;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel;
@@ -10,7 +11,7 @@ public static class UserEndpoints
     public static void MapUserEndpoints(this IEndpointRouteBuilder builder)
     {
         var groupBuilder = builder.MapGroup("api/users");
-        
+
 
         groupBuilder.MapPut("/",
                 async ([FromBody] UpdateUserCommandRequest updateUserCommandRequest,
@@ -19,5 +20,15 @@ public static class UserEndpoints
                     return (await mediator.Send(updateUserCommandRequest)).ToHttpResponse();
                 })
             .WithTags("Users");
+
+
+        groupBuilder.MapPost("/profile-image",
+                async ([FromForm] UpdateProfileImageCommandRequest updateProfileImageCommandRequest,
+                    IMediator mediator) =>
+                {
+                    return (await mediator.Send(updateProfileImageCommandRequest)).ToHttpResponse();
+                })
+            .WithTags("Users")
+            .DisableAntiforgery();
     }
 }

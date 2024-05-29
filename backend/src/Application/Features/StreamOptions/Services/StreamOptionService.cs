@@ -93,7 +93,8 @@ public sealed class StreamOptionService : IStreamOptionService
         }
         else if (streamOption.ThumbnailUrl.Length > 0)
         {
-            _ = _imageService.DeleteImageAsync(streamOption.ThumbnailUrl, ImageConstants.Folder.StreamThumbnailFolder);
+            _ = Task.Run(() => _imageService.DeleteImageAsync(streamOption.ThumbnailUrl,
+                ImageConstants.Folder.StreamThumbnailFolder));
         }
 
         return thumbnailUrl;

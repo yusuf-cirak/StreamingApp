@@ -5,9 +5,6 @@ public readonly record struct UserErrors
     public static readonly Error NameCannotBeEmpty =
         Error.Create("User.NameCannotBeEmpty", "User name cannot be empty");
 
-    public static readonly Error DoesNotExist =
-        Error.Create("User.DoesNotExist", "User does not exist");
-
     public static readonly Error UserDoesNotExist =
         Error.Create("User.DoesNotExist", "User does not exist");
 
