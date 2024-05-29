@@ -1,5 +1,5 @@
 import { KeyValuePipe, NgClass, NgFor, NgIf } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, input, Input, Output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { LookupItem } from '../../api/lookup-item';
 
@@ -47,6 +47,8 @@ export class InputComponent {
     // this.dropdownVisible = !!arr.length;
   }
   @Input() control?: FormControl;
+
+  value = input('');
 
   currentValueOf(item: {}, selector: string): any {
     return item[selector as keyof typeof item];

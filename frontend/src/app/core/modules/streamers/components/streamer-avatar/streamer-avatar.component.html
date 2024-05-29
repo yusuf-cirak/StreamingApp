@@ -1,6 +1,6 @@
 <img
   [src]="imageService.getProfilePictureUrl(user())"
-  class="rounded-full"
+  class="w-full h-full rounded-full"
   alt="user image"
   [hidden]="!isLoaded()"
   (load)="setIsLoaded(true)"

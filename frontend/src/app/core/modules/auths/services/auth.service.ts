@@ -21,6 +21,7 @@ import {
 import { LocalStorageEventService, User } from '@streaming-app/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { StreamHub } from '../../../hubs/stream-hub';
+import { UserClaimsDto } from '../models/claim';
 
 @Injectable({
   providedIn: 'root',
@@ -71,6 +72,30 @@ export class AuthService {
       ...rest,
       roles: claims.roles,
       operationClaims: claims.operationClaims,
+    };
+  }
+
+  currentUserToAuthDto(currentUser: CurrentUser): UserAuthDto {
+    const {
+      accessToken,
+      tokenExpiration,
+      refreshToken,
+      roles,
+      operationClaims,
+      ...rest
+    } = currentUser;
+
+    const claims: UserClaimsDto = {
+      roles: roles,
+      operationClaims: operationClaims,
+    };
+
+    return {
+      ...rest,
+      accessToken,
+      refreshToken,
+      tokenExpiration: new Date(tokenExpiration),
+      claims: claims,
     };
   }
 

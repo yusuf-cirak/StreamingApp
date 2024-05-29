@@ -8,10 +8,28 @@ import { StreamProxyService } from '../../streams/services/stream-proxy.service'
   providedIn: 'root',
 })
 export class UserService {
-  readonly httpClientService = inject(HttpClientService);
-  readonly streamProxyService = inject(StreamProxyService);
+  private readonly httpClientService = inject(HttpClientService);
+  private readonly streamProxyService = inject(StreamProxyService);
 
-  readonly authService = inject(AuthService);
+  private readonly authService = inject(AuthService);
+
+  uploadProfileImage(profileImageDto: UpdateProfileImageDto) {
+    const formData = Object.entries(profileImageDto).reduce(
+      (acc, [key, value]) => {
+        acc.append(key, value);
+
+        return acc;
+      },
+      new FormData()
+    );
+    return this.httpClientService.post<string>(
+      {
+        controller: 'users',
+        action: 'profile-image',
+      },
+      formData
+    );
+  }
 
   getFollowingStreamers() {
     return this.streamProxyService.getFollowing().pipe(
@@ -33,3 +51,8 @@ export class UserService {
     );
   }
 }
+
+export type UpdateProfileImageDto = {
+  profileImageUrl: string;
+  profileImage: File;
+};

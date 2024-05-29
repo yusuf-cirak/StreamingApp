@@ -18,4 +18,8 @@ export class ImageService {
         : `${environment.defaultProfileImageApiUrl}/?background=a0a0a0&name=${user.username}`
       : '';
   }
+
+  getDefaultProfilePictureUrl(username: string): string {
+    return `${environment.defaultProfileImageApiUrl}/?background=a0a0a0&name=${username}`;
+  }
 }
