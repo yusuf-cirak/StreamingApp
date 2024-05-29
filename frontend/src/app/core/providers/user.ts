@@ -16,19 +16,20 @@ function initializeUserFactory(
   streamProxyService: StreamProxyService
 ) {
   return () => {
-    const followingAndBlocked$ = location.pathname.includes('/creator')
-      ? forkJoin([
-          streamProxyService.getBlocked(),
-          streamProxyService.getFollowing(),
-        ]).pipe(
-          tap(([blocked, following]) => {
-            authService.updateBlockedStreamers(blocked.map((b) => b.user.id));
-            authService.updateFollowingStreamers(
-              following.map((f) => f.user.id)
-            );
-          })
-        )
-      : of(null);
+    const followingAndBlocked$ =
+      location.pathname.includes('/creator') && authService.isAuthenticated()
+        ? forkJoin([
+            streamProxyService.getBlocked(),
+            streamProxyService.getFollowing(),
+          ]).pipe(
+            tap(([blocked, following]) => {
+              authService.updateBlockedStreamers(blocked.map((b) => b.user.id));
+              authService.updateFollowingStreamers(
+                following.map((f) => f.user.id)
+              );
+            })
+          )
+        : of(null);
 
     return authService.initializeUser().pipe(
       tap(() => console.log('user is initialized')),
