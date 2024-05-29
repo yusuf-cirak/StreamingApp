@@ -176,12 +176,11 @@ export class AuthService {
         this.setUser(userAuthDto);
       }),
       concatMap(() => {
-        const connectAndReturnUser$ = of(
-          this.streamHub.buildAndConnect(this.user()?.accessToken)
-        ).pipe(
-          map(() => this.user()!),
-          tap(() => this.login$.next())
-        );
+        const connectAndReturnUser = () =>
+          of(this.streamHub.buildAndConnect(this.user()?.accessToken)).pipe(
+            map(() => this.user()!),
+            tap(() => this.login$.next())
+          );
 
         return this.streamHub.connectedToHub()
           ? this.streamHub.disconnect().pipe(
@@ -190,10 +189,10 @@ export class AuthService {
                 return throwError(error);
               }),
               concatMap(() => {
-                return connectAndReturnUser$;
+                return connectAndReturnUser();
               })
             )
-          : connectAndReturnUser$;
+          : connectAndReturnUser();
       })
     );
   }
