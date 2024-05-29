@@ -158,7 +158,7 @@ public sealed class StreamService : IStreamService
 
         var getStreamDto = stream.ToDto(streamOption.Streamer.ToDto(), streamOption.ToDto());
 
-        _ = this.AddToCacheAndSendNotificationAsync(getStreamDto);
+        _ = Task.Run(()=>this.AddToCacheAndSendNotificationAsync(getStreamDto));
 
         return updateStreamKeyResult > 0;
     }
@@ -176,7 +176,7 @@ public sealed class StreamService : IStreamService
 
     public async Task AddToCacheAndSendNotificationAsync(GetStreamDto streamDto)
     {
-        await Task.Delay(TimeSpan.FromSeconds(5));
+        await Task.Delay(TimeSpan.FromSeconds(3));
 
         var updateCacheTask = _streamCacheService.AddNewStreamToCacheAsync(streamDto);
 
