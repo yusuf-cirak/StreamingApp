@@ -1,6 +1,6 @@
 ﻿using Application.Features.Streams.Services;
 
-namespace Application.Features.Streams.Queries.FindByName;
+namespace Application.Features.Streams.Queries.FindStreamersByName;
 
 public readonly record struct FindStreamersByNameQueryRequest(string Term)
     : IRequest<HttpResult<IAsyncEnumerable<GetStreamDto>>>;

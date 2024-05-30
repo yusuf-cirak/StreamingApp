@@ -70,6 +70,6 @@ public static class StreamOptionAuthorizationRules
 
         return operationClaims.Any(oc =>
             oc.Value == streamerIdString &&
-            oc.Name == OperationClaimConstants.StreamUpdateTitleDescription);
+            oc.Name == OperationClaimConstants.Stream.Write.TitleDescription);
     }
 }

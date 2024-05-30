@@ -60,6 +60,6 @@ public static class StreamBlockedUserAuthorizationRules
 
         return operationClaims.Any(oc =>
             oc.Value == streamerIdString &&
-            oc.Name == OperationClaimConstants.StreamBlockUserFromChat);
+            oc.Name == OperationClaimConstants.Stream.Write.BlockFromChat);
     }
 }

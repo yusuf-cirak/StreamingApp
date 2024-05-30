@@ -48,18 +48,37 @@ public class SeedDataGenerator
     {
         var operationClaims = new List<OperationClaim>();
         operationClaims.Add(OperationClaim.Create(
-            GuidExtensions.GenerateGuidFromString(OperationClaimConstants.StreamBlockUserFromChat),
-            OperationClaimConstants.StreamBlockUserFromChat));
+            GuidExtensions.GenerateGuidFromString(OperationClaimConstants.Stream.Read.BlockFromChat),
+            OperationClaimConstants.Stream.Read.BlockFromChat));
         operationClaims.Add(OperationClaim.Create(
-            GuidExtensions.GenerateGuidFromString(OperationClaimConstants.StreamDelayChat),
-            OperationClaimConstants.StreamDelayChat));
+            GuidExtensions.GenerateGuidFromString(OperationClaimConstants.Stream.Write.BlockFromChat),
+            OperationClaimConstants.Stream.Write.BlockFromChat));
+        
+        
         operationClaims.Add(OperationClaim.Create(
-            GuidExtensions.GenerateGuidFromString(OperationClaimConstants.StreamUpdateTitleDescription),
-            OperationClaimConstants.StreamUpdateTitleDescription));
+            GuidExtensions.GenerateGuidFromString(OperationClaimConstants.Stream.Read.DelayChat),
+            OperationClaimConstants.Stream.Read.DelayChat));
+        operationClaims.Add(OperationClaim.Create(
+            GuidExtensions.GenerateGuidFromString(OperationClaimConstants.Stream.Write.DelayChat),
+            OperationClaimConstants.Stream.Write.DelayChat));
+        
+        
+        operationClaims.Add(OperationClaim.Create(
+            GuidExtensions.GenerateGuidFromString(OperationClaimConstants.Stream.Read.TitleDescription),
+            OperationClaimConstants.Stream.Read.TitleDescription));
+        
+        operationClaims.Add(OperationClaim.Create(
+            GuidExtensions.GenerateGuidFromString(OperationClaimConstants.Stream.Write.TitleDescription),
+            OperationClaimConstants.Stream.Write.TitleDescription));
+        
 
         operationClaims.Add(OperationClaim.Create(
-            GuidExtensions.GenerateGuidFromString(OperationClaimConstants.StreamUpdateChatOptions),
-            OperationClaimConstants.StreamUpdateChatOptions));
+            GuidExtensions.GenerateGuidFromString(OperationClaimConstants.Stream.Read.ChatOptions),
+            OperationClaimConstants.Stream.Read.ChatOptions));
+        
+        operationClaims.Add(OperationClaim.Create(
+            GuidExtensions.GenerateGuidFromString(OperationClaimConstants.Stream.Write.ChatOptions),
+            OperationClaimConstants.Stream.Write.ChatOptions));
 
         return operationClaims;
     }
