@@ -10,6 +10,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { StreamBlockUserDto } from '../../../models/stream-block-user-dto';
 import { UserRoleDto } from '../../../../auths/models/role';
 import { UserOperationClaimDto } from '../../../../auths/models/operation-claim';
+import { OperationClaims } from '../../../../../constants/operation-claims';
 
 @Component({
   selector: 'app-community-viewer',
@@ -39,7 +40,10 @@ export class CommunityViewerComponent {
   ];
 
   operationClaims: UserOperationClaimDto[] = [
-    { name: 'BlockUser', value: this.streamerId() },
+    {
+      name: OperationClaims.Stream.Write.BlockFromChat,
+      value: this.streamerId(),
+    },
   ];
 
   blockViewer = output<StreamBlockUserDto>();

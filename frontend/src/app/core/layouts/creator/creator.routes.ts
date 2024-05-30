@@ -1,21 +1,38 @@
 import { Route } from '@angular/router';
 import { authGuard } from '../../guards/auth.guard';
 import { streamStateResolver } from '../../modules/streams/resolvers/stream-state.resolver';
-import { streamerGuard } from './guards/streamer.guard';
-import { streamerIdResolver } from './resolvers/streamer-id.resolver';
+import {
+  chatSettingsGuard,
+  communitySettingsGuard,
+  creatorGuard,
+  keySettingsGuard,
+} from './guards/creator-page.guard';
 
 export const creatorRoutes: Route[] = [
   {
-    path: '',
+    path: ':streamerName',
     pathMatch: 'prefix',
-    canActivate: [],
+    canActivate: [authGuard, creatorGuard],
+
     loadComponent: () =>
       import('@streaming-app/layouts/creator').then((m) => m.CreatorLayout),
     children: [
       {
+        path: 'stream',
+        pathMatch: 'full',
+        resolve: {
+          // todo: remove this. don't remove the state in stream.facade. this is why you have to pass this again.
+          streamState: streamStateResolver,
+        },
+        loadComponent: () =>
+          import('../../modules/streams/stream.component').then(
+            (c) => c.StreamComponent
+          ),
+      },
+      {
         path: 'chat-settings',
         pathMatch: 'full',
-        canActivate: [authGuard],
+        canActivate: [chatSettingsGuard],
         loadComponent: () =>
           import(
             '../../modules/stream-options/components/chat-settings/chat-settings.component'
@@ -24,40 +41,14 @@ export const creatorRoutes: Route[] = [
       {
         path: 'key',
         pathMatch: 'full',
-        canActivateChild: [authGuard],
+        canActivate: [keySettingsGuard],
         loadComponent: () =>
           import('../../modules/key/key.component').then((c) => c.KeyComponent),
       },
       {
-        path: 'stream',
-        pathMatch: 'full',
-        canActivateChild: [authGuard],
-        resolve: {
-          streamState: streamStateResolver,
-        },
-        loadComponent: () =>
-          import('../../modules/streams/stream.component').then(
-            (c) => c.StreamComponent
-          ),
-      },
-
-      {
         path: 'community',
         pathMatch: 'full',
-        canActivateChild: [authGuard],
-        resolve: {
-          streamerId: streamerIdResolver,
-        },
-        loadComponent: () =>
-          import(
-            '../../modules/community-settings/community-settings.component'
-          ).then((c) => c.CommunitySettingsComponent),
-      },
-      {
-        path: 'community/:streamerId',
-        pathMatch: 'full',
-        canActivateChild: [authGuard, streamerGuard],
-
+        canActivate: [communitySettingsGuard],
         loadComponent: () =>
           import(
             '../../modules/community-settings/community-settings.component'

@@ -1,19 +1,19 @@
 import { catchError, EMPTY, tap } from 'rxjs';
-import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, Signal, signal } from '@angular/core';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { min, max } from '../../../../validators';
 import { RippleModule } from 'primeng/ripple';
 import { ButtonModule } from 'primeng/button';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ChatSettingsSkeletonComponent } from './skeleton/chat-settings-skeleton.component';
 import { StreamOptionProxyService } from '../../services/proxy/stream-option-proxy.service';
-import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '@streaming-app/core';
 import { finalize } from 'rxjs';
 import { PatchStreamChatSettingsDto } from '../../dtos/patch-stream-chat-settings-dto';
 import { ToastrService } from 'ngx-toastr';
+import { CreatorService } from '../../../../layouts/creator/services/creator-service';
 @Component({
   standalone: true,
   selector: 'app-chat-settings',
@@ -32,7 +32,10 @@ export class ChatSettingsComponent {
   readonly toastr = inject(ToastrService);
   readonly destroyRef = inject(DestroyRef);
   readonly fb = inject(NonNullableFormBuilder);
-  readonly route = inject(ActivatedRoute);
+
+  readonly creatorService = inject(CreatorService);
+
+  readonly streamerId = this.creatorService.streamerId as Signal<string>;
 
   readonly #loaded = signal(false);
   readonly loaded = this.#loaded.asReadonly();
@@ -83,11 +86,10 @@ export class ChatSettingsComponent {
     }
     this.form.disable();
     const { chatEnabled, ...rest } = value;
-
     const formValues = {
       ...rest,
       chatDisabled: !chatEnabled,
-      streamerId: this.authService.userId()!, // todo: change this
+      streamerId: this.streamerId(),
     } as PatchStreamChatSettingsDto;
 
     this.streamOptionProxyService

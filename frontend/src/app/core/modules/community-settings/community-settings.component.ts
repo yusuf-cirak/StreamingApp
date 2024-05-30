@@ -1,11 +1,11 @@
 import { DatePipe, NgClass } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, Signal, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { GetStreamBlockedUserDto } from './contracts/get-stream-blocked-user-dto';
 import { CommunitySettingsService } from './services/community-settings.service';
 import { ActivatedRoute } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
   catchError,
   EMPTY,
@@ -20,6 +20,7 @@ import { StreamerAvatarComponent } from '../streamers/components/streamer-avatar
 import { CommunitySettingsSkeletonComponent } from './community-settings-skeleton/community-settings-skeleton.component';
 import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
 import { ToastrService } from 'ngx-toastr';
+import { CreatorService } from '../../layouts/creator/services/creator-service';
 @Component({
   selector: 'app-community-settings',
   standalone: true,
@@ -36,13 +37,12 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class CommunitySettingsComponent {
   private readonly toastr = inject(ToastrService);
-  private readonly activatedRoute = inject(ActivatedRoute);
-
-  private readonly streamerId = toSignal(
-    this.activatedRoute.data.pipe(map((data) => data['streamerId'] as string))
-  );
 
   private readonly communitySettingsService = inject(CommunitySettingsService);
+
+  private readonly creatorService = inject(CreatorService);
+
+  readonly streamerId = this.creatorService.streamerId as Signal<string>;
 
   readonly update$ = new Subject<void>();
 
@@ -118,10 +118,10 @@ export class CommunitySettingsComponent {
 
   private getStreamBlockedUsers() {
     return merge(this.update$).pipe(
-      startWith(null),
-      switchMap(() =>
-        this.communitySettingsService.getBlockedUsers(this.streamerId()!)
-      ),
+      startWith(0),
+      switchMap(() => {
+        return this.communitySettingsService.getBlockedUsers(this.streamerId());
+      }),
       tap(() => this.#isLoaded.set(true))
     );
   }

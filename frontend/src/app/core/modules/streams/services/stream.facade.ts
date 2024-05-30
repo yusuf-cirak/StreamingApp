@@ -59,9 +59,11 @@ export class StreamFacade {
     () => this.liveStream()?.user.username || this.#streamerName()
   );
 
-  readonly isHost = computed(
-    () => this.liveStream().user.username === this.authService.user()?.username
-  );
+  readonly isHost = computed(() => {
+    return (
+      this.liveStream()?.user.username === this.authService.user()?.username
+    );
+  });
 
   readonly chatMessages = this.#chatMessages.asReadonly();
 
@@ -179,6 +181,7 @@ export class StreamFacade {
     this.#streamer.set(null);
     this.#streamOptions.set(null);
     this.#chatMessages.set([]);
+    // todo: don't remove error and streamer here. use another state for leavedStream
   }
 
   joinStreamRoom(streamerName: string) {

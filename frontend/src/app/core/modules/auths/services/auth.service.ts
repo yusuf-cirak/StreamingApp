@@ -8,10 +8,7 @@ import { UserAuthDto } from '../dtos/user-auth-dto';
 import {
   catchError,
   concatMap,
-  EMPTY,
-  from,
   map,
-  mergeMap,
   of,
   Subject,
   switchMap,
