@@ -1,6 +1,6 @@
 ﻿using Application.Features.Streams.Commands.Create;
 using Application.Features.Streams.Commands.Update;
-using Application.Features.Streams.Queries.FindByName;
+using Application.Features.Streams.Queries.FindStreamersByName;
 using Application.Features.Streams.Queries.Get;
 using Application.Features.Streams.Queries.GetAll;
 using Application.Features.Streams.Queries.GetBlocked;
