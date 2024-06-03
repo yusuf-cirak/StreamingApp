@@ -11,6 +11,7 @@ import { StreamBlockUserDto } from '../../../models/stream-block-user-dto';
 import { UserRoleDto } from '../../../../auths/models/role';
 import { UserOperationClaimDto } from '../../../../auths/models/operation-claim';
 import { OperationClaims } from '../../../../../constants/operation-claims';
+import { Roles } from '../../../../../constants/roles';
 
 @Component({
   selector: 'app-community-viewer',
@@ -35,8 +36,8 @@ export class CommunityViewerComponent {
 
   roles: UserRoleDto[] = [
     { name: 'Admin' },
-    { name: 'Streamer', value: this.streamerId() },
-    { name: 'SuperModerator', value: this.streamerId() },
+    { name: Roles.Streamer, value: this.streamerId() },
+    { name: Roles.StreamSuperModerator, value: this.streamerId() },
   ];
 
   operationClaims: UserOperationClaimDto[] = [

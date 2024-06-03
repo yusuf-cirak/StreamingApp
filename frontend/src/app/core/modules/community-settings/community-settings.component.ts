@@ -11,6 +11,7 @@ import {
   EMPTY,
   map,
   merge,
+  skip,
   startWith,
   Subject,
   switchMap,
@@ -20,7 +21,7 @@ import { StreamerAvatarComponent } from '../streamers/components/streamer-avatar
 import { CommunitySettingsSkeletonComponent } from './community-settings-skeleton/community-settings-skeleton.component';
 import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
 import { ToastrService } from 'ngx-toastr';
-import { CreatorService } from '../../layouts/creator/services/creator-service';
+import { CurrentCreatorService } from '../../layouts/creator/services/current-creator-service';
 @Component({
   selector: 'app-community-settings',
   standalone: true,
@@ -40,7 +41,7 @@ export class CommunitySettingsComponent {
 
   private readonly communitySettingsService = inject(CommunitySettingsService);
 
-  private readonly creatorService = inject(CreatorService);
+  readonly creatorService = inject(CurrentCreatorService);
 
   readonly streamerId = this.creatorService.streamerId as Signal<string>;
 
@@ -117,12 +118,14 @@ export class CommunitySettingsComponent {
   );
 
   private getStreamBlockedUsers() {
-    return merge(this.update$).pipe(
-      startWith(0),
+    return merge(toObservable(this.streamerId), this.update$).pipe(
       switchMap(() => {
         return this.communitySettingsService.getBlockedUsers(this.streamerId());
       }),
-      tap(() => this.#isLoaded.set(true))
+      tap(() => {
+        this.selectAll(false);
+        this.#isLoaded.set(true);
+      })
     );
   }
 

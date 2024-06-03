@@ -15,6 +15,7 @@ import { CreatorService } from './services/creator-service';
     NgIf,
     RouterOutlet,
   ],
+  providers: [CreatorService],
   templateUrl: './creator.layout.html',
 })
 export class CreatorLayout {}

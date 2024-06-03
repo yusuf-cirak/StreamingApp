@@ -1,3 +1,5 @@
-@for (streamer of streamers(); track $index) {
-<app-streamer [streamer]="streamer"></app-streamer>
-}
+<div class="flex flex-col gap-4">
+  @for (streamer of streamers(); track $index) {
+  <app-streamer [streamer]="streamer"></app-streamer>
+  }
+</div>

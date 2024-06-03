@@ -1,10 +1,8 @@
 import { NgOptimizedImage } from '@angular/common';
 import { Component, inject, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { SpookyIcon } from '@streaming-app/shared/icons';
-import { CreatorService } from '../../services/creator-service';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { map, of } from 'rxjs';
+import { CurrentCreatorService } from '../../services/current-creator-service';
 import { LogoSkeletonComponent } from './logo-skeleton.component';
 
 @Component({
@@ -36,7 +34,7 @@ import { LogoSkeletonComponent } from './logo-skeleton.component';
   `,
 })
 export class CreatorLogoComponent {
-  readonly creatorService = inject(CreatorService);
+  readonly creatorService = inject(CurrentCreatorService);
 
   readonly streamerName = this.creatorService.streamerName;
 }

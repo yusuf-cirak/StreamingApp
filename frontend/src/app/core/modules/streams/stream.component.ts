@@ -5,12 +5,12 @@ import { LiveStreamComponent } from './components/live-stream/live-stream.compon
 import { StreamFacade } from './services/stream.facade';
 import { NotFoundStreamComponent } from './components/not-found-stream/not-found-stream.component';
 import { StreamHub } from '../../hubs/stream-hub';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services';
-import { filter, forkJoin, switchMap, tap } from 'rxjs';
 import { StreamFollowerService } from './services/stream-follower.service';
-
+import { CurrentCreatorService } from '../../layouts/creator/services/current-creator-service';
+import { tap } from 'rxjs';
 @Component({
   selector: 'app-stream',
   standalone: true,
@@ -27,7 +27,8 @@ export class StreamComponent {
   readonly streamFacade = inject(StreamFacade);
   readonly authService = inject(AuthService);
   readonly streamFollowerService = inject(StreamFollowerService);
-  // readonly streamBlockedService = inject(StreamBlockedService);
+
+  readonly currentCreatorService = inject(CurrentCreatorService);
 
   readonly streamError = computed(() => this.streamFacade.streamState()?.error);
 

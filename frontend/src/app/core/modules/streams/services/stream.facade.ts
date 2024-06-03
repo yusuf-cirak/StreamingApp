@@ -123,7 +123,6 @@ export class StreamFacade {
       .pipe(
         takeUntilDestroyed(),
         tap((blockUserDto) => {
-          console.log('stream block user!');
           const blockedStreamerIds = this.authService.blockedStreamIds();
           const updatedBlockedStreamers = blockUserDto.isBlocked
             ? [...blockedStreamerIds, blockUserDto.streamerId]
@@ -177,9 +176,9 @@ export class StreamFacade {
   }
 
   leaveStream() {
-    this.#error.set(null);
-    this.#streamer.set(null);
-    this.#streamOptions.set(null);
+    // this.#error.set(null);
+    // this.#streamer.set(null);
+    // this.#streamOptions.set(null);
     this.#chatMessages.set([]);
     // todo: don't remove error and streamer here. use another state for leavedStream
   }

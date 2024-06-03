@@ -13,13 +13,11 @@ import {
 } from '@streaming-app/shared/icons';
 import { expandCollapseAnimation } from '../../../../../shared/animations/expand-collapse-animation';
 import { CtrlDirective } from '../../../../../shared/directives/ctrl.directive';
-import { CreatorService } from '../../services/creator-service';
+import { CurrentCreatorService } from '../../services/current-creator-service';
 import { AuthorizationDirective } from '../../../../../shared/directives/authorization.directive';
-import { UserOperationClaimDto } from '../../../../modules/auths/models/operation-claim';
-import { getRequiredRoles } from '../../../../constants/roles';
-import { OperationClaims } from '../../../../constants/operation-claims';
 import { HintComponent } from '../../../../components/hint/hint.component';
 import { CreatorAuthService } from '../../services/creator-auth-service';
+import { UserAuthorizationService } from '../../../../services/user-authorization.service';
 
 @Component({
   selector: 'app-creator-sidebar',
@@ -42,9 +40,36 @@ import { CreatorAuthService } from '../../services/creator-auth-service';
 })
 export class CreatorSidebarComponent {
   readonly layoutService = inject(LayoutService);
-  readonly creatorService = inject(CreatorService);
+  readonly creatorService = inject(CurrentCreatorService);
   readonly creatorAuthService = inject(CreatorAuthService);
   readonly authService = inject(AuthService);
+  readonly userAuthorizationService = inject(UserAuthorizationService);
+
+  readonly canNavigateToKeyPage = computed(() => {
+    const { roles } = this.creatorAuthService.keyPageRequirements();
+
+    return this.userAuthorizationService.checkRoles(roles);
+  });
+
+  readonly canNavigateToChatSettingsPage = computed(() => {
+    const { roles, operationClaims } =
+      this.creatorAuthService.chatSettingsPageRequirements();
+
+    return (
+      this.userAuthorizationService.checkRoles(roles) ||
+      this.userAuthorizationService.checkOperationClaims(operationClaims)
+    );
+  });
+
+  readonly canNavigateToCommunitySettingsPage = computed(() => {
+    const { roles, operationClaims } =
+      this.creatorAuthService.communityPageRequirements();
+
+    return (
+      this.userAuthorizationService.checkRoles(roles) ||
+      this.userAuthorizationService.checkOperationClaims(operationClaims)
+    );
+  });
 
   readonly router = inject(Router);
 

@@ -4,7 +4,7 @@ import {
   HttpHandlerFn,
   HttpErrorResponse,
 } from '@angular/common/http';
-import { catchError, throwError, mergeMap, EMPTY } from 'rxjs';
+import { catchError, throwError, mergeMap } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthService } from '../services';
 

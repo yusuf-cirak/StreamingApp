@@ -1,17 +1,12 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
-import { User } from '../../../models';
+import { inject, Injectable } from '@angular/core';
+import { CreatorProxyService } from './creator-proxy-service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class CreatorService {
-  // readonly moderatingStreamers = signal<User[]>([]);
+  private readonly creatorProxyService = inject(CreatorProxyService);
 
-  #streamer = signal<User | undefined>(undefined);
-  readonly streamer = this.#streamer.asReadonly();
-
-  readonly streamerId = computed(() => this.#streamer()?.id);
-  readonly streamerName = computed(() => this.#streamer()?.username);
-
-  setStreamer(streamer: User) {
-    this.#streamer.set(streamer);
-  }
+  readonly moderatingStreams = toSignal(
+    this.creatorProxyService.getModeratingStreamers()
+  );
 }

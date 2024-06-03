@@ -20,10 +20,6 @@ export const creatorRoutes: Route[] = [
       {
         path: 'stream',
         pathMatch: 'full',
-        resolve: {
-          // todo: remove this. don't remove the state in stream.facade. this is why you have to pass this again.
-          streamState: streamStateResolver,
-        },
         loadComponent: () =>
           import('../../modules/streams/stream.component').then(
             (c) => c.StreamComponent

@@ -28,7 +28,6 @@ import { StreamAboutComponent } from '../stream-about/stream-about.component';
   ],
 })
 export class LiveStreamComponent {
-  liveStream = input.required<StreamDto>();
   readonly streamFacade = inject(StreamFacade);
 
   onPlayerReady(service: VgApiService) {

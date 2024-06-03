@@ -2,20 +2,21 @@
   class="flex flex-col lg:flex-row gap-y-4 lg:gap-y-0 items-start justify-between p-4 text-white"
 >
   <div class="flex items-center gap-x-3">
+    @if (streamFacade.liveStream(); as liveStream) {
     <app-streamer-avatar
-      [user]="streamFacade.liveStream().user"
+      [user]="liveStream.user"
       [isLive]="streamFacade.isStreamLive()"
       class="w-12 h-12"
     />
     <div class="space-y-1">
       <div class="flex items-center gap-x-2">
         <h2 class="text-lg font-semibold">
-          {{ streamFacade.streamerName() }}
+          {{ liveStream.user.username }}
         </h2>
         <app-verified-icon />
       </div>
       <p class="text-sm font-semibold">
-        {{ streamFacade.liveStream().streamOption.title }}
+        {{ liveStream.streamOption.title }}
       </p>
       @if (streamFacade.isStreamLive()) {
       <div
@@ -32,6 +33,7 @@
       <p class="font-semibold text-xs text-gray-300">Offline</p>
       }
     </div>
+    }
   </div>
   <!-- actions component -->
   <app-stream-actions

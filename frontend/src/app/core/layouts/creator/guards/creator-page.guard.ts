@@ -5,7 +5,8 @@ import { UserAuthorizationService } from '../../../services/user-authorization.s
 import { map, tap } from 'rxjs';
 import { StreamService } from '../../../modules/streams/services/stream.service';
 import { AuthService } from '../../../services';
-import { CreatorService } from '../services/creator-service';
+import { CurrentCreatorService } from '../services/current-creator-service';
+import { StreamFacade } from '../../../modules/streams/services/stream.facade';
 
 export const creatorGuard: CanActivateFn = (route, state) => {
   let streamerName = route.params['streamerName'];
@@ -16,18 +17,20 @@ export const creatorGuard: CanActivateFn = (route, state) => {
       inject(Router).getCurrentNavigation()?.extras.state!['streamerName']; // User state passed from the previous route
   }
 
-  const creatorService = inject(CreatorService);
+  const currentCreatorService = inject(CurrentCreatorService);
 
   const streamService = inject(StreamService);
 
   const userAuthorizationService = inject(UserAuthorizationService);
   const creatorAuthService = inject(CreatorAuthService);
+  const streamFacade = inject(StreamFacade);
 
   const router = inject(Router);
 
   return streamService.getStreamInfo(streamerName).pipe(
     tap((streamDto) => {
-      creatorService.setStreamer(streamDto.stream?.user!);
+      currentCreatorService.update(streamDto.stream?.user!);
+      streamFacade.setStream(streamDto);
     }),
     map(() => {
       const { roles } = creatorAuthService.creatorPageRequirements();
@@ -54,12 +57,15 @@ export const chatSettingsGuard: CanActivateFn = (route, state) => {
 };
 
 export const keySettingsGuard: CanActivateFn = (route, state) => {
+  const router = inject(Router);
   const userAuthorizationService = inject(UserAuthorizationService);
   const creatorAuthService = inject(CreatorAuthService);
 
   const { roles } = creatorAuthService.keyPageRequirements();
 
-  return userAuthorizationService.checkRoles(roles);
+  return userAuthorizationService.checkRoles(roles)
+    ? true
+    : router.createUrlTree(['/']);
 };
 
 export const communitySettingsGuard: CanActivateFn = (route, state) => {

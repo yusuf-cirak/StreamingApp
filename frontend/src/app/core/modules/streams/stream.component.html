@@ -1,6 +1,6 @@
 @if (streamFacade.streamState(); as streamState) { @if (!streamState.error &&
 streamState.stream) {
-<app-live-stream [liveStream]="streamState.stream"></app-live-stream>
+<app-live-stream />
 } @else if (streamState.error && streamState.error.statusCode===400) {
 <app-offline-stream [streamError]="streamState.error"></app-offline-stream>
 }@else {

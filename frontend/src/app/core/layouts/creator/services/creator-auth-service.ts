@@ -2,11 +2,11 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { OperationClaims } from '../../../constants/operation-claims';
 import { getRequiredRoles } from '../../../constants/roles';
 import { UserOperationClaimDto } from '../../../modules/auths/models/operation-claim';
-import { CreatorService } from './creator-service';
+import { CurrentCreatorService } from './current-creator-service';
 
 @Injectable({ providedIn: 'root' })
 export class CreatorAuthService {
-  private readonly creatorService = inject(CreatorService);
+  private readonly creatorService = inject(CurrentCreatorService);
 
   readonly creatorPageRequirements = computed(() => {
     const streamerId = this.creatorService.streamer()?.id as string;
@@ -20,7 +20,9 @@ export class CreatorAuthService {
   readonly keyPageRequirements = computed(() => {
     const streamerId = this.creatorService.streamer()?.id as string;
 
-    const roles = getRequiredRoles(streamerId);
+    const roles = getRequiredRoles(streamerId).filter(
+      (role) => role.name === 'Streamer'
+    );
 
     return {
       roles,

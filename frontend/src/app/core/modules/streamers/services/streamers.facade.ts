@@ -1,6 +1,14 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { concatMap, forkJoin, map, merge, of, switchMap } from 'rxjs';
+import {
+  catchError,
+  concatMap,
+  forkJoin,
+  map,
+  merge,
+  of,
+  switchMap,
+} from 'rxjs';
 import { AuthService } from '@streaming-app/core';
 import { StreamHub } from '../../../hubs/stream-hub';
 import { StreamProxyService } from '../../streams/services/stream-proxy.service';
@@ -41,6 +49,7 @@ export class StreamersFacade {
       this.streamProxyService.getRecommended(),
       this.getBlockedStreamers(),
     ]).pipe(
+      catchError(() => of([[], [], []])),
       map(
         ([
           liveStreamersResult,
