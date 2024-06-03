@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Application.Abstractions;
 using Application.Common.Behaviors;
+using Application.Common.Services;
 using Application.Features.Streams.Services;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -63,6 +64,8 @@ public static class ServiceRegistration
 
         RegisterInterfaceServices(services, executingAssembly, typeof(IDomainService<>));
 
+
+        services.AddSingleton<CurrentUserService>();
 
         services.AddScoped<IStreamCacheService, StreamCacheService>();
 

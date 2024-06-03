@@ -1,14 +1,28 @@
-﻿using Application.Abstractions.Image;
+﻿using Application.Common.Permissions;
 using Application.Features.StreamOptions.Abstractions;
-using Application.Features.StreamOptions.Rules;
 using Application.Features.StreamOptions.Services;
 
 namespace Application.Features.StreamOptions.Commands.Update;
 
-public readonly record struct UpdateStreamTitleDescriptionCommandRequest
+public record struct UpdateStreamTitleDescriptionCommandRequest
     : IStreamOptionRequest, IRequest<HttpResult>, ISecuredRequest
 {
-    public Guid StreamerId { get; init; }
+    private Guid _streamerId;
+
+    public Guid StreamerId
+    {
+        get => _streamerId;
+        set
+        {
+            _streamerId = value;
+            this.PermissionRequirements = PermissionRequirements
+                .Create()
+                .WithRequiredValue(_streamerId.ToString())
+                .WithRoles(PermissionHelper.AllStreamRoles().ToArray())
+                .WithOperationClaims(RequiredClaim.Create(OperationClaimConstants.Stream.Write.TitleDescription,
+                    StreamErrors.UserIsNotModeratorOfStream));
+        }
+    }
 
     public IFormFile? Thumbnail { get; init; }
 
@@ -18,14 +32,7 @@ public readonly record struct UpdateStreamTitleDescriptionCommandRequest
 
     public string StreamDescription { get; init; }
 
-
-    public AuthorizationFunctions AuthorizationFunctions { get; }
-
-    public UpdateStreamTitleDescriptionCommandRequest()
-    {
-        AuthorizationFunctions =
-            [StreamOptionAuthorizationRules.CanUserGetOrUpdateStreamOptions];
-    }
+    public PermissionRequirements PermissionRequirements { get; private set; }
 }
 
 public sealed class

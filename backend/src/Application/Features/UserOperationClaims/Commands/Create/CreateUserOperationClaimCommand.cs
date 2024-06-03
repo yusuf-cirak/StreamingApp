@@ -1,28 +1,30 @@
-﻿using Application.Features.UserOperationClaims.Abstractions;
-using Application.Features.UserOperationClaims.Rules;
+﻿using Application.Common.Permissions;
+using Application.Features.UserOperationClaims.Abstractions;
 
 namespace Application.Features.UserOperationClaims.Commands.Create;
 
-public readonly record struct CreateUserOperationClaimCommandRequest : IUserOperationClaimCommandRequest,
+public record struct CreateUserOperationClaimCommandRequest : IUserOperationClaimCommandRequest,
     IRequest<HttpResult>, ISecuredRequest
 {
     public Guid UserId { get; init; }
     public Guid OperationClaimId { get; init; }
-    public string Value { get; init; }
 
-    public AuthorizationFunctions AuthorizationFunctions { get; }
+    private string _value;
 
-    public CreateUserOperationClaimCommandRequest()
+    public string Value
     {
-        AuthorizationFunctions = [UserOperationClaimAuthorizationRules.CanUserCreateOrDeleteUserOperationClaim];
+        get => _value;
+        set
+        {
+            _value = value;
+
+            this.PermissionRequirements = PermissionRequirements.Create()
+                .WithRequiredValue(value)
+                .WithRoles(PermissionHelper.AllStreamRoles().ToArray());
+        }
     }
 
-    public CreateUserOperationClaimCommandRequest(Guid userId, Guid operationClaimId, string value)
-    {
-        UserId = userId;
-        OperationClaimId = operationClaimId;
-        Value = value;
-    }
+    public PermissionRequirements PermissionRequirements { get; private set; }
 }
 
 public sealed class

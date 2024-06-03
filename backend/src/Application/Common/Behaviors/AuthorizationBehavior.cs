@@ -27,20 +27,12 @@ public sealed class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavi
             return (TResponse)response;
         }
 
-        var httpContext = _httpContextAccessor.HttpContext;
+        var authorizationResult = request.PermissionRequirements.Authorize(_httpContextAccessor.HttpContext.User);
 
-        var authorizationFailureResults = request.AuthorizationFunctions
-            .Select(rule => rule(httpContext, claims, request))
-            .Where(result => result.IsFailure)
-            .ToList();
-
-        if (authorizationFailureResults.Count > 0)
+        if (authorizationResult.IsFailure)
         {
-            StringBuilder sb = new();
-
-            authorizationFailureResults.ForEach(result => sb.AppendLine(result.Error.Message));
-
-            var response = new TResponse().CreateWith(AuthorizationErrors.Unauthorized(sb.ToString()),
+            var response = new TResponse().CreateWith(
+                AuthorizationErrors.Unauthorized(authorizationResult.Error.Message),
                 StatusCodes.Status401Unauthorized);
 
             return (TResponse)response;

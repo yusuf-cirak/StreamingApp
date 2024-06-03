@@ -1,26 +1,32 @@
-﻿using Application.Features.StreamOptions.Abstractions;
-using Application.Features.StreamOptions.Rules;
+﻿using Application.Common.Permissions;
+using Application.Features.StreamOptions.Abstractions;
 
 namespace Application.Features.StreamOptions.Queries.GetStreamKey;
 
-public readonly record struct GetStreamKeyQueryRequest : IRequest<HttpResult<string>>, ISecuredRequest , IStreamOptionRequest
+public record struct GetStreamKeyQueryRequest : IRequest<HttpResult<string>>, ISecuredRequest, IStreamOptionRequest
 {
-    public Guid StreamerId { get; init; }
-    public AuthorizationFunctions AuthorizationFunctions { get; }
+    private Guid _streamerId;
 
-
-    public GetStreamKeyQueryRequest()
+    public Guid StreamerId
     {
-        AuthorizationFunctions = [StreamOptionAuthorizationRules.UserMustBeStreamer];
+        get => _streamerId;
+        set
+        {
+            _streamerId = value;
+
+            PermissionRequirements = PermissionRequirements.Create()
+                .WithRequiredValue(value.ToString())
+                .WithRoles(RequiredClaim.Create(RoleConstants.Streamer, StreamErrors.UserIsNotStreamer));
+        }
     }
 
+    public PermissionRequirements PermissionRequirements { get; private set; }
 
 
-    public GetStreamKeyQueryRequest(Guid streamerId) : this()
+    public GetStreamKeyQueryRequest(Guid streamerId)
     {
         StreamerId = streamerId;
     }
-
 }
 
 public sealed class GetStreamKeyQueryHandler : IRequestHandler<GetStreamKeyQueryRequest, HttpResult<string>>
@@ -34,7 +40,6 @@ public sealed class GetStreamKeyQueryHandler : IRequestHandler<GetStreamKeyQuery
 
     public async Task<HttpResult<string>> Handle(GetStreamKeyQueryRequest request, CancellationToken cancellationToken)
     {
-
         return await _efRepository
             .StreamOptions
             .Where(r => r.Id == request.StreamerId)

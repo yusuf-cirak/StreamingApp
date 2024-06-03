@@ -1,5 +1,6 @@
 ﻿using Application.Common.Mapping;
-using Application.Common.Models;
+using Application.Contracts.Common.Dtos;
+using Application.Contracts.Common.Models;
 
 namespace Application.Features.Auths.Services;
 

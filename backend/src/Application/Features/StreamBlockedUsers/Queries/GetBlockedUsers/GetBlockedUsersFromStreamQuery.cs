@@ -1,23 +1,37 @@
-﻿using Application.Features.StreamBlockedUsers.Abstractions;
-using Application.Features.StreamBlockedUsers.Rules;
+﻿using Application.Common.Permissions;
+using Application.Features.StreamBlockedUsers.Abstractions;
 using Application.Features.StreamBlockedUsers.Services;
 using Application.Features.Streams.Dtos;
 
 namespace Application.Features.StreamBlockedUsers.Queries.GetBlockedUsers;
 
-public readonly record struct GetBlockedUsersFromStreamQueryRequest :
+public record struct GetBlockedUsersFromStreamQueryRequest :
     IRequest<HttpResult<IAsyncEnumerable<GetStreamBlockedUserDto>>>, IStreamBlockedUserRequest,
     ISecuredRequest
 {
-    public Guid StreamerId { get; init; }
-    public AuthorizationFunctions AuthorizationFunctions { get; }
+    private Guid _streamerId;
 
-    public GetBlockedUsersFromStreamQueryRequest()
+    public Guid StreamerId
     {
-        AuthorizationFunctions = [StreamBlockedUserAuthorizationRules.CanUserBlockOrUnblockAUserFromStream];
+        get => _streamerId;
+        set
+        {
+            _streamerId = value;
+
+            this.PermissionRequirements = PermissionRequirements
+                .Create()
+                .WithRequiredValue(value.ToString())
+                .WithRoles(PermissionHelper.AllStreamRoles().ToArray())
+                .WithOperationClaims(RequiredClaim.Create(OperationClaimConstants.Stream.Read.BlockFromChat,
+                    StreamErrors.UserIsNotModeratorOfStream),RequiredClaim.Create(OperationClaimConstants.Stream.Write.BlockFromChat,
+                    StreamErrors.UserIsNotModeratorOfStream));
+        }
     }
 
-    public GetBlockedUsersFromStreamQueryRequest(Guid streamerId) : this()
+    public PermissionRequirements PermissionRequirements { get; private set; }
+
+
+    public GetBlockedUsersFromStreamQueryRequest(Guid streamerId)
     {
         StreamerId = streamerId;
     }

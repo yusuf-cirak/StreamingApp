@@ -1,34 +1,23 @@
-﻿using Application.Features.Users.Services;
+﻿using Application.Common.Permissions;
+using Application.Features.Users.Services;
 
 namespace Application.Features.Streams.Queries.GetFollowing;
 
-public readonly record struct GetFollowingStreamsQueryRequest : IRequest<HttpResult<List<GetStreamDto>>>,
+public readonly record struct GetFollowingStreamsQueryRequest() : IRequest<HttpResult<List<GetStreamDto>>>,
     ISecuredRequest
 {
-    public AuthorizationFunctions AuthorizationFunctions { get; }
-
-    public GetFollowingStreamsQueryRequest()
-    {
-        AuthorizationFunctions = [];
-    }
+    public PermissionRequirements PermissionRequirements { get; } = PermissionRequirements.Create();
 }
 
 public sealed class
-    GetFollowingStreamsQueryHandler : IRequestHandler<GetFollowingStreamsQueryRequest, HttpResult<List<GetStreamDto>>>
+    GetFollowingStreamsQueryHandler(IHttpContextAccessor httpContextAccessor, IUserService userService)
+    : IRequestHandler<GetFollowingStreamsQueryRequest, HttpResult<List<GetStreamDto>>>
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IUserService _userService;
-
-    public GetFollowingStreamsQueryHandler(IHttpContextAccessor httpContextAccessor, IUserService userService)
+    public async Task<HttpResult<List<GetStreamDto>>> Handle(GetFollowingStreamsQueryRequest request,
+        CancellationToken cancellationToken)
     {
-        _httpContextAccessor = httpContextAccessor;
-        _userService = userService;
-    }
+        var userId = Guid.Parse(httpContextAccessor.HttpContext.User.GetUserId());
 
-    public async Task<HttpResult<List<GetStreamDto>>> Handle(GetFollowingStreamsQueryRequest request, CancellationToken cancellationToken)
-    {
-        var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.GetUserId());
-
-        return await _userService.GetFollowingStreamsAsync(userId, cancellationToken);
+        return await userService.GetFollowingStreamsAsync(userId, cancellationToken);
     }
 }

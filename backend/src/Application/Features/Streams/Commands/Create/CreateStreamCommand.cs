@@ -10,11 +10,11 @@ public readonly record struct CreateStreamCommandRequest : IStreamCommandRequest
 {
     public string StreamKey { get; init; }
 
-    public AuthorizationFunctions AuthorizationFunctions { get; }
+    public AuthorizationRequirements AuthorizationRequirements { get; }
 
     public CreateStreamCommandRequest()
     {
-        AuthorizationFunctions = [StreamAuthorizationRules.RequesterMustHaveValidApiKey];
+        AuthorizationRequirements = [StreamAuthorizationRules.RequesterMustHaveValidApiKey];
     }
 }
 

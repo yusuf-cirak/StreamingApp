@@ -1,4 +1,5 @@
 ﻿using Application.Common.Mapping;
+using Application.Common.Permissions;
 using Application.Common.Rules;
 using Application.Features.OperationClaims.Rules;
 
@@ -8,19 +9,13 @@ public readonly record struct CreateOperationClaimCommandRequest : IRequest<Http
     ISecuredRequest
 {
     public string Name { get; init; }
-    
-    public AuthorizationFunctions AuthorizationFunctions { get; }
+
+    public PermissionRequirements PermissionRequirements { get; }
 
     public CreateOperationClaimCommandRequest()
     {
-        AuthorizationFunctions = [CommonAuthorizationRules.UserMustBeAdmin];
+        PermissionRequirements = PermissionRequirementConstants.WithAdminRole();
     }
-
-    public CreateOperationClaimCommandRequest(string name) : this()
-    {
-        Name = name;
-    }
-
 }
 
 public sealed class

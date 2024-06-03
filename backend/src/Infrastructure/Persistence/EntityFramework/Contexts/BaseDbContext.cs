@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Reflection;
-using Application.Common.Models;
+using Application.Contracts.Common.Models;
 using Stream = Domain.Entities.Stream;
 
 namespace Infrastructure.Persistence.EntityFramework.Contexts;

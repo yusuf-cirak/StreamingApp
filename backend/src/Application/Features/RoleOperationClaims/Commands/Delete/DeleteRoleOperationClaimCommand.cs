@@ -1,26 +1,13 @@
-﻿using System.Security.Claims;
-using Application.Common.Rules;
+﻿using Application.Common.Permissions;
 using Application.Features.RoleOperationClaims.Rules;
 
 namespace Application.Features.RoleOperationClaims.Commands.Delete;
 
-public readonly record struct DeleteRoleOperationClaimCommandRequest
-    : IRequest<HttpResult>, ISecuredRequest
+public readonly record struct DeleteRoleOperationClaimCommandRequest() : IRequest<HttpResult>, ISecuredRequest
 {
     public Guid RoleId { get; init; }
     public Guid OperationClaimId { get; init; }
-    public AuthorizationFunctions AuthorizationFunctions { get; }
-
-    public DeleteRoleOperationClaimCommandRequest()
-    {
-        AuthorizationFunctions = [CommonAuthorizationRules.UserMustBeAdmin];
-    }
-
-    public DeleteRoleOperationClaimCommandRequest(Guid roleId, Guid operationClaimId) : this()
-    {
-        RoleId = roleId;
-        OperationClaimId = operationClaimId;
-    }
+    public PermissionRequirements PermissionRequirements { get; } = PermissionRequirementConstants.WithAdminRole();
 }
 
 public sealed class

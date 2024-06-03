@@ -1,44 +1,39 @@
-﻿using Application.Features.StreamFollowerUsers.Abstractions;
+﻿using Application.Common.Permissions;
+using Application.Common.Services;
+using Application.Features.StreamFollowerUsers.Abstractions;
 using Application.Features.StreamFollowerUsers.Rules;
 
 namespace Application.Features.StreamFollowerUsers.Commands.Delete;
 
-public readonly record struct DeleteStreamFollowerUserCommandRequest : IStreamFollowerUserCommandRequest,
+public readonly record struct DeleteStreamFollowerUserCommandRequest() : IStreamFollowerUserCommandRequest,
     IRequest<HttpResult>, ISecuredRequest
 {
     public Guid StreamerId { get; init; }
     public Guid UserId { get; init; }
 
-    public AuthorizationFunctions AuthorizationFunctions { get; }
-
-    public DeleteStreamFollowerUserCommandRequest()
-    {
-        AuthorizationFunctions = [StreamFollowerUserAuthorizationRules.CanUserFollowStreamer];
-    }
-
-    public DeleteStreamFollowerUserCommandRequest(Guid streamerId, Guid userId) : this()
-    {
-        StreamerId = streamerId;
-        UserId = userId;
-    }
+    public PermissionRequirements PermissionRequirements { get; } = PermissionRequirements.Create();
 }
 
 public sealed class
-    DeleteStreamFollowerUserCommandHandler : IRequestHandler<DeleteStreamFollowerUserCommandRequest, HttpResult>
+    DeleteStreamFollowerUserCommandHandler(
+        StreamFollowerUserBusinessRules streamFollowerUserBusinessRules,
+        CurrentUserService currentUserService,
+        IEfRepository efRepository)
+    : IRequestHandler<DeleteStreamFollowerUserCommandRequest, HttpResult>
 {
-    private readonly IEfRepository _efRepository;
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public DeleteStreamFollowerUserCommandHandler(IEfRepository efRepository, IHttpContextAccessor httpContextAccessor)
-    {
-        _efRepository = efRepository;
-        _httpContextAccessor = httpContextAccessor;
-    }
-
     public async Task<HttpResult> Handle(DeleteStreamFollowerUserCommandRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _efRepository
+        var canFollowResult =
+            streamFollowerUserBusinessRules.CanUserFollowTheStreamer(request.UserId, currentUserService.UserId);
+
+        if (canFollowResult.IsFailure)
+        {
+            return canFollowResult.Error;
+        }
+        
+
+        var result = await efRepository
             .StreamFollowerUsers
             .Where(sfu => sfu.UserId == request.UserId && sfu.StreamerId == request.StreamerId)
             .ExecuteDeleteAsync(cancellationToken);

@@ -7,9 +7,9 @@ public static class CommonAuthorizationRules
 {
     public static Result UserMustBeAdmin(HttpContext context, ICollection<Claim> claims, object request)
     {
-        var roles = claims.GetRoles().ToList();
+        var roles = claims.GetRoles();
 
-        if (!roles.Exists(r => r.Name == RoleConstants.SystemAdmin))
+        if (roles.All(r => r.Name != RoleConstants.SystemAdmin))
         {
             return Result.Failure(AuthorizationErrors.Unauthorized());
         }

@@ -1,4 +1,4 @@
-﻿using Application.Common.Models;
+﻿using Application.Contracts.Common.Models;
 using Application.Features.Auths.Rules;
 using Application.Features.Auths.Services;
 

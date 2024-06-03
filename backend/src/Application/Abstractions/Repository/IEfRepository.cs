@@ -1,4 +1,4 @@
-﻿using Application.Common.Models;
+﻿using Application.Contracts.Common.Models;
 using Stream = Domain.Entities.Stream;
 
 namespace Application.Abstractions.Repository;

@@ -1,4 +1,5 @@
 using Application.Abstractions;
+using Application.Common.Errors;
 
 namespace Application.Features.StreamFollowerUsers.Rules;
 
@@ -10,7 +11,8 @@ public sealed class StreamFollowerUserBusinessRules : BaseBusinessRules
     {
         _efRepository = efRepository;
     }
-        public async Task<bool> IsUserFollowingTheStreamAsync(Guid streamerId, Guid userId,
+
+    public async Task<bool> IsUserFollowingTheStreamAsync(Guid streamerId, Guid userId,
         CancellationToken cancellationToken = default)
     {
         var isBlocked = await _efRepository
@@ -18,5 +20,16 @@ public sealed class StreamFollowerUserBusinessRules : BaseBusinessRules
             .AnyAsync(sbu => sbu.StreamerId == streamerId && sbu.UserId == userId, cancellationToken);
 
         return isBlocked;
+    }
+
+
+    public Result CanUserFollowTheStreamer(Guid requesterId, Guid currentUserId)
+    {
+        if (requesterId == currentUserId)
+        {
+            AuthorizationErrors.Unauthorized();
+        }
+
+        return Result.Success();
     }
 }

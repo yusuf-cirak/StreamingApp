@@ -1,4 +1,4 @@
-﻿using Application.Common.Models;
+﻿using Application.Contracts.Common.Models;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using SharedKernel;
 namespace Infrastructure.Persistence.EntityFramework.Interceptors;

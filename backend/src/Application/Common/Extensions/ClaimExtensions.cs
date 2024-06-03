@@ -20,7 +20,7 @@ public static partial class ClaimsPrincipalExtensions
     }
 
     public static IEnumerable<GetUserRoleDto> GetRoles(this IEnumerable<Claim> claims) =>
-        JsonSerializer.Deserialize<IEnumerable<GetUserRoleDto>>(claims.GetClaim("roles") ?? EmptyStringArray);
+        JsonSerializer.Deserialize<IEnumerable<GetUserRoleDto>>(claims.GetClaim(ClaimTypes.Role) ?? EmptyStringArray);
 
     public static IEnumerable<GetUserOperationClaimDto> GetOperationClaims(this IEnumerable<Claim> claims) =>
         JsonSerializer.Deserialize<IEnumerable<GetUserOperationClaimDto>>(claims.GetClaim("operationClaims") ??

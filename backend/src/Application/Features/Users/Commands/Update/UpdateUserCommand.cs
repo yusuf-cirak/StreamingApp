@@ -1,22 +1,16 @@
-﻿using Application.Features.Users.Abstractions;
+﻿using Application.Common.Permissions;
+using Application.Features.Users.Abstractions;
 using Application.Features.Users.Rules;
 
 namespace Application.Features.Users.Commands.Update;
 
-public readonly record struct UpdateUserCommandRequest : IUserCommandRequest, IRequest<HttpResult>, ISecuredRequest
+public readonly record struct UpdateUserCommandRequest() : IUserCommandRequest, IRequest<HttpResult>
 {
-    public Guid UserId { get; init; }
+    public Guid UserId { get; init; } = default;
     public string Username { get; init; } = string.Empty;
 
     public string OldPassword { get; init; } = string.Empty;
     public string NewPassword { get; init; } = string.Empty;
-
-    public AuthorizationFunctions AuthorizationFunctions { get; }
-
-    public UpdateUserCommandRequest()
-    {
-        AuthorizationFunctions = [UserAuthorizationRules.CanUpdateUser];
-    }
 }
 
 public sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommandRequest, HttpResult>

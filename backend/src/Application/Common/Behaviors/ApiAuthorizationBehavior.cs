@@ -19,7 +19,7 @@ public sealed class ApiAuthorizationBehavior<TRequest, TResponse> : IPipelineBeh
     {
         var httpContext = _httpContextAccessor.HttpContext;
 
-        var authorizationFailureResults = request.AuthorizationFunctions
+        var authorizationFailureResults = request.AuthorizationRequirements
             .Select(rule => rule(httpContext, ArraySegment<Claim>.Empty, request))
             .Where(result => result.IsFailure)
             .ToList();

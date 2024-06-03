@@ -1,28 +1,29 @@
-﻿using Application.Features.UserRoleClaims.Abstractions;
-using Application.Features.UserRoleClaims.Rules;
+﻿using Application.Common.Permissions;
+using Application.Features.UserRoleClaims.Abstractions;
 
 namespace Application.Features.UserRoleClaims.Commands.Create;
 
-public readonly record struct CreateUserRoleClaimCommandRequest : IUserRoleClaimCommandRequest, IRequest<HttpResult>,
+public record struct CreateUserRoleClaimCommandRequest : IUserRoleClaimCommandRequest, IRequest<HttpResult>,
     ISecuredRequest
 {
     public Guid UserId { get; init; }
     public Guid RoleId { get; init; }
-    public string Value { get; init; }
+    private string _value;
 
-    public AuthorizationFunctions AuthorizationFunctions { get; }
-
-    public CreateUserRoleClaimCommandRequest()
+    public string Value
     {
-        AuthorizationFunctions = [UserRoleClaimAuthorizationRules.CanUserCreateOrDeleteUserRoleClaim];
+        get => _value;
+        set
+        {
+            _value = value;
+
+            this.PermissionRequirements = PermissionRequirements.Create()
+                .WithRequiredValue(value)
+                .WithRoles(PermissionHelper.AllStreamRoles().ToArray());
+        }
     }
 
-    public CreateUserRoleClaimCommandRequest(Guid userId, Guid roleId, string value) : this()
-    {
-        UserId = userId;
-        RoleId = roleId;
-        Value = value;
-    }
+    public PermissionRequirements PermissionRequirements { get; private set; }
 }
 
 public sealed class

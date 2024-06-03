@@ -1,26 +1,39 @@
-﻿using Application.Features.StreamBlockedUsers.Abstractions;
+﻿using Application.Common.Permissions;
+using Application.Features.StreamBlockedUsers.Abstractions;
 using Application.Features.StreamBlockedUsers.Rules;
 using Application.Features.StreamBlockedUsers.Services;
 
 namespace Application.Features.StreamBlockedUsers.Commands.Create;
 
-public readonly record struct CreateStreamBlockedUserCreateCommandRequest
+public record struct CreateStreamBlockedUserCreateCommandRequest
     : IStreamBlockedUserRequest, IRequest<HttpResult>, ISecuredRequest
 {
-    public Guid StreamerId { get; init; }
+    private Guid _streamerId;
 
-    public Guid BlockedUserId { get; init; }
-    public AuthorizationFunctions AuthorizationFunctions { get; }
-
-    public CreateStreamBlockedUserCreateCommandRequest()
+    public Guid StreamerId
     {
-        AuthorizationFunctions = [StreamBlockedUserAuthorizationRules.CanUserBlockOrUnblockAUserFromStream];
+        get => _streamerId;
+        set
+        {
+            _streamerId = value;
+
+            this.SetPermissionRequirements();
+        }
     }
 
-    public CreateStreamBlockedUserCreateCommandRequest(Guid streamerId, Guid blockedUserId) : this()
+
+    public Guid BlockedUserId { get; init; }
+    public PermissionRequirements PermissionRequirements { get; private set; }
+
+
+    private void SetPermissionRequirements()
     {
-        StreamerId = streamerId;
-        BlockedUserId = blockedUserId;
+        PermissionRequirements = PermissionRequirements
+            .Create()
+            .WithRequiredValue(this.StreamerId.ToString())
+            .WithRoles(PermissionHelper.AllStreamRoles().ToArray())
+            .WithOperationClaims(RequiredClaim.Create(OperationClaimConstants.Stream.Write.BlockFromChat,
+                StreamErrors.UserIsNotModeratorOfStream));
     }
 }
 
@@ -53,8 +66,8 @@ public sealed class
             cancellationToken);
 
 
-
-        _ = Task.Run(() => _streamBlockUserService.SendBlockNotificationToUsersAsync(request.StreamerId, [request.BlockedUserId],
+        _ = Task.Run(() => _streamBlockUserService.SendBlockNotificationToUsersAsync(request.StreamerId,
+            [request.BlockedUserId],
             isBlocked: true), cancellationToken);
 
 

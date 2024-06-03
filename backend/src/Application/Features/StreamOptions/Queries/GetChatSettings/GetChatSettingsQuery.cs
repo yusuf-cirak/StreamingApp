@@ -1,23 +1,34 @@
 ﻿using Application.Common.Mapping;
-using Application.Contracts.StreamOptions;
+using Application.Common.Permissions;
 using Application.Features.StreamOptions.Abstractions;
 using Application.Features.StreamOptions.Rules;
 
 namespace Application.Features.StreamOptions.Queries.GetChatSettings;
 
-public readonly record struct GetStreamChatSettingsQueryRequest : IStreamOptionRequest, IRequest<HttpResult<GetStreamChatSettingsDto>>,
+public record struct GetStreamChatSettingsQueryRequest : IStreamOptionRequest,
+    IRequest<HttpResult<GetStreamChatSettingsDto>>,
     ISecuredRequest
 {
-    public Guid StreamerId { get; init; }
+    private Guid _streamerId;
 
-    public AuthorizationFunctions AuthorizationFunctions { get; }
-
-    public GetStreamChatSettingsQueryRequest()
+    public Guid StreamerId
     {
-        AuthorizationFunctions = [StreamOptionAuthorizationRules.CanUserGetOrUpdateStreamOptions];
+        get => _streamerId;
+        set
+        {
+            _streamerId = value;
+
+            this.PermissionRequirements = PermissionRequirements.Create()
+                .WithRequiredValue(_streamerId.ToString())
+                .WithRoles(PermissionHelper.AllStreamRoles().ToArray())
+                .WithOperationClaims(RequiredClaim.Create(OperationClaimConstants.Stream.Read.ChatOptions,
+                    StreamErrors.UserIsNotModeratorOfStream));
+        }
     }
 
-    public GetStreamChatSettingsQueryRequest(Guid streamerId) : this()
+    public PermissionRequirements PermissionRequirements { get; private set; }
+
+    public GetStreamChatSettingsQueryRequest(Guid streamerId)
     {
         StreamerId = streamerId;
     }

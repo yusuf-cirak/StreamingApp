@@ -1,6 +1,8 @@
-﻿namespace Application.Abstractions.Security;
+﻿using Application.Common.Permissions;
+
+namespace Application.Abstractions.Security;
 
 public interface ISecuredRequest
 {
-    AuthorizationFunctions AuthorizationFunctions { get; }
+    PermissionRequirements PermissionRequirements { get; }
 }

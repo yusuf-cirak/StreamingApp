@@ -1,3 +1,4 @@
+using Application.Common.Permissions;
 using Application.Features.StreamFollowerUsers.Services;
 
 namespace Application.Features.StreamFollowerUsers.Queries.GetIsUserFollowing;
@@ -5,29 +6,22 @@ namespace Application.Features.StreamFollowerUsers.Queries.GetIsUserFollowing;
 public readonly record struct GetIsUserFollowingStreamQueryRequest(Guid StreamerId)
     : ISecuredRequest, IRequest<HttpResult<bool>>
 {
-    public AuthorizationFunctions AuthorizationFunctions => [];
+    public PermissionRequirements PermissionRequirements { get; } = PermissionRequirements.Create();
 }
 
 public sealed class
-    GetIsUserBlockedFromStreamQueryRequestHandler : IRequestHandler<GetIsUserFollowingStreamQueryRequest,
-    HttpResult<bool>>
-{
-    private readonly IStreamFollowerUserService _streamFollowerUserService;
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public GetIsUserBlockedFromStreamQueryRequestHandler(IHttpContextAccessor httpContextAccessor,
+    GetIsUserBlockedFromStreamQueryRequestHandler(
+        IHttpContextAccessor httpContextAccessor,
         IStreamFollowerUserService streamFollowerUserService)
-    {
-        _httpContextAccessor = httpContextAccessor;
-        _streamFollowerUserService = streamFollowerUserService;
-    }
-
+    : IRequestHandler<GetIsUserFollowingStreamQueryRequest,
+        HttpResult<bool>>
+{
     public async Task<HttpResult<bool>> Handle(GetIsUserFollowingStreamQueryRequest request,
         CancellationToken cancellationToken)
     {
-        _ = Guid.TryParse(_httpContextAccessor.HttpContext.User.GetUserId(), out Guid userId);
+        _ = Guid.TryParse(httpContextAccessor.HttpContext.User.GetUserId(), out Guid userId);
 
         return HttpResult<bool>.Success(
-            await _streamFollowerUserService.IsUserFollowingStreamAsync(request.StreamerId, userId, cancellationToken));
+            await streamFollowerUserService.IsUserFollowingStreamAsync(request.StreamerId, userId, cancellationToken));
     }
 }

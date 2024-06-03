@@ -56,10 +56,10 @@ public static class StreamOptionAuthorizationRules
     {
         string streamerIdString = ((IStreamOptionRequest)request).StreamerId.ToString();
 
-        var roles = claims.GetRoles();
+        var roles = claims.GetRoles().ToList();
 
         return roles.Any(rc =>
-            rc.Name == RoleConstants.StreamSuperModerator && rc.Value == streamerIdString);
+            rc.Name == RoleConstants.StreamSuperModerator || rc.Name==RoleConstants.StreamModerator && rc.Value == streamerIdString);
     }
 
     private static bool IsUserModeratorOfStreamByOperationClaim(ICollection<Claim> claims, object request)

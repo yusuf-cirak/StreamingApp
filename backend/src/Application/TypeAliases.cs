@@ -1,4 +1,4 @@
-﻿global using AuthorizationFunctions =
+﻿global using AuthorizationRequirements =
     System.Collections.Generic.List<System.Func<Microsoft.AspNetCore.Http.HttpContext,
         System.Collections.Generic.ICollection<System.Security.Claims.Claim>,
         object,

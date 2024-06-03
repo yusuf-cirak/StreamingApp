@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
+using SharedKernel;
 
-namespace Application.Common.Models;
+namespace Application.Contracts.Common.Models;
 
 public sealed class OutboxMessage
 {

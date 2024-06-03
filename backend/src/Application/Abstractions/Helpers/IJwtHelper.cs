@@ -1,4 +1,4 @@
-﻿using Application.Common.Models;
+﻿using Application.Contracts.Common.Models;
 
 namespace Application.Abstractions.Helpers;
 

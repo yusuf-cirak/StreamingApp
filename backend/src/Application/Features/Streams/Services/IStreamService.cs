@@ -5,6 +5,7 @@ namespace Application.Features.Streams.Services;
 public interface IStreamService : IDomainService<Stream>
 {
     IAsyncEnumerable<GetStreamDto> GetRecommendedStreamersAsyncEnumerable();
+    Task<List<GetUserDto>> GetModeratingStreamsAsync(Guid userId, CancellationToken cancellationToken);
 
     Task<Result<StreamOption, Error>> StreamerExistsAsync(string streamKey,
         CancellationToken cancellationToken = default);

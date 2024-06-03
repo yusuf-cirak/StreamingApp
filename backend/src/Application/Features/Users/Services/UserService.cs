@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Image;
 using Application.Common.Mapping;
+using Application.Common.Services;
 using Application.Contracts.Constants;
 using Application.Features.Streams.Services;
 
@@ -17,7 +18,6 @@ public sealed class UserService : IUserService
         _cacheService = cacheService;
         _imageService = imageService;
     }
-
 
     public async Task<Result<User, Error>> UserMustExistAsync(Guid userId,
         CancellationToken cancellationToken = default)

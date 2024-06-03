@@ -36,7 +36,7 @@ public sealed class ConcurrentList<T> : ICollection<T>
 
     public bool Contains(T item)
     {
-        return _store.ContainsKey(item);
+        return item != null && _store.ContainsKey(item);
     }
 
     public void CopyTo(T[] array, int arrayIndex)
@@ -49,13 +49,7 @@ public sealed class ConcurrentList<T> : ICollection<T>
         return _store.Keys.Remove(item);
     }
 
-    public int Count
-    {
-        get { return _store.Count; }
-    }
+    public int Count => _store.Count;
 
-    public bool IsReadOnly
-    {
-        get { return _store.Keys.IsReadOnly; }
-    }
+    public bool IsReadOnly => _store.Keys.IsReadOnly;
 }

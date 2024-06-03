@@ -1,11 +1,12 @@
-﻿using Application.Features.Users.Services;
+﻿using Application.Common.Permissions;
+using Application.Features.Users.Services;
 
 namespace Application.Features.Streams.Queries.GetBlocked;
 
 public sealed record GetBlockedStreamsQueryRequest : IRequest<HttpResult<IEnumerable<GetBlockedStreamDto>>>,
     ISecuredRequest
 {
-    public AuthorizationFunctions AuthorizationFunctions { get; } = new();
+    public PermissionRequirements PermissionRequirements { get; } = PermissionRequirements.Create();
 }
 
 public sealed class GetBlockedStreamsQueryRequestHandler : IRequestHandler<GetBlockedStreamsQueryRequest,
