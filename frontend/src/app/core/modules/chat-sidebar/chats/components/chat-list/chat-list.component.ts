@@ -1,6 +1,6 @@
-import { Component, input } from '@angular/core';
-import { ChatMessage } from '../../models/chat-message';
+import { Component, inject } from '@angular/core';
 import { ChatMessageComponent } from '../chat-message/chat-message.component';
+import { StreamFacade } from '../../../../streams/services/stream.facade';
 
 @Component({
   selector: 'app-chat-list',
@@ -9,5 +9,6 @@ import { ChatMessageComponent } from '../chat-message/chat-message.component';
   templateUrl: './chat-list.component.html',
 })
 export class ChatListComponent {
-  messages = input.required<ChatMessage[]>();
+  readonly streamFacade = inject(StreamFacade);
+  readonly messages = this.streamFacade.chatMessages;
 }

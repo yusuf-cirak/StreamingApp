@@ -1,5 +1,5 @@
 <div class="flex w-full h-full flex-col-reverse text-white overflow-y-auto">
-  @for (message of messages(); track messages()) {
+  @for (message of messages(); track $index) {
   <app-chat-message [data]="message"></app-chat-message>
   }
 </div>

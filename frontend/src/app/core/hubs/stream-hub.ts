@@ -15,6 +15,8 @@ export class StreamHub {
 
   readonly connectedToHub = signal(false);
 
+  readonly connectedStreamRoom = signal<string | undefined>(undefined);
+
   streamStarted$ = new Subject<StreamDto>();
   streamEnd$ = new Subject<string>();
 
@@ -97,12 +99,13 @@ export class StreamHub {
     );
   }
 
-  invokeOnJoinedStream(streamerId: string) {
+  invokeOnJoinedStream(streamerName: string) {
     return from(
-      this._hubConnection.invoke(StreamHubAction.OnJoinedStream, streamerId)
+      this._hubConnection.invoke(StreamHubAction.OnJoinedStream, streamerName)
     ).pipe(
       tap(() => {
         console.log('Joined stream');
+        this.connectedStreamRoom.set(streamerName);
       }),
       catchError((err) => {
         console.error(err);
@@ -111,11 +114,14 @@ export class StreamHub {
     );
   }
 
-  invokeOnLeavedStream(streamerId: string) {
+  invokeOnLeavedStream(streamerName: string) {
     return from(
-      this._hubConnection.invoke(StreamHubAction.OnLeavedStream, streamerId)
+      this._hubConnection.invoke(StreamHubAction.OnLeavedStream, streamerName)
     ).pipe(
-      tap(() => console.log('Leaved stream')),
+      tap(() => {
+        console.log('Leaved stream');
+        this.connectedStreamRoom.set(undefined);
+      }),
       catchError((err) => {
         console.error(err);
         return throwError(err);

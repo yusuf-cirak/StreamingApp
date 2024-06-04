@@ -11,7 +11,6 @@
 <ng-template #chatTemplate>
   <app-chat-list
     class="w-full h-[70%] max-h-[70%] sm:h-[80%] sm:max-h-[80%] items-start flex flex-col"
-    [messages]="streamFacade.chatMessages()"
   />
   <app-chat-form class="w-full h-[30%] sm:h-[20%]"></app-chat-form>
 </ng-template>

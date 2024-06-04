@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Application.Common.Errors;
+﻿using Application.Common.Errors;
 
 namespace Application.Common.Behaviors;
 

@@ -9,7 +9,9 @@ import {
   catchError,
   concatMap,
   map,
+  Observable,
   of,
+  shareReplay,
   Subject,
   switchMap,
   tap,
@@ -50,6 +52,8 @@ export class AuthService {
 
     return !!user && user.tokenExpiration > new Date(Date.now());
   });
+
+  refreshToken$: Observable<CurrentUser> | null = null;
 
   constructor() {
     this.handleStorageEvents();
@@ -182,6 +186,9 @@ export class AuthService {
   }
 
   refreshToken(user?: CurrentUser) {
+    if (this.refreshToken$) {
+      return this.refreshToken$;
+    }
     user = user ?? this.user();
 
     if (!user) {
@@ -193,30 +200,38 @@ export class AuthService {
       userId: user?.id!,
     };
 
-    return this.authProxyService.refreshToken(userRefreshTokenDto).pipe(
-      tap((userAuthDto) => {
-        this.setUser(userAuthDto);
-      }),
-      concatMap(() => {
-        const connectAndReturnUser = () =>
-          of(this.streamHub.buildAndConnect(this.user()?.accessToken)).pipe(
-            map(() => this.user()!),
-            tap(() => this.login$.next())
-          );
+    this.refreshToken$ = this.authProxyService
+      .refreshToken(userRefreshTokenDto)
+      .pipe(
+        shareReplay(1),
+        tap((userAuthDto) => {
+          this.setUser(userAuthDto);
+        }),
+        concatMap(() => {
+          const connectAndReturnUser = () =>
+            of(this.streamHub.buildAndConnect(this.user()?.accessToken)).pipe(
+              map(() => this.user()!),
+              tap(() => this.login$.next())
+            );
 
-        return this.streamHub.connectedToHub()
-          ? this.streamHub.disconnect().pipe(
-              catchError((error) => {
-                console.log(error);
-                return throwError(error);
-              }),
-              concatMap(() => {
-                return connectAndReturnUser();
-              })
-            )
-          : connectAndReturnUser();
-      })
-    );
+          return this.streamHub.connectedToHub()
+            ? this.streamHub.disconnect().pipe(
+                catchError((error) => {
+                  console.log(error);
+                  return throwError(error);
+                }),
+                concatMap(() => {
+                  return connectAndReturnUser();
+                })
+              )
+            : connectAndReturnUser();
+        }),
+        tap(() => {
+          this.refreshToken$ = null;
+        })
+      );
+
+    return this.refreshToken$;
   }
 
   logout() {

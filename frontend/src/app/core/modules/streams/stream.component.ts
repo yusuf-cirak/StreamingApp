@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services';
 import { StreamFollowerService } from './services/stream-follower.service';
 import { CurrentCreatorService } from '../../layouts/creator/services/current-creator-service';
-import { tap } from 'rxjs';
+import { skip, tap } from 'rxjs';
 @Component({
   selector: 'app-stream',
   standalone: true,
@@ -37,6 +37,29 @@ export class StreamComponent {
   readonly router = inject(Router);
 
   constructor() {
+    this.listenToHubEvents();
+
+    toObservable(this.streamFacade.streamerName)
+      .pipe(
+        takeUntilDestroyed(),
+        skip(1),
+        tap((streamerName) => {
+          this.streamFacade.leaveStreamRoom(streamerName);
+          this.streamFacade.clearChatMessages();
+          this.streamFacade.joinStreamRoom(streamerName);
+        })
+      )
+      .subscribe();
+
+    effect(() => {
+      const isAuthenticated = this.authService.isAuthenticated();
+      if (this.canJoinToChatRoom()) {
+        this.streamFacade.joinStreamRoom(this.streamFacade.streamerName());
+      }
+    });
+  }
+
+  private listenToHubEvents() {
     this.streamHub.streamStarted$.subscribe({
       next: (value) => {
         this.streamFacade.updateStream(value);
@@ -60,19 +83,12 @@ export class StreamComponent {
           this.streamFacade.setStreamChatOptions(value);
         },
       });
-
-    effect(() => {
-      const isAuthenticated = this.authService.isAuthenticated();
-      if (this.canJoinToChatRoom()) {
-        this.streamFacade.joinStreamRoom(this.streamFacade.streamerName());
-      }
-    });
   }
 
   ngOnDestroy() {
     if (this.canJoinToChatRoom()) {
       this.streamFacade.leaveStreamRoom(this.streamFacade.streamerName());
     }
-    this.streamFacade.leaveStream();
+    this.streamFacade.clearChatMessages();
   }
 }

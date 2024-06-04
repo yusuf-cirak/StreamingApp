@@ -15,11 +15,11 @@ import { StreamDto } from '../contracts/stream-dto';
 @Injectable({ providedIn: 'root' })
 export class StreamFacade {
   // services
-  readonly authService = inject(AuthService);
+  private readonly authService = inject(AuthService);
 
-  readonly streamService = inject(StreamService);
+  private readonly streamService = inject(StreamService);
 
-  readonly streamHub = inject(StreamHub);
+  private readonly streamHub = inject(StreamHub);
 
   // states
 
@@ -175,12 +175,8 @@ export class StreamFacade {
     });
   }
 
-  leaveStream() {
-    // this.#error.set(null);
-    // this.#streamer.set(null);
-    // this.#streamOptions.set(null);
+  clearChatMessages() {
     this.#chatMessages.set([]);
-    // todo: don't remove error and streamer here. use another state for leavedStream
   }
 
   joinStreamRoom(streamerName: string) {
