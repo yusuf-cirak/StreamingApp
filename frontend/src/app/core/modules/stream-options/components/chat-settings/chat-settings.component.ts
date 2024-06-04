@@ -29,6 +29,7 @@ import { finalize } from 'rxjs';
 import { PatchStreamChatSettingsDto } from '../../dtos/patch-stream-chat-settings-dto';
 import { ToastrService } from 'ngx-toastr';
 import { CurrentCreatorService } from '../../../../layouts/creator/services/current-creator-service';
+import { ChatSettingsService } from '../../services/chat-settings.service';
 @Component({
   standalone: true,
   selector: 'app-chat-settings',
@@ -55,7 +56,8 @@ export class ChatSettingsComponent {
   readonly #loaded = signal(false);
   readonly loaded = this.#loaded.asReadonly();
 
-  readonly streamOptionProxyService = inject(StreamOptionProxyService);
+  readonly chatSettingsService = inject(ChatSettingsService);
+
   readonly authService = inject(AuthService);
 
   readonly form = this.fb.group({
@@ -78,7 +80,7 @@ export class ChatSettingsComponent {
       filter(Boolean),
       switchMap((source) => source),
       exhaustMap(() =>
-        this.streamOptionProxyService.getChatSettings(this.streamerId())
+        this.chatSettingsService.getChatSettings(this.streamerId())
       ),
       tap((chatSettings) => {
         this.#loaded.set(true);
@@ -116,26 +118,24 @@ export class ChatSettingsComponent {
       streamerId: this.streamerId(),
     } as PatchStreamChatSettingsDto;
 
-    const update$ = this.streamOptionProxyService
-      .patchChatSettings(formValues)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        catchError((error) => {
-          this.toastr.error(
-            error?.error?.message || 'Something went wrong',
-            'Error'
-          );
-          return EMPTY;
-        }),
-        tap(() => {
-          this.toastr.success('Chat settings updated', 'Success');
-        }),
-        finalize(() => {
-          this.form.enable();
-          this.form.markAsUntouched();
-          this.updateFormValues();
-        })
-      );
+    const update$ = this.chatSettingsService.patchChatSettings(formValues).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      catchError((error) => {
+        this.toastr.error(
+          error?.error?.message || 'Something went wrong',
+          'Error'
+        );
+        return EMPTY;
+      }),
+      tap(() => {
+        this.toastr.success('Chat settings updated', 'Success');
+      }),
+      finalize(() => {
+        this.form.enable();
+        this.form.markAsUntouched();
+        this.updateFormValues();
+      })
+    );
 
     this.update$.next(update$);
   }

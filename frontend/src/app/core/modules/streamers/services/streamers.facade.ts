@@ -1,14 +1,6 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import {
-  catchError,
-  concatMap,
-  forkJoin,
-  map,
-  merge,
-  of,
-  switchMap,
-} from 'rxjs';
+import { catchError, concatMap, forkJoin, map, merge, of } from 'rxjs';
 import { AuthService } from '@streaming-app/core';
 import { StreamHub } from '../../../hubs/stream-hub';
 import { StreamProxyService } from '../../streams/services/stream-proxy.service';
@@ -56,33 +48,57 @@ export class StreamersFacade {
           followingStreamersResult,
           recommendedStreamersResult,
         ]) => {
-          // prevent duplicates
+          // Get the list of live streamer IDs
           const liveStreamerIds = liveStreamersResult.map((ls) => ls.user.id);
-          const allFollowingStreamerIds = Array.from(
-            new Set([
-              ...followingStreamersResult
-                .filter((fs) => !liveStreamerIds.includes(fs.user.id))
-                .map((fs) => fs.user.id),
-            ])
+
+          // Get the list of following streamer IDs
+          const followingStreamerIds = followingStreamersResult.map(
+            (fs) => fs.user.id
           );
 
-          this.authService.updateFollowingStreamers(allFollowingStreamerIds);
+          this.authService.updateFollowingStreamers(followingStreamerIds);
 
-          const allRecommendedStreamerIds = Array.from(
-            new Set([
-              ...liveStreamerIds,
-              ...recommendedStreamersResult
-                .filter((rs) => !allFollowingStreamerIds.includes(rs.user.id))
-                .map((rs) => rs.user.id),
-            ])
+          // Determine following streamers that are live and not live
+          const followingLiveStreamers = followingStreamersResult.filter((fs) =>
+            liveStreamerIds.includes(fs.user.id)
+          );
+          const followingNotLiveStreamers = followingStreamersResult.filter(
+            (fs) => !liveStreamerIds.includes(fs.user.id)
           );
 
-          const followingStreamers = followingStreamersResult.filter((fs) =>
-            allFollowingStreamerIds.includes(fs.user.id)
+          // Determine live streamers who are not being followed
+          const notFollowingLiveStreamers = liveStreamersResult.filter(
+            (ls) => !followingStreamerIds.includes(ls.user.id)
           );
 
-          const recommendedStreamers = recommendedStreamersResult.filter((rs) =>
-            allRecommendedStreamerIds.includes(rs.user.id)
+          // Determine recommended streamers that are not being followed
+          const recommendedNotFollowingStreamers =
+            recommendedStreamersResult.filter(
+              (rs) => !followingStreamerIds.includes(rs.user.id)
+            );
+
+          // Combine following streamers into one list
+          const followingStreamers = [
+            ...followingLiveStreamers,
+            ...followingNotLiveStreamers,
+          ];
+
+          // Combine recommended streamers into one list and make them unique by user id
+          const recommendedStreamersMap = new Map();
+
+          // Add not following live streamers to the map
+          notFollowingLiveStreamers.forEach((streamer) => {
+            recommendedStreamersMap.set(streamer.user.id, streamer);
+          });
+
+          // Add recommended not following streamers to the map
+          recommendedNotFollowingStreamers.forEach((streamer) => {
+            recommendedStreamersMap.set(streamer.user.id, streamer);
+          });
+
+          // Convert the map back to an array
+          const recommendedStreamers = Array.from(
+            recommendedStreamersMap.values()
           );
 
           return {

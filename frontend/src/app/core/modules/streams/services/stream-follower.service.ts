@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { AuthService } from '@streaming-app/core';
 import { Subject, tap } from 'rxjs';
 import {

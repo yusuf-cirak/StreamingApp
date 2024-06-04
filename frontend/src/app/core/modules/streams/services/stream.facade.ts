@@ -161,7 +161,11 @@ export class StreamFacade {
     } as StreamOptions;
 
     this.#streamOptions.set(newOptions);
-    this.#error.set(null);
+    // this.#error.set(null);
+  }
+
+  setStreamOptions(streamOptions: StreamOptions) {
+    this.#streamOptions.set(streamOptions);
   }
 
   setLiveStreamErrorState(error: Error) {
