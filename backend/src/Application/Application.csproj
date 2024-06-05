@@ -28,7 +28,6 @@
     <Folder Include="Features\OperationClaims\Dtos\" />
     <Folder Include="Features\StreamOptions\Dtos\" />
     <Folder Include="Features\Users\Dtos\" />
-    <Folder Include="Features\Users\Queries\" />
   </ItemGroup>
 
 </Project>

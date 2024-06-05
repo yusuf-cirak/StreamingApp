@@ -1,6 +1,6 @@
 ﻿namespace Domain.Entities;
 
-public class RoleOperationClaim : BaseEntity
+public class RoleOperationClaim : EquatableEntity
 {
     public Guid RoleId { get; set; }
     public Guid OperationClaimId { get; set; }

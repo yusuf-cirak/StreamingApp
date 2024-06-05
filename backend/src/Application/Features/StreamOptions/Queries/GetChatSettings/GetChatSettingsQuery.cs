@@ -22,7 +22,9 @@ public record struct GetStreamChatSettingsQueryRequest : IStreamOptionRequest,
                 .WithRequiredValue(_streamerId.ToString())
                 .WithRoles(PermissionHelper.AllStreamRoles().ToArray())
                 .WithOperationClaims(RequiredClaim.Create(OperationClaimConstants.Stream.Read.ChatOptions,
-                    StreamErrors.UserIsNotModeratorOfStream))
+                    StreamErrors.UserIsNotModeratorOfStream),
+                    RequiredClaim.Create(OperationClaimConstants.Stream.Write.ChatOptions,
+                        StreamErrors.UserIsNotModeratorOfStream))
                 .WithNameIdentifierClaim();
         }
     }

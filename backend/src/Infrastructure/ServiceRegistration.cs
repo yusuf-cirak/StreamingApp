@@ -59,14 +59,26 @@ public static class ServiceRegistration
     {
         services.AddQuartz(configurator =>
         {
-            var jobKey = new JobKey(nameof(ProcessOutboxMessagesJob));
+            var processOutboxMessagesKey = new JobKey(nameof(ProcessOutboxMessagesJob));
 
             configurator
-                .AddJob<ProcessOutboxMessagesJob>(jobKey)
+                .AddJob<ProcessOutboxMessagesJob>(processOutboxMessagesKey)
                 .AddTrigger(trigger => trigger
-                    .ForJob(jobKey)
+                    .ForJob(processOutboxMessagesKey)
                     .WithSimpleSchedule(schedule => schedule
                         .WithIntervalInSeconds(5)
+                        .RepeatForever()));
+
+
+            var refreshTokenCleanupKey = new JobKey(nameof(RefreshTokenCleanupJob));
+            
+            
+            configurator
+                .AddJob<RefreshTokenCleanupJob>(refreshTokenCleanupKey)
+                .AddTrigger(trigger => trigger
+                    .ForJob(refreshTokenCleanupKey)
+                    .WithSimpleSchedule(schedule => schedule
+                        .WithIntervalInSeconds(60)
                         .RepeatForever()));
         });
 

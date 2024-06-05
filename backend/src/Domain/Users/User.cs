@@ -9,14 +9,14 @@ public class User : AuditableEntity
 
     public virtual ICollection<RefreshToken> RefreshTokens { get; }
 
-    public virtual ICollection<UserRoleClaim> UserRoleClaims { get; }
+    public virtual ICollection<UserRoleClaim> UserRoleClaims { get; set; } = [];
 
-    public virtual ICollection<UserOperationClaim> UserOperationClaims { get; }
-    
+    public virtual ICollection<UserOperationClaim> UserOperationClaims { get; set; } = [];
+
     public virtual ICollection<Stream> Streams { get; }
-    
+
     public virtual StreamOption StreamOption { get; }
-    
+
 
     public User()
     {
@@ -36,7 +36,7 @@ public class User : AuditableEntity
     public static User Create(string userName, byte[] passwordHash, byte[] passwordSalt)
     {
         User user = new(userName, passwordHash, passwordSalt);
-        
+
         user.Raise(new UserCreatedEvent(user));
 
         return user;

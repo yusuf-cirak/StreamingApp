@@ -102,7 +102,7 @@ public sealed class PermissionRequirements
         }
 
         var failureIndex = authorizationResults.FindIndex(ar => ar.IsFailure);
-        var isSuccess = authorizationResults.Exists(ar => ar.IsSuccess);
+        var successExists = authorizationResults.Exists(ar => ar.IsSuccess);
 
 
         if (this.MatchMode is MatchMode.All)
@@ -111,7 +111,9 @@ public sealed class PermissionRequirements
         }
 
 
-        return isSuccess ? Result.Success() : Result.Failure(authorizationResults[failureIndex].Error);
+        return successExists || failureIndex is -1
+            ? Result.Success()
+            : Result.Failure(authorizationResults[failureIndex].Error);
     }
 
 
@@ -123,10 +125,20 @@ public sealed class PermissionRequirements
 
         if (this.MatchMode is MatchMode.Any)
         {
-            roleErrors = this.Roles
-                .Where(requiredRole => userRoles.All(userRole =>
-                    userRole.Name != requiredRole.Name && userRole.Value != this.RequiredValue))
-                .Select(requiredClaim => requiredClaim.Error);
+            bool anyRequiredRoleFound = this.Roles.Any(requiredRole =>
+                userRoles.Any(userRole =>
+                    userRole.Name.Equals(requiredRole.Name, StringComparison.OrdinalIgnoreCase) &&
+                    userRole.Value.Equals(this.RequiredValue, StringComparison.OrdinalIgnoreCase))
+            );
+
+            if (!anyRequiredRoleFound)
+            {
+                roleErrors = this.Roles
+                    .Where(requiredRole => !userRoles.Any(userOperationClaim =>
+                        userOperationClaim.Name.Equals(requiredRole.Name, StringComparison.OrdinalIgnoreCase) &&
+                        userOperationClaim.Value.Equals(this.RequiredValue, StringComparison.OrdinalIgnoreCase)))
+                    .Select(requiredOperationClaim => requiredOperationClaim.Error);
+            }
         }
         else
         {
@@ -144,22 +156,37 @@ public sealed class PermissionRequirements
     {
         var userOperationClaims = user.Claims.GetOperationClaims();
 
-        IEnumerable<Error> operationClaimErrors = new List<Error>();
+        IEnumerable<Error> operationClaimErrors = [];
 
-        if (this.MatchMode is MatchMode.Any)
+        if (this.MatchMode == MatchMode.Any)
         {
-            operationClaimErrors = this.OperationClaims
-                .Where(requiredOperationClaim => userOperationClaims.All(userOperationClaim =>
-                    userOperationClaim.Name != requiredOperationClaim.Name &&
-                    userOperationClaim.Value != this.RequiredValue))
-                .Select(requiredOperationClaim => requiredOperationClaim.Error);
+            bool anyRequiredOperationClaimFound = this.OperationClaims.Any(requiredOperationClaim =>
+                userOperationClaims.Any(userOperationClaim =>
+                    userOperationClaim.Name.Equals(requiredOperationClaim.Name, StringComparison.OrdinalIgnoreCase) &&
+                    userOperationClaim.Value.Equals(this.RequiredValue, StringComparison.OrdinalIgnoreCase))
+            );
+
+            if (!anyRequiredOperationClaimFound)
+            {
+                operationClaimErrors = this.OperationClaims
+                    .Where(requiredOperationClaim => !userOperationClaims.Any(userOperationClaim =>
+                        userOperationClaim.Name.Equals(requiredOperationClaim.Name,
+                            StringComparison.OrdinalIgnoreCase) &&
+                        userOperationClaim.Value.Equals(this.RequiredValue, StringComparison.OrdinalIgnoreCase)))
+                    .Select(requiredOperationClaim => requiredOperationClaim.Error);
+            }
         }
         else
         {
+            // If any required operation claim is not found in userOperationClaims, return error.
             operationClaimErrors = this.OperationClaims
-                .Where(requiredOperationClaim => userOperationClaims.Any(userOperationClaim =>
-                    userOperationClaim.Name != requiredOperationClaim.Name &&
-                    userOperationClaim.Value != this.RequiredValue))
+                .Where(requiredOperationClaim =>
+                    !userOperationClaims.Any(userOperationClaim =>
+                        userOperationClaim.Name.Equals(requiredOperationClaim.Name,
+                            StringComparison.OrdinalIgnoreCase) &&
+                        userOperationClaim.Value.Equals(this.RequiredValue,
+                            StringComparison.OrdinalIgnoreCase))
+                )
                 .Select(requiredOperationClaim => requiredOperationClaim.Error);
         }
 
@@ -167,13 +194,14 @@ public sealed class PermissionRequirements
         return !errors.Any() ? Result.Success() : Result.Failure(errors.First());
     }
 
+
     public Result AuthorizeByClaim(ClaimsPrincipal user)
     {
         var userClaims = user.Claims;
 
         IEnumerable<Error> errors = this.Claims
-            .Where(requiredClaim => userClaims.All(userClaim =>
-                userClaim.Type != requiredClaim.Name && userClaim.Value != this.RequiredValue))
+            .Where(requiredClaim => !userClaims.Any(userClaim =>
+                userClaim.Type == requiredClaim.Name && userClaim.Value == this.RequiredValue))
             .Select(requiredClaim => requiredClaim.Error)
             .ToList();
 

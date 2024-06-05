@@ -65,7 +65,7 @@ public static class ServiceRegistration
         RegisterInterfaceServices(services, executingAssembly, typeof(IDomainService<>));
 
 
-        services.AddSingleton<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
 
         services.AddScoped<IStreamCacheService, StreamCacheService>();
 

@@ -73,18 +73,23 @@ public sealed class StreamService(
 
     public Task<List<GetUserDto>> GetModeratingStreamsAsync(Guid userId, CancellationToken cancellationToken)
     {
-        var userRoleClaims = efRepository
-            .UserRoleClaims
-            .Where(u => u.UserId == userId);
-
-        var moderatingStreamers = userRoleClaims
-            .Join(
-                inner: efRepository.Users,
-                outerKeySelector: urc => urc.Value,
-                innerKeySelector: u => u.Id.ToString(),
-                resultSelector: (urc, user) => user
+        // Step 1: Construct the query for UserRoleClaims and UserOperationClaims
+        var userClaims = efRepository.UserRoleClaims
+            .Where(urc => urc.UserId == userId)
+            .Select(urc => urc.Value)
+            .Union(
+                efRepository.UserOperationClaims
+                    .Where(uoc => uoc.UserId == userId)
+                    .Select(uoc => uoc.Value)
             )
+            .Distinct();
+
+        // Step 2: Query Users table using the combined unique user IDs
+        var moderatingStreamers = efRepository.Users
+            .Where(u => userClaims.Contains(u.Id.ToString()))
             .Select(u => u.ToDto());
+
+
 
         return moderatingStreamers.ToListAsync(cancellationToken);
     }
