@@ -5,7 +5,7 @@ using Application.Features.RoleOperationClaims.Rules;
 namespace Application.Features.RoleOperationClaims.Commands.Create;
 
 public readonly record struct CreateRoleOperationClaimCommandRequest()
-    : IRequest<HttpResult<GetRoleOperationClaimDto>>, ISecuredRequest
+    : IRequest<HttpResult<GetRoleOperationClaimDto>>, IPermissionRequest
 {
     public Guid RoleId { get; init; }
     public Guid OperationClaimId { get; init; }

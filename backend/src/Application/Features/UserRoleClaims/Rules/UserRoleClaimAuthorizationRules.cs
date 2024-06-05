@@ -29,7 +29,7 @@ public static class UserRoleClaimAuthorizationRules
     {
         var roles = claims.GetRoles();
 
-        return roles.Any(rc => rc.Name == RoleConstants.SystemAdmin);
+        return roles.Any(rc => rc.Name == RoleConstants.Admin);
     }
 
 

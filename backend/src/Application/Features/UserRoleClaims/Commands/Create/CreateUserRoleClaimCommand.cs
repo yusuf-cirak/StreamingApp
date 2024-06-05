@@ -4,7 +4,7 @@ using Application.Features.UserRoleClaims.Abstractions;
 namespace Application.Features.UserRoleClaims.Commands.Create;
 
 public record struct CreateUserRoleClaimCommandRequest : IUserRoleClaimCommandRequest, IRequest<HttpResult>,
-    ISecuredRequest
+    IPermissionRequest
 {
     public Guid UserId { get; init; }
     public Guid RoleId { get; init; }
@@ -19,7 +19,7 @@ public record struct CreateUserRoleClaimCommandRequest : IUserRoleClaimCommandRe
 
             this.PermissionRequirements = PermissionRequirements.Create()
                 .WithRequiredValue(value)
-                .WithRoles(PermissionHelper.AllStreamRoles().ToArray());
+                .WithNameIdentifierClaim();
         }
     }
 

@@ -6,7 +6,7 @@ public sealed class PermissionRequirements
 {
     private IEnumerable<RequiredClaim> Roles { get; set; } = [];
     private IEnumerable<RequiredClaim> OperationClaims { get; set; } = [];
-    
+
     private IEnumerable<RequiredClaim> Claims { get; set; } = [];
 
     private string RequiredValue { get; set; }
@@ -54,6 +54,13 @@ public sealed class PermissionRequirements
         return this;
     }
 
+    public PermissionRequirements WithClaims(params RequiredClaim[] requiredClaims)
+    {
+        this.Claims = requiredClaims;
+
+        return this;
+    }
+
     public PermissionRequirements WithRequiredValue(string requiredValue)
     {
         this.RequiredValue = requiredValue;
@@ -71,16 +78,40 @@ public sealed class PermissionRequirements
 
     public Result Authorize(ClaimsPrincipal user)
     {
-        var roleAuthorizeResult = this.AuthorizeByRole(user);
+        List<Result> authorizationResults = new();
 
-        if (!roleAuthorizeResult.IsFailure) return Result.Success();
+        if (this.Roles.Count() is not 0)
+        {
+            authorizationResults.Add(this.AuthorizeByRole(user));
+        }
+
+        if (this.OperationClaims.Count() is not 0)
+        {
+            authorizationResults.Add(this.AuthorizeByOperationClaim(user));
+        }
+
+        if (this.Claims.Count() is not 0)
+        {
+            authorizationResults.Add(this.AuthorizeByClaim(user));
+        }
 
 
-        var operationClaimAuthorizeResult = this.AuthorizeByOperationClaim(user);
+        if (authorizationResults.Count() is 0)
+        {
+            return Result.Success();
+        }
 
-        return operationClaimAuthorizeResult.IsFailure
-            ? Result.Failure(operationClaimAuthorizeResult.Error)
-            : Result.Success();
+        var failureIndex = authorizationResults.FindIndex(ar => ar.IsFailure);
+        var isSuccess = authorizationResults.Exists(ar => ar.IsSuccess);
+
+
+        if (this.MatchMode is MatchMode.All)
+        {
+            return failureIndex is not -1 ? Result.Failure(authorizationResults[failureIndex].Error) : Result.Success();
+        }
+
+
+        return isSuccess ? Result.Success() : Result.Failure(authorizationResults[failureIndex].Error);
     }
 
 
@@ -88,7 +119,7 @@ public sealed class PermissionRequirements
     {
         var userRoles = user.Claims.GetRoles();
 
-        IEnumerable<Error> roleErrors;
+        IEnumerable<Error> roleErrors = new List<Error>();
 
         if (this.MatchMode is MatchMode.Any)
         {
@@ -113,7 +144,7 @@ public sealed class PermissionRequirements
     {
         var userOperationClaims = user.Claims.GetOperationClaims();
 
-        IEnumerable<Error> operationClaimErrors;
+        IEnumerable<Error> operationClaimErrors = new List<Error>();
 
         if (this.MatchMode is MatchMode.Any)
         {
@@ -133,6 +164,19 @@ public sealed class PermissionRequirements
         }
 
         var errors = operationClaimErrors.ToList();
+        return !errors.Any() ? Result.Success() : Result.Failure(errors.First());
+    }
+
+    public Result AuthorizeByClaim(ClaimsPrincipal user)
+    {
+        var userClaims = user.Claims;
+
+        IEnumerable<Error> errors = this.Claims
+            .Where(requiredClaim => userClaims.All(userClaim =>
+                userClaim.Type != requiredClaim.Name && userClaim.Value != this.RequiredValue))
+            .Select(requiredClaim => requiredClaim.Error)
+            .ToList();
+
         return !errors.Any() ? Result.Success() : Result.Failure(errors.First());
     }
 }

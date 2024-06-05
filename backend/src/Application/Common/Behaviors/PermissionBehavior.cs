@@ -2,13 +2,13 @@
 
 namespace Application.Common.Behaviors;
 
-public sealed class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>, ISecuredRequest
+public sealed class PermissionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>, IPermissionRequest
     where TResponse : IHttpResult, new()
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public AuthorizationBehavior(IHttpContextAccessor httpContextAccessor)
+    public PermissionBehavior(IHttpContextAccessor httpContextAccessor)
     {
         _httpContextAccessor = httpContextAccessor;
     }
@@ -16,11 +16,12 @@ public sealed class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavi
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
-        var claims = _httpContextAccessor.HttpContext?.User.Claims.ToList();
+        var authorizationResult = request.PermissionRequirements.Authorize(_httpContextAccessor.HttpContext!.User);
 
-        if (claims is null or { Count: 0 })
+        if (authorizationResult.IsFailure)
         {
-            var response = new TResponse().CreateWith(AuthorizationErrors.Unauthorized(),
+            var response = new TResponse().CreateWith(
+                AuthorizationErrors.Unauthorized(authorizationResult.Error.Message),
                 StatusCodes.Status401Unauthorized);
 
             return (TResponse)response;

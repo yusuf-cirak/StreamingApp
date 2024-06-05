@@ -27,7 +27,7 @@ public static class UserOperationClaimAuthorizationRules
     {
         var roles = claims.GetRoles().ToList();
 
-        return roles.Exists(rc => rc.Name == RoleConstants.SystemAdmin);
+        return roles.Exists(rc => rc.Name == RoleConstants.Admin);
     }
 
 

@@ -4,13 +4,26 @@ using Application.Features.Users.Rules;
 
 namespace Application.Features.Users.Commands.Update;
 
-public readonly record struct UpdateUserCommandRequest() : IUserCommandRequest, IRequest<HttpResult>
+public record struct UpdateUserCommandRequest() : IUserCommandRequest, IRequest<HttpResult>, IPermissionRequest
 {
-    public Guid UserId { get; init; } = default;
+    private Guid _userId;
+
+    public Guid UserId
+    {
+        get => _userId;
+        set
+        {
+            _userId = value;
+
+            PermissionRequirements = PermissionRequirementConstants.WithNameIdentifier(value.ToString());
+        }
+    }
+
     public string Username { get; init; } = string.Empty;
 
     public string OldPassword { get; init; } = string.Empty;
     public string NewPassword { get; init; } = string.Empty;
+    public PermissionRequirements PermissionRequirements { get; private set; }
 }
 
 public sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommandRequest, HttpResult>

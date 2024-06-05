@@ -4,7 +4,7 @@ using Application.Features.UserOperationClaims.Abstractions;
 namespace Application.Features.UserOperationClaims.Commands.Create;
 
 public record struct CreateUserOperationClaimCommandRequest : IUserOperationClaimCommandRequest,
-    IRequest<HttpResult>, ISecuredRequest
+    IRequest<HttpResult>, IPermissionRequest
 {
     public Guid UserId { get; init; }
     public Guid OperationClaimId { get; init; }
@@ -20,7 +20,7 @@ public record struct CreateUserOperationClaimCommandRequest : IUserOperationClai
 
             this.PermissionRequirements = PermissionRequirements.Create()
                 .WithRequiredValue(value)
-                .WithRoles(PermissionHelper.AllStreamRoles().ToArray());
+                .WithNameIdentifierClaim();
         }
     }
 

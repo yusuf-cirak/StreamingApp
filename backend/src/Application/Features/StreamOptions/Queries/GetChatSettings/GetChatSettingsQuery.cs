@@ -7,7 +7,7 @@ namespace Application.Features.StreamOptions.Queries.GetChatSettings;
 
 public record struct GetStreamChatSettingsQueryRequest : IStreamOptionRequest,
     IRequest<HttpResult<GetStreamChatSettingsDto>>,
-    ISecuredRequest
+    IPermissionRequest
 {
     private Guid _streamerId;
 
@@ -22,7 +22,8 @@ public record struct GetStreamChatSettingsQueryRequest : IStreamOptionRequest,
                 .WithRequiredValue(_streamerId.ToString())
                 .WithRoles(PermissionHelper.AllStreamRoles().ToArray())
                 .WithOperationClaims(RequiredClaim.Create(OperationClaimConstants.Stream.Read.ChatOptions,
-                    StreamErrors.UserIsNotModeratorOfStream));
+                    StreamErrors.UserIsNotModeratorOfStream))
+                .WithNameIdentifierClaim();
         }
     }
 

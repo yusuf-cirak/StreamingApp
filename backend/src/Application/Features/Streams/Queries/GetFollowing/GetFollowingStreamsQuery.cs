@@ -4,10 +4,7 @@ using Application.Features.Users.Services;
 namespace Application.Features.Streams.Queries.GetFollowing;
 
 public readonly record struct GetFollowingStreamsQueryRequest() : IRequest<HttpResult<List<GetStreamDto>>>,
-    ISecuredRequest
-{
-    public PermissionRequirements PermissionRequirements { get; } = PermissionRequirements.Create();
-}
+    ISecuredRequest;
 
 public sealed class
     GetFollowingStreamsQueryHandler(IHttpContextAccessor httpContextAccessor, IUserService userService)

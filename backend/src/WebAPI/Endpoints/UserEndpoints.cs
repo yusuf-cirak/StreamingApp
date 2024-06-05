@@ -16,19 +16,7 @@ public static class UserEndpoints
 
         groupBuilder.MapPut("/",
                 async ([FromBody] UpdateUserCommandRequest updateUserCommandRequest,
-                    IMediator mediator, IHttpContextAccessor httpContextAccessor) =>
-                {
-                    var httpContext = httpContextAccessor.HttpContext;
-                    var canUpdateResult = UserAuthorizationRules.CanUpdateUser(httpContext,
-                        httpContext!.User.Claims, updateUserCommandRequest);
-
-                    if (canUpdateResult.IsFailure)
-                    {
-                        return HttpResult.Failure(canUpdateResult.Error).ToHttpResponse();
-                    }
-
-                    return (await mediator.Send(updateUserCommandRequest)).ToHttpResponse();
-                })
+                    IMediator mediator) => (await mediator.Send(updateUserCommandRequest)).ToHttpResponse())
             .WithTags("Users");
 
 

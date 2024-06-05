@@ -1,5 +1,4 @@
-﻿using Application.Common.Permissions;
-using Application.Common.Services;
+﻿using Application.Common.Services;
 using Application.Features.StreamFollowerUsers.Abstractions;
 using Application.Features.StreamFollowerUsers.Rules;
 
@@ -11,12 +10,11 @@ public readonly record struct StreamFollowerUserCreateCommandRequest() : IStream
 {
     public Guid StreamerId { get; init; }
     public Guid UserId { get; init; }
-    public PermissionRequirements PermissionRequirements { get; } = PermissionRequirements.Create();
 }
 
 public sealed class
     StreamFollowerUserCreateCommandHandler(
-        CurrentUserService currentUserService,
+        ICurrentUserService currentUserService,
         IEfRepository efRepository,
         StreamFollowerUserBusinessRules streamFollowerUserBusinessRules)
     : IRequestHandler<StreamFollowerUserCreateCommandRequest, HttpResult>

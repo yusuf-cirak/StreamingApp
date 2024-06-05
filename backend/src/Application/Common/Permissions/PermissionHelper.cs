@@ -8,7 +8,6 @@ public static class PermissionHelper
         [
             RequiredClaim.Create(RoleConstants.StreamModerator, StreamErrors.UserIsNotModeratorOfStream),
             RequiredClaim.Create(RoleConstants.StreamSuperModerator, StreamErrors.UserIsNotModeratorOfStream),
-            RequiredClaim.Create(RoleConstants.Streamer, StreamErrors.UserIsNotStreamer)
         ];
     }
 
@@ -18,7 +17,6 @@ public static class PermissionHelper
         [
             RequiredClaim.Create(RoleConstants.StreamModerator, StreamErrors.UserIsNotModeratorOfStream),
             RequiredClaim.Create(RoleConstants.StreamSuperModerator, StreamErrors.UserIsNotModeratorOfStream),
-            RequiredClaim.Create(RoleConstants.Streamer, StreamErrors.UserIsNotStreamer)
         ];
     }
 }

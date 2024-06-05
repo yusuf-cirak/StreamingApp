@@ -5,7 +5,7 @@ using Application.Features.OperationClaims.Rules;
 
 namespace Application.Features.OperationClaims.Commands.Update;
 
-public readonly record struct UpdateOperationClaimCommandRequest() : IRequest<HttpResult>, ISecuredRequest
+public readonly record struct UpdateOperationClaimCommandRequest() : IRequest<HttpResult>, IPermissionRequest
 {
     public Guid Id { get; init; }
     public string Name { get; init; }

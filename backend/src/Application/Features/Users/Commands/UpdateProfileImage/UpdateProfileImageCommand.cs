@@ -1,5 +1,4 @@
-﻿using Application.Common.Permissions;
-using Application.Features.Users.Services;
+﻿using Application.Features.Users.Services;
 
 namespace Application.Features.Users.Commands.UpdateProfileImage;
 
@@ -7,7 +6,6 @@ public sealed record UpdateProfileImageCommandRequest : IRequest<HttpResult<stri
 {
     public IFormFile? ProfileImage { get; set; }
     public string ProfileImageUrl { get; set; }
-    public PermissionRequirements PermissionRequirements { get; } = PermissionRequirements.Create();
 }
 
 public sealed class

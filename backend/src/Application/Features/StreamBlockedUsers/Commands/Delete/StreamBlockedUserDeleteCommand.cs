@@ -5,7 +5,7 @@ using Application.Features.StreamBlockedUsers.Services;
 namespace Application.Features.StreamBlockedUsers.Commands.Delete;
 
 public record struct StreamBlockedUserDeleteCommandRequest
-    : IStreamBlockedUserRequest, IRequest<HttpResult>, ISecuredRequest
+    : IStreamBlockedUserRequest, IRequest<HttpResult>, IPermissionRequest
 {
     private Guid _streamerId;
 
@@ -31,7 +31,8 @@ public record struct StreamBlockedUserDeleteCommandRequest
             .WithRequiredValue(this.StreamerId.ToString())
             .WithRoles(PermissionHelper.AllStreamRoles().ToArray())
             .WithOperationClaims(RequiredClaim.Create(OperationClaimConstants.Stream.Write.BlockFromChat,
-                StreamErrors.UserIsNotModeratorOfStream));
+                StreamErrors.UserIsNotModeratorOfStream))
+            .WithNameIdentifierClaim();
     }
 }
 

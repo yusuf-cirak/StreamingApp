@@ -1,13 +1,9 @@
-using Application.Common.Permissions;
 using Application.Features.StreamBlockedUsers.Services;
 
 namespace Application.Features.StreamBlockedUsers.Queries.GetIsBlockedFromStream;
 
 public readonly record struct GetIsUserBlockedFromStreamQueryRequest(Guid StreamerId)
-    : ISecuredRequest, IRequest<Boolean>
-{
-    public PermissionRequirements PermissionRequirements { get; } = PermissionRequirements.Create();
-}
+    : ISecuredRequest, IRequest<bool>;
 
 public sealed class
     GetIsUserBlockedFromStreamQueryRequestHandler : IRequestHandler<GetIsUserBlockedFromStreamQueryRequest, Boolean>

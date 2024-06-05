@@ -1,5 +1,6 @@
 ﻿using Application.Features.OperationClaims.Commands.Create;
 using Application.Features.OperationClaims.Commands.Update;
+using Application.Features.OperationClaims.Queries.GetAll;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel;
@@ -12,6 +13,9 @@ public static class OperationClaimEndpoints
     {
         var groupBuilder = builder.MapGroup("api/operation-claims");
 
+        groupBuilder.MapGet("/stream",
+                async (IMediator mediator) => (await mediator.Send(new GetStreamOperationClaimsQueryRequest())))
+            .WithTags("OperationClaims");
 
         groupBuilder.MapPost("/",
                 async ([FromBody] CreateOperationClaimCommandRequest createOperationClaimCommandRequest,

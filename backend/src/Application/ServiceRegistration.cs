@@ -65,7 +65,7 @@ public static class ServiceRegistration
         RegisterInterfaceServices(services, executingAssembly, typeof(IDomainService<>));
 
 
-        services.AddSingleton<CurrentUserService>();
+        services.AddSingleton<ICurrentUserService, CurrentUserService>();
 
         services.AddScoped<IStreamCacheService, StreamCacheService>();
 
@@ -77,7 +77,7 @@ public static class ServiceRegistration
         // AuthorizationBehavior dependency injection
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
 
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehavior<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PermissionBehavior<,>));
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ApiAuthorizationBehavior<,>));
     }

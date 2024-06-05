@@ -11,13 +11,12 @@ public readonly record struct DeleteStreamFollowerUserCommandRequest() : IStream
     public Guid StreamerId { get; init; }
     public Guid UserId { get; init; }
 
-    public PermissionRequirements PermissionRequirements { get; } = PermissionRequirements.Create();
 }
 
 public sealed class
     DeleteStreamFollowerUserCommandHandler(
         StreamFollowerUserBusinessRules streamFollowerUserBusinessRules,
-        CurrentUserService currentUserService,
+        ICurrentUserService currentUserService,
         IEfRepository efRepository)
     : IRequestHandler<DeleteStreamFollowerUserCommandRequest, HttpResult>
 {

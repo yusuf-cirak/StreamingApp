@@ -3,7 +3,7 @@ using Application.Features.Roles.Rules;
 
 namespace Application.Features.Roles.Commands.Delete;
 
-public readonly record struct DeleteRoleCommandRequest() : IRequest<HttpResult>, ISecuredRequest
+public readonly record struct DeleteRoleCommandRequest() : IRequest<HttpResult>, IPermissionRequest
 {
     public Guid Id { get; init; }
 

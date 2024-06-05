@@ -4,10 +4,7 @@ using Application.Features.StreamFollowerUsers.Services;
 namespace Application.Features.StreamFollowerUsers.Queries.GetIsUserFollowing;
 
 public readonly record struct GetIsUserFollowingStreamQueryRequest(Guid StreamerId)
-    : ISecuredRequest, IRequest<HttpResult<bool>>
-{
-    public PermissionRequirements PermissionRequirements { get; } = PermissionRequirements.Create();
-}
+    : ISecuredRequest, IRequest<HttpResult<bool>>;
 
 public sealed class
     GetIsUserBlockedFromStreamQueryRequestHandler(

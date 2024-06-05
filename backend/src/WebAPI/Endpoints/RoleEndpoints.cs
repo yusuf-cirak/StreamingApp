@@ -1,5 +1,6 @@
 ﻿using Application.Features.Roles.Commands.Create;
 using Application.Features.Roles.Commands.Delete;
+using Application.Features.Roles.Queries.GetStreamRoles;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel;
@@ -11,6 +12,11 @@ public static class RoleEndpoints
     public static void MapRoleEndpoints(this IEndpointRouteBuilder builder)
     {
         var groupBuilder = builder.MapGroup("api/roles");
+
+        groupBuilder.MapGet("/stream",
+                async (
+                    IMediator mediator) => (await mediator.Send(new GetStreamRolesQueryRequest())))
+            .WithTags("Roles");
 
 
         groupBuilder.MapPost("/",

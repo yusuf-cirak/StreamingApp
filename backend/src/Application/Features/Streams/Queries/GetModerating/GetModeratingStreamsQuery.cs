@@ -4,10 +4,7 @@ using Application.Features.Streams.Services;
 namespace Application.Features.Streams.Queries.GetModerating;
 
 public readonly record struct GetModeratingStreamsQueryRequest()
-    : IRequest<HttpResult<List<GetUserDto>>>, ISecuredRequest
-{
-    public PermissionRequirements PermissionRequirements { get; } = PermissionRequirements.Create();
-}
+    : IRequest<HttpResult<List<GetUserDto>>>, ISecuredRequest;
 
 public sealed class
     GetModeratingStreamsQueryHandler : IRequestHandler<GetModeratingStreamsQueryRequest, HttpResult<List<GetUserDto>>>

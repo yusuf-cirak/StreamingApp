@@ -1,12 +1,11 @@
 ﻿using Application.Common.Mapping;
 using Application.Common.Permissions;
-using Application.Common.Rules;
 using Application.Features.OperationClaims.Rules;
 
 namespace Application.Features.OperationClaims.Commands.Create;
 
 public readonly record struct CreateOperationClaimCommandRequest : IRequest<HttpResult<GetOperationClaimDto>>,
-    ISecuredRequest
+    IPermissionRequest
 {
     public string Name { get; init; }
 

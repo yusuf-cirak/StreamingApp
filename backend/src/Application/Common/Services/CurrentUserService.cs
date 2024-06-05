@@ -1,6 +1,12 @@
 ﻿namespace Application.Common.Services;
 
-public sealed record CurrentUserService
+public interface ICurrentUserService
+{
+    public ClaimsPrincipal? User { get; }
+    public Guid UserId { get; }
+}
+
+public sealed record CurrentUserService : ICurrentUserService
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
     public ClaimsPrincipal? User => _httpContextAccessor.HttpContext?.User;

@@ -5,7 +5,7 @@ using Application.Features.Streams.Services;
 namespace Application.Features.StreamOptions.Commands.Update;
 
 public record struct GenerateStreamKeyCommandRequest
-    : IStreamOptionRequest, IRequest<HttpResult<string>>, ISecuredRequest
+    : IStreamOptionRequest, IRequest<HttpResult<string>>, IPermissionRequest
 {
     private Guid _streamerId;
 
@@ -16,8 +16,7 @@ public record struct GenerateStreamKeyCommandRequest
         {
             _streamerId = value;
 
-            PermissionRequirements = PermissionRequirements.Create()
-                .WithRoles(RequiredClaim.Create(RoleConstants.Streamer, StreamErrors.UserIsNotStreamer));
+            PermissionRequirements = PermissionRequirementConstants.WithNameIdentifier(value.ToString());
         }
     }
 

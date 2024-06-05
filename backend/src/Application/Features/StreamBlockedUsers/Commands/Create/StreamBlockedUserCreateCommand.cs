@@ -6,7 +6,7 @@ using Application.Features.StreamBlockedUsers.Services;
 namespace Application.Features.StreamBlockedUsers.Commands.Create;
 
 public record struct CreateStreamBlockedUserCreateCommandRequest
-    : IStreamBlockedUserRequest, IRequest<HttpResult>, ISecuredRequest
+    : IStreamBlockedUserRequest, IRequest<HttpResult>, IPermissionRequest
 {
     private Guid _streamerId;
 
@@ -28,9 +28,8 @@ public record struct CreateStreamBlockedUserCreateCommandRequest
 
     private void SetPermissionRequirements()
     {
-        PermissionRequirements = PermissionRequirements
-            .Create()
-            .WithRequiredValue(this.StreamerId.ToString())
+        PermissionRequirements = PermissionRequirementConstants.WithNameIdentifier(_streamerId.ToString())
+            .WithNameIdentifierClaim()
             .WithRoles(PermissionHelper.AllStreamRoles().ToArray())
             .WithOperationClaims(RequiredClaim.Create(OperationClaimConstants.Stream.Write.BlockFromChat,
                 StreamErrors.UserIsNotModeratorOfStream));

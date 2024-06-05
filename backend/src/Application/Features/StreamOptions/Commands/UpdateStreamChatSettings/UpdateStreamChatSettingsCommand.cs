@@ -5,7 +5,7 @@ using Application.Features.StreamOptions.Services;
 namespace Application.Features.StreamOptions.Commands.Update;
 
 public record struct UpdateStreamChatSettingsCommandRequest()
-    : IStreamOptionRequest, IRequest<HttpResult>, ISecuredRequest
+    : IStreamOptionRequest, IRequest<HttpResult>, IPermissionRequest
 {
     private Guid _streamerId;
 
@@ -21,7 +21,8 @@ public record struct UpdateStreamChatSettingsCommandRequest()
                 .WithRequiredValue(value.ToString())
                 .WithRoles(PermissionHelper.AllStreamRoles().ToArray())
                 .WithOperationClaims(RequiredClaim.Create(OperationClaimConstants.Stream.Write.ChatOptions,
-                    StreamErrors.UserIsNotModeratorOfStream));
+                    StreamErrors.UserIsNotModeratorOfStream))
+                .WithNameIdentifierClaim();
         }
     }
 

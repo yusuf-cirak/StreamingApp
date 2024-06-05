@@ -9,7 +9,7 @@ public static class CommonAuthorizationRules
     {
         var roles = claims.GetRoles();
 
-        if (roles.All(r => r.Name != RoleConstants.SystemAdmin))
+        if (roles.All(r => r.Name != RoleConstants.Admin))
         {
             return Result.Failure(AuthorizationErrors.Unauthorized());
         }

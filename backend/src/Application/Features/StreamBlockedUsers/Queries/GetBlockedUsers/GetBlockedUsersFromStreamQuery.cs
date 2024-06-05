@@ -7,7 +7,7 @@ namespace Application.Features.StreamBlockedUsers.Queries.GetBlockedUsers;
 
 public record struct GetBlockedUsersFromStreamQueryRequest :
     IRequest<HttpResult<IAsyncEnumerable<GetStreamBlockedUserDto>>>, IStreamBlockedUserRequest,
-    ISecuredRequest
+    IPermissionRequest
 {
     private Guid _streamerId;
 
@@ -23,8 +23,10 @@ public record struct GetBlockedUsersFromStreamQueryRequest :
                 .WithRequiredValue(value.ToString())
                 .WithRoles(PermissionHelper.AllStreamRoles().ToArray())
                 .WithOperationClaims(RequiredClaim.Create(OperationClaimConstants.Stream.Read.BlockFromChat,
-                    StreamErrors.UserIsNotModeratorOfStream),RequiredClaim.Create(OperationClaimConstants.Stream.Write.BlockFromChat,
-                    StreamErrors.UserIsNotModeratorOfStream));
+                    StreamErrors.UserIsNotModeratorOfStream), RequiredClaim.Create(
+                    OperationClaimConstants.Stream.Write.BlockFromChat,
+                    StreamErrors.UserIsNotModeratorOfStream))
+                .WithNameIdentifierClaim();
         }
     }
 

@@ -3,7 +3,7 @@ using Application.Features.StreamOptions.Abstractions;
 
 namespace Application.Features.StreamOptions.Queries.GetStreamKey;
 
-public record struct GetStreamKeyQueryRequest : IRequest<HttpResult<string>>, ISecuredRequest, IStreamOptionRequest
+public record struct GetStreamKeyQueryRequest : IRequest<HttpResult<string>>, IPermissionRequest, IStreamOptionRequest
 {
     private Guid _streamerId;
 
@@ -14,9 +14,7 @@ public record struct GetStreamKeyQueryRequest : IRequest<HttpResult<string>>, IS
         {
             _streamerId = value;
 
-            PermissionRequirements = PermissionRequirements.Create()
-                .WithRequiredValue(value.ToString())
-                .WithRoles(RequiredClaim.Create(RoleConstants.Streamer, StreamErrors.UserIsNotStreamer));
+            PermissionRequirements = PermissionRequirementConstants.WithNameIdentifier(value.ToString());
         }
     }
 

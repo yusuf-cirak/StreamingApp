@@ -5,7 +5,7 @@ using Application.Features.StreamOptions.Services;
 namespace Application.Features.StreamOptions.Commands.Update;
 
 public record struct UpdateStreamTitleDescriptionCommandRequest
-    : IStreamOptionRequest, IRequest<HttpResult>, ISecuredRequest
+    : IStreamOptionRequest, IRequest<HttpResult>, IPermissionRequest
 {
     private Guid _streamerId;
 
@@ -20,7 +20,8 @@ public record struct UpdateStreamTitleDescriptionCommandRequest
                 .WithRequiredValue(_streamerId.ToString())
                 .WithRoles(PermissionHelper.AllStreamRoles().ToArray())
                 .WithOperationClaims(RequiredClaim.Create(OperationClaimConstants.Stream.Write.TitleDescription,
-                    StreamErrors.UserIsNotModeratorOfStream));
+                    StreamErrors.UserIsNotModeratorOfStream))
+                .WithNameIdentifierClaim();
         }
     }
 

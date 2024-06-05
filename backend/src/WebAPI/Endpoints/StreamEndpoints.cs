@@ -6,6 +6,7 @@ using Application.Features.Streams.Queries.GetAll;
 using Application.Features.Streams.Queries.GetBlocked;
 using Application.Features.Streams.Queries.GetFollowing;
 using Application.Features.Streams.Queries.GetModerating;
+using Application.Features.Streams.Queries.GetModerators;
 using Application.Features.Streams.Queries.GetRecommended;
 using Application.Features.Streams.Queries.GetViewers;
 using Application.Features.Streams.Queries.GetViewersCount;
@@ -77,6 +78,10 @@ public static class StreamEndpoints
                 {
                     return (await mediator.Send(new GetModeratingStreamsQueryRequest())).ToHttpResponse();
                 })
+            .WithTags("Streams");
+
+        groupBuilder.MapGet("/moderators",
+                async (IMediator mediator) => (await mediator.Send(new GetStreamModeratorsQueryRequest())))
             .WithTags("Streams");
 
         groupBuilder.MapGet("/blocked",

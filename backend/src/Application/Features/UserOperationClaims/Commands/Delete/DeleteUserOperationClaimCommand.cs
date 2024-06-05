@@ -5,7 +5,7 @@ using Application.Features.UserOperationClaims.Rules;
 namespace Application.Features.UserOperationClaims.Commands.Delete;
 
 public record struct DeleteUserOperationClaimCommandRequest : IUserOperationClaimCommandRequest,
-    IRequest<HttpResult>, ISecuredRequest
+    IRequest<HttpResult>, IPermissionRequest
 {
     public Guid UserId { get; init; }
     public Guid OperationClaimId { get; init; }
@@ -20,7 +20,7 @@ public record struct DeleteUserOperationClaimCommandRequest : IUserOperationClai
 
             PermissionRequirements = PermissionRequirements.Create()
                 .WithRequiredValue(value)
-                .WithRoles(PermissionHelper.AllStreamRoles().ToArray());
+                .WithNameIdentifierClaim();
         }
     }
 

@@ -11,9 +11,6 @@ public sealed class AuthService : IAuthService
     private readonly IHashingHelper _hashingHelper;
     private readonly IJwtHelper _jwtHelper;
 
-    private static readonly Guid StreamerRoleId =
-        GuidExtensions.GenerateGuidFromString(RoleConstants.Streamer);
-
     public AuthService(IEfRepository efRepository, IHttpContextAccessor httpContextAccessor,
         IHashingHelper hashingHelper, IJwtHelper jwtHelper)
     {
@@ -30,16 +27,13 @@ public sealed class AuthService : IAuthService
 
         User user = User.Create(username, passwordHash, passwordSalt);
 
-        var userRoleClaim = UserRoleClaim.Create(user.Id, StreamerRoleId,
-            user.Id.ToString());
-        user.UserRoleClaims.Add(userRoleClaim);
 
         var userIpAddress = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString();
 
 
         claims = new()
         {
-            ["roles"] = new List<GetUserRoleDto>() { userRoleClaim.ToDto(RoleConstants.Streamer) },
+            ["roles"] = Enumerable.Empty<GetUserRoleDto>(),
             ["operationClaims"] = Enumerable.Empty<GetUserOperationClaimDto>()
         };
 

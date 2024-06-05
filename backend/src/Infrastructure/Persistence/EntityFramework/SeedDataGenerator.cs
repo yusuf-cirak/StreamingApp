@@ -87,10 +87,8 @@ public class SeedDataGenerator
     {
         var roles = new List<Role>();
 
-        roles.Add(Role.Create(GuidExtensions.GenerateGuidFromString(RoleConstants.SystemAdmin),
-            RoleConstants.SystemAdmin));
-        roles.Add(Role.Create(GuidExtensions.GenerateGuidFromString(RoleConstants.Streamer),
-            RoleConstants.Streamer));
+        roles.Add(Role.Create(GuidExtensions.GenerateGuidFromString(RoleConstants.Admin),
+            RoleConstants.Admin));
         roles.Add(Role.Create(GuidExtensions.GenerateGuidFromString(RoleConstants.StreamSuperModerator),
             RoleConstants.StreamSuperModerator));
         roles.Add(Role.Create(GuidExtensions.GenerateGuidFromString(RoleConstants.StreamModerator),

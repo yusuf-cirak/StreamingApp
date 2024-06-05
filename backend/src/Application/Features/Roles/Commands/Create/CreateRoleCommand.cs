@@ -4,7 +4,7 @@ using Application.Features.Roles.Rules;
 
 namespace Application.Features.Roles.Commands.Create;
 
-public readonly record struct CreateRoleCommandRequest() : IRequest<HttpResult<GetRoleDto>>, ISecuredRequest
+public readonly record struct CreateRoleCommandRequest() : IRequest<HttpResult<GetRoleDto>>, IPermissionRequest
 {
     public string Name { get; init; }
     public PermissionRequirements PermissionRequirements { get; } = PermissionRequirementConstants.WithAdminRole();

@@ -19,7 +19,7 @@ public static class UserAuthorizationRules
     private static bool IsAdmin(IEnumerable<Claim> claims, object request)
     {
         var roles = claims.GetRoles();
-        return roles.Any(ur => ur.Name == RoleConstants.SystemAdmin);
+        return roles.Any(ur => ur.Name == RoleConstants.Admin);
     }
 
     private static bool IsOwner(IEnumerable<Claim> claims, object request)

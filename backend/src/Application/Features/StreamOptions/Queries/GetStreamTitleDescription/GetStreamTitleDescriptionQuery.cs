@@ -6,7 +6,7 @@ using Application.Features.StreamOptions.Rules;
 namespace Application.Features.StreamOptions.Queries.GetStreamTitleDescription;
 
 public record struct
-    GetStreamTitleDescriptionQueryRequest : IRequest<HttpResult<GetStreamTitleDescriptionDto>>, ISecuredRequest
+    GetStreamTitleDescriptionQueryRequest : IRequest<HttpResult<GetStreamTitleDescriptionDto>>, IPermissionRequest
 {
     private Guid _streamerId;
 
@@ -23,7 +23,8 @@ public record struct
                     RequiredClaim.Create(OperationClaimConstants.Stream.Read.TitleDescription,
                         StreamErrors.UserIsNotModeratorOfStream),
                     RequiredClaim.Create(OperationClaimConstants.Stream.Write.TitleDescription,
-                        StreamErrors.UserIsNotModeratorOfStream));
+                        StreamErrors.UserIsNotModeratorOfStream))
+                .WithNameIdentifierClaim();
         }
     }
 
