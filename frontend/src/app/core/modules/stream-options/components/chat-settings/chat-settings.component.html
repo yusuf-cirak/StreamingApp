@@ -54,11 +54,13 @@
     </div>
     <button
       pRipple
-      class="w-full sm:w-[30%] h-10 rounded-lg bg-slate-600 outline-none flex self-center text-center justify-center items-center"
+      class="w-full sm:w-[30%] h-10 rounded-lg bg-slate-600 outline-none flex self-center text-center justify-center items-center disabled:cursor-not-allowed"
       type="submit"
-      [disabled]="!form.valid || form.controls.chatEnabled.disabled"
+      [disabled]="
+        submitted() && (!form.valid || form.controls.chatEnabled.disabled)
+      "
     >
-      @if (form.controls.chatEnabled.disabled) {
+      @if (submitted()) {
       <i class="pi pi-spin pi-spinner" style="font-size: 1rem"></i>
       } @else {
       <span>Save changes</span>

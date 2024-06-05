@@ -1,35 +1,54 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { OperationClaims } from '../../../constants/operation-claims';
+import {
+  getRequiredReadOperationClaims,
+  getRequiredWriteOperationClaims,
+  OperationClaims,
+} from '../../../constants/operation-claims';
 import { getRequiredRoles } from '../../../constants/roles';
 import { UserOperationClaimDto } from '../../../modules/auths/models/operation-claim';
 import { CurrentCreatorService } from './current-creator-service';
+import { AuthService } from '@streaming-app/core';
+import { CreatorPage } from '../guards/creator-page.guard';
 
 @Injectable({ providedIn: 'root' })
 export class CreatorAuthService {
   private readonly creatorService = inject(CurrentCreatorService);
+  private readonly authService = inject(AuthService);
 
-  readonly creatorPageRequirements = computed(() => {
+  readonly isStreamerFlag = computed(() => {
+    const streamerId = this.creatorService.streamer()?.id as string;
+    const userId = this.authService.userId();
+
+    return streamerId === userId;
+  });
+
+  private readonly creatorPageRequirements = computed(() => {
     const streamerId = this.creatorService.streamer()?.id as string;
 
     const roles = getRequiredRoles(streamerId);
 
-    return {
-      roles,
-    };
-  });
-  readonly keyPageRequirements = computed(() => {
-    const streamerId = this.creatorService.streamer()?.id as string;
-
-    const roles = getRequiredRoles(streamerId).filter(
-      (role) => role.name === 'Streamer'
+    const operationClaims = getRequiredReadOperationClaims(streamerId).concat(
+      getRequiredWriteOperationClaims(streamerId)
     );
 
     return {
       roles,
+      operationClaims,
+      flags: [this.isStreamerFlag()],
+    };
+  });
+  private readonly keyPageRequirements = computed(() => {
+    return {
+      flags: [this.isStreamerFlag()],
+    };
+  });
+  readonly moderatorPageRequirements = computed(() => {
+    return {
+      flags: [this.isStreamerFlag()],
     };
   });
 
-  readonly chatSettingsPageRequirements = computed(() => {
+  private readonly chatSettingsPageRequirements = computed(() => {
     const streamerId = this.creatorService.streamer()?.id as string;
     const roles = getRequiredRoles(streamerId);
 
@@ -41,10 +60,11 @@ export class CreatorAuthService {
     return {
       roles,
       operationClaims,
+      flags: [this.isStreamerFlag()],
     };
   });
 
-  readonly communityPageRequirements = computed(() => {
+  private readonly communityPageRequirements = computed(() => {
     const streamerId = this.creatorService.streamer()?.id as string;
     const roles = getRequiredRoles(streamerId);
 
@@ -56,6 +76,27 @@ export class CreatorAuthService {
     return {
       roles,
       operationClaims,
+      flags: [this.isStreamerFlag()],
     };
   });
+
+  readonly pageRequirement = {
+    get: (page: CreatorPage) => {
+      switch (page) {
+        case 'creator':
+          return this.creatorPageRequirements();
+        case 'key':
+          return this.keyPageRequirements();
+        case 'moderators':
+          return this.moderatorPageRequirements();
+        case 'chat-settings':
+          return this.chatSettingsPageRequirements();
+        case 'community':
+          return this.communityPageRequirements();
+
+        default:
+          return { flags: [] };
+      }
+    },
+  };
 }

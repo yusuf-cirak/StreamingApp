@@ -30,7 +30,7 @@
     <button
       class="flex flex-row w-full pl-4 justify-start items-center gap-3 cursor-pointer hover:bg-muted-foreground h-12 icon-container hover:bg-gray-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-none"
       (click)="navigateTo('key')"
-      [disabled]="!canNavigateToKeyPage()"
+      [disabled]="!canNavigateTo('key')"
     >
       <app-key-icon />
       <span class="hideable">Keys</span>
@@ -38,7 +38,7 @@
     <button
       class="flex flex-row w-full pl-4 justify-start items-center gap-3 cursor-pointer hover:bg-muted-foreground h-12 icon-container hover:bg-gray-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-none"
       (click)="navigateTo('chat-settings')"
-      [disabled]="!canNavigateToChatSettingsPage()"
+      [disabled]="!canNavigateTo('chat-settings')"
     >
       <app-chat-icon />
       <span class="hideable">Chat</span>
@@ -46,10 +46,19 @@
     <button
       (click)="navigateTo('community')"
       class="flex flex-row w-full pl-4 justify-start items-center gap-3 cursor-pointer hover:bg-muted-foreground h-12 icon-container hover:bg-gray-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-none"
-      [disabled]="!canNavigateToCommunitySettingsPage()"
+      [disabled]="!canNavigateTo('community')"
     >
       <app-community-icon />
       <span class="hideable">Community</span>
+    </button>
+
+    <button
+      (click)="navigateTo('moderators')"
+      class="flex flex-row w-full pl-4 justify-start items-center gap-3 cursor-pointer hover:bg-muted-foreground h-12 icon-container hover:bg-gray-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-none"
+      [disabled]="!canNavigateTo('moderators')"
+    >
+      <app-community-icon />
+      <span class="hideable">Moderators</span>
     </button>
   </div>
 </aside>

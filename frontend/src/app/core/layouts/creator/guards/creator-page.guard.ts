@@ -8,7 +8,7 @@ import { AuthService } from '../../../services';
 import { CurrentCreatorService } from '../services/current-creator-service';
 import { StreamFacade } from '../../../modules/streams/services/stream.facade';
 
-export const creatorGuard: CanActivateFn = (route, state) => {
+export const creatorLayoutGuard: CanActivateFn = (route, state) => {
   let streamerName = route.params['streamerName'];
 
   if (!streamerName) {
@@ -33,53 +33,32 @@ export const creatorGuard: CanActivateFn = (route, state) => {
       streamFacade.setStream(streamDto);
     }),
     map(() => {
-      const { roles } = creatorAuthService.creatorPageRequirements();
-
-      const rolesMatched = userAuthorizationService.checkRoles(roles);
-
-      return rolesMatched ? true : router.createUrlTree(['/']);
+      return userAuthorizationService.check(
+        creatorAuthService.pageRequirement.get('creator')
+      )
+        ? true
+        : router.createUrlTree(['/']);
     })
   );
 };
 
-export const chatSettingsGuard: CanActivateFn = (route, state) => {
-  const userAuthorizationService = inject(UserAuthorizationService);
-  const creatorAuthService = inject(CreatorAuthService);
+export const creatorPageGuard = (page: CreatorPage): CanActivateFn => {
+  return (route, state) => {
+    const userAuthorizationService = inject(UserAuthorizationService);
+    const creatorAuthService = inject(CreatorAuthService);
 
-  const { roles, operationClaims } =
-    creatorAuthService.chatSettingsPageRequirements();
-
-  const anyRoleMatched = userAuthorizationService.checkRoles(roles);
-  const anyOperationClaimMatched =
-    userAuthorizationService.checkOperationClaims(operationClaims);
-
-  return anyRoleMatched || anyOperationClaimMatched;
+    return userAuthorizationService.check(
+      creatorAuthService.pageRequirement.get(page)
+    )
+      ? true
+      : inject(Router).createUrlTree(['/']);
+  };
 };
 
-export const keySettingsGuard: CanActivateFn = (route, state) => {
-  const router = inject(Router);
-  const userAuthorizationService = inject(UserAuthorizationService);
-  const creatorAuthService = inject(CreatorAuthService);
-
-  const { roles } = creatorAuthService.keyPageRequirements();
-
-  return userAuthorizationService.checkRoles(roles)
-    ? true
-    : router.createUrlTree(['/']);
-};
-
-export const communitySettingsGuard: CanActivateFn = (route, state) => {
-  const userAuthorizationService = inject(UserAuthorizationService);
-  const creatorAuthService = inject(CreatorAuthService);
-
-  const { roles, operationClaims } =
-    creatorAuthService.communityPageRequirements();
-
-  const anyRoleMatched = userAuthorizationService.checkRoles(roles);
-  const anyOperationClaimMatched =
-    userAuthorizationService.checkOperationClaims(operationClaims);
-
-  return anyRoleMatched || anyOperationClaimMatched;
-};
-
-// todo: refactor this
+export type CreatorPage =
+  | 'key'
+  | 'chat-settings'
+  | 'community'
+  | 'moderators'
+  | 'stream'
+  | 'creator';

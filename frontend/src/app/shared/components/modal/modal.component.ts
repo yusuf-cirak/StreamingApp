@@ -31,6 +31,7 @@ export class ModalComponent {
   @Output() outsideModalClicked = new EventEmitter<void>();
 
   emitCloseModalClicked() {
+    this.visible.set(false);
     this.closeModalClicked.emit();
   }
 

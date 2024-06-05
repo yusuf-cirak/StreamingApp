@@ -36,7 +36,6 @@ export class CommunityViewerComponent {
 
   roles: UserRoleDto[] = [
     { name: 'Admin' },
-    { name: Roles.Streamer, value: this.streamerId() },
     { name: Roles.StreamSuperModerator, value: this.streamerId() },
   ];
 

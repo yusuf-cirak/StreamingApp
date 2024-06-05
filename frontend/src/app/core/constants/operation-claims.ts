@@ -3,17 +3,17 @@ import { UserOperationClaimDto } from '../modules/auths/models/operation-claim';
 export const OperationClaims = {
   Stream: {
     Read: {
-      BlockFromChat: 'Stream::Read::BlockFromChat',
-      DelayChat: 'Stream::Read::DelayChat',
-      TitleDescription: 'Stream::Read::TitleDescription',
-      ChatOptions: 'Stream::Read::ChatOptions',
+      BlockFromChat: 'Stream.Read.BlockFromChat',
+      DelayChat: 'Stream.Read.DelayChat',
+      TitleDescription: 'Stream.Read.TitleDescription',
+      ChatOptions: 'Stream.Read.ChatOptions',
     },
 
     Write: {
-      BlockFromChat: 'Stream::Write::BlockFromChat',
-      DelayChat: 'Stream::Write::DelayChat',
-      TitleDescription: 'Stream::Write::TitleDescription',
-      ChatOptions: 'Stream::Write::ChatOptions',
+      BlockFromChat: 'Stream.Write.BlockFromChat',
+      DelayChat: 'Stream.Write.DelayChat',
+      TitleDescription: 'Stream.Write.TitleDescription',
+      ChatOptions: 'Stream.Write.ChatOptions',
     },
   },
 };

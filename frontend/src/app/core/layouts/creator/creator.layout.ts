@@ -8,6 +8,7 @@ import { StreamFacade } from '../../modules/streams/services/stream.facade';
 import { ChatSettingsService } from '../../modules/stream-options/services/chat-settings.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { tap } from 'rxjs';
+import { PermissionService } from '../../modules/permissions/services/permission.service';
 
 @Component({
   selector: 'app-creator',
@@ -19,7 +20,7 @@ import { tap } from 'rxjs';
     NgIf,
     RouterOutlet,
   ],
-  providers: [CreatorService],
+  providers: [CreatorService, PermissionService],
   templateUrl: './creator.layout.html',
 })
 export class CreatorLayout {

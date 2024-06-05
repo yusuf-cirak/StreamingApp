@@ -8,6 +8,16 @@ import { UserOperationClaimDto } from '../modules/auths/models/operation-claim';
 export class UserAuthorizationService {
   private readonly authService = inject(AuthService);
 
+  check(options: AuthorizationOptions) {
+    const { roles = [], operationClaims = [], flags = [] } = options;
+
+    const rolesMatched = this.checkRoles(roles);
+    const operationClaimsMatched = this.checkOperationClaims(operationClaims);
+    const flagsMatched = this.checkFlags(flags);
+
+    return rolesMatched || operationClaimsMatched || flagsMatched;
+  }
+
   checkOperationClaims(
     operationClaims: UserOperationClaimDto[],
     matchMode: 'any' | 'all' = 'any'
@@ -54,4 +64,16 @@ export class UserAuthorizationService {
           });
         });
   }
+
+  checkFlags(flags: boolean[], matchMode: 'any' | 'all' = 'any') {
+    return matchMode === 'any'
+      ? flags.some((flag) => flag)
+      : flags.every((flag) => flag);
+  }
 }
+
+export type AuthorizationOptions = {
+  roles?: UserOperationClaimDto[];
+  operationClaims?: UserOperationClaimDto[];
+  flags?: boolean[];
+};

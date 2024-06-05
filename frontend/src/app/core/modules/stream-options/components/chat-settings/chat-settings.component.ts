@@ -10,7 +10,14 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { Component, DestroyRef, inject, Signal, signal } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  effect,
+  inject,
+  Signal,
+  signal,
+} from '@angular/core';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -30,6 +37,8 @@ import { PatchStreamChatSettingsDto } from '../../dtos/patch-stream-chat-setting
 import { ToastrService } from 'ngx-toastr';
 import { CurrentCreatorService } from '../../../../layouts/creator/services/current-creator-service';
 import { ChatSettingsService } from '../../services/chat-settings.service';
+import { CreatorAuthService } from '../../../../layouts/creator/services/creator-auth-service';
+import { UserAuthorizationService } from '../../../../services/user-authorization.service';
 @Component({
   standalone: true,
   selector: 'app-chat-settings',
@@ -56,7 +65,13 @@ export class ChatSettingsComponent {
   readonly #loaded = signal(false);
   readonly loaded = this.#loaded.asReadonly();
 
+  readonly submitted = signal(false);
+
   readonly chatSettingsService = inject(ChatSettingsService);
+
+  readonly creatorAuthService = inject(CreatorAuthService);
+
+  readonly userAuthorizationService = inject(UserAuthorizationService);
 
   readonly authService = inject(AuthService);
 
@@ -94,6 +109,15 @@ export class ChatSettingsComponent {
     )
   );
 
+  constructor() {
+    effect(() => {
+      const isAuthorized = this.userAuthorizationService.check(
+        this.creatorAuthService.pageRequirement.get('chat-settings')
+      );
+
+      isAuthorized ? this.form.enable() : this.form.disable();
+    });
+  }
   ngOnInit() {
     this.form.controls.chatEnabled.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -134,8 +158,11 @@ export class ChatSettingsComponent {
         this.form.enable();
         this.form.markAsUntouched();
         this.updateFormValues();
+        this.submitted.set(false);
       })
     );
+
+    this.submitted.set(true);
 
     this.update$.next(update$);
   }

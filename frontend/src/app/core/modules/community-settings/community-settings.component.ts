@@ -1,5 +1,12 @@
 import { DatePipe, NgClass } from '@angular/common';
-import { Component, computed, inject, Signal, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  Signal,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { GetStreamBlockedUserDto } from './contracts/get-stream-blocked-user-dto';
@@ -22,6 +29,11 @@ import { CommunitySettingsSkeletonComponent } from './community-settings-skeleto
 import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
 import { ToastrService } from 'ngx-toastr';
 import { CurrentCreatorService } from '../../layouts/creator/services/current-creator-service';
+import { CreatorAuthService } from '../../layouts/creator/services/creator-auth-service';
+import { UserAuthorizationService } from '../../services/user-authorization.service';
+import { Roles } from '../../constants/roles';
+import { OperationClaims } from '../../constants/operation-claims';
+import { AuthService } from '../../services';
 @Component({
   selector: 'app-community-settings',
   standalone: true,
@@ -43,7 +55,15 @@ export class CommunitySettingsComponent {
 
   readonly creatorService = inject(CurrentCreatorService);
 
+  readonly authService = inject(AuthService);
+
   readonly streamerId = this.creatorService.streamerId as Signal<string>;
+
+  readonly creatorAuthService = inject(CreatorAuthService);
+
+  readonly userAuthorizationService = inject(UserAuthorizationService);
+
+  readonly isAuthorized = signal(false);
 
   readonly update$ = new Subject<void>();
 
@@ -81,6 +101,28 @@ export class CommunitySettingsComponent {
   selectedRows = signal<GetStreamBlockedUserDto[] | undefined>(undefined);
 
   dialogVisible = signal(false);
+
+  constructor() {
+    effect(
+      () => {
+        const isAuthorized = this.userAuthorizationService.check({
+          roles: [
+            { name: Roles.StreamSuperModerator, value: this.streamerId() },
+          ],
+          operationClaims: [
+            {
+              name: OperationClaims.Stream.Write.BlockFromChat,
+              value: this.streamerId(),
+            },
+          ],
+          flags: [this.authService.userId() === this.streamerId()!],
+        });
+
+        this.isAuthorized.set(isAuthorized);
+      },
+      { allowSignalWrites: true }
+    );
+  }
 
   onPageChange(event: PaginatorState) {
     this.#startIndex.set(event.first!);

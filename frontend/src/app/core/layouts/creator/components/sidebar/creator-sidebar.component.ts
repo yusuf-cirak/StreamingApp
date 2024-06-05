@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, computed, DebugNode, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { LayoutService } from '../../../../services/layout.service';
 import { AuthService } from '@streaming-app/core';
@@ -18,6 +18,7 @@ import { AuthorizationDirective } from '../../../../../shared/directives/authori
 import { HintComponent } from '../../../../components/hint/hint.component';
 import { CreatorAuthService } from '../../services/creator-auth-service';
 import { UserAuthorizationService } from '../../../../services/user-authorization.service';
+import { CreatorPage } from '../../guards/creator-page.guard';
 
 @Component({
   selector: 'app-creator-sidebar',
@@ -45,32 +46,13 @@ export class CreatorSidebarComponent {
   readonly authService = inject(AuthService);
   readonly userAuthorizationService = inject(UserAuthorizationService);
 
-  readonly canNavigateToKeyPage = computed(() => {
-    const { roles } = this.creatorAuthService.keyPageRequirements();
-
-    return this.userAuthorizationService.checkRoles(roles);
-  });
-
-  readonly canNavigateToChatSettingsPage = computed(() => {
-    const { roles, operationClaims } =
-      this.creatorAuthService.chatSettingsPageRequirements();
-
-    return (
-      this.userAuthorizationService.checkRoles(roles) ||
-      this.userAuthorizationService.checkOperationClaims(operationClaims)
-    );
-  });
-
-  readonly canNavigateToCommunitySettingsPage = computed(() => {
-    const { roles, operationClaims } =
-      this.creatorAuthService.communityPageRequirements();
-
-    return (
-      this.userAuthorizationService.checkRoles(roles) ||
-      this.userAuthorizationService.checkOperationClaims(operationClaims)
-    );
-  });
-
+  readonly canNavigateTo = (page: CreatorPage) => {
+    return computed(() =>
+      this.userAuthorizationService.check(
+        this.creatorAuthService.pageRequirement.get(page)
+      )
+    )();
+  };
   readonly router = inject(Router);
 
   readonly ctrlPressed = signal(false);
