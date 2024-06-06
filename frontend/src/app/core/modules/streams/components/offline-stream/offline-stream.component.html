@@ -3,7 +3,7 @@
   [autofocus]="true"
 >
   <div
-    class="w-full sm:w-[80%] h-full overflow-y-auto scroller-none bg-tw-primary"
+    class="w-full sm:w-[80%] h-full overflow-y-auto scroller-none bg-slate-900"
   >
     <div
       class="w-full h-[60%] sm:h-[70%] flex flex-col items-center justify-center border-b border-tw-tertiary"
@@ -36,7 +36,8 @@
     <div class="w-full h-fit sm:h-[30%] border-tw-secondary border-t">
       <app-stream-header />
 
-      @if (streamFacade.isHost(); as isHost) { @defer(when isHost){
+      @if (streamFacade.isAuthorized(); as isAuthorized) { @defer(when
+      isAuthorized){
       <app-stream-option-card />
       } }
 

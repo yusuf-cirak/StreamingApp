@@ -1,6 +1,15 @@
 import { inject, Injectable, signal, Signal } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
-import { catchError, EMPTY, from, Subject, tap, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  EMPTY,
+  from,
+  ReplaySubject,
+  Subject,
+  tap,
+  throwError,
+} from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { StreamHubAction } from './stream-hub-action';
 import { StreamDto } from '../modules/streams/contracts/stream-dto';
@@ -26,19 +35,21 @@ export class StreamHub {
 
   streamBlockUserOccured$ = new Subject<StreamBlockUserActionDto>();
 
+  upsertModerator$ = new Subject<void>();
+
   connect() {
     return from(this._hubConnection.start()).pipe(
-      tap(() => {
-        console.log('Connected to stream hub');
-        this.registerStreamHubHandlers();
-        this.connectedToHub.set(true);
-        console.log('Registered stream hub handlers');
-      }),
       catchError((err) => {
         console.error(err);
         this.connectedToHub.set(false);
 
         return throwError(err);
+      }),
+      tap(() => {
+        console.log('Connected to stream hub');
+        this.registerStreamHubHandlers();
+        this.connectedToHub.set(true);
+        console.log('Registered stream hub handlers');
       })
     );
   }
@@ -97,6 +108,11 @@ export class StreamHub {
       (streamBlockUserDto: StreamBlockUserActionDto) =>
         this.streamBlockUserOccured$.next(streamBlockUserDto)
     );
+
+    this._hubConnection.on(StreamHubAction.OnUpsertModerator, () => {
+      console.log('upsert moderator!');
+      this.upsertModerator$.next();
+    });
   }
 
   invokeOnJoinedStream(streamerName: string) {

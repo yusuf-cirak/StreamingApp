@@ -11,6 +11,9 @@ import { ChatMessage } from '../../chat-sidebar/chats/models/chat-message';
 import { StreamState } from '../models/stream-state';
 import { StreamOptions } from '../../../models/stream-options';
 import { StreamDto } from '../contracts/stream-dto';
+import { UserAuthorizationService } from '../../../services/user-authorization.service';
+import { getRequiredRoles } from '../../../constants/roles';
+import { getRequiredWriteOperationClaims } from '../../../constants/operation-claims';
 
 @Injectable({ providedIn: 'root' })
 export class StreamFacade {
@@ -20,6 +23,8 @@ export class StreamFacade {
   private readonly streamService = inject(StreamService);
 
   private readonly streamHub = inject(StreamHub);
+
+  private readonly userAuthorizationService = inject(UserAuthorizationService);
 
   // states
 
@@ -59,10 +64,22 @@ export class StreamFacade {
     () => this.liveStream()?.user.username || this.#streamerName()
   );
 
-  readonly isHost = computed(() => {
-    return (
-      this.liveStream()?.user.username === this.authService.user()?.username
-    );
+  // readonly isHost = computed(() => {
+  //   return (
+  //     this.liveStream()?.user.username === this.authService.user()?.username
+  //   );
+  // });
+
+  readonly isAuthorized = computed(() => {
+    const streamerId = this.liveStream()?.user.id;
+
+    const authorizeOptions = {
+      roles: getRequiredRoles(streamerId),
+      operationClaims: getRequiredWriteOperationClaims(streamerId),
+      flags: [streamerId == this.authService.userId()],
+    };
+
+    return this.userAuthorizationService.check(authorizeOptions);
   });
 
   readonly chatMessages = this.#chatMessages.asReadonly();

@@ -55,8 +55,11 @@ export class AuthService {
 
   refreshToken$: Observable<CurrentUser> | null = null;
 
+  streamUpsertModerator$ = new Subject<void>();
+
   constructor() {
     this.handleStorageEvents();
+    this.refreshOnUpsertModerator();
   }
 
   getUserFromLocalStorage(): UserAuthDto | null {
@@ -209,7 +212,7 @@ export class AuthService {
         }),
         concatMap(() => {
           const connectAndReturnUser = () =>
-            of(this.streamHub.buildAndConnect(this.user()?.accessToken)).pipe(
+            this.streamHub.buildAndConnect(this.user()?.accessToken).pipe(
               map(() => this.user()!),
               tap(() => this.login$.next())
             );
@@ -254,5 +257,11 @@ export class AuthService {
           this.setUser(user);
         },
       });
+  }
+
+  private refreshOnUpsertModerator() {
+    this.streamHub.upsertModerator$
+      .pipe(switchMap(() => this.refreshToken()))
+      .subscribe();
   }
 }
