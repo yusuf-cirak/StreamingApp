@@ -45,7 +45,7 @@ public static class ServiceRegistration
         services.AddSingleton<IHashingHelper, HashingHelper>();
         services.AddSingleton<IEncryptionHelper, AesEncryptionHelper>();
 
-        // services.AddQuartzBackgroundJob();
+        services.AddQuartzBackgroundJob();
 
         services.AddSingleton<ICacheService, RedisCacheService>();
 
@@ -59,20 +59,20 @@ public static class ServiceRegistration
     {
         services.AddQuartz(configurator =>
         {
-            var processOutboxMessagesKey = new JobKey(nameof(ProcessOutboxMessagesJob));
-
-            configurator
-                .AddJob<ProcessOutboxMessagesJob>(processOutboxMessagesKey)
-                .AddTrigger(trigger => trigger
-                    .ForJob(processOutboxMessagesKey)
-                    .WithSimpleSchedule(schedule => schedule
-                        .WithIntervalInSeconds(5)
-                        .RepeatForever()));
+            // var processOutboxMessagesKey = new JobKey(nameof(ProcessOutboxMessagesJob));
+            //
+            // configurator
+            //     .AddJob<ProcessOutboxMessagesJob>(processOutboxMessagesKey)
+            //     .AddTrigger(trigger => trigger
+            //         .ForJob(processOutboxMessagesKey)
+            //         .WithSimpleSchedule(schedule => schedule
+            //             .WithIntervalInSeconds(5)
+            //             .RepeatForever()));
 
 
             var refreshTokenCleanupKey = new JobKey(nameof(RefreshTokenCleanupJob));
-            
-            
+
+
             configurator
                 .AddJob<RefreshTokenCleanupJob>(refreshTokenCleanupKey)
                 .AddTrigger(trigger => trigger
@@ -88,6 +88,8 @@ public static class ServiceRegistration
     private static void AddCacheServices(this IServiceCollection services)
     {
         services.AddScoped<ICacheService, RedisCacheService>();
+        services.AddScoped<IRedisCacheService, RedisCacheService>();
+
     }
 
 

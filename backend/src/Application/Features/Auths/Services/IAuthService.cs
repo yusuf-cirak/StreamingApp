@@ -10,6 +10,8 @@ public interface IAuthService : IDomainService<User>
 
     Task<GetUserRolesAndOperationClaimsDto> GetUserRolesAndOperationClaimsAsync(Guid userId,
         CancellationToken cancellationToken);
+    
+    GetUserRolesAndOperationClaimsDto GetUserRolesAndOperationClaims(User user);
 
     Task<List<GetUserRoleDto>> GetUserRolesAsync(Guid userId,
         CancellationToken cancellationToken);

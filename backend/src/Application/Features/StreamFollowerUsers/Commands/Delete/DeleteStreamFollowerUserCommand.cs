@@ -1,5 +1,4 @@
-﻿using Application.Common.Permissions;
-using Application.Common.Services;
+﻿using Application.Common.Services;
 using Application.Features.StreamFollowerUsers.Abstractions;
 using Application.Features.StreamFollowerUsers.Rules;
 
@@ -10,7 +9,6 @@ public readonly record struct DeleteStreamFollowerUserCommandRequest() : IStream
 {
     public Guid StreamerId { get; init; }
     public Guid UserId { get; init; }
-
 }
 
 public sealed class
@@ -23,14 +21,15 @@ public sealed class
     public async Task<HttpResult> Handle(DeleteStreamFollowerUserCommandRequest request,
         CancellationToken cancellationToken)
     {
+        var userId = currentUserService.UserId;
         var canFollowResult =
-            streamFollowerUserBusinessRules.CanUserFollowTheStreamer(request.UserId, currentUserService.UserId);
+            streamFollowerUserBusinessRules.CanUserFollowTheStreamer(request.UserId, userId);
 
         if (canFollowResult.IsFailure)
         {
             return canFollowResult.Error;
         }
-        
+
 
         var result = await efRepository
             .StreamFollowerUsers

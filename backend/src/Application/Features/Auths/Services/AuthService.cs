@@ -55,6 +55,20 @@ public sealed class AuthService : IAuthService
         return new GetUserRolesAndOperationClaimsDto(userId, userRoles, userOperationClaims);
     }
 
+    public GetUserRolesAndOperationClaimsDto GetUserRolesAndOperationClaims(User user)
+    {
+        var roles = user
+            .UserRoleClaims
+            .Select(urc => new GetUserRoleDto(urc.Role.Name, urc.Value));
+
+        var operationClaims = user
+            .UserOperationClaims
+            .Select(uoc => new GetUserOperationClaimDto(uoc.OperationClaim.Name, uoc.Value));
+        
+        return new GetUserRolesAndOperationClaimsDto(user.Id,roles,operationClaims);
+
+    }
+
     public Task<List<GetUserRoleDto>> GetUserRolesAsync(Guid userId,
         CancellationToken cancellationToken = default)
     {

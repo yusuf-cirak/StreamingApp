@@ -1,4 +1,5 @@
 ﻿using Application.Common.Errors;
+using Application.Common.Permissions;
 
 namespace Application.Common.Behaviors;
 
@@ -7,16 +8,20 @@ public sealed class PermissionBehavior<TRequest, TResponse> : IPipelineBehavior<
     where TResponse : IHttpResult, new()
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IPermissionService _permissionService;
 
-    public PermissionBehavior(IHttpContextAccessor httpContextAccessor)
+    public PermissionBehavior(IHttpContextAccessor httpContextAccessor, IPermissionService permissionService)
     {
         _httpContextAccessor = httpContextAccessor;
+        _permissionService = permissionService;
     }
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
-        var authorizationResult = request.PermissionRequirements.Authorize(_httpContextAccessor.HttpContext!.User);
+        var user = _httpContextAccessor.HttpContext!.User;
+
+        var authorizationResult = _permissionService.Authorize(request.PermissionRequirements, user);
 
         if (authorizationResult.IsFailure)
         {

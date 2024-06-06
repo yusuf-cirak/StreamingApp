@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Application.Abstractions;
 using Application.Common.Behaviors;
+using Application.Common.Permissions;
 using Application.Common.Services;
 using Application.Features.Streams.Services;
 using FluentValidation;
@@ -65,7 +66,8 @@ public static class ServiceRegistration
         RegisterInterfaceServices(services, executingAssembly, typeof(IDomainService<>));
 
 
-        services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddSingleton<IPermissionService, PermissionService>();
+        services.AddSingleton<ICurrentUserService, CurrentUserService>();
 
         services.AddScoped<IStreamCacheService, StreamCacheService>();
 
@@ -74,11 +76,15 @@ public static class ServiceRegistration
         // FluentValidation dependency injection
         services.AddValidatorsFromAssembly(executingAssembly);
 
-        // AuthorizationBehavior dependency injection
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
+
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehavior<,>));
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PermissionBehavior<,>));
 
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LockBehavior<,>));
+
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ApiAuthorizationBehavior<,>));
+        
     }
 }

@@ -28,27 +28,27 @@ public sealed class
     {
         var userId = (request.UserId);
 
-        var userExistResult = await authBusinessRules.UserWithIdMustExistBeforeRefreshToken(userId);
+        var ipAddress = httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? string.Empty;
+
+        var userExistResult = await authBusinessRules.UserWithIdMustExist(userId, ipAddress);
 
         if (userExistResult.IsFailure)
         {
             return userExistResult.Error;
         }
 
-        User user = userExistResult.Value;
+        var user = userExistResult.Value;
 
         var verifyRefreshTokenResult =
-            await authBusinessRules.GetAndVerifyUserRefreshToken(userId, request.RefreshToken);
+            authBusinessRules.VerifyRefreshToken(user, request.RefreshToken);
 
         if (verifyRefreshTokenResult.IsFailure)
         {
             return verifyRefreshTokenResult.Error;
         }
 
-        var userIpAddress = httpContextAccessor?.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "";
-
         var userRolesAndOperationClaims =
-            await authService.GetUserRolesAndOperationClaimsAsync(user.Id, cancellationToken);
+            authService.GetUserRolesAndOperationClaims(user);
 
         var claimsDictionary = new Dictionary<string, object>
         {
@@ -57,7 +57,7 @@ public sealed class
         };
 
         var accessToken = jwtHelper.CreateAccessToken(user, claimsDictionary);
-        var refreshToken = jwtHelper.CreateRefreshToken(user, userIpAddress);
+        var refreshToken = jwtHelper.CreateRefreshToken(user, ipAddress);
 
         efRepository.RefreshTokens.Add(refreshToken);
 

@@ -1,5 +1,4 @@
-﻿using Application.Common.Permissions;
-using Application.Features.Streams.Services;
+﻿using Application.Features.Streams.Services;
 
 namespace Application.Features.Streams.Queries.GetModerating;
 

@@ -1,5 +1,6 @@
 ﻿using Application.Common.Services;
 using Application.Features.Users.Services;
+using SignalR.Hubs.Stream.Server.Abstractions;
 
 namespace Application.Features.Users.Commands.UpsertStreamModerator;
 
@@ -11,7 +12,8 @@ public sealed record UpsertStreamModeratorsCommandRequest(
 public sealed class UserCreateStreamPermissionCommandRequestHandler(
     ICurrentUserService currentUserService,
     IUserService userService,
-    IEfRepository efRepository)
+    IEfRepository efRepository,
+    IStreamHubServerService streamHubServerService)
     : IRequestHandler<UpsertStreamModeratorsCommandRequest, HttpResult<bool>>
 {
     public async Task<HttpResult<bool>> Handle(UpsertStreamModeratorsCommandRequest request,
@@ -34,8 +36,8 @@ public sealed class UserCreateStreamPermissionCommandRequestHandler(
 
         await efRepository.SaveChangesAsync(cancellationToken);
 
-        // todo: send notification users to refresh their tokens
 
+        _ = Task.Run(() => streamHubServerService.OnUpsertModeratorsAsync(request.UserIds), cancellationToken);
         return true;
     }
 }

@@ -6,6 +6,7 @@ using SignalR.Constants;
 using SignalR.Contracts;
 using SignalR.Hubs.Stream.Client.Abstractions.Services;
 using SignalR.Hubs.Stream.Server.Abstractions;
+using SignalR.Hubs.Stream.Shared;
 
 namespace SignalR.Hubs.Stream.Server.Concretes;
 
@@ -13,12 +14,14 @@ public sealed class InMemoryStreamHubServerService : IStreamHubServerService
 {
     private readonly IHubContext<StreamHub> _hubContext;
     private readonly IStreamHubChatRoomService _hubChatRoomService;
+    private readonly IStreamHubState _streamHubState;
 
     public InMemoryStreamHubServerService(IHubContext<StreamHub> hubContext,
-        IStreamHubChatRoomService hubChatRoomService)
+        IStreamHubChatRoomService hubChatRoomService, IStreamHubState streamHubState)
     {
         _hubContext = hubContext;
         _hubChatRoomService = hubChatRoomService;
+        _streamHubState = streamHubState;
     }
 
     public async Task OnStreamStartedAsync(GetStreamDto streamDto)
@@ -68,12 +71,28 @@ public sealed class InMemoryStreamHubServerService : IStreamHubServerService
 
 
         var viewerConnectionIds = streamViewerConnectionIds as HubConnectionId[] ?? streamViewerConnectionIds.ToArray();
-        
+
         if (!viewerConnectionIds.Any())
         {
             return;
         }
-        
-        await _hubContext.Clients.Clients(viewerConnectionIds).SendAsync(StreamHubConstant.Method.OnBlockFromStreamAsync, new StreamBlockUserDto(streamer.Id, isBlocked));
+
+        await _hubContext.Clients.Clients(viewerConnectionIds).SendAsync(
+            StreamHubConstant.Method.OnBlockFromStreamAsync, new StreamBlockUserDto(streamer.Id, isBlocked));
+    }
+
+    public async Task OnUpsertModeratorsAsync(List<Guid> userIds)
+    {
+        var stringUserIds = new List<string>();
+        userIds.ForEach(userId => stringUserIds.Add(userId.ToString()));
+
+        var userConnectionIds = _streamHubState
+            .OnlineUsers
+            .Users
+            .Where(kvp => stringUserIds.Exists(id => id == kvp.Value.Id))
+            .Select(kvp => kvp.Key);
+
+
+        await _hubContext.Clients.Clients(userConnectionIds).SendAsync(StreamHubConstant.Method.OnUpsertModeratorAsync);
     }
 }

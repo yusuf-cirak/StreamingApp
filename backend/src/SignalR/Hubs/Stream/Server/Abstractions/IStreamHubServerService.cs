@@ -13,4 +13,6 @@ public interface IStreamHubServerService
     Task OnStreamChatMessageSendAsync(string streamerName, StreamChatMessageDto streamChatMessageDto);
 
     Task OnBlockFromStreamAsync(GetUserDto streamer, List<Guid> blockUserIds, bool isBlocked);
+
+    Task OnUpsertModeratorsAsync(List<Guid> userIds);
 }

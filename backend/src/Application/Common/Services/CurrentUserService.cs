@@ -2,15 +2,13 @@
 
 public interface ICurrentUserService
 {
-    public ClaimsPrincipal? User { get; }
     public Guid UserId { get; }
 }
 
-public sealed record CurrentUserService : ICurrentUserService
+public sealed class CurrentUserService : ICurrentUserService
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
-    public ClaimsPrincipal? User => _httpContextAccessor.HttpContext?.User;
-    public Guid UserId => Guid.Parse(User.GetUserId());
+    public Guid UserId => Guid.Parse(_httpContextAccessor.HttpContext!.User.GetUserId());
 
     public CurrentUserService(IHttpContextAccessor httpContextAccessor)
     {

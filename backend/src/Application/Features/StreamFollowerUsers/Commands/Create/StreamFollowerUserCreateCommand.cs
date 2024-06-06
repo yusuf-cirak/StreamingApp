@@ -22,8 +22,9 @@ public sealed class
     public async Task<HttpResult> Handle(StreamFollowerUserCreateCommandRequest request,
         CancellationToken cancellationToken)
     {
+        var userId = currentUserService.UserId;
         var canFollowResult =
-            streamFollowerUserBusinessRules.CanUserFollowTheStreamer(request.UserId, currentUserService.UserId);
+            streamFollowerUserBusinessRules.CanUserFollowTheStreamer(request.UserId, userId);
 
         if (canFollowResult.IsFailure)
         {

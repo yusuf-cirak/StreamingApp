@@ -28,7 +28,7 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommandRequest, H
     public async Task<HttpResult<AuthResponseDto>> Handle(LoginCommandRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _authBusinessRules.UserNameShouldExistBeforeLogin(request.Username);
+        var result = await _authBusinessRules.UserNameShouldExistBeforeLoginAsync(request.Username, cancellationToken);
 
         if (result.IsFailure)
         {
@@ -46,11 +46,10 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommandRequest, H
             return verifyCredentialsResult.Error;
         }
 
-        var userIpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+        var userIpAddress = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? string.Empty;
 
 
-        var userRolesAndOperationClaims =
-            await _authService.GetUserRolesAndOperationClaimsAsync(user.Id, cancellationToken);
+        var userRolesAndOperationClaims = _authService.GetUserRolesAndOperationClaims(user);
 
         var claimsDictionary = new Dictionary<string, dynamic>
         {

@@ -27,7 +27,7 @@ public interface IUserService : IDomainService<User>
 
     void UpdateUsersWithRolesAndOperationClaims(List<User> users, List<Guid> roleIds, List<Guid> operationClaimIds,
         string value);
-    
+
     void DeleteStreamModerators(List<User> users,
         string value);
 }
@@ -35,22 +35,22 @@ public interface IUserService : IDomainService<User>
 public sealed class UserService : IUserService
 {
     private readonly IEfRepository _efRepository;
-    private readonly IStreamCacheService _cacheService;
+    private readonly IStreamCacheService _streamCacheService;
     private readonly IImageService _imageService;
 
-    public UserService(IEfRepository efRepository, IStreamCacheService cacheService, IImageService imageService)
+    public UserService(IEfRepository efRepository, IStreamCacheService streamCacheService, IImageService imageService)
     {
         _efRepository = efRepository;
-        _cacheService = cacheService;
+        _streamCacheService = streamCacheService;
         _imageService = imageService;
     }
 
     public IEnumerable<GetUserDto> SearchUsersByName(string term)
     {
-        var searchTerm = $"%{term}%";
+        var searchTerm = $"%{term.ToLower()}%";
         return _efRepository
             .Users
-            .Where(u => EF.Functions.Like(u.Username, searchTerm))
+            .Where(u => EF.Functions.Like(u.Username.ToLower(), searchTerm))
             .Select(u => u.ToDto());
     }
 
@@ -98,7 +98,7 @@ public sealed class UserService : IUserService
             .Include(s => s.Streamer)
             .ThenInclude(s => s.StreamOption)
             .Where(sfu => sfu.UserId == userId)
-            .Select(sfu => sfu.Streamer.ResolveGetStreamDto(_cacheService.LiveStreamers))
+            .Select(sfu => sfu.Streamer.ResolveGetStreamDto(_streamCacheService.LiveStreamers))
             .ToListAsync(cancellationToken);
     }
 
