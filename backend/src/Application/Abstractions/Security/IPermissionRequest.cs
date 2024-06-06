@@ -2,7 +2,7 @@
 
 namespace Application.Abstractions.Security;
 
-public interface IPermissionRequest : ISecuredRequest
+public interface IPermissionRequest : ISecuredRequest, ISensitiveRequest
 {
     PermissionRequirements PermissionRequirements { get; }
 }

@@ -80,11 +80,12 @@ public static class ServiceRegistration
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehavior<,>));
 
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(SensitiveRequestBehavior<,>));
+
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PermissionBehavior<,>));
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LockBehavior<,>));
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ApiAuthorizationBehavior<,>));
-        
     }
 }

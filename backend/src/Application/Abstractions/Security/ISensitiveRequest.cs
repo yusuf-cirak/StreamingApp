@@ -1,5 +1,3 @@
 ﻿namespace Application.Abstractions.Security;
 
-public interface ISecuredRequest 
-{
-}
+public interface ISensitiveRequest;

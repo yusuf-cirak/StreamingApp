@@ -14,5 +14,5 @@ public interface IStreamHubServerService
 
     Task OnBlockFromStreamAsync(GetUserDto streamer, List<Guid> blockUserIds, bool isBlocked);
 
-    Task OnUpsertModeratorsAsync(List<Guid> userIds);
+    Task OnUpsertModeratorsAsync(List<string> userIds);
 }

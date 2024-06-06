@@ -45,6 +45,7 @@ public sealed class AuthBusinessRules : BaseBusinessRules
     {
         var user = await this
             .GetUserQueryable()
+            .AsSplitQuery()
             .SingleOrDefaultAsync(u => u.Username == username, cancellationToken);
 
         if (user is null)

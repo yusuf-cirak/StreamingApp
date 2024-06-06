@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Locking;
 using Application.Features.Auths.Rules;
 using Application.Features.Auths.Services;
+using Application.Features.Users.Services;
 
 namespace Application.Features.Auths.Commands.Refresh;
 
@@ -20,7 +21,8 @@ public sealed class
         IHttpContextAccessor httpContextAccessor,
         AuthBusinessRules authBusinessRules,
         IEfRepository efRepository,
-        IAuthService authService)
+        IAuthService authService,
+        IUserBlacklistManager blacklistManager)
     : IRequestHandler<RefreshTokenCommandRequest, HttpResult<AuthResponseDto>>
 {
     public async Task<HttpResult<AuthResponseDto>> Handle(RefreshTokenCommandRequest request,
@@ -62,6 +64,8 @@ public sealed class
         efRepository.RefreshTokens.Add(refreshToken);
 
         await efRepository.SaveChangesAsync(cancellationToken);
+
+        _ = Task.Run(() => blacklistManager.RemoveUserFromBlacklistAsync(user.Id.ToString()));
 
         return new AuthResponseDto(user.Id, user.Username, user.ProfileImageUrl, accessToken.Token, refreshToken.Token,
             accessToken.Expiration, claimsDictionary);

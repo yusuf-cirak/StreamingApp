@@ -78,7 +78,7 @@ public static class ServiceRegistration
                 .AddTrigger(trigger => trigger
                     .ForJob(refreshTokenCleanupKey)
                     .WithSimpleSchedule(schedule => schedule
-                        .WithIntervalInSeconds(60)
+                        .WithIntervalInHours(24)
                         .RepeatForever()));
         });
 
@@ -89,7 +89,6 @@ public static class ServiceRegistration
     {
         services.AddScoped<ICacheService, RedisCacheService>();
         services.AddScoped<IRedisCacheService, RedisCacheService>();
-
     }
 
 

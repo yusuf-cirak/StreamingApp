@@ -81,15 +81,12 @@ public sealed class InMemoryStreamHubServerService : IStreamHubServerService
             StreamHubConstant.Method.OnBlockFromStreamAsync, new StreamBlockUserDto(streamer.Id, isBlocked));
     }
 
-    public async Task OnUpsertModeratorsAsync(List<Guid> userIds)
+    public async Task OnUpsertModeratorsAsync(List<string> userIds)
     {
-        var stringUserIds = new List<string>();
-        userIds.ForEach(userId => stringUserIds.Add(userId.ToString()));
-
         var userConnectionIds = _streamHubState
             .OnlineUsers
             .Users
-            .Where(kvp => stringUserIds.Exists(id => id == kvp.Value.Id))
+            .Where(kvp => userIds.Exists(id => id == kvp.Value.Id))
             .Select(kvp => kvp.Key);
 
 

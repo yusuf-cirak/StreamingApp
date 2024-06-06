@@ -1,5 +1,4 @@
-﻿using Application.Abstractions.Caching;
-using Application.Common.Services;
+﻿using Application.Common.Services;
 using Application.Features.Users.Services;
 using SignalR.Hubs.Stream.Server.Abstractions;
 
@@ -12,7 +11,8 @@ public sealed class DeleteStreamModeratorCommandHandler(
     IUserService userService,
     ICurrentUserService currentUserService,
     IEfRepository efRepository,
-    IStreamHubServerService streamHubServerService
+    IStreamHubServerService streamHubServerService,
+    IUserBlacklistManager blacklistManager
 )
     : IRequestHandler<DeleteStreamModeratorsCommandRequest, HttpResult<bool>>
 {
@@ -32,9 +32,17 @@ public sealed class DeleteStreamModeratorCommandHandler(
 
         userService.DeleteStreamModerators(users, userId.ToString());
 
-        await efRepository.SaveChangesAsync(cancellationToken);
+        var userIds = request.UserIds.Select(id => id.ToString()).ToList();
 
-        _ = Task.Run(() => streamHubServerService.OnUpsertModeratorsAsync(request.UserIds), cancellationToken);
+        Task[] tasks =
+        [
+            efRepository.SaveChangesAsync(cancellationToken),
+            blacklistManager.AddUsersToBlacklistAsync(userIds)
+        ];
+
+        await Task.WhenAll(tasks);
+
+        _ = Task.Run(() => streamHubServerService.OnUpsertModeratorsAsync(userIds), cancellationToken);
 
         return true;
     }

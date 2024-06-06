@@ -33,11 +33,11 @@ public sealed class UserCreateStreamPermissionCommandRequestHandler(
         userService.UpdateUsersWithRolesAndOperationClaims(users, request.RoleIds, request.OperationClaimIds,
             userId.ToString());
 
+        var userIds = request.UserIds.Select(id => id.ToString()).ToList();
 
         await efRepository.SaveChangesAsync(cancellationToken);
 
-
-        _ = Task.Run(() => streamHubServerService.OnUpsertModeratorsAsync(request.UserIds), cancellationToken);
+        _ = Task.Run(() => streamHubServerService.OnUpsertModeratorsAsync(userIds), cancellationToken);
         return true;
     }
 }
