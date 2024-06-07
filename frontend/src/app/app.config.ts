@@ -19,7 +19,6 @@ import { PRIMENG_CONFIG_PROVIDER } from './core/config/primeng';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes, withComponentInputBinding(), withViewTransitions()),
-    // provideClientHydration(),
     provideAnimations(),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     provideToastr({
