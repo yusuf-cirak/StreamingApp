@@ -5,13 +5,17 @@ public interface ICurrentUserService
     public Guid UserId { get; }
 }
 
-public sealed class CurrentUserService : ICurrentUserService
+public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICurrentUserService
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    public Guid UserId => Guid.Parse(_httpContextAccessor.HttpContext!.User.GetUserId());
-
-    public CurrentUserService(IHttpContextAccessor httpContextAccessor)
+    public Guid UserId
     {
-        _httpContextAccessor = httpContextAccessor;
+        get
+        {
+            var user = httpContextAccessor.HttpContext?.User;
+
+            ArgumentNullException.ThrowIfNull(user, nameof(httpContextAccessor.HttpContext.User));
+
+            return Guid.Parse(user.GetUserId());
+        }
     }
 }
