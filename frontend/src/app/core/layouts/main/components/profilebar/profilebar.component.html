@@ -1,10 +1,12 @@
 <div>
   <div #profileMenuWrapperRef>
+    @if (authService.user(); as user) {
     <app-streamer-avatar
-      [user]="authService.user()!"
+      [user]="user"
       class="flex w-12 h-12 rounded-full cursor-pointer"
       (click)="toggleProfileMenu()"
     ></app-streamer-avatar>
+    }
   </div>
   @if(profileMenuOpen()) {
   <ul
