@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm install --memory=512m
+RUN npm install --memory=256m
 
 RUN npm run build:prod
 

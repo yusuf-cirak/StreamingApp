@@ -7,7 +7,7 @@ WORKDIR /app
 COPY . .
 
 # Install app dependencies
-RUN npm install --memory=512m
+RUN npm install --memory=256m
 
 
 FROM node:latest as build
