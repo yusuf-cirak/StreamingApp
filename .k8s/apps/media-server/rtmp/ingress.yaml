@@ -1,0 +1,31 @@
+# @format
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rtmp-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  tls:
+    - hosts:
+        - yusufirak.net
+      secretName: yusufcirak-tls
+  rules:
+    - host: yusufcirak.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: rtmp-service
+                port:
+                  number: 1935
+          - path: /hls
+            pathType: Prefix
+            backend:
+              service:
+                name: rtmp-service
+                port:
+                  number: 8080

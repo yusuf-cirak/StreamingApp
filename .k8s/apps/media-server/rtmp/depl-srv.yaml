@@ -1,0 +1,68 @@
+# @format
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rtmp
+  labels:
+    app: rtmp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rtmp
+  template:
+    metadata:
+      labels:
+        app: rtmp
+    spec:
+      # affinity:
+      #   nodeAffinity:
+      #     requiredDuringSchedulingIgnoredDuringExecution:
+      #       nodeSelectorTerms:
+      #         - matchExpressions:
+      #             - key: dedicated
+      #               operator: In
+      #               values:
+      #                 - nginx-rtmp
+      containers:
+        - name: nginx-rtmp
+          image: tiangolo/nginx-rtmp
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 1935
+            - containerPort: 8080
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx-rtmp.conf
+            # - name: hls-storage
+            #   mountPath: /mnt/hls
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: nginx-conf
+        # - name: hls-storage
+        #   hostPath:
+        #     path: /mnt/hls
+        #     type: DirectoryOrCreate
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rtmp-service
+  labels:
+    app: rtmp-service
+spec:
+  selector:
+    app: rtmp
+  ports:
+    - name: rtmp-port
+      protocol: TCP
+      port: 1935
+      targetPort: 1935
+    - name: status-port
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
