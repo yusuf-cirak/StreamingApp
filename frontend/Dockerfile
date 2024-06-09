@@ -4,7 +4,9 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm install --memory=256m
+ENV NODE_ENV=production
+
+RUN npm install
 
 RUN npm run build:prod
 
