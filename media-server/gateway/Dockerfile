@@ -7,7 +7,7 @@ WORKDIR /app
 COPY . .
 
 # Install app dependencies
-RUN npm install
+RUN npm install --memory=512m
 
 
 FROM node:latest as build
@@ -21,7 +21,7 @@ COPY --from=dependency /app .
 RUN npm run build
 
 
-FROM node:latest as runtime
+FROM node:alpine as runtime
 
 WORKDIR /app
 
