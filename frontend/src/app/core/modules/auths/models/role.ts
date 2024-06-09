@@ -1,9 +1,6 @@
 export type UserRoleDto = {
-  role: RoleDto;
-  value: string;
+  name: Role;
+  value?: string;
 };
 
-export type RoleDto = {
-  id: number;
-  name: string;
-};
+export type Role = string;

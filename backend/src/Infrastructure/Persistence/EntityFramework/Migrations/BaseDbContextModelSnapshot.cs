@@ -17,7 +17,7 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "8.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -62,6 +62,9 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("Name")
                         .IsUnique();
 
                     b.ToTable("OperationClaims", (string)null);
@@ -187,6 +190,15 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("UserId");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("StreamerId", "UserId");
 
                     b.HasIndex("UserId");
@@ -255,6 +267,11 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
                     b.Property<string>("StreamTitle")
                         .HasColumnType("text")
                         .HasColumnName("StreamTitle");
+
+                    b.Property<string>("ThumbnailUrl")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("ThumbnailUrl");
 
                     b.HasKey("Id");
 
@@ -439,7 +456,7 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
             modelBuilder.Entity("Domain.Entities.StreamOption", b =>
                 {
                     b.HasOne("Domain.Entities.User", "Streamer")
-                        .WithOne()
+                        .WithOne("StreamOption")
                         .HasForeignKey("Domain.Entities.StreamOption", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -488,6 +505,8 @@ namespace Infrastructure.Persistence.EntityFramework.Migrations
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Navigation("RefreshTokens");
+
+                    b.Navigation("StreamOption");
 
                     b.Navigation("Streams");
 

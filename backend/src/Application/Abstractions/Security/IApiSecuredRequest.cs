@@ -2,5 +2,5 @@
 
 public interface IApiSecuredRequest
 {
-    public AuthorizationFunctions AuthorizationFunctions { get; }
+    public AuthorizationRequirements AuthorizationRequirements { get; }
 }

@@ -17,6 +17,6 @@ export const mainRoutes: Route[] = [
       streamState: streamStateResolver,
     },
     loadComponent: () =>
-      import('@streaming-app/layouts/main').then((m) => m.MainLayout),
+      import('../stream/stream.layout').then((m) => m.StreamLayout),
   },
 ];

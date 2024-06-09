@@ -9,7 +9,9 @@ export class CtrlDirective {
 
   @HostListener('document:keydown.control', ['$event'])
   onCtrlDown() {
-    this.ctrlPressed.set(true);
+    if (!this.ctrlPressed()) {
+      this.ctrlPressed.set(true);
+    }
   }
   @HostListener('document:keyup.control', ['$event'])
   onCtrlUp() {

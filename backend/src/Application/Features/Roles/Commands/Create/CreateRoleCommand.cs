@@ -1,26 +1,13 @@
-﻿using System.Security.Claims;
-using Application.Common.Mapping;
-using Application.Common.Rules;
-using Application.Contracts.Roles;
+﻿using Application.Common.Mapping;
+using Application.Common.Permissions;
 using Application.Features.Roles.Rules;
 
 namespace Application.Features.Roles.Commands.Create;
 
-public readonly record struct CreateRoleCommandRequest
-    : IRequest<HttpResult<GetRoleDto>>, ISecuredRequest
+public readonly record struct CreateRoleCommandRequest() : IRequest<HttpResult<GetRoleDto>>, IPermissionRequest
 {
     public string Name { get; init; }
-    public AuthorizationFunctions AuthorizationFunctions { get; }
-
-    public CreateRoleCommandRequest()
-    {
-        AuthorizationFunctions = [CommonAuthorizationRules.UserMustBeAdmin];
-    }
-
-    public CreateRoleCommandRequest(string name) : this()
-    {
-        Name = name;
-    }
+    public PermissionRequirements PermissionRequirements { get; } = PermissionRequirementConstants.WithAdminRole();
 }
 
 public sealed class CreateRoleCommandHandler : IRequestHandler<CreateRoleCommandRequest, HttpResult<GetRoleDto>>

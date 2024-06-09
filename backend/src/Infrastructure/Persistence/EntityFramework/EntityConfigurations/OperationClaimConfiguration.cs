@@ -12,6 +12,8 @@ namespace Infrastructure.Persistence.EntityFramework.EntityConfigurations
             builder.ToTable("OperationClaims");
 
             builder.Property(o => o.Name).HasColumnName("Name");
+
+            builder.HasIndex(o => o.Name).IsUnique();
         }
     }
 }

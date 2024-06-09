@@ -1,26 +1,26 @@
-﻿using Application.Common.Extensions;
+﻿using Application.Common.Permissions;
 using Application.Features.StreamOptions.Abstractions;
-using Application.Features.StreamOptions.Rules;
 using Application.Features.Streams.Services;
 
 namespace Application.Features.StreamOptions.Commands.Update;
 
-public readonly record struct GenerateStreamKeyCommandRequest
-    : IStreamOptionRequest, IRequest<HttpResult<string>>, ISecuredRequest
+public record struct GenerateStreamKeyCommandRequest
+    : IStreamOptionRequest, IRequest<HttpResult<string>>, IPermissionRequest
 {
-    public Guid StreamerId { get; init; }
-    public AuthorizationFunctions AuthorizationFunctions { get; }
+    private Guid _streamerId;
 
-    public GenerateStreamKeyCommandRequest()
+    public Guid StreamerId
     {
-        AuthorizationFunctions =
-            [StreamOptionAuthorizationRules.UserMustBeStreamer];
+        get => _streamerId;
+        set
+        {
+            _streamerId = value;
+
+            PermissionRequirements = PermissionRequirementConstants.WithNameIdentifier(value.ToString());
+        }
     }
 
-    public GenerateStreamKeyCommandRequest(Guid streamerId) : this()
-    {
-        StreamerId = streamerId;
-    }
+    public PermissionRequirements PermissionRequirements { get; private set; }
 }
 
 public sealed class

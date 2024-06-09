@@ -1,26 +1,16 @@
 ﻿using Application.Common.Mapping;
+using Application.Common.Permissions;
 using Application.Common.Rules;
 using Application.Features.OperationClaims.Rules;
 
 namespace Application.Features.OperationClaims.Commands.Update;
 
-public readonly record struct UpdateOperationClaimCommandRequest
-    : IRequest<HttpResult>, ISecuredRequest
+public readonly record struct UpdateOperationClaimCommandRequest() : IRequest<HttpResult>, IPermissionRequest
 {
     public Guid Id { get; init; }
     public string Name { get; init; }
-    public AuthorizationFunctions AuthorizationFunctions { get; }
 
-    public UpdateOperationClaimCommandRequest()
-    {
-        AuthorizationFunctions = [CommonAuthorizationRules.UserMustBeAdmin];
-    }
-
-    public UpdateOperationClaimCommandRequest(Guid id, string name) : this()
-    {
-        Id = id;
-        Name = name;
-    }
+    public PermissionRequirements PermissionRequirements { get; } = PermissionRequirementConstants.WithAdminRole();
 }
 
 public sealed class

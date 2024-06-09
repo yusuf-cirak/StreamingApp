@@ -29,7 +29,10 @@
       <input
         #inputElementRef
         [type]="inputType"
-        class="w-full rounded-md px-4 py-2 bg-slate-100 outline-none border shadow disabled:opacity-40 border-transparent"
+        [class]="
+          inputClass ??
+          'w-full rounded-md px-4 py-2 bg-slate-100 outline-none border shadow disabled:opacity-40 border-transparent'
+        "
         [formControl]="control"
         [placeholder]="placeholder || ''"
         [disabled]="disabled"
@@ -49,9 +52,13 @@
       } @else {
       <input
         #inputElementRef
-        class="text-black focus:outline-none focus:border bg-white font-normal w-64 h-10 flex items-center pl-12 text-sm border-gray-300 rounded border shadow disabled:opacity-40"
+        [class]="
+          inputClass ??
+          'text-black focus:outline-none focus:border bg-white font-normal w-64 h-10 flex items-center pl-12 text-sm border-gray-300 rounded border shadow disabled:opacity-40'
+        "
         [placeholder]="placeholder || ''"
         [disabled]="disabled"
+        [value]="value().length ? value() : null"
       />}
     </div>
   </div>

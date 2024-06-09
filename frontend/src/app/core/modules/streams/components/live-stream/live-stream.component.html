@@ -1,10 +1,12 @@
 <div
-  class="flex flex-col sm:flex-row w-full h-full overflow-y-auto"
+  class="flex flex-col sm:flex-row w-full h-full overflow-y-auto overflow-hidden"
   [autofocus]="true"
 >
-  <div class="w-full sm:w-[80%] h-full">
+  <div
+    class="w-full sm:w-[80%] h-full overflow-y-auto scroller-none bg-slate-900"
+  >
     <div
-      class="w-full h-full sm:h-[80%] flex flex-col items-center justify-center"
+      class="w-full h-[60%] sm:h-[70%] flex flex-col items-center justify-center border-b border-tw-tertiary"
     >
       <vg-player #player (onPlayerReady)="onPlayerReady($event)">
         <vg-overlay-play vgFor="stream"></vg-overlay-play>
@@ -30,13 +32,26 @@
           #media
           id="stream"
           preload="metadata"
+          class="w-full h-full"
           [vgHls]="streamFacade.getHlsUrl()"
         ></video>
       </vg-player>
     </div>
-    <div class="hidden sm:block w-full h-[20%] bg-slate-200"></div>
+    <div class="w-full h-max sm:h-[30%] bg-tw-primary">
+      <app-stream-header />
+
+      @if (streamFacade.isAuthorized(); as isAuthorized) { @defer(when
+      isAuthorized){
+      <app-stream-option-card />
+
+      } }
+
+      <app-stream-about></app-stream-about>
+    </div>
   </div>
-  <div class="chat-sidebar w-full sm:w-[20%] h-full bg-gray-800 pt-4 sm:pt-0">
-    <app-chat-sidebar [liveStream]="liveStream()"></app-chat-sidebar>
+  <div
+    class="chat-sidebar w-full h-full sm:w-[20%] sm:h-full pt-4 sm:pt-0 border-tw-secondary"
+  >
+    <app-chat-sidebar></app-chat-sidebar>
   </div>
 </div>

@@ -1,6 +1,9 @@
 @if (visible()) {
-<div class="modal text-black" #modalRef>
-  <article class="modal-container min-w-[27rem] bg-white relative">
+<div
+  class="w-screen h-screen absolute left-0 right-0 bottom-0 top-0 text-black flex"
+  #modalRef
+>
+  <section class="modal-container min-w-[27rem] bg-white mt-auto mb-auto">
     <header class="modal-container-header">
       @if (!headerTemplate()) {
       <h1 class="modal-container-title">{{ header() }}</h1>
@@ -25,11 +28,11 @@
 
     @if (bodyTemplate()) {
     <div
-      class="modal-container-body rtf flex flex-col items-center justify-center w-full"
+      class="modal-container-body rtf flex flex-col items-center justify-center w-full h-full"
     >
       <ng-container [ngTemplateOutlet]="bodyTemplate()"></ng-container>
     </div>
     }
-  </article>
+  </section>
 </div>
 }

@@ -11,3 +11,8 @@ export * from './spooky-icon';
 export * from './loading-icon';
 export * from './chat-disabled.icon';
 export * from './info-icon';
+export * from './block.icon';
+export * from './verified-icon';
+export * from './user-icon';
+export * from './heart-icon';
+export * from './pencil-icon';

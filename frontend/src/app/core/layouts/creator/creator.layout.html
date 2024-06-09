@@ -1,5 +1,5 @@
 <main class="w-full h-full flex flex-col overflow-y-auto">
-  <div class="navbar-container w-full h-[10%] z-40">
+  <div class="navbar-container w-full h-[10%] z-40 border-b border-tw-tertiary">
     <app-creator-navbar
       class="text-white flex items-center justify-between h-full"
     />
@@ -9,7 +9,7 @@
       <app-creator-sidebar class="text-white h-full flex flex-col relative" />
     </div>
 
-    <div class="main w-full h-full overflow-y-auto">
+    <div class="main w-full h-full overflow-y-auto bg-slate-900">
       <router-outlet></router-outlet>
     </div>
   </div>

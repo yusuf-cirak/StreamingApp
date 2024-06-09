@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+﻿using Application.Common.Extensions;
 using Application.Features.StreamBlockedUsers.Abstractions;
 
 namespace Application.Features.StreamBlockedUsers.Rules;
@@ -45,24 +45,21 @@ public static class StreamBlockedUserAuthorizationRules
     {
         string streamerIdString = ((IStreamBlockedUserRequest)request).StreamerId.ToString();
 
-        string rolesString = claims.First(c => c.Type == "Roles").Value;
-        List<GetUserRoleDto> roleClaims = JsonSerializer.Deserialize<List<GetUserRoleDto>>(rolesString);
+        var roles = claims.GetRoles();
 
-        return roleClaims.Exists(rc =>
-            rc.Role.Name == RoleConstants.StreamSuperModerator && rc.Value == streamerIdString);
+        return roles.Any(rc =>
+            rc.Name == RoleConstants.StreamSuperModerator ||
+            rc.Name == RoleConstants.StreamModerator && rc.Value == streamerIdString);
     }
 
     private static bool IsUserModeratorOfStreamByOperationClaim(ICollection<Claim> claims, object request)
     {
         string streamerIdString = ((IStreamBlockedUserRequest)request).StreamerId.ToString();
 
-        string operationClaimsString = claims.First(c => c.Type == "OperationClaims").Value;
+        var operationClaims = claims.GetOperationClaims();
 
-        List<GetUserOperationClaimDto> operationClaims =
-            JsonSerializer.Deserialize<List<GetUserOperationClaimDto>>(operationClaimsString);
-
-        return operationClaims.Exists(oc =>
+        return operationClaims.Any(oc =>
             oc.Value == streamerIdString &&
-            oc.OperationClaim.Name == OperationClaimConstants.StreamBlockUserFromChat);
+            oc.Name == OperationClaimConstants.Stream.Write.BlockFromChat);
     }
 }

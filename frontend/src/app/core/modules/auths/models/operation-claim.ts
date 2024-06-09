@@ -1,9 +1,6 @@
 export type UserOperationClaimDto = {
-  operationClaim: OperationClaimDto;
-  value: string;
+  name: OperationClaim;
+  value?: string;
 };
 
-export type OperationClaimDto = {
-  id: number;
-  name: string;
-};
+export type OperationClaim = string;

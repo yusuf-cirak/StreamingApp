@@ -1,0 +1,16 @@
+<main class="w-full h-full flex flex-col overflow-y-auto">
+  <div class="navbar-container w-full h-[10%] border-b border-tw-tertiary">
+    <app-main-navbar
+      class="text-white flex items-center justify-between h-full"
+    />
+  </div>
+  <div class="sidebar-main-container flex w-full h-[90%]">
+    <div class="sidebar-container h-full">
+      <app-main-sidebar class="text-white h-full flex flex-col relative" />
+    </div>
+
+    <div class="main w-full h-full overflow-y-auto bg-tw-secondary">
+      <app-stream />
+    </div>
+  </div>
+</main>

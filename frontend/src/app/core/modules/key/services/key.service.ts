@@ -11,13 +11,11 @@ export class KeyService {
   private readonly authService = inject(AuthService);
 
   get() {
-    return this.httpClientService.get<string>(
-      {
-        controller: 'stream-options',
-        action: 'key',
-      },
-      this.authService.user()?.id
-    );
+    return this.httpClientService.get<string>({
+      controller: 'stream-options',
+      action: 'key',
+      routeParams: [this.authService.user()?.id!], // todo: get this from parameter, moderators will try to access this
+    });
   }
 
   generate(): Observable<string> {

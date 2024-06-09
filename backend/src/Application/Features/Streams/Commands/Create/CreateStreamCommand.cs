@@ -1,8 +1,6 @@
-﻿using Application.Common.Mapping;
-using Application.Features.Streams.Abstractions;
+﻿using Application.Features.Streams.Abstractions;
 using Application.Features.Streams.Rules;
 using Application.Features.Streams.Services;
-using SignalR.Hubs.Stream.Server.Abstractions;
 using Stream = Domain.Entities.Stream;
 
 namespace Application.Features.Streams.Commands.Create;
@@ -12,11 +10,11 @@ public readonly record struct CreateStreamCommandRequest : IStreamCommandRequest
 {
     public string StreamKey { get; init; }
 
-    public AuthorizationFunctions AuthorizationFunctions { get; }
+    public AuthorizationRequirements AuthorizationRequirements { get; }
 
     public CreateStreamCommandRequest()
     {
-        AuthorizationFunctions = [StreamAuthorizationRules.RequesterMustHaveValidApiKey];
+        AuthorizationRequirements = [StreamAuthorizationRules.RequesterMustHaveValidApiKey];
     }
 }
 
@@ -44,7 +42,7 @@ public sealed class CreateStreamCommandHandler : IRequestHandler<CreateStreamCom
         var streamer = streamOptions.Streamer;
 
         var isStreamerLiveResult =
-            await _streamService.IsStreamerLiveAsync(streamer, request.StreamKey, cancellationToken);
+            _streamService.IsStreamerLive(streamer, request.StreamKey);
 
         if (isStreamerLiveResult.IsFailure)
         {

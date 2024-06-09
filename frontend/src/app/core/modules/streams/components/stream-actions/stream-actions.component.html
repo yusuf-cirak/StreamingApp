@@ -1,0 +1,23 @@
+@if (authService.isAuthenticated()) {
+<button
+  (click)="toggleFollow()"
+  class="w-full sm:w-28 bg-blue-600 rounded-lg flex flex-row items-center justify-center py-2 px-4 gap-1 text-white font-semibold"
+  [ngClass]="{
+    'cursor-not-allowed': isPendingFollow(),
+  }"
+  [disabled]="isPendingFollow()"
+  pRipple
+>
+  <app-heart-icon
+    class="flex"
+    [ngClass]="{
+      'fill-white': isFollowingStreamer(),
+      'fill-none': !isFollowingStreamer()
+    }"
+  />
+  <span class="text-sm font-semibold">
+    {{ isFollowingStreamer() ? "Unfollow" : "Follow" }}
+  </span>
+</button>
+
+}

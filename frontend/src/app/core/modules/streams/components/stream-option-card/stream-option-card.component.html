@@ -1,0 +1,124 @@
+<div class="px-4 hover:cursor-pointer pb-4" (click)="modalVisible.set(true)">
+  <div class="rounded-xl bg-tw-secondary">
+    <div class="flex items-center gap-x-2.5 p-4">
+      <div class="rounded-md bg-blue-600 p-2 h-auto w-auto text-white">
+        <app-pencil-icon />
+      </div>
+      <div>
+        <h2 class="text-sm lg-text-lg font-semibold capitalize text-white">
+          Edit your stream info
+        </h2>
+        <p class="text-muted-foreground text-xs lg:text-sm text-white/55">
+          Maximize your visibility
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-modal
+  [(visible)]="modalVisible"
+  (closeModalClicked)="modalVisible.set(false)"
+  [bodyTemplate]="formTemplateRef"
+  [headerTemplate]="headerRef"
+></app-modal>
+
+<ng-template #headerRef>
+  <h2 class="text-tw-primary font-semibold">Edit Stream Info</h2>
+</ng-template>
+<ng-template #formTemplateRef>
+  <form
+    class="w-full flex flex-col"
+    [formGroup]="form"
+    (ngSubmit)="submit()"
+    [autofocus]="true"
+  >
+    <app-input
+      [control]="form.controls.streamTitle"
+      inputType="text"
+      label="Stream Title"
+      class="w-full"
+    ></app-input>
+
+    <app-input
+      [control]="form.controls.streamDescription"
+      inputType="text"
+      label="Stream Description"
+      class="w-full"
+    ></app-input>
+
+    <div class="w-full h-64">
+      <label class="text-sm font-bold leading-tight tracking-normal"
+        >Thumbnail</label
+      >
+      <label
+        for="uploadFile"
+        class="relative bg-white text-gray-500 font-semibold text-base rounded max-w-md w-full h-full flex flex-col items-center justify-center cursor-pointer border-2 border-gray-300 border-dashed mx-auto font-[sans-serif]"
+      >
+        @if (this.thumbnailUrl(); as thumbnailUrl) {
+        <div class="absolute top-2 right-2 z-[10]">
+          <button
+            pRipple
+            type="button"
+            class="focus:outline-none rounded-full bg-white p-1"
+            (click)="setFile('')"
+          >
+            <app-trash-icon />
+          </button>
+        </div>
+        <img
+          [src]="thumbnailUrl"
+          class="w-full h-full"
+          [hidden]="!thumbnailLoaded()"
+          (load)="thumbnailLoaded.set(true)"
+        />
+
+        @if (!thumbnailLoaded()) {
+        <div class="w-full h-full bg-gray-200 animate-pulse"></div>
+        } }@else {
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-11 mb-2 fill-gray-500"
+          viewBox="0 0 32 32"
+        >
+          <path
+            d="M23.75 11.044a7.99 7.99 0 0 0-15.5-.009A8 8 0 0 0 9 27h3a1 1 0 0 0 0-2H9a6 6 0 0 1-.035-12 1.038 1.038 0 0 0 1.1-.854 5.991 5.991 0 0 1 11.862 0A1.08 1.08 0 0 0 23 13a6 6 0 0 1 0 12h-3a1 1 0 0 0 0 2h3a8 8 0 0 0 .75-15.956z"
+            data-original="#000000"
+          />
+          <path
+            d="M20.293 19.707a1 1 0 0 0 1.414-1.414l-5-5a1 1 0 0 0-1.414 0l-5 5a1 1 0 0 0 1.414 1.414L15 16.414V29a1 1 0 0 0 2 0V16.414z"
+            data-original="#000000"
+          />
+        </svg>
+        Upload Thumbnail
+
+        <input
+          id="uploadFile"
+          type="file"
+          class="hidden"
+          accept=".png, .jpg, .jpeg, .svg"
+          (change)="setFile($any($event).target.files[0])"
+          (click)="$any($event).target.value = ''"
+        />
+        <p class="text-xs font-medium text-gray-400 mt-2">
+          PNG, JPG are allowed
+        </p>
+        }
+      </label>
+    </div>
+
+    <button
+      pRipple
+      [disabled]="form.disabled"
+      class="focus:outline-none rounded text-white bg-wp-green hover:opacity-90 w-full h-10 bg-slate-600 disabled:opacity-40 mt-8"
+    >
+      <span class="flex items-center justify-center w-full h-full">
+        @if (formSubmitted()) {
+        <app-loading-icon></app-loading-icon>
+        }@else {
+        <span>Save</span>
+        }
+      </span>
+    </button>
+  </form>
+</ng-template>

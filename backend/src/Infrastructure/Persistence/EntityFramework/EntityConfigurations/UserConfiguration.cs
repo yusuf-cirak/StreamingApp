@@ -22,6 +22,8 @@ namespace Infrastructure.Persistence.EntityFramework.EntityConfigurations
             builder.HasMany(u => u.UserRoleClaims).WithOne(uop => uop.User).HasForeignKey(uop => uop.UserId);
 
             builder.HasMany(u => u.RefreshTokens).WithOne(rt => rt.User).HasForeignKey(rt => rt.UserId);
+
+            builder.HasOne(u => u.StreamOption).WithOne(so => so.Streamer).HasForeignKey<StreamOption>(so => so.Id);
         }
     }
 }

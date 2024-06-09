@@ -1,14 +1,14 @@
 <nav
-  class="relative w-full h-full z-40 bg-gray-800 px-2 lg:px-4 flex justify-between items-center shadow-sm"
+  class="relative w-full h-full z-40 px-2 lg:px-4 flex justify-between items-center shadow-sm"
 >
   <app-main-logo></app-main-logo>
-  <app-search class="w-[30%] sm:min-w-[40%]"></app-search>
+  <app-search-bar class="w-[30%] sm:min-w-[40%"></app-search-bar>
   <div class="flex flex-row gap-3 sm:pr-5 items-center justify-center">
     @if (authService.isAuthenticated()) {
     <button
       variant="link"
       class="hover:opacity-75 text hover:no-underline"
-      [routerLink]="['/creator']"
+      [routerLink]="['', 'creator', authService.user()?.username]"
     >
       <app-clapper-board-icon></app-clapper-board-icon>
       <span class="hidden lg:block">Dashboard</span>

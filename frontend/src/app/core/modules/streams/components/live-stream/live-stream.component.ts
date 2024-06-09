@@ -4,9 +4,11 @@ import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
 import { VgStreamingModule } from '@videogular/ngx-videogular/streaming';
-import { LiveStreamDto } from '../../../recommended-streamers/models/live-stream-dto';
 import { StreamFacade } from '../../services/stream.facade';
 import { ChatSidebarComponent } from '../../../chat-sidebar/chat-sidebar.component';
+import { StreamHeaderComponent } from '../stream-header/stream-header.component';
+import { StreamOptionCardComponent } from '../stream-option-card/stream-option-card.component';
+import { StreamAboutComponent } from '../stream-about/stream-about.component';
 
 @Component({
   selector: 'app-live-stream',
@@ -19,11 +21,12 @@ import { ChatSidebarComponent } from '../../../chat-sidebar/chat-sidebar.compone
     VgBufferingModule,
     VgStreamingModule,
     ChatSidebarComponent,
+    StreamHeaderComponent,
+    StreamOptionCardComponent,
+    StreamAboutComponent,
   ],
 })
 export class LiveStreamComponent {
-  liveStream = input.required<LiveStreamDto>();
-
   readonly streamFacade = inject(StreamFacade);
 
   onPlayerReady(service: VgApiService) {
@@ -32,9 +35,5 @@ export class LiveStreamComponent {
         service.play();
       },
     });
-  }
-
-  ngOnDestroy() {
-    this.streamFacade.leaveStream();
   }
 }

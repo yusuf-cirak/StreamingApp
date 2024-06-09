@@ -9,23 +9,26 @@ import {
 } from '@angular/core';
 import { fadeAnimation } from '../../../../../shared/animations/fade-animation';
 import { AuthService } from '@streaming-app/core';
-import { UserImageService } from '../../../../services/user-image.service';
+import { ImageService } from '../../../../services/image.service';
+import { StreamerAvatarComponent } from '../../../../modules/streamers/components/streamer-avatar/streamer-avatar.component';
+import { ModalComponent } from '../../../../../shared/components/modal/modal.component';
+import { ProfileSettingsComponent } from '../../../../modules/users/profile-settings/profile-settings.component';
 
 @Component({
   selector: 'app-main-profilebar',
   standalone: true,
-  imports: [],
+  imports: [StreamerAvatarComponent, ModalComponent, ProfileSettingsComponent],
   templateUrl: './profilebar.component.html',
   animations: [fadeAnimation],
 })
 export class ProfilebarComponent {
   readonly authService = inject(AuthService);
-  readonly userImageService = inject(UserImageService);
-  #profileMenuOpen = signal(false);
+  readonly imageService = inject(ImageService);
 
+  #profileMenuOpen = signal(false);
   readonly profileMenuOpen = this.#profileMenuOpen.asReadonly();
 
-  readonly isProfileMenuOpen = computed(() => this.profileMenuOpen());
+  profileModalVisible = signal(false);
 
   closeProfileMenu() {
     this.#profileMenuOpen.set(false);

@@ -1,0 +1,15 @@
+<div class="flex flex-col gap-5">
+  @for (_ of skeletonCount(); track $index) {
+  <div
+    class="flex flex-row justify-center items-center cursor-pointer hover:bg-muted-foreground px-5 h-12 animate-pulse"
+  >
+    <div
+      class="w-10 h-10 bg-gray-200 rounded-full dark:bg-gray-700 ring-4 ring-gray-300 dark:ring-gray-600"
+    ></div>
+
+    <span
+      class="hideable w-20 h-2 mx-auto bg-gray-200 rounded-lg dark:bg-gray-700"
+    ></span>
+  </div>
+  }
+</div>

@@ -1,26 +1,50 @@
-@if (chatSidebar(); as chatSidebar) {
-<div class="w-full h-full px-3 flex flex-col">
+@if (chatSidebar(); as chatSidebar) { @if (chatSidebar.variant==='chat') {
+<ng-container
+  *ngTemplateOutlet="chat; context: { $implicit: chatSidebar }"
+></ng-container>
+}@else {
+<ng-container
+  *ngTemplateOutlet="community; context: { $implicit: chatSidebar }"
+></ng-container>
+
+} }
+
+<ng-template #chat let-chatSidebar>
   <div
-    class="flex flex-row flex-1 w-full h-[5%] max-h-[5%] items-center justify-between text-white"
+    class="w-full h-full px-2 flex flex-col bg-tw-primary sm:border-l sm:border-tw-tertiary"
   >
-    <span class="font-semibold">{{
-      chatSidebar.variant === "chat" ? "Stream Chat" : "Community"
-    }}</span>
-    <a class="cursor-pointer" (click)="changeVariant()">
-      @if (chatSidebar.variant==='chat') {
-      <app-community-icon
-        pTooltip="Community"
-        tooltipPosition="left"
-      ></app-community-icon>
-      }@else {
-      <app-chat-icon pTooltip="Chat" tooltipPosition="left"></app-chat-icon>
-      }
-    </a>
+    <div
+      class="flex flex-row flex-1 w-full h-[5%] max-h-[5%] items-center justify-between text-white"
+    >
+      <span class="font-semibold">Stream Chat</span>
+      <a class="cursor-pointer" (click)="changeVariant()">
+        <app-community-icon
+          pTooltip="Community"
+          tooltipPosition="left"
+        ></app-community-icon>
+      </a>
+    </div>
+    <app-chat
+      class="flex w-full h-[95%] max-h-[95%]"
+      (messageSend)="onMessageSend($event)"
+    />
   </div>
-  <app-chat
-    class="flex w-full h-[95%] max-h-[95%]"
-    [liveStream]="liveStream()"
-    (messageSend)="onMessageSend($event)"
-  />
-</div>
-}
+</ng-template>
+
+<ng-template #community let-chatSidebar>
+  <div
+    class="w-full h-full px-2 flex flex-col bg-tw-primary border-l border-tw-tertiary"
+  >
+    <div
+      class="flex flex-row flex-1 w-full h-[5%] max-h-[5%] items-center justify-between text-white"
+    >
+      <span class="font-semibold">Community</span>
+      <a class="cursor-pointer" (click)="changeVariant()">
+        <app-chat-icon pTooltip="Chat" tooltipPosition="left"></app-chat-icon>
+      </a>
+    </div>
+    <app-community
+      class="flex flex-1 w-full h-[95%] max-h-[95%]"
+    ></app-community>
+  </div>
+</ng-template>

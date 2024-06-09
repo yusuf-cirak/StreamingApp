@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CreatorLogoComponent } from '../logo/logo.component';
 import { RouterLink } from '@angular/router';
 import { ProfilebarComponent } from '../../../main/components/profilebar/profilebar.component';
 import { ArrowRightIcon } from '../../../../../shared/icons/arrow-right-icon';
+import { NavbarDashobardsComponent } from './navbar-dashobards/navbar-dashobards.component';
 
 @Component({
   selector: 'app-creator-navbar',
@@ -13,6 +14,7 @@ import { ArrowRightIcon } from '../../../../../shared/icons/arrow-right-icon';
     ArrowRightIcon,
     RouterLink,
     ProfilebarComponent,
+    NavbarDashobardsComponent,
   ],
 })
 export class CreatorNavbarComponent {}

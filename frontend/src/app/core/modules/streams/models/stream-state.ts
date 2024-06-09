@@ -1,7 +1,7 @@
 import { Error } from '../../../../shared/api/error';
-import { LiveStreamDto } from '../../recommended-streamers/models/live-stream-dto';
+import { StreamDto } from '../contracts/stream-dto';
 
 export interface StreamState {
-  stream?: LiveStreamDto;
-  error?: Error;
+  stream: StreamDto | null;
+  error: Error | null;
 }

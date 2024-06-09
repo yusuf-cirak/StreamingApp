@@ -1,29 +1,29 @@
-﻿using Application.Features.UserRoleClaims.Abstractions;
-using Application.Features.UserRoleClaims.Rules;
+﻿using Application.Common.Permissions;
+using Application.Features.UserRoleClaims.Abstractions;
 
 namespace Application.Features.UserRoleClaims.Commands.Delete;
 
-public readonly record struct DeleteUserRoleClaimCommandRequest : IUserRoleClaimCommandRequest, IRequest<HttpResult>,
-    ISecuredRequest
+public record struct DeleteUserRoleClaimCommandRequest : IUserRoleClaimCommandRequest, IRequest<HttpResult>,
+    IPermissionRequest
 {
     public Guid UserId { get; init; }
     public Guid RoleId { get; init; }
-    public string Value { get; init; }
+    private string _value;
 
-    public AuthorizationFunctions AuthorizationFunctions { get; }
-
-    public DeleteUserRoleClaimCommandRequest()
+    public string Value
     {
-        AuthorizationFunctions = [UserRoleClaimAuthorizationRules.CanUserCreateOrDeleteUserRoleClaim];
+        get => _value;
+        set
+        {
+            _value = value;
+
+            this.PermissionRequirements = PermissionRequirements.Create()
+                .WithRequiredValue(value)
+                .WithNameIdentifierClaim();
+        }
     }
 
-
-    public DeleteUserRoleClaimCommandRequest(Guid userId, Guid roleId, string value) : this()
-    {
-        UserId = userId;
-        RoleId = roleId;
-        Value = value;
-    }
+    public PermissionRequirements PermissionRequirements { get; private set; }
 }
 
 public sealed class DeleteUserRoleClaimHandler : IRequestHandler<DeleteUserRoleClaimCommandRequest, HttpResult>

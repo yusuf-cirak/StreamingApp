@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Application.Common.Errors;
+﻿using Application.Common.Errors;
 
 namespace Application.Common.Behaviors;
 
@@ -22,25 +21,6 @@ public sealed class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavi
         if (claims is null or { Count: 0 })
         {
             var response = new TResponse().CreateWith(AuthorizationErrors.Unauthorized(),
-                StatusCodes.Status401Unauthorized);
-
-            return (TResponse)response;
-        }
-
-        var httpContext = _httpContextAccessor.HttpContext;
-
-        var authorizationFailureResults = request.AuthorizationFunctions
-            .Select(rule => rule(httpContext, claims, request))
-            .Where(result => result.IsFailure)
-            .ToList();
-
-        if (authorizationFailureResults.Count > 0)
-        {
-            StringBuilder sb = new();
-
-            authorizationFailureResults.ForEach(result => sb.AppendLine(result.Error.Message));
-
-            var response = new TResponse().CreateWith(AuthorizationErrors.Unauthorized(sb.ToString()),
                 StatusCodes.Status401Unauthorized);
 
             return (TResponse)response;

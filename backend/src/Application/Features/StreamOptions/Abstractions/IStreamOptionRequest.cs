@@ -2,5 +2,5 @@
 
 public interface IStreamOptionRequest
 {
-    public Guid StreamerId { get; init; }
+    public Guid StreamerId { get; set; }
 }

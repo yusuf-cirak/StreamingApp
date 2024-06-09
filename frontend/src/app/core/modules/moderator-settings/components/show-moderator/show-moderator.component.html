@@ -1,0 +1,141 @@
+<app-modal
+  [(visible)]="visible"
+  [bodyTemplate]="formTemplateRef"
+  header="Moderator Permissions"
+></app-modal>
+
+<ng-template #formTemplateRef>
+  <div
+    class="w-full flex flex-row items-center justify-evenly text-black rounded-lg relative border-2 border-tw-tertiary"
+  >
+    <input
+      #searchInput
+      type="text"
+      placeholder="Search for users"
+      class="w-full border-none rounded-md text-black px-4 py-2"
+      [(ngModel)]="moderatorSearchService.term"
+      [autofocus]="true"
+    />
+    @if (moderatorSearchService.term()) {
+    <i
+      class="pi pi-times cursor-pointer hover:opacity-50 text-muted pr-2"
+      (click)="moderatorSearchService.clearTerm()"
+    ></i>
+    } @if (moderatorSearchService.visible()) {
+    <div
+      class="suggestions-dropdown disabled:pointer-events-none"
+      #suggestionsDropdown
+    >
+      @for (user of moderatorSearchService.searchResults(); track $index) {
+      <div class="suggestions-dropdown-item">
+        <div
+          class="item-text flex flex-row px-2 gap-3 items-center"
+          (click)="addToChip(user)"
+        >
+          <app-streamer-avatar
+            [user]="user"
+            class="w-10 h-10"
+          ></app-streamer-avatar>
+          <span>
+            {{ user.username }}
+          </span>
+        </div>
+      </div>
+      } @empty { @if (search().length) {
+      <div class="suggestions-dropdown-item">
+        <div class="item-text">No results found</div>
+      </div>
+      } }
+    </div>
+    }
+  </div>
+
+  <form
+    class="flex flex-col w-full p-4"
+    [formGroup]="form"
+    (ngSubmit)="submit()"
+    [autofocus]="true"
+  >
+    <app-chip-list
+      [(items)]="chipUsers"
+      displayKey="key"
+      (onRemoveClick)="removeFromChip($event)"
+    ></app-chip-list>
+
+    <div class="w-full h-full flex flex-row pb-4 gap-4">
+      <fieldset>
+        <label for="roles" class="font-semibold text-black">Roles</label>
+        <legend class="sr-only">Checkbox variants</legend>
+
+        <div class="flex flex-col gap-4 pt-2">
+          @for (role of roles(); track $index) {
+
+          <div class="flex items-center">
+            <input
+              [id]="role.name"
+              type="checkbox"
+              [checked]="form.controls.roleIds.value.includes(role.id)"
+              (change)="togglePermission(role.id, form.controls.roleIds)"
+              class="w-4 h-4 border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
+            />
+            <label
+              [for]="role.name"
+              class="ms-2 text-sm font-medium text-gray-400 dark:text-gray-500"
+              >{{ role.name }}</label
+            >
+          </div>
+          }
+        </div>
+      </fieldset>
+      <fieldset>
+        <label for="operation-claims" class="font-semibold text-black"
+          >Operation Claims</label
+        >
+
+        <legend class="sr-only">Checkbox variants</legend>
+
+        <div class="flex flex-col gap-4 pt-2">
+          @for (operationClaim of operationClaims(); track $index) {
+          <div class="flex items-center">
+            <input
+              [id]="operationClaim.name"
+              type="checkbox"
+              [checked]="
+                form.controls.operationClaimIds.value.includes(
+                  operationClaim.id
+                )
+              "
+              (change)="
+                togglePermission(
+                  operationClaim.id,
+                  form.controls.operationClaimIds
+                )
+              "
+              class="w-4 h-4 border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
+            />
+            <label
+              [for]="operationClaim.name"
+              class="ms-2 text-sm font-medium text-gray-400 dark:text-gray-500"
+              >{{ operationClaim.name }}</label
+            >
+          </div>
+          }
+        </div>
+      </fieldset>
+    </div>
+
+    <button
+      pRipple
+      [disabled]="formSubmitted()"
+      class="focus:outline-none rounded text-white hover:opacity-90 w-full h-10 bg-slate-600 disabled:opacity-40"
+    >
+      <span class="flex items-center justify-center w-full h-full">
+        @if (formSubmitted()) {
+        <app-loading-icon></app-loading-icon>
+        }@else {
+        <p>Submit</p>
+        }
+      </span>
+    </button>
+  </form>
+</ng-template>

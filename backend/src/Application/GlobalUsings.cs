@@ -11,7 +11,6 @@ global using Application.Abstractions.Security;
 global using System.Security.Claims;
 global using Application.Contracts.OperationClaims;
 global using Application.Contracts.Auths;
-global using Application.Contracts.Common;
 global using Application.Contracts.RoleOperationClaims;
 global using Application.Contracts.Roles;
 global using Application.Contracts.StreamOptions;

@@ -11,26 +11,35 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="8.0.0" />
-    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.2">
+    <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="8.0.1" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
 
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 
-    <PackageReference Include="StackExchange.Redis" Version="2.7.27" />
+    <PackageReference Include="StackExchange.Redis" Version="2.7.33" />
 
     <PackageReference Include="StackExchange.Redis.Extensions.AspNetCore" Version="10.2.0" />
 
     <PackageReference Include="StackExchange.Redis.Extensions.MsgPack" Version="10.2.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+
+    <PackageReference Include="StackExchange.Redis.Extensions.Newtonsoft" Version="10.2.0" />
+
+    <PackageReference Include="StackExchange.Redis.Extensions.Protobuf" Version="10.2.0" />
+
+    <PackageReference Include="StackExchange.Redis.Extensions.System.Text.Json" Version="10.2.0" />
+
+    <PackageReference Include="StackExchange.Redis.Extensions.Utf8Json" Version="10.2.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Application.Contracts\Application.Contracts.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 

@@ -31,4 +31,10 @@ export class AuthProxyService {
       refreshTokenDto
     );
   }
+
+  followingStreamIds(): Observable<string[]> {
+    return this.httpClientService.get({
+      controller: 'stream-follower-users',
+    });
+  }
 }

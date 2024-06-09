@@ -1,39 +1,52 @@
-﻿using Application.Features.StreamBlockedUsers.Abstractions;
+﻿using Application.Common.Permissions;
+using Application.Features.StreamBlockedUsers.Abstractions;
 using Application.Features.StreamBlockedUsers.Rules;
+using Application.Features.StreamBlockedUsers.Services;
 
 namespace Application.Features.StreamBlockedUsers.Commands.Create;
 
-public readonly record struct CreateStreamBlockedUserCreateCommandRequest
-    : IStreamBlockedUserRequest, IRequest<HttpResult>, ISecuredRequest
+public record struct CreateStreamBlockedUserCreateCommandRequest
+    : IStreamBlockedUserRequest, IRequest<HttpResult>, IPermissionRequest
 {
-    public Guid StreamerId { get; init; }
+    private Guid _streamerId;
 
-    public Guid BlockedUserId { get; init; }
-    public AuthorizationFunctions AuthorizationFunctions { get; }
-
-    public CreateStreamBlockedUserCreateCommandRequest()
+    public Guid StreamerId
     {
-        AuthorizationFunctions = [StreamBlockedUserAuthorizationRules.CanUserBlockOrUnblockAUserFromStream];
+        get => _streamerId;
+        set
+        {
+            _streamerId = value;
+
+            this.SetPermissionRequirements();
+        }
     }
 
-    public CreateStreamBlockedUserCreateCommandRequest(Guid streamerId, Guid blockedUserId) : this()
+
+    public Guid BlockedUserId { get; init; }
+    public PermissionRequirements PermissionRequirements { get; private set; }
+
+
+    private void SetPermissionRequirements()
     {
-        StreamerId = streamerId;
-        BlockedUserId = blockedUserId;
+        PermissionRequirements = PermissionRequirementConstants.WithNameIdentifier(_streamerId.ToString())
+            .WithNameIdentifierClaim()
+            .WithRoles(PermissionHelper.AllStreamRoles().ToArray())
+            .WithOperationClaims(RequiredClaim.Create(OperationClaimConstants.Stream.Write.BlockFromChat,
+                StreamErrors.UserIsNotModeratorOfStream));
     }
 }
 
 public sealed class
     CreateStreamBlockedUserCreateHandler : IRequestHandler<CreateStreamBlockedUserCreateCommandRequest, HttpResult>
 {
-    private readonly IEfRepository _efRepository;
     private readonly StreamBlockedUserBusinessRules _streamBlockedUserBusinessRules;
+    private readonly IStreamBlockUserService _streamBlockUserService;
 
-    public CreateStreamBlockedUserCreateHandler(IEfRepository efRepository,
-        StreamBlockedUserBusinessRules streamBlockedUserBusinessRules)
+    public CreateStreamBlockedUserCreateHandler(
+        StreamBlockedUserBusinessRules streamBlockedUserBusinessRules, IStreamBlockUserService streamBlockUserService)
     {
-        _efRepository = efRepository;
         _streamBlockedUserBusinessRules = streamBlockedUserBusinessRules;
+        _streamBlockUserService = streamBlockUserService;
     }
 
     public async Task<HttpResult> Handle(CreateStreamBlockedUserCreateCommandRequest request,
@@ -48,14 +61,17 @@ public sealed class
             return streamBlockedUserExistResult.Error;
         }
 
-        var streamBlockedUser = StreamBlockedUser.Create(request.StreamerId, request.BlockedUserId);
+        var result = await _streamBlockUserService.BlockUserFromStreamAsync(request.StreamerId, request.BlockedUserId,
+            cancellationToken);
 
-        _efRepository.StreamBlockedUsers.Add(streamBlockedUser);
 
-        var result = await _efRepository.SaveChangesAsync(cancellationToken);
+        _ = Task.Run(() => _streamBlockUserService.SendBlockNotificationToUsersAsync(request.StreamerId,
+            [request.BlockedUserId],
+            isBlocked: true), cancellationToken);
+
 
         return result > 0
-            ? HttpResult.Success(StatusCodes.Status201Created)
+            ? HttpResult.Success(StatusCodes.Status204NoContent)
             : StreamBlockedUserErrors.FailedToBlockUser;
     }
 }

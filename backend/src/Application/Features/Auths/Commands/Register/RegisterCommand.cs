@@ -1,7 +1,6 @@
-﻿using Application.Common.Models;
-using Application.Contracts.Auths;
-using Application.Features.Auths.Rules;
-using Application.Features.Streams.Services;
+﻿using Application.Features.Auths.Rules;
+using Application.Features.Auths.Services;
+using Application.Features.StreamOptions.Services;
 
 namespace Application.Features.Auths.Commands.Register;
 
@@ -13,23 +12,16 @@ public sealed class
 {
     private readonly IEfRepository _efRepository;
     private readonly AuthBusinessRules _authBusinessRules;
-    private readonly IJwtHelper _jwtHelper;
-    private readonly IHashingHelper _hashingHelper;
+    private readonly IAuthService _authService;
+    private readonly IStreamOptionService _streamOptionService;
 
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    private readonly IStreamService _streamService;
-
-    public RegisterUserCommandHandler(AuthBusinessRules authBusinessRules, IJwtHelper jwtHelper,
-        IHashingHelper hashingHelper, IHttpContextAccessor httpContextAccessor, IEfRepository efRepository,
-        IStreamService streamService)
+    public RegisterUserCommandHandler(AuthBusinessRules authBusinessRules, IEfRepository efRepository,
+        IAuthService authService, IStreamOptionService streamOptionService)
     {
         _authBusinessRules = authBusinessRules;
-        _jwtHelper = jwtHelper;
-        _hashingHelper = hashingHelper;
-        _httpContextAccessor = httpContextAccessor;
         _efRepository = efRepository;
-        _streamService = streamService;
+        _authService = authService;
+        _streamOptionService = streamOptionService;
     }
 
     public async Task<HttpResult<AuthResponseDto>> Handle(RegisterCommandRequest request,
@@ -42,33 +34,15 @@ public sealed class
             return result.Error;
         }
 
-        _hashingHelper.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+        var user = _authService.RegisterUser(request.Username, request.Password, out var accessToken,
+            out var refreshToken, out var claims);
 
-        // User created, User create event should be fired and create a streamer for the user
-        User newUser = User.Create(request.Username, passwordHash, passwordSalt);
-
-        var userIpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
-
-        AccessToken accessToken = _jwtHelper.CreateAccessToken(newUser, new());
-        RefreshToken refreshToken = _jwtHelper.CreateRefreshToken(newUser, userIpAddress);
-
-        _efRepository.Users.Add(newUser);
-        _efRepository.RefreshTokens.Add(refreshToken);
-
-        // All users are also streamers, so we create a streamer for the user
-        // TODO: Handle this with events
-        var streamerKey = _streamService.GenerateStreamKey(newUser);
-        var streamerTitle = $"{newUser.Username}'s stream";
-        var streamerDescription = $"{newUser.Username}'s stream description";
-
-        var streamOption = StreamOption.Create(newUser.Id, streamerKey, streamerTitle, streamerDescription);
-
-        _efRepository.StreamOptions.Add(streamOption);
+        _streamOptionService.CreateStreamOption(user);
 
         await _efRepository.SaveChangesAsync(cancellationToken);
 
-        var authResponseDto = new AuthResponseDto(newUser.Id, newUser.Username, ProfileImageUrl: string.Empty,
-            accessToken.Token, refreshToken.Token, accessToken.Expiration, claims: []);
+        var authResponseDto = new AuthResponseDto(user.Id, user.Username, ProfileImageUrl: string.Empty,
+            accessToken.Token, refreshToken.Token, accessToken.Expiration, Claims: claims);
 
         return HttpResult<AuthResponseDto>.Success(authResponseDto,
             StatusCodes.Status201Created);

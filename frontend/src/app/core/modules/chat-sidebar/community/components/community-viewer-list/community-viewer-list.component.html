@@ -1,0 +1,11 @@
+@for (viewer of viewers(); track $index) {
+<app-community-viewer
+  [viewer]="viewer"
+  (blockViewer)="openBlockViewerDialog($event)"
+/>
+}
+
+<app-dialog
+  [(visible)]="dialogVisible"
+  [onConfirm]="onBlockViewerConfirm"
+></app-dialog>

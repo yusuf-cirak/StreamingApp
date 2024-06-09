@@ -1,49 +1,71 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal, Signal } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
-import { BehaviorSubject, Subject } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  EMPTY,
+  from,
+  ReplaySubject,
+  Subject,
+  tap,
+  throwError,
+} from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AuthService } from '../services';
 import { StreamHubAction } from './stream-hub-action';
-import { LiveStreamDto } from '../modules/recommended-streamers/models/live-stream-dto';
-import { StreamInfoDto } from '../modules/streams/contracts/stream-info-dto';
-import { StreamChatOptionsDto } from '../modules/streams/contracts/stream-options-dto';
+import { StreamDto } from '../modules/streams/contracts/stream-dto';
+import { StreamInfoDto } from './dtos/stream-info-dto';
+import { StreamChatOptionsDto } from './dtos/stream-options-dto';
+import { StreamChatMessageDto } from './dtos/stream-chat-message-dto';
+import { StreamBlockUserActionDto } from './dtos/stream-block-user-action-dto';
 
 @Injectable({ providedIn: 'root' })
 export class StreamHub {
-  private readonly authService = inject(AuthService);
-  private readonly _hubConnection = new signalR.HubConnectionBuilder()
-    .withUrl(environment.streamHubUrl!, {
-      accessTokenFactory: () => this.authService.user()?.accessToken!,
-    })
-    .build();
+  private _hubConnection!: signalR.HubConnection;
 
-  streamStarted$ = new Subject<LiveStreamDto>();
+  readonly connectedToHub = signal(false);
+
+  readonly connectedStreamRoom = signal<string | undefined>(undefined);
+
+  streamStarted$ = new Subject<StreamDto>();
   streamEnd$ = new Subject<string>();
 
   streamChatOptionsChanged$ = new Subject<StreamChatOptionsDto>();
 
-  async connect() {
-    await this._hubConnection
-      .start()
-      .then(() => {
+  streamChatMessageReceived$ = new Subject<StreamChatMessageDto>();
+
+  streamBlockUserOccured$ = new Subject<StreamBlockUserActionDto>();
+
+  upsertModerator$ = new Subject<void>();
+
+  connect() {
+    return from(this._hubConnection.start()).pipe(
+      catchError((err) => {
+        console.error(err);
+        this.connectedToHub.set(false);
+
+        return throwError(err);
+      }),
+      tap(() => {
         console.log('Connected to stream hub');
         this.registerStreamHubHandlers();
+        this.connectedToHub.set(true);
         console.log('Registered stream hub handlers');
       })
-      .catch((err) => {
-        console.error(err);
-      });
+    );
   }
 
-  async disconnect() {
-    await this._hubConnection
-      .stop()
-      .then(() => {
+  disconnect() {
+    return from(this._hubConnection.stop()).pipe(
+      tap(() => {
+        this.connectedToHub.set(false);
         console.log('Disconnected from stream hub');
+      }),
+      catchError((err) => {
+        console.log('error when disconnecting');
+        console.log(err);
+        return EMPTY;
       })
-      .catch((err) => {
-        console.error(err);
-      });
+    );
   }
 
   registerStreamHubHandlers() {
@@ -52,9 +74,9 @@ export class StreamHub {
       (streamInfo: StreamInfoDto) => {
         const stream = {
           startedAt: streamInfo.startedAt,
-          options: streamInfo.streamOption,
+          streamOption: streamInfo.streamOption,
           user: streamInfo.user,
-        } as LiveStreamDto;
+        } as StreamDto;
 
         this.streamStarted$.next(stream);
       }
@@ -73,27 +95,87 @@ export class StreamHub {
         this.streamChatOptionsChanged$.next(streamChatOptionsDto);
       }
     );
+
+    this._hubConnection.on(
+      StreamHubAction.OnStreamChatMessageSend,
+      (streamChatMessageDto: StreamChatMessageDto) => {
+        this.streamChatMessageReceived$.next(streamChatMessageDto);
+      }
+    );
+
+    this._hubConnection.on(
+      StreamHubAction.OnBlockFromStream,
+      (streamBlockUserDto: StreamBlockUserActionDto) =>
+        this.streamBlockUserOccured$.next(streamBlockUserDto)
+    );
+
+    this._hubConnection.on(StreamHubAction.OnUpsertModerator, () => {
+      console.log('upsert moderator!');
+      this.upsertModerator$.next();
+    });
   }
 
-  invokeOnJoinedStream(streamerId: string) {
-    this._hubConnection
-      .invoke(StreamHubAction.OnJoinedStream, streamerId)
-      .then(() => {
+  invokeOnJoinedStream(streamerName: string) {
+    return from(
+      this._hubConnection.invoke(StreamHubAction.OnJoinedStream, streamerName)
+    ).pipe(
+      tap(() => {
         console.log('Joined stream');
-      })
-      .catch((err) => {
+        this.connectedStreamRoom.set(streamerName);
+      }),
+      catchError((err) => {
         console.error(err);
-      });
+        return throwError(err);
+      })
+    );
   }
 
-  invokeOnLeavedStream(streamerId: string) {
-    this._hubConnection
-      .invoke(StreamHubAction.OnLeavedStream, streamerId)
-      .then(() => {
+  invokeOnLeavedStream(streamerName: string) {
+    return from(
+      this._hubConnection.invoke(StreamHubAction.OnLeavedStream, streamerName)
+    ).pipe(
+      tap(() => {
         console.log('Leaved stream');
-      })
-      .catch((err) => {
+        this.connectedStreamRoom.set(undefined);
+      }),
+      catchError((err) => {
         console.error(err);
-      });
+        return throwError(err);
+      })
+    );
+  }
+
+  invokeOnStreamChatMessageSend(
+    streamerName: string,
+    streamChatMessageDto: StreamChatMessageDto
+  ) {
+    return from(
+      this._hubConnection.invoke(
+        StreamHubAction.OnStreamChatMessageSend,
+        streamerName,
+        streamChatMessageDto
+      )
+    ).pipe(
+      tap(() => console.log('Message sent')),
+      catchError((err) => {
+        console.error(err);
+        return throwError(err);
+      })
+    );
+  }
+
+  buildAndConnect(accessToken?: string) {
+    this.buildConnection(accessToken);
+    return this.connect();
+  }
+
+  private buildConnection(accessToken?: string) {
+    this._hubConnection = new signalR.HubConnectionBuilder()
+      .withUrl(environment.streamHubUrl!, {
+        accessTokenFactory: () => accessToken!,
+      })
+      .build();
+
+    console.log('builded new connection!');
   }
 }

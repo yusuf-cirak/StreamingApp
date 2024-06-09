@@ -1,6 +1,5 @@
-﻿using System.Text.Json;
-using Application.Common.Errors;
-using Application.Contracts.Roles;
+﻿using Application.Common.Errors;
+using Application.Common.Extensions;
 using Application.Features.UserOperationClaims.Abstractions;
 
 namespace Application.Features.UserOperationClaims.Rules;
@@ -26,17 +25,9 @@ public static class UserOperationClaimAuthorizationRules
 
     private static bool IsUserAdmin(ICollection<Claim> claims)
     {
-        string rolesString = claims.FirstOrDefault(claim => claim.Type == "Roles")?.Value ??
-                             string.Empty;
+        var roles = claims.GetRoles().ToList();
 
-        if (string.IsNullOrEmpty(rolesString))
-        {
-            return false;
-        }
-
-        List<GetUserRoleDto> roleClaims = JsonSerializer.Deserialize<List<GetUserRoleDto>>(rolesString);
-
-        return roleClaims.Exists(rc => rc.Role.Name == RoleConstants.SystemAdmin);
+        return roles.Exists(rc => rc.Name == RoleConstants.Admin);
     }
 
 

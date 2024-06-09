@@ -54,4 +54,5 @@ public sealed class UserBusinessRules : BaseBusinessRules
 
         return true;
     }
+    
 }

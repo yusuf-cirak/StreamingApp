@@ -1,9 +1,0 @@
-@defer (when streamerFacade.recommendedStreamers()!==undefined) {
-@if(streamerFacade.recommendedStreamers(); as recommendedStreamers) {
-<app-streamer-list
-  [liveStreamers]="recommendedStreamers.liveStreamers"
-  [followingStreamers]="recommendedStreamers.followingStreamers"
-/>
-} } @placeholder {
-<app-streamer-skeleton />
-}

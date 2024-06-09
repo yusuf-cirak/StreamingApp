@@ -1,9 +1,4 @@
 ﻿using Application.Abstractions;
-using Application.Abstractions.Helpers;
-using Application.Abstractions.Repository;
-using Application.Common.Exceptions;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Auths.Rules;
 
@@ -45,9 +40,13 @@ public sealed class AuthBusinessRules : BaseBusinessRules
         return Result.Success();
     }
 
-    public async Task<Result<User, Error>> UserNameShouldExistBeforeLogin(string username)
+    public async Task<Result<User, Error>> UserNameShouldExistBeforeLoginAsync(string username,
+        CancellationToken cancellationToken)
     {
-        User? user = await _repository.Users.SingleOrDefaultAsync(user => user.Username == username);
+        var user = await this
+            .GetUserQueryable()
+            .AsSplitQuery()
+            .SingleOrDefaultAsync(u => u.Username == username, cancellationToken);
 
         if (user is null)
         {
@@ -57,25 +56,37 @@ public sealed class AuthBusinessRules : BaseBusinessRules
         return user;
     }
 
-    public async Task<Result<User, Error>> UserWithIdMustExistBeforeRefreshToken(Guid userId)
+    public async Task<Result<User, Error>> UserWithIdMustExist(Guid userId, string ipAddress)
     {
-        User? user = await _repository.Users.SingleOrDefaultAsync(user => user.Id == userId);
+        var result = await this
+            .GetUserQueryable()
+            .AsSplitQuery()
+            .Where(u => u.Id == userId)
+            .Select(user => new
+            {
+                User = user,
+                RefreshToken = user.RefreshTokens
+                    .OrderByDescending(rt => rt.ExpiresAt)
+                    .FirstOrDefault(rt => rt.CreatedByIp == ipAddress)
+            }).SingleOrDefaultAsync();
 
-
-        if (user is null)
+        if (result is null)
         {
             return UserErrors.NotFound;
         }
 
-        return user;
+        if (result.RefreshToken is not null)
+        {
+            result.User.RefreshTokens.Add(result.RefreshToken);
+        }
+
+
+        return result.User;
     }
 
-    public async Task<Result> GetAndVerifyUserRefreshToken(Guid userId, string refreshTokenFromRequest)
+    public Result VerifyRefreshToken(User user, string refreshTokenFromRequest)
     {
-        var ipAddress = _httpContextAccessor?.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? "";
-
-        var refreshToken = await _repository.RefreshTokens.OrderByDescending(rt => rt.ExpiresAt)
-            .FirstOrDefaultAsync(rt => rt.UserId == userId && rt.CreatedByIp == ipAddress);
+        var refreshToken = user.RefreshTokens.FirstOrDefault();
 
         if (refreshToken is null)
         {
@@ -94,4 +105,12 @@ public sealed class AuthBusinessRules : BaseBusinessRules
 
         return Result.Success();
     }
+
+    private IQueryable<User> GetUserQueryable() => _repository
+        .Users
+        .Include(u => u.UserRoleClaims)
+        .ThenInclude(urc => urc.Role)
+        .Include(u => u.UserOperationClaims)
+        .ThenInclude(uoc => uoc.OperationClaim);
+    // .AsSplitQuery();
 }

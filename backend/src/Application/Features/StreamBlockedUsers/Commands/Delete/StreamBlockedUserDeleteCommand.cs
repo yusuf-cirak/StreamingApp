@@ -1,46 +1,55 @@
-﻿using System.Security.Claims;
+﻿using Application.Common.Permissions;
 using Application.Features.StreamBlockedUsers.Abstractions;
-using Application.Features.StreamBlockedUsers.Rules;
+using Application.Features.StreamBlockedUsers.Services;
 
 namespace Application.Features.StreamBlockedUsers.Commands.Delete;
 
-public readonly record struct StreamBlockedUserDeleteCommandRequest
-    : IStreamBlockedUserRequest, IRequest<HttpResult>, ISecuredRequest
+public record struct StreamBlockedUserDeleteCommandRequest
+    : IStreamBlockedUserRequest, IRequest<HttpResult>, IPermissionRequest
 {
-    public Guid StreamerId { get; init; }
+    private Guid _streamerId;
 
-    public Guid BlockedUserId { get; init; }
-    public AuthorizationFunctions AuthorizationFunctions { get; }
-
-    public StreamBlockedUserDeleteCommandRequest()
+    public Guid StreamerId
     {
-        AuthorizationFunctions = [StreamBlockedUserAuthorizationRules.CanUserBlockOrUnblockAUserFromStream];
+        get => _streamerId;
+        set
+        {
+            _streamerId = value;
+            this.SetPermissionRequirements();
+        }
     }
 
-    public StreamBlockedUserDeleteCommandRequest(Guid streamerId, Guid blockedUserId) : this()
+
+    public List<Guid> BlockedUserIds { get; init; }
+
+    public PermissionRequirements PermissionRequirements { get; private set; }
+
+    private void SetPermissionRequirements()
     {
-        StreamerId = streamerId;
-        BlockedUserId = blockedUserId;
+        PermissionRequirements = PermissionRequirements
+            .Create()
+            .WithRequiredValue(this.StreamerId.ToString())
+            .WithRoles(PermissionHelper.AllStreamRoles().ToArray())
+            .WithOperationClaims(RequiredClaim.Create(OperationClaimConstants.Stream.Write.BlockFromChat,
+                StreamErrors.UserIsNotModeratorOfStream))
+            .WithNameIdentifierClaim();
     }
 }
 
 public sealed class
-    StreamBlockedUserDeleteCommandHandler : IRequestHandler<StreamBlockedUserDeleteCommandRequest, HttpResult>
+    StreamBlockedUserDeleteCommandHandler(IStreamBlockUserService streamBlockUserService)
+    : IRequestHandler<StreamBlockedUserDeleteCommandRequest, HttpResult>
 {
-    private readonly IEfRepository _efRepository;
-
-    public StreamBlockedUserDeleteCommandHandler(IEfRepository efRepository)
-    {
-        _efRepository = efRepository;
-    }
-
     public async Task<HttpResult> Handle(StreamBlockedUserDeleteCommandRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _efRepository
-            .StreamBlockedUsers
-            .Where(sbu => sbu.UserId == request.BlockedUserId && sbu.StreamerId == request.StreamerId)
-            .ExecuteDeleteAsync(cancellationToken);
+        var result =
+            await streamBlockUserService.UnblockUsersFromStreamAsync(request.StreamerId, request.BlockedUserIds,
+                cancellationToken);
+
+        _ = Task.Run(() => streamBlockUserService.SendBlockNotificationToUsersAsync(request.StreamerId,
+            request.BlockedUserIds,
+            isBlocked: false));
 
         return result > 0
             ? HttpResult.Success(StatusCodes.Status204NoContent)

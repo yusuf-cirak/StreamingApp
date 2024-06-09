@@ -8,7 +8,7 @@ public class Stream : Entity
     
     public virtual User Streamer { get; }
     
-    private Stream()
+    public Stream()
     {
         StartedAt = DateTime.UtcNow;
     }

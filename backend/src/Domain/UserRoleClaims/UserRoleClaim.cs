@@ -1,6 +1,6 @@
 ﻿namespace Domain.Entities;
 
-public class UserRoleClaim : BaseEntity
+public class UserRoleClaim : BaseEntity, IEquatable<UserRoleClaim>
 {
     public Guid UserId { get; set; }
     public Guid RoleId { get; set; }
@@ -20,9 +20,30 @@ public class UserRoleClaim : BaseEntity
         Value = value;
     }
 
-    public static UserRoleClaim Create(Guid userId, Guid roleOperationClaimId, string value)
+    public static UserRoleClaim Create(Guid userId, Guid roleId, string value)
     {
-        UserRoleClaim userOperationClaim = new(userId, roleOperationClaimId, value);
-        return userOperationClaim;
+        UserRoleClaim userRoleClaim = new(userId, roleId, value);
+        return userRoleClaim;
+    }
+
+    public bool Equals(UserRoleClaim other)
+    {
+        if (other == null) return false;
+        return this.RoleId == other.RoleId && this.UserId == other.UserId && this.Value == other.Value;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is UserRoleClaim other)
+        {
+            return Equals(other);
+        }
+
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(UserId, RoleId, Value);
     }
 }

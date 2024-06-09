@@ -1,4 +1,7 @@
 ﻿using Application.Common.Errors;
+using Application.Common.Extensions;
+using Application.Features.StreamBlockedUsers.Abstractions;
+using Application.Features.Streams.Abstractions;
 using Microsoft.Extensions.Configuration;
 
 namespace Application.Features.Streams.Rules;
@@ -43,4 +46,6 @@ public static class StreamAuthorizationRules
             ? Result.Failure(AuthorizationErrors.Unauthorized())
             : Result.Success();
     }
+
+
 }

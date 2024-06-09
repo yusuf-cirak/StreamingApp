@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Repository;
-using Application.Common.Models;
+using Application.Contracts.Common.Models;
 using Application.Contracts.Streams;
 using Infrastructure.Persistence.EntityFramework.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -39,8 +39,7 @@ public sealed class EfRepository : IEfRepository
         return Context.SaveChangesAsync(cancellationToken);
     }
 
-
-    public Func<Task<List<GetStreamDto>>> GetLiveStreamers(CancellationToken cancellationToken = default)
+    public Func<Task<List<GetStreamDto>>> GetLiveStreamersAsync(CancellationToken cancellationToken = default)
     {
         return async () => await CompiledQueries.GetLiveStreamers(Context).ToListAsync(cancellationToken);
     }

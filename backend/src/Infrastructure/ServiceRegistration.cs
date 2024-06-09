@@ -1,6 +1,8 @@
 ﻿using Application.Abstractions.Caching;
 using Application.Abstractions.Helpers;
+using Application.Abstractions.Image;
 using Application.Abstractions.Repository;
+using CloudinaryDotNet;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.Helpers.Hashing;
 using Infrastructure.Helpers.JWT;
@@ -9,16 +11,11 @@ using Infrastructure.Persistence.EntityFramework.Contexts;
 using Infrastructure.Persistence.EntityFramework.Interceptors;
 using Infrastructure.Persistence.EntityFramework.Repositories;
 using Infrastructure.Services.Cache;
+using Infrastructure.Services.Image;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
-using SignalR.Hubs.Stream.Client.Abstractions.Services;
-using SignalR.Hubs.Stream.Client.Concretes.Services.InMemory;
-using SignalR.Hubs.Stream.Server.Abstractions;
-using SignalR.Hubs.Stream.Server.Concretes;
-using SignalR.Hubs.Stream.Shared;
-using SignalR.Hubs.Stream.Shared.InMemory;
 
 namespace Infrastructure;
 
@@ -50,7 +47,11 @@ public static class ServiceRegistration
 
         services.AddQuartzBackgroundJob();
 
-        services.AddSignalrServices();
+        services.AddSingleton<ICacheService, RedisCacheService>();
+
+        services.AddCacheServices();
+
+        services.AddImageServices(configuration);
     }
 
 
@@ -58,30 +59,44 @@ public static class ServiceRegistration
     {
         services.AddQuartz(configurator =>
         {
-            var jobKey = new JobKey(nameof(ProcessOutboxMessagesJob));
+            // var processOutboxMessagesKey = new JobKey(nameof(ProcessOutboxMessagesJob));
+            //
+            // configurator
+            //     .AddJob<ProcessOutboxMessagesJob>(processOutboxMessagesKey)
+            //     .AddTrigger(trigger => trigger
+            //         .ForJob(processOutboxMessagesKey)
+            //         .WithSimpleSchedule(schedule => schedule
+            //             .WithIntervalInSeconds(5)
+            //             .RepeatForever()));
+
+
+            var refreshTokenCleanupKey = new JobKey(nameof(RefreshTokenCleanupJob));
+
 
             configurator
-                .AddJob<ProcessOutboxMessagesJob>(jobKey)
+                .AddJob<RefreshTokenCleanupJob>(refreshTokenCleanupKey)
                 .AddTrigger(trigger => trigger
-                    .ForJob(jobKey)
+                    .ForJob(refreshTokenCleanupKey)
                     .WithSimpleSchedule(schedule => schedule
-                        .WithIntervalInSeconds(5)
+                        .WithIntervalInHours(24)
                         .RepeatForever()));
         });
 
         services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
     }
 
-    private static void AddSignalrServices(this IServiceCollection services)
+    private static void AddCacheServices(this IServiceCollection services)
     {
-        services.AddSingleton<IStreamHubState, InMemoryStreamHubState>();
+        services.AddScoped<ICacheService, RedisCacheService>();
+        services.AddScoped<IRedisCacheService, RedisCacheService>();
+    }
 
-        services.AddScoped<IStreamHubUserService, InMemoryStreamHubUserService>();
-        services.AddScoped<IStreamHubChatRoomService, InMemoryStreamHubChatRoomService>();
 
-        services.AddScoped<IStreamHubClientService, InMemoryStreamHubClientService>();
-        services.AddScoped<IStreamHubServerService, InMemoryStreamHubServerService>();
+    private static void AddImageServices(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddSingleton(_ =>
+            new Cloudinary(account: configuration.GetSection("CloudinarySettings").Get<Account>()));
 
-        services.AddSingleton<ICacheService, RedisCacheService>();
+        services.AddScoped<IImageService, CloudinaryImageService>();
     }
 }

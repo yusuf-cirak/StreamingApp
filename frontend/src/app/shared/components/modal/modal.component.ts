@@ -8,6 +8,7 @@ import {
   TemplateRef,
   ViewChild,
   input,
+  model,
 } from '@angular/core';
 
 @Component({
@@ -17,7 +18,7 @@ import {
   templateUrl: './modal.component.html',
 })
 export class ModalComponent {
-  visible = input.required<boolean>();
+  visible = model(false);
   header = input<string>('');
 
   headerTemplate = input<TemplateRef<ElementRef> | null>(null);
@@ -30,6 +31,7 @@ export class ModalComponent {
   @Output() outsideModalClicked = new EventEmitter<void>();
 
   emitCloseModalClicked() {
+    this.visible.set(false);
     this.closeModalClicked.emit();
   }
 

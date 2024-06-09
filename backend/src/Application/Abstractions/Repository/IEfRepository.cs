@@ -1,4 +1,4 @@
-﻿using Application.Common.Models;
+﻿using Application.Contracts.Common.Models;
 using Stream = Domain.Entities.Stream;
 
 namespace Application.Abstractions.Repository;
@@ -30,5 +30,5 @@ public interface IEfRepository
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
-    Func<Task<List<GetStreamDto>>> GetLiveStreamers(CancellationToken cancellationToken = default);
+    Func<Task<List<GetStreamDto>>> GetLiveStreamersAsync(CancellationToken cancellationToken = default);
 }

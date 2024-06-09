@@ -19,11 +19,11 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "outputPath": "dist",
             "index": "src/index.html",
-            "browser": "src/main.ts",
+            "main": "src/main.ts",
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
@@ -32,42 +32,37 @@
               "src/styles.scss",
               "node_modules/@videogular/ngx-videogular/fonts/videogular.css"
             ],
-            "scripts": ["./node_modules/hls.js/dist/hls.min.js"],
-            "server": "src/main.server.ts",
-            "prerender": true,
-            "ssr": {
-              "entry": "server.ts"
-            }
+            "scripts": ["./node_modules/hls.js/dist/hls.min.js"]
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "2mb",
+                  "maximumError": "2mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "2mb",
+                  "maximumError": "2mb"
                 }
               ],
               "outputHashing": "all",
               "aot": true,
+              "buildOptimizer": true,
+              "vendorChunk": false,
+              "subresourceIntegrity": false,
               "namedChunks": false,
               "extractLicenses": true,
               "optimization": true,
-              "sourceMap": false,
-              "ssr": false,
-              "prerender": false
+              "sourceMap": false
             },
             "development": {
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,
-              "ssr": false,
-              "prerender": false,
+
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",

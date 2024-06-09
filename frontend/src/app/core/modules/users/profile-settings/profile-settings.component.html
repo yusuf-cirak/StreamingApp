@@ -1,0 +1,136 @@
+<app-modal
+  [visible]="visible()"
+  [bodyTemplate]="formTemplateRef"
+  [headerTemplate]="headerRef"
+  (closeModalClicked)="closeModal()"
+  (outsideModalClicked)="closeModal()"
+></app-modal>
+
+<ng-template #headerRef>
+  <h2 class="text-tw-primary font-semibold">Edit Profile Settings</h2>
+</ng-template>
+<ng-template #formTemplateRef>
+  <form
+    class="w-full flex flex-col"
+    [formGroup]="form"
+    (ngSubmit)="submit()"
+    [autofocus]="true"
+  >
+    <app-input
+      inputType="text"
+      label="Username"
+      class="w-full"
+      [disabled]="true"
+      [value]="user()?.username!"
+    ></app-input>
+
+    <!-- <div class="w-full h-72">
+      <label class="text-sm font-bold leading-tight tracking-normal"
+        >Profile Image</label
+      >
+      <label
+        for="uploadFile"
+        class="relative bg-white text-gray-500 font-semibold text-base max-w-md w-64 h-64 rounded-full flex flex-col items-center justify-center cursor-pointer border-2 border-gray-300 border-dashed mx-auto font-[sans-serif]"
+      >
+        @if (this.imageUrl(); as imageUrl) {
+        <img
+          [src]="imageUrl"
+          class="w-64 h-64 rounded-full"
+          [hidden]="!isImageLoaded()"
+          (load)="isImageLoaded.set(true)"
+        />
+
+        @if (!isImageLoaded()) {
+        <div class="w-64 h-64 bg-gray-200 animate-pulse rounded-full"></div>
+        } }@else {
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-11 mb-2 fill-gray-500"
+          viewBox="0 0 32 32"
+        >
+          <path
+            d="M23.75 11.044a7.99 7.99 0 0 0-15.5-.009A8 8 0 0 0 9 27h3a1 1 0 0 0 0-2H9a6 6 0 0 1-.035-12 1.038 1.038 0 0 0 1.1-.854 5.991 5.991 0 0 1 11.862 0A1.08 1.08 0 0 0 23 13a6 6 0 0 1 0 12h-3a1 1 0 0 0 0 2h3a8 8 0 0 0 .75-15.956z"
+            data-original="#000000"
+          />
+          <path
+            d="M20.293 19.707a1 1 0 0 0 1.414-1.414l-5-5a1 1 0 0 0-1.414 0l-5 5a1 1 0 0 0 1.414 1.414L15 16.414V29a1 1 0 0 0 2 0V16.414z"
+            data-original="#000000"
+          />
+        </svg>
+        Upload Profile Image
+
+        <input
+          id="uploadFile"
+          type="file"
+          class="hidden"
+          accept=".png, .jpg, .jpeg, .svg"
+          (change)="setFile($any($event).target.files[0])"
+          (click)="$any($event).target.value = ''"
+        />
+        <p class="text-xs font-medium text-gray-400 mt-2">
+          PNG, JPG are allowed
+        </p>
+        }
+      </label>
+    </div> -->
+
+    <div class="grid max-w-2xl mx-auto mt-8">
+      <div
+        class="flex flex-col items-center space-y-5 sm:flex-row sm:space-y-0"
+      >
+        @if (imageUrl(); as imageUrl) {
+        <img
+          class="object-cover w-40 h-40 p-1 rounded-full ring-2 ring-indigo-300 dark:ring-indigo-500"
+          [src]="imageUrl"
+          [hidden]="!isImageLoaded()"
+          (load)="isImageLoaded.set(true)"
+          alt="Bordered avatar"
+        />
+        @if (!isImageLoaded()) {
+        <div class="w-40 h-40 bg-gray-200 animate-pulse rounded-full"></div>
+        } }
+
+        <div class="flex flex-col space-y-5 sm:ml-8">
+          <label for="uploadFile">
+            <a
+              role="button"
+              tabindex="0"
+              class="flex w-full h-full text-center py-3.5 px-7 font-medium text-indigo-100 focus:outline-none bg-[#202142] rounded-lg border border-indigo-200 hover:bg-indigo-900 focus:z-10 focus:ring-4 focus:ring-indigo-200"
+            >
+              Change picture
+            </a>
+          </label>
+          <input
+            id="uploadFile"
+            type="file"
+            class="hidden"
+            accept=".png, .jpg, .jpeg, .svg"
+            (change)="setFile($any($event).target.files[0])"
+            (click)="$any($event).target.value = ''"
+          />
+          <button
+            type="button"
+            (click)="setFile('')"
+            class="py-3.5 px-7 text-base font-medium text-indigo-900 focus:outline-none bg-white rounded-lg border border-indigo-200 hover:bg-indigo-100 hover:text-[#202142] focus:z-10 focus:ring-4 focus:ring-indigo-200"
+          >
+            Delete picture
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <button
+      pRipple
+      [disabled]="form.disabled"
+      class="focus:outline-none rounded text-white bg-wp-green hover:opacity-90 w-full h-10 bg-slate-600 disabled:opacity-40 mt-8"
+    >
+      <span class="flex items-center justify-center w-full h-full">
+        @if (formSubmitted()) {
+        <app-loading-icon></app-loading-icon>
+        }@else {
+        <span>Save</span>
+        }
+      </span>
+    </button>
+  </form>
+</ng-template>

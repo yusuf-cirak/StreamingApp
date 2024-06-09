@@ -1,28 +1,27 @@
 ﻿using Application.Abstractions.Caching;
-using Microsoft.Extensions.Configuration;
 using StackExchange.Redis;
 using StackExchange.Redis.Extensions.Core.Abstractions;
 
 namespace Infrastructure.Services.Cache
 {
-    public sealed class RedisCacheService : ICacheService
+    public sealed class RedisCacheService : IRedisCacheService
     {
-        private readonly IRedisDatabase _redisDb;
+        public IRedisDatabase RedisDb { get; }
 
         public RedisCacheService(IRedisDatabase redisDb)
         {
-            _redisDb = redisDb ?? throw new ArgumentNullException(nameof(redisDb));
+            RedisDb = redisDb ?? throw new ArgumentNullException(nameof(redisDb));
         }
 
         public async Task<T> GetAsync<T>(string key, CancellationToken cancellationToken)
         {
-            RedisValue bytes = await _redisDb.Database.StringGetAsync(key);
+            RedisValue bytes = await RedisDb.Database.StringGetAsync(key);
             if (bytes.IsNullOrEmpty)
             {
                 return default;
             }
 
-            return _redisDb.Serializer.Deserialize<T>(bytes);
+            return RedisDb.Serializer.Deserialize<T>(bytes);
         }
 
         public async Task<T> GetOrAddAsync<T>(string key, Func<Task<T>> factory, TimeSpan? expiresIn = null,
@@ -33,7 +32,7 @@ namespace Infrastructure.Services.Cache
             if (value == null)
             {
                 value = await factory();
-                await SetAsync(key, value, expiresIn, cancellationToken: cancellationToken);
+                await SetAsync<T>(key, value, expiresIn, cancellationToken: cancellationToken);
             }
 
             return value;
@@ -47,13 +46,13 @@ namespace Infrastructure.Services.Cache
         public async Task<bool> SetAsync<T>(string key, T value, TimeSpan? expiresIn = null,
             CancellationToken cancellationToken = default)
         {
-            var valueBytes = _redisDb.Serializer.Serialize(value);
-            return await _redisDb.Database.StringSetAsync(key, valueBytes, expiresIn, When.Always);
+            var valueBytes = RedisDb.Serializer.Serialize(value);
+            return await RedisDb.Database.StringSetAsync(key, valueBytes, expiresIn, When.Always);
         }
 
         public async Task<bool> RemoveAsync(string key)
         {
-            return await _redisDb.Database.KeyDeleteAsync(key);
+            return await RedisDb.Database.KeyDeleteAsync(key);
         }
     }
 }

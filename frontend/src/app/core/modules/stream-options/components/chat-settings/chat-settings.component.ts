@@ -1,18 +1,44 @@
-import { tap } from 'rxjs';
-import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
+import {
+  catchError,
+  EMPTY,
+  exhaustMap,
+  filter,
+  merge,
+  Observable,
+  of,
+  Subject,
+  switchMap,
+  tap,
+} from 'rxjs';
+import {
+  Component,
+  DestroyRef,
+  effect,
+  inject,
+  Signal,
+  signal,
+} from '@angular/core';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { min, max } from '../../../../validators';
 import { RippleModule } from 'primeng/ripple';
 import { ButtonModule } from 'primeng/button';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import {
+  takeUntilDestroyed,
+  toObservable,
+  toSignal,
+} from '@angular/core/rxjs-interop';
 import { ChatSettingsSkeletonComponent } from './skeleton/chat-settings-skeleton.component';
 import { StreamOptionProxyService } from '../../services/proxy/stream-option-proxy.service';
-import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '@streaming-app/core';
 import { finalize } from 'rxjs';
 import { PatchStreamChatSettingsDto } from '../../dtos/patch-stream-chat-settings-dto';
+import { ToastrService } from 'ngx-toastr';
+import { CurrentCreatorService } from '../../../../layouts/creator/services/current-creator-service';
+import { ChatSettingsService } from '../../services/chat-settings.service';
+import { CreatorAuthService } from '../../../../layouts/creator/services/creator-auth-service';
+import { UserAuthorizationService } from '../../../../services/user-authorization.service';
 @Component({
   standalone: true,
   selector: 'app-chat-settings',
@@ -28,14 +54,25 @@ import { PatchStreamChatSettingsDto } from '../../dtos/patch-stream-chat-setting
   providers: [StreamOptionProxyService],
 })
 export class ChatSettingsComponent {
+  readonly toastr = inject(ToastrService);
   readonly destroyRef = inject(DestroyRef);
   readonly fb = inject(NonNullableFormBuilder);
-  readonly route = inject(ActivatedRoute);
 
-  readonly #loaded = signal<boolean>(true);
+  readonly currentCreatorService = inject(CurrentCreatorService);
+
+  readonly streamerId = this.currentCreatorService.streamerId as Signal<string>;
+
+  readonly #loaded = signal(false);
   readonly loaded = this.#loaded.asReadonly();
 
-  readonly streamOptionProxyService = inject(StreamOptionProxyService);
+  readonly submitted = signal(false);
+
+  readonly chatSettingsService = inject(ChatSettingsService);
+
+  readonly creatorAuthService = inject(CreatorAuthService);
+
+  readonly userAuthorizationService = inject(UserAuthorizationService);
+
   readonly authService = inject(AuthService);
 
   readonly form = this.fb.group({
@@ -50,24 +87,42 @@ export class ChatSettingsComponent {
     ],
   });
 
+  readonly update$ = new Subject<Observable<unknown>>();
+
+  readonly chatSettings = toSignal(
+    merge(toObservable(this.streamerId), this.update$).pipe(
+      catchError(() => of([])),
+      filter(Boolean),
+      switchMap((source) => source),
+      exhaustMap(() =>
+        this.chatSettingsService.getChatSettings(this.streamerId())
+      ),
+      tap((chatSettings) => {
+        this.#loaded.set(true);
+
+        this.form.patchValue({
+          ...chatSettings,
+          chatEnabled: !chatSettings.chatDisabled,
+        }),
+          this.updateFormValues();
+      })
+    )
+  );
+
+  constructor() {
+    effect(() => {
+      const isAuthorized = this.userAuthorizationService.check(
+        this.creatorAuthService.pageRequirement.get('chat-settings')
+      );
+
+      isAuthorized ? this.form.enable() : this.form.disable();
+    });
+  }
   ngOnInit() {
     this.form.controls.chatEnabled.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.updateFormValues();
-      });
-
-    this.streamOptionProxyService
-      .getChatSettings(this.authService.userId()!)
-      .pipe(finalize(() => this.#loaded.set(true)))
-      .subscribe({
-        next: (settings) => {
-          this.form.patchValue({
-            ...settings,
-            chatEnabled: !settings.chatDisabled,
-          }),
-            this.updateFormValues();
-        },
       });
   }
 
@@ -81,24 +136,35 @@ export class ChatSettingsComponent {
     }
     this.form.disable();
     const { chatEnabled, ...rest } = value;
-
     const formValues = {
       ...rest,
       chatDisabled: !chatEnabled,
-      streamerId: this.authService.userId()!,
+      streamerId: this.streamerId(),
     } as PatchStreamChatSettingsDto;
 
-    this.streamOptionProxyService
-      .patchChatSettings(formValues)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => {
-          this.form.enable();
-          this.form.markAsUntouched();
-          this.updateFormValues();
-        })
-      )
-      .subscribe();
+    const update$ = this.chatSettingsService.patchChatSettings(formValues).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      catchError((error) => {
+        this.toastr.error(
+          error?.error?.message || 'Something went wrong',
+          'Error'
+        );
+        return EMPTY;
+      }),
+      tap(() => {
+        this.toastr.success('Chat settings updated', 'Success');
+      }),
+      finalize(() => {
+        this.form.enable();
+        this.form.markAsUntouched();
+        this.updateFormValues();
+        this.submitted.set(false);
+      })
+    );
+
+    this.submitted.set(true);
+
+    this.update$.next(update$);
   }
 
   updateFormValues() {

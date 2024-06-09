@@ -1,5 +1,6 @@
 ﻿using Application.Features.StreamBlockedUsers.Commands.Create;
 using Application.Features.StreamBlockedUsers.Commands.Delete;
+using Application.Features.StreamBlockedUsers.Queries.GetBlockedUsers;
 using Application.Features.StreamBlockedUsers.Queries.GetIsBlockedFromStream;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +14,22 @@ public static class StreamBlockedUserEndpoints
     {
         var groupBuilder = builder.MapGroup("api/stream-blocked-users");
 
-                groupBuilder.MapGet("/",
+        groupBuilder.MapGet("/all/{streamerId}",
                 async (
-                    [FromBody] GetIsUserBlockedFromStreamQueryRequest getIsUserBlockedFromStreamQueryRequest,
+                    Guid streamerId,
                     IMediator mediator) =>
                 {
-                    return await mediator.Send(getIsUserBlockedFromStreamQueryRequest);
+                    return (await mediator.Send(new GetBlockedUsersFromStreamQueryRequest(streamerId)))
+                        .ToHttpResponse();
+                })
+            .WithTags("StreamBlockedUsers");
+
+        groupBuilder.MapGet("/{streamerId}",
+                async (
+                    Guid streamerId,
+                    IMediator mediator) =>
+                {
+                    return await mediator.Send(new GetIsUserBlockedFromStreamQueryRequest(streamerId));
                 })
             .WithTags("StreamBlockedUsers");
 
@@ -33,7 +44,7 @@ public static class StreamBlockedUserEndpoints
             .WithTags("StreamBlockedUsers");
 
 
-        groupBuilder.MapDelete("/",
+        groupBuilder.MapPut("/",
                 async ([FromBody] StreamBlockedUserDeleteCommandRequest streamBlockedUserDeleteCommandRequest,
                     IMediator mediator) =>
                 {

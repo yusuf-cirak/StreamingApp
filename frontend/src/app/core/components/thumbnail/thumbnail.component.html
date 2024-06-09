@@ -1,0 +1,67 @@
+@defer (when streamer()) { @if (streamer(); as streamer) {
+<div
+  class="group aspect-video relative rounded-md cursor-pointer bg-tw-tertiary"
+>
+  <div
+    class="rounded-md absolute inset-0 bg-blue-600 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+  ></div>
+  @if (streamer.streamOption.thumbnailUrl) {
+  <ng-container *ngTemplateOutlet="thumbnailContent"></ng-container>
+
+  }@else {
+  <ng-container *ngTemplateOutlet="defaultThumbnailContent"></ng-container>
+  }
+</div>
+<div class="flex gap-x-3 pt-4">
+  <app-streamer-avatar
+    [user]="streamer.user"
+    [isLive]="isLive()"
+    class="w-12 h-12"
+  ></app-streamer-avatar>
+  <div class="flex flex-col text-sm overflow-hidden">
+    <p class="truncate font-semibold hover:text-blue-500">
+      {{ streamer.streamOption.title }}
+    </p>
+    <p class="truncate text-gray-400">{{ streamer.user.username }}</p>
+  </div>
+</div>
+} }@placeholder {
+<app-thumbnail-skeleton></app-thumbnail-skeleton>
+}
+
+<ng-template #thumbnailContent>
+  <img
+    [priority]="true"
+    [ngSrc]="imageService.getThumbnailUrl(streamer().streamOption.thumbnailUrl)"
+    fill
+    alt="Thumbnail"
+    class="object-cover transition-transform group-hover:translate-x-2 group-hover:-translate-y-2 rounded-md"
+    [hidden]="!isLoaded()"
+    (load)="setIsLoaded(true)"
+  />
+
+  @if (!isLoaded()) {
+  <div
+    class="object-cover transition-transform group-hover:translate-x-2 group-hover:-translate-y-2 rounded-md animate-pulse bg-gray-400 w-full h-full"
+  ></div>
+  }
+</ng-template>
+
+<ng-template #defaultThumbnailContent>
+  <div
+    class="bg-tw-tertiary flex flex-col items-center justify-center gap-y-4 h-full w-full transition-transform group-hover:translate-x-2 group-hover:-translate-y-1 rounded-md"
+  >
+    <app-streamer-avatar
+      [user]="streamer().user"
+      [isLive]="isLive()"
+      class="w-12 h-12"
+    ></app-streamer-avatar>
+    @if (isLive()) {
+    <span
+      class="hideable flex text-white bg-rose-500 text-center p-0.5 px-1.5 rounded-md text-[10px] border border-background font-semibold tracking-wide w-10"
+      >LIVE</span
+    >
+
+    }
+  </div>
+</ng-template>

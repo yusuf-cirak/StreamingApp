@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using Application.Abstractions.Helpers;
-using Application.Common.Models;
+using Application.Contracts.Common.Models;
 using Infrastructure.Helpers.Security.Encryption;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;

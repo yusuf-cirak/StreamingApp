@@ -1,3 +1,4 @@
+import { Signal } from '@angular/core';
 import { UserOperationClaimDto } from '../modules/auths/models/operation-claim';
 import { UserRoleDto } from '../modules/auths/models/role';
 import { User } from './user';
@@ -8,5 +9,4 @@ export interface CurrentUser extends User {
   refreshToken: string;
   roles: UserRoleDto[];
   operationClaims: UserOperationClaimDto[];
-  followingStreamers?: string[];
 }

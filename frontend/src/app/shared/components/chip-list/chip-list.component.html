@@ -1,0 +1,31 @@
+<div
+  id="chip-container"
+  class="grid w-80 grid-cols-2 auto-cols-min grid-flow-row gap-3"
+  #chipContainerRef
+>
+  @for (item of items(); track $index) {
+  <div
+    class="center relative inline-block select-none whitespace-nowrap rounded-lg bg-gradient-to-tr bg-wp-green py-2 px-3.5 align-baseline font-sans text-xs font-bold leading-none text-white min-w-[5rem] hover:cursor-pointer bg-gray-600"
+    (click)="onRemoveClick.emit($index)"
+  >
+    <div class="mr-5 mt-px text-center">{{ item[displayKey()] }}</div>
+    <div class="absolute top-1 right-1 mx-px mt-[0.5px] w-max rounded-md">
+      <div role="button" class="h-5 w-5 p-1">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="3"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 18L18 6M6 6l12 12"
+          ></path>
+        </svg>
+      </div>
+    </div>
+  </div>
+  }
+</div>

@@ -9,11 +9,11 @@ public readonly record struct UpdateStreamCommandRequest : IStreamCommandRequest
     IApiSecuredRequest
 {
     public string StreamKey { get; init; }
-    public AuthorizationFunctions AuthorizationFunctions { get; }
+    public AuthorizationRequirements AuthorizationRequirements { get; }
 
     public UpdateStreamCommandRequest()
     {
-        AuthorizationFunctions = [StreamAuthorizationRules.RequesterMustHaveValidApiKey];
+        AuthorizationRequirements = [StreamAuthorizationRules.RequesterMustHaveValidApiKey];
     }
 }
 
@@ -30,18 +30,18 @@ public sealed class UpdateStreamCommandHandler : IRequestHandler<UpdateStreamCom
 
     public async Task<HttpResult> Handle(UpdateStreamCommandRequest request, CancellationToken cancellationToken)
     {
-        var streamLiveResult = await _streamService.GetLiveStreamerByKeyAsync(request.StreamKey, cancellationToken);
+        var streamLiveResult = _streamService.GetLiveStreamerByKeyFromCache(request.StreamKey, cancellationToken);
 
         if (streamLiveResult.IsFailure)
         {
             return streamLiveResult.Error;
         }
 
-        var liveStream = streamLiveResult.Value;
+        var (streamDto, index) = streamLiveResult.Value;
 
-        var streamHasEnded = await _streamService.EndStreamAsync(liveStream);
+        var streamHasEnded = await _streamService.EndStreamAsync(index, cancellationToken);
 
-        _ = _hubServerService.OnStreamEndAsync(liveStream.User.Username);
+        _ = _hubServerService.OnStreamEndAsync(streamDto.User.Username);
 
         return streamHasEnded
             ? HttpResult.Success(StatusCodes.Status204NoContent)

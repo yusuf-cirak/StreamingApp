@@ -1,8 +1,4 @@
-import {
-  APP_INITIALIZER,
-  ApplicationConfig,
-  importProvidersFrom,
-} from '@angular/core';
+import { ApplicationConfig } from '@angular/core';
 import {
   provideRouter,
   withComponentInputBinding,
@@ -16,19 +12,13 @@ import {
   withFetch,
   withInterceptors,
 } from '@angular/common/http';
-import { authInterceptor, AuthService } from './core';
-import { StreamHub } from './core/hubs/stream-hub';
-
-export function initializeApp(authService: AuthService, streamHub: StreamHub) {
-  return () => {
-    return authService.initializeUser().then(() => streamHub.connect());
-  };
-}
+import { authInterceptor } from './core';
+import { INITIALIZE_USER_PROVIDER } from './core/providers/user';
+import { PRIMENG_CONFIG_PROVIDER } from './core/config/primeng';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes, withComponentInputBinding(), withViewTransitions()),
-    // provideClientHydration(),
     provideAnimations(),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     provideToastr({
@@ -36,12 +26,9 @@ export const appConfig: ApplicationConfig = {
       preventDuplicates: true,
       easing: 'ease-in',
       easeTime: 300,
+      positionClass: 'toast-bottom-center',
     }),
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeApp,
-      deps: [AuthService, StreamHub],
-      multi: true,
-    },
+    PRIMENG_CONFIG_PROVIDER,
+    INITIALIZE_USER_PROVIDER,
   ],
 };

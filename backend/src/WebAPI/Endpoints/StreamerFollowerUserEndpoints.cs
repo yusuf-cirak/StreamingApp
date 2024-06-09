@@ -1,6 +1,7 @@
 ﻿using Application.Features.StreamFollowerUsers.Commands.Create;
 using Application.Features.StreamFollowerUsers.Commands.Delete;
-using Application.Features.StreamFollowerUsers.Queries.GetIsUserFollowingStream;
+using Application.Features.StreamFollowerUsers.Queries.GetFollowersCount;
+using Application.Features.StreamFollowerUsers.Queries.GetIsUserFollowing;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel;
@@ -13,11 +14,19 @@ public static class StreamerFollowerUserEndpoints
     {
         var groupBuilder = builder.MapGroup("api/stream-follower-users");
 
-                groupBuilder.MapGet("/",
-                async ([FromBody] GetIsUserFollowingStreamQueryRequest streamFollowerUserCreateCommandRequest,
+        groupBuilder.MapGet("/{streamerId}",
+                async (Guid streamerId,
                     IMediator mediator) =>
                 {
-                    return await mediator.Send(streamFollowerUserCreateCommandRequest);
+                    return (await mediator.Send(new GetIsUserFollowingStreamQueryRequest(streamerId))).ToHttpResponse();
+                })
+            .WithTags("StreamerFollowerUsers");
+
+
+        groupBuilder.MapGet("/count/{streamerId}",
+                async (Guid streamerId, IMediator mediator) =>
+                {
+                    return (await mediator.Send(new GetFollowersCountQueryRequest(streamerId))).ToHttpResponse();
                 })
             .WithTags("StreamerFollowerUsers");
 

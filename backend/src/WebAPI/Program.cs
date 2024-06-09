@@ -4,6 +4,7 @@ using Infrastructure;
 using Infrastructure.Helpers.JWT;
 using Infrastructure.Persistence.EntityFramework;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using SignalR;
 using SignalR.Hubs.Stream;
 using WebAPI.Extensions;
 using WebAPI.Infrastructure.Middlewares;
@@ -15,7 +16,7 @@ builder.Services.Configure<TokenOptions>(builder.Configuration.GetSection("Token
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
     policy.SetIsOriginAllowed(_ => true).AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
 
-builder.Services.AddNewtonsoftJsonSerializerSettings();
+// builder.Services.AddNewtonsoftJsonSerializerSettings();
 
 builder.Services.AddResponseCompressionServices(); // From WebAPI\Extensions\ResponseCompressionExtensions.cs
 builder.Services.AddHealthCheckServices(builder.Configuration); // From WebAPI\Extensions\HealthCheckExtensions.cs
@@ -23,6 +24,7 @@ builder.Services.AddJwtAuthenticationServices(builder.Configuration); // From We
 
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddSignalrServices();
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandlerMiddleware>();
 builder.Services.AddProblemDetails();
@@ -42,13 +44,11 @@ builder.Services.AddSignalR();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    app.ApplyPendingMigrations();
-    app.GenerateSeedDataAndPersist();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
+app.ApplyPendingMigrations();
+app.GenerateSeedDataAndPersist();
 
 app.UseCors();
 

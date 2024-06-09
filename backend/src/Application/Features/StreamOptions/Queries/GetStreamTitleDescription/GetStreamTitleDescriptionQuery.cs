@@ -1,21 +1,37 @@
 ﻿using Application.Common.Mapping;
+using Application.Common.Permissions;
 using Application.Contracts.StreamOptions;
 using Application.Features.StreamOptions.Rules;
 
 namespace Application.Features.StreamOptions.Queries.GetStreamTitleDescription;
 
-public readonly record struct
-    GetStreamTitleDescriptionQueryRequest : IRequest<HttpResult<GetStreamTitleDescriptionDto>>, ISecuredRequest
+public record struct
+    GetStreamTitleDescriptionQueryRequest : IRequest<HttpResult<GetStreamTitleDescriptionDto>>, IPermissionRequest
 {
-    public Guid StreamerId { get; init; }
-    public AuthorizationFunctions AuthorizationFunctions { get; }
+    private Guid _streamerId;
 
-    public GetStreamTitleDescriptionQueryRequest()
+    public Guid StreamerId
     {
-        AuthorizationFunctions = [StreamOptionAuthorizationRules.CanUserGetOrUpdateStreamOptions];
+        get => _streamerId;
+        set
+        {
+            _streamerId = value;
+            this.PermissionRequirements = PermissionRequirements.Create()
+                .WithRequiredValue(value.ToString())
+                .WithRoles(PermissionHelper.AllStreamRoles().ToArray())
+                .WithOperationClaims(
+                    RequiredClaim.Create(OperationClaimConstants.Stream.Read.TitleDescription,
+                        StreamErrors.UserIsNotModeratorOfStream),
+                    RequiredClaim.Create(OperationClaimConstants.Stream.Write.TitleDescription,
+                        StreamErrors.UserIsNotModeratorOfStream))
+                .WithNameIdentifierClaim();
+        }
     }
 
-    public GetStreamTitleDescriptionQueryRequest(Guid streamerId) : this()
+    public PermissionRequirements PermissionRequirements { get; private set; }
+
+
+    public GetStreamTitleDescriptionQueryRequest(Guid streamerId)
     {
         StreamerId = streamerId;
     }

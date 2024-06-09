@@ -24,8 +24,6 @@ import { UserRegisterDto } from '../../dtos/user-register-dto';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
 import { Tab } from './models/tab';
-import { UserAuthDto } from './dtos/user-auth-dto';
-import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-auth',
@@ -131,7 +129,7 @@ export class AuthComponent {
     this.form.enable();
     this.#formSubmitted.set(false);
     this.toastrService.error(
-      error?.error?.detail || 'Something went wrong',
+      error?.error?.message || 'Something went wrong',
       'Error'
     );
   }

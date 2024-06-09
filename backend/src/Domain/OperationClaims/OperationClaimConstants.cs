@@ -2,11 +2,24 @@
 
 public static class OperationClaimConstants
 {
-    public const string Stream = "Stream";
-    public const string StreamUpdateTitleDescription = "Stream.UpdateTitleDescription";
-    public const string StreamBlockUserFromChat = "Stream.BlockUserFromChat";
-    public const string StreamDelayChat = "Stream.DelayChat";
-    public const string StreamBlockMessage = "Stream.BlockMessage";
-    public const string StreamPinMessage = "Stream.PinMessage";
-    public const string System = "System";
+    public static class Stream
+    {
+        public static class Read
+        {
+            public const string TitleDescription = "Stream.Read.TitleDescription";
+            public const string ChatOptions = "Stream.Read.ChatOptions";
+            public const string BlockFromChat = "Stream.Read.BlockFromChat";
+            public const string DelayChat = "Stream.Read.DelayChat";
+
+        }
+
+        public static class Write
+        {
+            public const string TitleDescription = "Stream.Write.TitleDescription";
+            public const string ChatOptions = "Stream.Write.ChatOptions";
+            public const string BlockFromChat = "Stream.Write.BlockFromChat";
+            public const string DelayChat = "Stream.Write.DelayChat";
+        }
+        
+    }
 }

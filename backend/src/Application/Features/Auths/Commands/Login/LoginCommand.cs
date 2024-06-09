@@ -1,6 +1,7 @@
-﻿using Application.Common.Models;
+﻿using Application.Contracts.Common.Models;
 using Application.Features.Auths.Rules;
 using Application.Features.Auths.Services;
+using Application.Features.Users.Services;
 
 namespace Application.Features.Auths.Commands.Login;
 
@@ -14,21 +15,24 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommandRequest, H
     private readonly IJwtHelper _jwtHelper;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IEfRepository _efRepository;
+    private readonly IUserBlacklistManager _blacklistManager;
 
     public LoginCommandHandler(IJwtHelper jwtHelper, AuthBusinessRules authBusinessRules,
-        IHttpContextAccessor httpContextAccessor, IEfRepository efRepository, IAuthService authService)
+        IHttpContextAccessor httpContextAccessor, IEfRepository efRepository, IAuthService authService,
+        IUserBlacklistManager blacklistManager)
     {
         _jwtHelper = jwtHelper;
         _authBusinessRules = authBusinessRules;
         _httpContextAccessor = httpContextAccessor;
         _efRepository = efRepository;
         _authService = authService;
+        _blacklistManager = blacklistManager;
     }
 
     public async Task<HttpResult<AuthResponseDto>> Handle(LoginCommandRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await _authBusinessRules.UserNameShouldExistBeforeLogin(request.Username);
+        var result = await _authBusinessRules.UserNameShouldExistBeforeLoginAsync(request.Username, cancellationToken);
 
         if (result.IsFailure)
         {
@@ -46,11 +50,10 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommandRequest, H
             return verifyCredentialsResult.Error;
         }
 
-        var userIpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+        var userIpAddress = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? string.Empty;
 
 
-        var userRolesAndOperationClaims =
-            await _authService.GetUserRolesAndOperationClaimsAsync(user.Id, cancellationToken);
+        var userRolesAndOperationClaims = _authService.GetUserRolesAndOperationClaims(user);
 
         var claimsDictionary = new Dictionary<string, dynamic>
         {
@@ -66,7 +69,9 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommandRequest, H
         await _efRepository.SaveChangesAsync(cancellationToken);
 
         var authResponseDto = new AuthResponseDto(user.Id, user.Username, user.ProfileImageUrl, accessToken.Token,
-            refreshToken.Token, accessToken.Expiration, claims: claimsDictionary);
+            refreshToken.Token, accessToken.Expiration, Claims: claimsDictionary);
+
+        _ = Task.Run(() => _blacklistManager.RemoveUserFromBlacklistAsync(user.Id.ToString()));
 
         return authResponseDto;
     }

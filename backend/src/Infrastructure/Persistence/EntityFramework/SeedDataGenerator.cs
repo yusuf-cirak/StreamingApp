@@ -1,9 +1,11 @@
 ﻿using Application.Abstractions.Helpers;
 using Bogus;
+using Domain.Constants;
 using Infrastructure.Helpers.Hashing;
 using Infrastructure.Persistence.EntityFramework.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using SharedKernel;
 
 namespace Infrastructure.Persistence.EntityFramework;
 
@@ -45,10 +47,38 @@ public class SeedDataGenerator
     private List<OperationClaim> GenerateOperationClaims()
     {
         var operationClaims = new List<OperationClaim>();
-        operationClaims.Add(OperationClaim.Create("Stream.BlockUserFromChat"));
-        operationClaims.Add(OperationClaim.Create("Stream.DelayChat"));
-        operationClaims.Add(OperationClaim.Create("Stream.DeleteChatMessage"));
-        operationClaims.Add(OperationClaim.Create("Stream.PinChatMessage"));
+        operationClaims.Add(OperationClaim.Create(
+            GuidExtensions.GenerateGuidFromString(OperationClaimConstants.Stream.Read.BlockFromChat),
+            OperationClaimConstants.Stream.Read.BlockFromChat));
+        operationClaims.Add(OperationClaim.Create(
+            GuidExtensions.GenerateGuidFromString(OperationClaimConstants.Stream.Write.BlockFromChat),
+            OperationClaimConstants.Stream.Write.BlockFromChat));
+        
+        
+        operationClaims.Add(OperationClaim.Create(
+            GuidExtensions.GenerateGuidFromString(OperationClaimConstants.Stream.Read.DelayChat),
+            OperationClaimConstants.Stream.Read.DelayChat));
+        operationClaims.Add(OperationClaim.Create(
+            GuidExtensions.GenerateGuidFromString(OperationClaimConstants.Stream.Write.DelayChat),
+            OperationClaimConstants.Stream.Write.DelayChat));
+        
+        
+        operationClaims.Add(OperationClaim.Create(
+            GuidExtensions.GenerateGuidFromString(OperationClaimConstants.Stream.Read.TitleDescription),
+            OperationClaimConstants.Stream.Read.TitleDescription));
+        
+        operationClaims.Add(OperationClaim.Create(
+            GuidExtensions.GenerateGuidFromString(OperationClaimConstants.Stream.Write.TitleDescription),
+            OperationClaimConstants.Stream.Write.TitleDescription));
+        
+
+        operationClaims.Add(OperationClaim.Create(
+            GuidExtensions.GenerateGuidFromString(OperationClaimConstants.Stream.Read.ChatOptions),
+            OperationClaimConstants.Stream.Read.ChatOptions));
+        
+        operationClaims.Add(OperationClaim.Create(
+            GuidExtensions.GenerateGuidFromString(OperationClaimConstants.Stream.Write.ChatOptions),
+            OperationClaimConstants.Stream.Write.ChatOptions));
 
         return operationClaims;
     }
@@ -57,8 +87,12 @@ public class SeedDataGenerator
     {
         var roles = new List<Role>();
 
-        roles.Add(Role.Create("System.Admin"));
-        roles.Add(Role.Create("Stream.SuperModerator"));
+        roles.Add(Role.Create(GuidExtensions.GenerateGuidFromString(RoleConstants.Admin),
+            RoleConstants.Admin));
+        roles.Add(Role.Create(GuidExtensions.GenerateGuidFromString(RoleConstants.StreamSuperModerator),
+            RoleConstants.StreamSuperModerator));
+        roles.Add(Role.Create(GuidExtensions.GenerateGuidFromString(RoleConstants.StreamModerator),
+            RoleConstants.StreamModerator));
 
         return roles;
     }
@@ -67,7 +101,7 @@ public class SeedDataGenerator
     {
         var roleOperationClaims = new List<RoleOperationClaim>();
 
-        var superModeratorRole = roles.Find(r => r.Name == "Stream.SuperModerator");
+        var superModeratorRole = roles.Find(r => r.Name == RoleConstants.StreamSuperModerator);
 
         var superModeratorOperationClaims = operationClaims.FindAll(oc => oc.Name.Contains("Stream."));
 
@@ -111,34 +145,34 @@ public class SeedDataGenerator
     public void GenerateSeedDataAndPersist()
     {
         var context = _services.GetRequiredService<BaseDbContext>();
-        var encryptionHelper = _services.GetRequiredService<IEncryptionHelper>();
+        // var encryptionHelper = _services.GetRequiredService<IEncryptionHelper>();
 
 
-        var dataCount = context.Users.Count();
-        
+        var dataCount = context.Roles.Count();
+
         if (dataCount > 0)
         {
             return;
         }
 
-        var users = GenerateUsers();
-        var streamOptions = GenerateStreamOptions(users, encryptionHelper);
+        // var users = GenerateUsers();
+        // var streamOptions = GenerateStreamOptions(users, encryptionHelper);
 
         var operationClaims = GenerateOperationClaims();
         var roles = GenerateRoles();
 
-        var userRoleClaims = GenerateUserRoleClaims(users, roles);
+        // var userRoleClaims = GenerateUserRoleClaims(users, roles);
 
         var roleOperationClaims = GenerateRoleOperationClaims(roles, operationClaims);
-        var userOperationClaims = GenerateUserOperationClaims(users, operationClaims);
+        // var userOperationClaims = GenerateUserOperationClaims(users, operationClaims);
 
-        context.Users.AddRange(users);
-        context.StreamOptions.AddRange(streamOptions);
+        // context.Users.AddRange(users);
+        // context.StreamOptions.AddRange(streamOptions);
         context.OperationClaims.AddRange(operationClaims);
         context.Roles.AddRange(roles);
         context.RoleOperationClaims.AddRange(roleOperationClaims);
-        context.UserOperationClaims.AddRange(userOperationClaims);
-        context.UserRoleClaims.AddRange(userRoleClaims);
+        // context.UserOperationClaims.AddRange(userOperationClaims);
+        // context.UserRoleClaims.AddRange(userRoleClaims);
 
         context.SaveChanges();
     }
