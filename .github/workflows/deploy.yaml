@@ -27,4 +27,6 @@ jobs:
             cd ../../..
             export ASPNETCORE_ENVIRONMENT="Production"
             export STREAM_API_KEY="${{ secrets.STREAM_API_KEY }}"
+            export POSTGRES_USER="${{ secrets.POSTGRES_USER }}"
+            export POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}"
             bash start.sh
