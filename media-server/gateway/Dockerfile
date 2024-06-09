@@ -1,5 +1,5 @@
 # Base image
-FROM node:alpine as dependency
+FROM node:slim as dependency
 
 # Create app directory
 WORKDIR /app
@@ -7,10 +7,10 @@ WORKDIR /app
 COPY . .
 
 # Install app dependencies
-RUN npm install --memory=256m
+RUN npm install
 
 
-FROM node:latest as build
+FROM node:slim as build
 
 WORKDIR /app
 
