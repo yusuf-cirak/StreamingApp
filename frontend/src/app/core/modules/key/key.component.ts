@@ -11,6 +11,7 @@ import { KeyService } from './services/key.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
 import { InfoIcon } from '../../../shared/icons/info-icon';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   standalone: true,
@@ -31,6 +32,8 @@ import { InfoIcon } from '../../../shared/icons/info-icon';
 export class KeyComponent {
   readonly #loaded = signal(false);
   readonly loaded = this.#loaded.asReadonly();
+
+  readonly rtmpUrl = environment.rtmpUrl;
 
   readonly #generateKeySubmitted = signal(false);
   readonly generateKeySubmitted = this.#generateKeySubmitted.asReadonly();

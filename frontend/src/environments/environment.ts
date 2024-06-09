@@ -1,6 +1,7 @@
 export const environment = {
   apiUrl: 'http://localhost:5117/api',
   hlsUrl: 'http://localhost:8080/hls',
+  rtmpUrl: 'rtmp://localhost/live',
   streamHubUrl: 'http://localhost:5117/_stream',
   defaultProfileImageApiUrl: 'https://ui-avatars.com/api',
   cloudinary: {

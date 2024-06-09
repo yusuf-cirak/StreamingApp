@@ -1,6 +1,7 @@
 export const environment = {
   apiUrl: 'https://stream.yusufcirak.net/api',
   hlsUrl: 'https://stream.yusufcirak.net/hls',
+  rtmpUrl: 'rtmp://139.144.67.51/live',
   streamHubUrl: 'https://stream.yusufcirak.net/_stream',
   defaultProfileImageApiUrl: 'https://ui-avatars.com/api',
   cloudinary: {
