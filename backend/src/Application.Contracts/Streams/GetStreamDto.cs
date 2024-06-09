@@ -7,8 +7,12 @@ public sealed record GetStreamDto
 {
     public Guid? Id { get; set; }
     public DateTime? StartedAt { get; set; }
-    public GetUserDto User { get; set; }
+    public GetUserDto User { get; set; } = null!;
     public GetStreamOptionDto? StreamOption { get; set; }
+
+    public GetStreamDto()
+    {
+    }
 
     public GetStreamDto(Guid id, DateTime startedAt, GetUserDto user, GetStreamOptionDto? streamOption)
     {
