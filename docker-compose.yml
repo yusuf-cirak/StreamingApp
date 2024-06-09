@@ -4,7 +4,7 @@ name: "streaming-app"
 
 services:
   nginx-rtmp:
-    container_name: nginx-rtmp
+    container_name: streaming-app-nginx-rtmp
     image: tiangolo/nginx-rtmp
     ports:
       - "1935:1935"
@@ -16,7 +16,7 @@ services:
       - streaming-app
 
   gateway:
-    container_name: gateway
+    container_name: streaming-app-gateway
     image: yusufcirak/streaming-app-gateway
     # build:
     #   context: ./media-server/gateway
@@ -34,7 +34,7 @@ services:
 
   database:
     image: postgres:latest
-    container_name: postgres
+    container_name: streaming-app-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
@@ -49,7 +49,7 @@ services:
 
   redis:
     image: redis:latest
-    container_name: redis
+    container_name: streaming-app-redis
     restart: unless-stopped
     ports:
       - "6379:6379"
@@ -57,7 +57,7 @@ services:
       - streaming-app
 
   backend:
-    container_name: backend
+    container_name: streaming-app-backend
     restart: unless-stopped
     build:
       context: ./backend/src
@@ -73,7 +73,7 @@ services:
       - streaming-app
 
   frontend:
-    container_name: frontend
+    container_name: streaming-app-frontend
     image: yusufcirak/streaming-app-frontend
     restart: unless-stopped
     # build:
