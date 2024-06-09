@@ -170,7 +170,7 @@ public class SeedDataGenerator
         // context.StreamOptions.AddRange(streamOptions);
         context.OperationClaims.AddRange(operationClaims);
         context.Roles.AddRange(roles);
-        context.RoleOperationClaims.AddRange(roleOperationClaims);
+        // context.RoleOperationClaims.AddRange(roleOperationClaims);
         // context.UserOperationClaims.AddRange(userOperationClaims);
         // context.UserRoleClaims.AddRange(userRoleClaims);
 
