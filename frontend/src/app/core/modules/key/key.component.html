@@ -37,9 +37,7 @@
         </span>
       </div>
 
-      <app-copy-clipboard
-        [copyText]="'rtmp://139.144.76.14/live'"
-      ></app-copy-clipboard>
+      <app-copy-clipboard [copyText]="rtmpUrl"></app-copy-clipboard>
     </div>
 
     @if (key(); as key) {
