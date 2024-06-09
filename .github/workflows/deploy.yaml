@@ -1,0 +1,30 @@
+# @format
+
+name: Push to Deploy
+on:
+  push:
+    branches:
+      - master
+jobs:
+  release:
+    concurrency:
+      group: ${{ github.ref }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Streaming App
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            rm -rf streaming-app
+            git clone https://github.com/yusuf-cirak/streaming-app.git streaming-app
+            cd streaming-app/backend/src/WebAPI
+            appsettings_prod_json=$(echo ${{ secrets.APPSETTINGS_JSON }} | base64 --decode)
+            echo "$appsettings_prod_json" > appsettings.Production.json
+            cd ../../..
+            export ASPNETCORE_ENVIRONMENT="Production"
+            export STREAM_API_KEY="${{ secrets.STREAM_API_KEY }}"
+            bash start.sh
