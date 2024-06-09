@@ -10,11 +10,6 @@ public sealed record GetStreamDto
     public GetUserDto User { get; set; }
     public GetStreamOptionDto? StreamOption { get; set; }
 
-    public GetStreamDto()
-    {
-        
-    }
-
     public GetStreamDto(Guid id, DateTime startedAt, GetUserDto user, GetStreamOptionDto? streamOption)
     {
         Id = id;

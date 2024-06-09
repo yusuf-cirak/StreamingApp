@@ -8,7 +8,7 @@ COPY . .
 
 # Install app dependencies
 
-RUN npm install --production
+RUN npm install
 
 
 FROM node:slim as build
@@ -20,6 +20,8 @@ COPY --from=dependency /app .
 
 # Creates a "dist" folder with the production build
 RUN npm run build
+
+RUN npm prune --production
 
 
 FROM node:alpine as runtime

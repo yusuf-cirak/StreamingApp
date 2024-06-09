@@ -56,7 +56,7 @@ public sealed class InMemoryStreamHubChatRoomService : IStreamHubChatRoomService
         return ValueTask.FromResult(hubConnectionInfo!.GetAllConnectionIds());
     }
 
-    public ValueTask<string> GetStreamViewerConnectionId(string streamerName, Guid userId)
+    public ValueTask<string?> GetStreamViewerConnectionId(string streamerName, Guid userId)
     {
         if (!_streamViewers.TryGetValue(streamerName, out var hubConnectionInfo))
         {
@@ -69,7 +69,7 @@ public sealed class InMemoryStreamHubChatRoomService : IStreamHubChatRoomService
             .Select(kvp => kvp.Key)
             .SingleOrDefault();
 
-        return ValueTask.FromResult(userConnectionId!);
+        return ValueTask.FromResult(userConnectionId);
     }
 
     public ValueTask<IEnumerable<HubUserDto>> GetStreamViewersAsync(string streamerName)
