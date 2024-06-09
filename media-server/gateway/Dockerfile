@@ -7,9 +7,8 @@ WORKDIR /app
 COPY . .
 
 # Install app dependencies
-ENV NODE_ENV=production
 
-RUN npm install
+RUN npm install --production
 
 
 FROM node:slim as build
