@@ -3,7 +3,6 @@ import { StreamService } from './stream.service';
 import { Error } from '../../../../shared/api/error';
 import { AuthService, User } from '@streaming-app/core';
 import { StreamHub } from '../../../hubs/stream-hub';
-import { StreamChatOptionsDto } from '../../../hubs/dtos/stream-options-dto';
 import { Observable, Subject, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { StreamChatMessageDto } from '../../../hubs/dtos/stream-chat-message-dto';
@@ -149,15 +148,6 @@ export class StreamFacade {
         })
       )
       .subscribe();
-
-    this.streamHub.streamChatOptionsChanged$
-      .pipe(
-        takeUntilDestroyed(),
-        tap((chatOptions) => {
-          this.setStreamChatOptions(chatOptions);
-        })
-      )
-      .subscribe();
   }
 
   getHlsUrl() {
@@ -179,7 +169,7 @@ export class StreamFacade {
 
     this.#error.set(null);
   }
-  setStreamChatOptions(chatOptions: StreamChatOptionsDto) {
+  setStreamChatOptions(chatOptions: StreamOptions) {
     const streamState = this.streamState() as StreamState;
     const stream = streamState.stream;
     const newOptions = {

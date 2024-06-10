@@ -44,15 +44,15 @@ public sealed class InMemoryStreamHubServerService : IStreamHubServerService
             .SendAsync(StreamHubConstant.Method.OnStreamEndAsync, streamerName, default);
     }
 
-    public async Task OnStreamChatOptionsChangedAsync(GetStreamChatSettingsDto streamChatSettingsDto,
-        string streamerName)
+    public async Task OnStreamChatOptionsChangedAsync(GetStreamOptionDto streamOptionDto, string streamerName)
     {
         var streamViewerConnectionIds =
             await _hubChatRoomService.GetStreamViewerConnectionIds(streamerName);
 
         await _hubContext.Clients.Clients(streamViewerConnectionIds)
-            .SendAsync(StreamHubConstant.Method.OnStreamChatOptionsChangedAsync, streamChatSettingsDto, default);
+            .SendAsync(StreamHubConstant.Method.OnStreamChatOptionsChangedAsync, streamOptionDto, default);
     }
+
 
     public async Task OnStreamChatMessageSendAsync(string streamerName, StreamChatMessageDto streamChatMessageDto)
     {

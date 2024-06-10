@@ -14,9 +14,9 @@ import { environment } from '../../../environments/environment';
 import { StreamHubAction } from './stream-hub-action';
 import { StreamDto } from '../modules/streams/contracts/stream-dto';
 import { StreamInfoDto } from './dtos/stream-info-dto';
-import { StreamChatOptionsDto } from './dtos/stream-options-dto';
 import { StreamChatMessageDto } from './dtos/stream-chat-message-dto';
 import { StreamBlockUserActionDto } from './dtos/stream-block-user-action-dto';
+import { StreamOptions } from '../models/stream-options';
 
 @Injectable({ providedIn: 'root' })
 export class StreamHub {
@@ -29,7 +29,7 @@ export class StreamHub {
   streamStarted$ = new Subject<StreamDto>();
   streamEnd$ = new Subject<string>();
 
-  streamChatOptionsChanged$ = new Subject<StreamChatOptionsDto>();
+  streamOptionsChanged$ = new Subject<StreamOptions>();
 
   streamChatMessageReceived$ = new Subject<StreamChatMessageDto>();
 
@@ -91,8 +91,8 @@ export class StreamHub {
 
     this._hubConnection.on(
       StreamHubAction.OnStreamChatOptionsChanged,
-      (streamChatOptionsDto: StreamChatOptionsDto) => {
-        this.streamChatOptionsChanged$.next(streamChatOptionsDto);
+      (streamChatOptionsDto: StreamOptions) => {
+        this.streamOptionsChanged$.next(streamChatOptionsDto);
       }
     );
 

@@ -75,14 +75,13 @@ export class StreamComponent {
       },
     });
 
-    this.streamHub.streamChatOptionsChanged$
-      .pipe(takeUntilDestroyed())
-      .subscribe({
-        next: (value) => {
-          console.log('Stream chat options changed');
-          this.streamFacade.setStreamChatOptions(value);
-        },
-      });
+    this.streamHub.streamOptionsChanged$.pipe(takeUntilDestroyed()).subscribe({
+      next: (value) => {
+        console.log('Stream chat options changed');
+        console.log(value);
+        this.streamFacade.setStreamChatOptions(value);
+      },
+    });
   }
 
   ngOnDestroy() {

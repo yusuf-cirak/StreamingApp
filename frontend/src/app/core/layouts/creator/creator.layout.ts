@@ -9,6 +9,7 @@ import { ChatSettingsService } from '../../modules/stream-options/services/chat-
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { tap } from 'rxjs';
 import { PermissionService } from '../../modules/permissions/services/permission.service';
+import { StreamOptions } from '../../models/stream-options';
 
 @Component({
   selector: 'app-creator',
@@ -36,7 +37,9 @@ export class CreatorLayout {
       .pipe(
         takeUntilDestroyed(),
         tap((chatSettings) => {
-          this.streamerFacade.setStreamChatOptions(chatSettings);
+          this.streamerFacade.setStreamChatOptions(
+            chatSettings as StreamOptions
+          );
         })
       )
       .subscribe();

@@ -105,6 +105,6 @@ public sealed class StreamOptionService : IStreamOptionService
         CancellationToken cancellationToken = default)
     {
         return _streamHubServerService.OnStreamChatOptionsChangedAsync(
-            streamDto.StreamOption!.Value.ToStreamChatSettingsDto(), streamDto.User.Username);
+            streamDto.StreamOption!.Value, streamDto.User.Username);
     }
 }

@@ -9,7 +9,7 @@ public interface IStreamHubServerService
 {
     Task OnStreamStartedAsync(GetStreamDto streamDto);
     Task OnStreamEndAsync(string streamerName);
-    Task OnStreamChatOptionsChangedAsync(GetStreamChatSettingsDto streamChatSettingsDto, string streamerName);
+    Task OnStreamChatOptionsChangedAsync(GetStreamOptionDto streamOptionDto, string streamerName);
     Task OnStreamChatMessageSendAsync(string streamerName, StreamChatMessageDto streamChatMessageDto);
 
     Task OnBlockFromStreamAsync(GetUserDto streamer, List<Guid> blockUserIds, bool isBlocked);
