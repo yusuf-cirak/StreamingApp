@@ -99,6 +99,7 @@ export class StreamHub {
     this._hubConnection.on(
       StreamHubAction.OnStreamChatMessageSend,
       (streamChatMessageDto: StreamChatMessageDto) => {
+        console.log('stream options changed!');
         this.streamChatMessageReceived$.next(streamChatMessageDto);
       }
     );

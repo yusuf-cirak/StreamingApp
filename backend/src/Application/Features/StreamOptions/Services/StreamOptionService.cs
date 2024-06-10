@@ -62,20 +62,21 @@ public sealed class StreamOptionService : IStreamOptionService
     {
         var index = LiveStreamers.FindIndex(ls => ls.User.Id == streamOption.Streamer.Id);
 
-        if (index is -1)
+        var currentStreamOptions =
+            index is not -1 ? LiveStreamers[index].StreamOption!.Value : streamOption.ToDto(true);
+
+        var tasks = new List<Task>();
+
+        if (index is not -1)
         {
-            return;
+            LiveStreamers[index].StreamOption = streamOption.ToDto(streamKey: currentStreamOptions.StreamKey);
+            tasks.Add(_streamCacheService.SetLiveStreamsAsync(LiveStreamers, cancellationToken));
         }
 
-        var currentState = LiveStreamers[index].StreamOption!.Value;
+        tasks.Add(this.SendChatOptionsUpdatedNotificationAsync(currentStreamOptions, streamOption.Streamer.Username,
+            cancellationToken));
 
-        LiveStreamers[index].StreamOption = streamOption.ToDto(streamKey: currentState.StreamKey);
-
-        var updateCacheTask = _streamCacheService.SetLiveStreamsAsync(LiveStreamers, cancellationToken);
-        var sendNotificationTask =
-            this.SendChatOptionsUpdatedNotificationAsync(LiveStreamers[index], cancellationToken);
-
-        await Task.WhenAll(updateCacheTask, sendNotificationTask);
+        await Task.WhenAll(tasks);
     }
 
     public async Task<string> UploadStreamThumbnailImageAsync(StreamOption streamOption, IFormFile file,
@@ -101,10 +102,10 @@ public sealed class StreamOptionService : IStreamOptionService
     }
 
 
-    private Task SendChatOptionsUpdatedNotificationAsync(GetStreamDto streamDto,
+    private Task SendChatOptionsUpdatedNotificationAsync(GetStreamOptionDto streamOptionDto, string streamerName,
         CancellationToken cancellationToken = default)
     {
         return _streamHubServerService.OnStreamChatOptionsChangedAsync(
-            streamDto.StreamOption!.Value, streamDto.User.Username);
+            streamOptionDto, streamerName);
     }
 }
