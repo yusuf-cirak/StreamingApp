@@ -16,13 +16,7 @@ export class StreamAboutComponent {
   readonly streamFollowerService = inject(StreamFollowerService);
 
   readonly streamer = computed(() => this.streamFacade.streamState().stream);
-
-  readonly streamDescription = computed(
-    () =>
-      this.streamer()?.streamOption.description ??
-      `This user prefers to keep an air of mystery about
-  itself!`
-  );
+  readonly streamOptions = this.streamFacade.streamOptions;
 
   readonly streamFollowerCount = toSignal(this.getFollowersCount());
 

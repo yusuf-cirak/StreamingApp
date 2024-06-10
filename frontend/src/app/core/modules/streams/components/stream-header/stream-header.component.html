@@ -16,7 +16,7 @@
         <app-verified-icon />
       </div>
       <p class="text-sm font-semibold">
-        {{ liveStream.streamOption.title }}
+        {{ streamOptions()?.title }}
       </p>
       @if (streamFacade.isStreamLive()) {
       <div

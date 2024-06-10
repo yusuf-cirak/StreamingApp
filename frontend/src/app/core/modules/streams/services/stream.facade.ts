@@ -31,6 +31,7 @@ export class StreamFacade {
   #streamer = signal<User | null>(null);
 
   #streamOptions = signal<StreamOptions | null>(null);
+  readonly streamOptions = this.#streamOptions.asReadonly();
 
   stream = computed(() => ({
     user: this.#streamer(),
