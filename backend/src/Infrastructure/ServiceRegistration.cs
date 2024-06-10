@@ -88,6 +88,7 @@ public static class ServiceRegistration
     private static void AddCacheServices(this IServiceCollection services)
     {
         services.AddScoped<ICacheService, RedisCacheService>();
+        services.AddScoped<IRedisCacheService, RedisCacheService>();
     }
 
 
