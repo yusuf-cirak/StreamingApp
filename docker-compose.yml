@@ -43,7 +43,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./streaming-app-postgres-data:/var/lib/postgresql/data
+      - streaming-app-postgres-data:/var/lib/postgresql/data
     networks:
       - streaming-app
 
@@ -90,3 +90,9 @@ networks:
   streaming-app:
     driver: bridge
     name: streaming-app
+
+volumes:
+  streaming-app-postgres-data:
+    driver: local
+    external:
+      name: streaming-app-postgres-data
