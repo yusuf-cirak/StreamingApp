@@ -14,4 +14,7 @@ public interface ICacheService
         CancellationToken cancellationToken = default);
 
     Task<bool> RemoveAsync(string key);
+
+    Task<bool> TakeLockAsync(string key, TimeSpan expiration);
+    Task<bool> ReleaseLockAsync(string key);
 }

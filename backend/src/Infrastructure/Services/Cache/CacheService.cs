@@ -54,5 +54,15 @@ namespace Infrastructure.Services.Cache
         {
             return await RedisDb.Database.KeyDeleteAsync(key);
         }
+
+        public Task<bool> TakeLockAsync(string key, TimeSpan expiration)
+        {
+            return RedisDb.Database.LockTakeAsync(key, true, expiration);
+        }
+
+        public Task<bool> ReleaseLockAsync(string key)
+        {
+            return RedisDb.Database.LockReleaseAsync(key,true);
+        }
     }
 }

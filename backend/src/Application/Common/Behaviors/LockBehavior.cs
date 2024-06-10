@@ -1,5 +1,7 @@
-﻿using Application.Abstractions.Locking;
+﻿using Application.Abstractions.Caching;
+using Application.Abstractions.Locking;
 using Application.Common.Errors;
+using Microsoft.Extensions.Caching.Memory;
 using StackExchange.Redis.Extensions.Core.Abstractions;
 
 namespace Application.Common.Behaviors;
@@ -8,17 +10,17 @@ public sealed class LockBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
     where TRequest : IRequest<TResponse>, ILockRequest
     where TResponse : IHttpResult, new()
 {
-    private readonly IRedisDatabase _redisDb;
+    private readonly ICacheService cacheService;
 
-    public LockBehavior(IRedisDatabase redisDb)
+    public LockBehavior(IRedisDatabase cacheService)
     {
-        _redisDb = redisDb;
+        cacheService = cacheService;
     }
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
-        var acquireLock = await _redisDb.Database.LockTakeAsync(request.Key, true, TimeSpan.FromSeconds(request.Expiration));
+        var acquireLock = await cacheService.TakeLockAsync(request.Key, TimeSpan.FromSeconds(request.Expiration));
         try
         {
             if (acquireLock is false)
@@ -36,7 +38,7 @@ public sealed class LockBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
         {
             if (acquireLock is true && request.ReleaseImmediately is true)
             {
-              await  _redisDb.Database.LockReleaseAsync(request.Key, true);
+                await cacheService.ReleaseLockAsync(request.Key);
             }
         }
     }
