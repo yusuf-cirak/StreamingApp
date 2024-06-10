@@ -148,6 +148,13 @@ export class StreamFacade {
         })
       )
       .subscribe();
+
+    this.streamHub.streamChatOptionsChanged$.pipe(
+      takeUntilDestroyed(),
+      tap((chatOptions) => {
+        this.setStreamChatOptions(chatOptions);
+      })
+    );
   }
 
   getHlsUrl() {

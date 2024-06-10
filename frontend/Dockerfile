@@ -8,7 +8,7 @@ RUN npm install
 
 RUN npm run build:prod
 
-FROM nginx:latest AS final
+FROM nginx:alpine AS final
 
 # Copy nginx config
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
