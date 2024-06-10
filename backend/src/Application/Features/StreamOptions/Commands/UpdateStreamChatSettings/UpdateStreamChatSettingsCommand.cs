@@ -63,8 +63,7 @@ public sealed class
             return HttpResult.Failure(StreamOptionErrors.CannotBeUpdated);
         }
 
-        _ = Task.Run(() => streamOptionService.UpdateStreamOptionCacheAndSendNotificationAsync(streamOptions,
-            cancellationToken: cancellationToken), cancellationToken);
+        _ = Task.Run(() => streamOptionService.UpdateStreamOptionCacheAndSendNotificationAsync(streamOptions));
 
         return HttpResult.Success(StatusCodes.Status204NoContent);
     }
