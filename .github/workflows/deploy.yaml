@@ -19,6 +19,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
+            docker pull --pull always yusufcirak/streaming-app-frontend 
             rm -rf streaming-app
             git clone https://github.com/yusuf-cirak/StreamingApp.git streaming-app
             cd streaming-app/backend/src/WebAPI

@@ -1,11 +1,3 @@
-using Application;
-using HealthChecks.UI.Client;
-using Infrastructure;
-using Infrastructure.Helpers.JWT;
-using Infrastructure.Persistence.EntityFramework;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using SignalR;
-using SignalR.Hubs.Stream;
 using WebAPI.Extensions;
 using WebAPI.Infrastructure.Middlewares;
 

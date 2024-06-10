@@ -27,7 +27,7 @@ public static class CacheExtensions
         services.AddSingleton<IRedisConnectionPoolManager, RedisConnectionPoolManager>();
         services.AddSingleton<ISerializer, NewtonsoftSerializer>();
 
-        services.AddSingleton<IRedisDatabase>((provider) =>
+        services.AddScoped<IRedisDatabase>((provider) =>
             (provider.GetRequiredService<IRedisClient>().GetDefaultDatabase()));
     }
 }

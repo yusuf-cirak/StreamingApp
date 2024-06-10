@@ -2,20 +2,18 @@
 <div
   class="group flex items-center justify-between w-full p-2 rounded-md text-sm hover:bg-white/5"
 >
-  <strong appTextHashColor [textContent]="viewer.username" class=""></strong>
+  <strong appTextHashColor [textContent]="viewer.username"></strong>
+  @if (isAuthorized()) {
   <button
     class="flex"
     pTooltip="Block"
     tooltipPosition="left"
     (click)="block()"
-    *appAuthorization="{
-      roles: roles,
-      operationClaims: operationClaims,
-    }"
   >
     <app-block-icon
       class="p-1 opacity-0 group-hover:opacity-100 transition"
     ></app-block-icon>
   </button>
+  }
 </div>
 }

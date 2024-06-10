@@ -18,7 +18,7 @@ public sealed class LockBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
-        var acquireLock = _redisDb.Database.LockTake(request.Key, true, TimeSpan.FromSeconds(request.Expiration));
+        var acquireLock = await _redisDb.Database.LockTakeAsync(request.Key, true, TimeSpan.FromSeconds(request.Expiration));
         try
         {
             if (acquireLock is false)
@@ -36,7 +36,7 @@ public sealed class LockBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
         {
             if (acquireLock is true && request.ReleaseImmediately is true)
             {
-                _redisDb.Database.LockRelease(request.Key, true);
+              await  _redisDb.Database.LockReleaseAsync(request.Key, true);
             }
         }
     }

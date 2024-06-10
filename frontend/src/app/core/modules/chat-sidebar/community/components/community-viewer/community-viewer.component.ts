@@ -12,6 +12,7 @@ import { UserRoleDto } from '../../../../auths/models/role';
 import { UserOperationClaimDto } from '../../../../auths/models/operation-claim';
 import { OperationClaims } from '../../../../../constants/operation-claims';
 import { Roles } from '../../../../../constants/roles';
+import { UserAuthorizationService } from '../../../../../services/user-authorization.service';
 
 @Component({
   selector: 'app-community-viewer',
@@ -27,6 +28,7 @@ import { Roles } from '../../../../../constants/roles';
 export class CommunityViewerComponent {
   readonly streamFacade = inject(StreamFacade);
   readonly authService = inject(AuthService);
+  readonly userAuthorizationService = inject(UserAuthorizationService);
 
   viewer = input.required<User>();
 
@@ -45,6 +47,14 @@ export class CommunityViewerComponent {
       value: this.streamerId(),
     },
   ];
+
+  readonly isAuthorized = computed(() =>
+    this.userAuthorizationService.check({
+      roles: this.roles,
+      operationClaims: this.operationClaims,
+      flags: [this.authService.userId() === this.streamerId()],
+    })
+  );
 
   blockViewer = output<StreamBlockUserDto>();
 
