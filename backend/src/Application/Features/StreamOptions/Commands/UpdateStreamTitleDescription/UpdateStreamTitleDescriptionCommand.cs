@@ -74,7 +74,7 @@ public sealed class
         await _efRepository.SaveChangesAsync(cancellationToken);
 
         _ = Task.Run(() =>
-            _streamOptionService.UpdateStreamOptionCacheAndSendNotificationAsync(streamOptions));
+            _streamOptionService.UpdateStreamOptionCacheAndSendNotificationAsync(streamOptions, cancellationToken), cancellationToken);
 
         return HttpResult.Success(StatusCodes.Status204NoContent);
     }
