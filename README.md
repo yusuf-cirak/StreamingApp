@@ -6,8 +6,12 @@ Streaming App is a live streaming application like Twitch.
 
 ## Table of Contents
 
-- [Features](#features)
 - [Architecture Diagram](#architecture-diagram)
+- [Features](#features)
+
+## Architecture Diagram
+
+![Architecture Diagram](./.docs/architecture-diagram.png)
 
 ## Features
 
@@ -30,7 +34,3 @@ Streaming App includes the following features:
 - **Chat Options:** Streamers or authorized moderators can make changes about the stream options. Options includes: Chat delay second, must be follower to use chat, enable or disable chat.
 
 - **Real-time notifications:** Users will receive real-time notifications when in stream chat, when stream is started or ended, chat options changed, when blocked or unblocked from stream, when assigned as moderator or removed from moderators.
-
-## Architecture Diagram
-
-![Architecture Diagram](./.docs/architecture-diagram.png)
