@@ -10,17 +10,17 @@ public sealed class LockBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
     where TRequest : IRequest<TResponse>, ILockRequest
     where TResponse : IHttpResult, new()
 {
-    private readonly ICacheService cacheService;
+    private readonly ICacheService _cacheService;
 
-    public LockBehavior(IRedisDatabase cacheService)
+    public LockBehavior(ICacheService cacheService)
     {
-        cacheService = cacheService;
+        _cacheService = cacheService;
     }
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
-        var acquireLock = await cacheService.TakeLockAsync(request.Key, TimeSpan.FromSeconds(request.Expiration));
+        var acquireLock = await _cacheService.TakeLockAsync(request.Key, TimeSpan.FromSeconds(request.Expiration));
         try
         {
             if (acquireLock is false)
@@ -38,7 +38,7 @@ public sealed class LockBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
         {
             if (acquireLock is true && request.ReleaseImmediately is true)
             {
-                await cacheService.ReleaseLockAsync(request.Key);
+                await _cacheService.ReleaseLockAsync(request.Key);
             }
         }
     }
