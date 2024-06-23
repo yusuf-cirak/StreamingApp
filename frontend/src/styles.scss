@@ -89,6 +89,12 @@ div.scroller-none {
   }
 }
 
+@media screen and (max-width: 640px) {
+  aside.sidebar-container {
+    display: none;
+  }
+}
+
 input:focus-visible {
   outline: none;
   box-shadow: none;
