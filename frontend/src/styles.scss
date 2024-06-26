@@ -49,6 +49,10 @@ body {
   background-color: #344153;
 }
 
+div.chat-sidebar {
+  overflow: hidden;
+}
+
 .sidebar-closed {
   .hideable {
     display: none;
