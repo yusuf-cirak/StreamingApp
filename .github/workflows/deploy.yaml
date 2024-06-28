@@ -23,9 +23,6 @@ jobs:
       - name: Check if frontend folder changed
         id: checkout_code
         run: |
-          ls
-          # CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
-          cd $GITHUB_WORKSPACE
           CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
           echo "Changed files: $CHANGED_FILES"
           if echo "$CHANGED_FILES" | grep -qE '^frontend/'; then
