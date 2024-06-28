@@ -26,15 +26,17 @@ jobs:
           CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
           echo "Changed files: $CHANGED_FILES"
           if echo "$CHANGED_FILES" | grep -qE '^frontend/'; then
+            echo "Frontend folder has changes. Setting buildPushFrontend to true..."
             echo "::set-output name=buildPushFrontend::true"
           else
+            echo "Frontend folder has no changes. Setting buildPushFrontend to false..."
             echo "::set-output name=buildPushFrontend::false"
           fi
 
   build-and-push:
     runs-on: ubuntu-latest
     needs: check-changes
-    if: needs.check-changes.outputs.buildPushFrontend == true
+    if: ${{needs.check-changes.outputs.buildPushFrontend}} == true
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
