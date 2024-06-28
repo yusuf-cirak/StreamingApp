@@ -8,27 +8,27 @@ on:
       - master
 
 jobs:
-  # check-changes:
-  #   runs-on: ubuntu-latest
+  check-changes:
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-  #     - name: Check if frontend folder changed
-  #       id: checkout_code
-  #       run: |
-  #         if git diff --name-only 'HEAD^' HEAD | grep -q '^frontend/'; then
-  #           echo "Frontend has changes. Setting buildPushFrontend to true"
-  #           echo "buildPushFrontend=true" > $GITHUB_ENV
-  #         else
-  #           echo "Frontend has no changes. Setting buildPushFrontend to false"
-  #           echo "buildPushFrontend=false" > $GITHUB_ENV
-  #         fi
+      - name: Check if frontend folder changed
+        id: checkout_code
+        run: |
+          if git diff --name-only 'HEAD^' HEAD | grep -q '^frontend/'; then
+            echo "Frontend has changes. Setting buildPushFrontend to true"
+            echo "buildPushFrontend=true" >> $GITHUB_ENV
+          else
+            echo "Frontend has no changes. Setting buildPushFrontend to false"
+            echo "buildPushFrontend=false" >> $GITHUB_ENV
+          fi
 
   build-and-push:
     runs-on: ubuntu-latest
-    if: ${{ contains(github.event.head_commit.modified, 'frontend/') }}
+    if: ${{ github.env.buildPushFrontend == 'true' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -62,7 +62,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            if [[ "${{ contains(github.event.head_commit.modified, 'frontend/') }}" == "true" ]]; then
+            if [[ "${{ github.env.buildPushFrontend}}" == "true" ]]; then
               echo "Frontend has changes. Removing the current image..."
               docker image remove yusufcirak/streaming-app-frontend --force
             fi
