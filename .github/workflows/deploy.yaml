@@ -32,7 +32,7 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     needs: check-changes
-    if: ${{ github.event_name.buildPushFrontend == 'true' }}
+    if: ${{ github.env.buildPushFrontend == 'true' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -67,7 +67,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            if [[ "${{ github.event_name.buildPushFrontend }}" == "true" ]]; then
+            if [[ "${{ github.env.buildPushFrontend }}" == "true" ]]; then
               echo "Frontend has changes. Removing the current image..."
               docker image remove yusufcirak/streaming-app-frontend --force
             fi
