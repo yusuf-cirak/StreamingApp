@@ -1,15 +1,64 @@
 # @format
 
 name: Push to Deploy
+
 on:
   push:
     branches:
       - master
+
 jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+
+    outputs:
+      build_push_frontend: ${{ steps.checkout_code.outputs.build_push_frontend }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check if frontend folder changed
+        id: checkout_code
+        run: |
+          if git diff --name-only HEAD^ HEAD | grep -q '^frontend/'; then
+            echo "build_push_frontend=true" >> $GITHUB_ENV
+            echo "::set-output name=build_push_frontend::true"
+          else
+            echo "build_push_frontend=false" >> $GITHUB_ENV
+            echo "::set-output name=build_push_frontend::false"
+          fi
+
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs: check-changes
+    if: needs.check-changes.outputs.build_push_frontend == 'true'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/streaming-app-frontend:latest
+
   release:
     concurrency:
       group: ${{ github.ref }}
     runs-on: ubuntu-latest
+    needs: check-changes
     steps:
       - name: Deploy Streaming App
         uses: appleboy/ssh-action@master
@@ -19,6 +68,10 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
+            if [[ "${{ needs.check-changes.outputs.build_push_frontend }}" == "true" ]]; then
+              docker image remove yusufcirak/streaming-app-frontend --force
+            fi
+
             rm -rf streaming-app
             git clone https://github.com/yusuf-cirak/StreamingApp.git streaming-app
             cd streaming-app/backend/src/WebAPI
