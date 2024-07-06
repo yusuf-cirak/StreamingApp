@@ -1,5 +1,5 @@
 # Base image
-FROM node:slim as dependency
+FROM node:alpine as dependency
 
 # Create app directory
 WORKDIR /app
@@ -11,7 +11,7 @@ COPY . .
 RUN npm install
 
 
-FROM node:slim as build
+FROM node:alpine as build
 
 WORKDIR /app
 
