@@ -58,7 +58,7 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/streaming-app-frontend:latest
 
   release:
-    needs: check-changes
+    needs: [check-changes, build-and-push]
     concurrency:
       group: ${{ github.ref }}
     runs-on: ubuntu-latest
