@@ -13,6 +13,7 @@ jobs:
 
     outputs:
       buildPushFrontend: ${{ steps.checkout_code.outputs.buildPushFrontend }}
+      buildPushGateway: ${{ steps.checkout_code.outputs.buildPushGateway }}
 
     steps:
       - name: Checkout code
@@ -20,7 +21,7 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Check if frontend folder changed
+      - name: Check frontend and gateway changes
         id: checkout_code
         run: |
           CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
@@ -33,10 +34,18 @@ jobs:
             echo "::set-output name=buildPushFrontend::false"
           fi
 
-  build-and-push:
+          if echo "$CHANGED_FILES" | grep -qE '^media-server/gateway/'; then
+            echo "Gateway folder has changes. Setting buildPushGateway to true..."
+            echo "::set-output name=buildPushGateway::true"
+          else
+            echo "Gateway folder has no changes. Setting buildPushGateway to false..."
+            echo "::set-output name=buildPushGateway::false"
+          fi
+
+  build-push:
     runs-on: ubuntu-latest
     needs: check-changes
-    if: ${{needs.check-changes.outputs.buildPushFrontend == 'true'}}
+    if: ${{needs.check-changes.outputs.buildPushFrontend == 'true' || needs.check-changes.outputs.buildPushGateway == 'true'}}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -50,15 +59,26 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push Docker image
+      - name: Build and push Frontend
         uses: docker/build-push-action@v5
+        if: ${{needs.check-changes.outputs.buildPushFrontend == 'true'}}
         with:
           context: ./frontend
+          platforms: linux/amd64,linux/arm64/v8
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/streaming-app-frontend:latest
 
+      - name: Build and push Gateway
+        uses: docker/build-push-action@v5
+        if: ${{needs.check-changes.outputs.buildPushGateway == 'true'}}
+        with:
+          context: ./media-server/gateway
+          platforms: linux/amd64,linux/arm64/v8
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/streaming-app-gateway:latest
+
   release:
-    needs: [check-changes, build-and-push]
+    needs: [check-changes, build-push]
     if: always()
     concurrency:
       group: ${{ github.ref }}
