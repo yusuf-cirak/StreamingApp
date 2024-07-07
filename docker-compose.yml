@@ -21,8 +21,6 @@ services:
   nginx-rtmp:
     container_name: streaming-app-nginx-rtmp
     image: tiangolo/nginx-rtmp
-    ports:
-      - "8080:80"
     volumes:
       - ./media-server/rtmp/nginx.conf:/etc/nginx/nginx.conf
     restart: unless-stopped
