@@ -25,7 +25,7 @@
     "@angular/router": "^18.0.1",
     "@microsoft/signalr": "^8.0.0",
     "@videogular/ngx-videogular": "^8.0.0",
-    "hls.js": "^1.5.11",
+    "hls.js": "^1.5.20",
     "ngx-toastr": "^19.0.0",
     "primeicons": "^7.0.0",
     "primeng": "^17.18.0",
