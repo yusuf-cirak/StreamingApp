@@ -60,7 +60,13 @@ app.GenerateSeedDataAndPersist();
 
 app.UseSwagger();
 
-app.UseWatchDog(cfg => { cfg.UseOutputCache = true; });
+app.UseWatchDog(cfg =>
+{
+    cfg.UseOutputCache = true;
+    cfg.WatchPageUsername = "";
+    cfg.WatchPagePassword = "";
+    ;
+});
 
 app.UseSwaggerUI();
 
