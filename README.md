@@ -34,3 +34,26 @@ Streaming App includes the following features:
 - **Chat Options:** Streamers or authorized moderators can make changes about the stream options. Options includes: Chat delay second, must be follower to use chat, enable or disable chat.
 
 - **Real-time notifications:** Users will receive real-time notifications when in stream chat, when stream is started or ended, chat options changed, when blocked or unblocked from stream, when assigned as moderator or removed from moderators.
+
+## Git hooks
+
+This repo contains a pre-push hook that blocks pushes when the backend fails to build.
+
+Setup (one-time per clone):
+
+1. Tell Git to use the versioned hooks directory
+	- `git config core.hooksPath .githooks`
+2. Ensure the script is executable (on Windows with Git Bash it runs without chmod, but it's fine to set it):
+	- `chmod +x .githooks/pre-push`
+
+Behavior:
+
+- On `git push`, it runs `dotnet build StreamingApp.sln -c Release`.
+- If the build fails, the push is aborted.
+- To temporarily skip (CI or emergencies): set environment variable `SKIP_PRE_PUSH_BUILD=1` for that push.
+
+Examples (Git Bash):
+
+- Enable hooks: `git config core.hooksPath .githooks`
+- Push normally: `git push`
+- Skip once: `SKIP_PRE_PUSH_BUILD=1 git push`

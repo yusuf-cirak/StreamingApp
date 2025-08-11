@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Blocks push if backend .NET build fails.
+set -euo pipefail
+
+# Allow skipping via env var for emergencies (CI or local)
+if [[ "${SKIP_PRE_PUSH_BUILD:-}" == "1" ]]; then
+  echo "[pre-push] Skipping backend build due to SKIP_PRE_PUSH_BUILD=1"
+  exit 0
+fi
+
+# Ensure we are at repo root
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+echo "[pre-push] Verifying backend builds..."
+
+# Check for dotnet SDK
+if ! command -v dotnet >/dev/null 2>&1; then
+  echo "[pre-push] ERROR: .NET SDK (dotnet) not found. Install .NET SDK to push."
+  exit 1
+fi
+
+# Prefer building the solution to cover all backend projects.
+if [[ -f "StreamingApp.sln" ]]; then
+  BUILD_TARGET=("StreamingApp.sln")
+else
+  # Fallback to WebAPI project if solution isn't present (shouldn't happen normally)
+  BUILD_TARGET=("backend/src/WebAPI/WebAPI.csproj")
+fi
+
+# Build in Release for stricter checks; change to Debug if preferred
+if ! dotnet build "${BUILD_TARGET[@]}" -c Release --nologo; then
+  echo "[pre-push] ERROR: Backend build failed. Aborting push."
+  exit 1
+fi
+
+echo "[pre-push] Backend build succeeded. Proceeding with push."
+exit 0
