@@ -60,13 +60,6 @@ app.GenerateSeedDataAndPersist();
 
 app.UseSwagger();
 
-app.UseWatchDog(cfg =>
-{
-    cfg.WatchPageUsername = "admin";
-    cfg.WatchPagePassword = "admin";
-    ;
-});
-
 app.UseSwaggerUI();
 
 app.UseCors();
@@ -85,5 +78,12 @@ app.UseAuthorization();
 app.MapApiEndpoints(); // From WebAPI\Extensions\EndpointExtensions.cs
 
 app.MapHub<StreamHub>("/_stream");
+
+app.UseWatchDog(cfg =>
+{
+    cfg.WatchPageUsername = "admin";
+    cfg.WatchPagePassword = "admin";
+    ;
+});
 
 app.Run();
