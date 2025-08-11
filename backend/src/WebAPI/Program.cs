@@ -62,7 +62,6 @@ app.UseSwagger();
 
 app.UseWatchDog(cfg =>
 {
-    cfg.UseOutputCache = true;
     cfg.WatchPageUsername = "admin";
     cfg.WatchPagePassword = "admin";
     ;
