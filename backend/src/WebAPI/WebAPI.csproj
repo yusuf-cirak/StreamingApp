@@ -36,7 +36,6 @@
 
         <PackageReference Include="StackExchange.Redis.Extensions.Utf8Json" Version="11.0.0"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.1"/>
-        <PackageReference Include="WatchDog.NET" Version="1.4.12"/>
     </ItemGroup>
 
     <ItemGroup>

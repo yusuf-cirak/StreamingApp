@@ -6,8 +6,6 @@ using Infrastructure.Persistence.EntityFramework;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using SignalR;
 using SignalR.Hubs.Stream;
-using WatchDog;
-using WatchDog.src.Enums;
 using WebAPI.Extensions;
 using WebAPI.Infrastructure.Middlewares;
 
@@ -43,13 +41,6 @@ builder.Services.AddStackExchangeRedis(builder.Configuration);
 
 builder.Services.AddSignalR();
 
-builder.Services.AddWatchDogServices(cfg =>
-{
-    cfg.IsAutoClear = true;
-    cfg.ClearTimeSchedule = WatchDogAutoClearScheduleEnum.Monthly;
-    cfg.SetExternalDbConnString = builder.Configuration.GetConnectionString("Postgres");
-    cfg.DbDriverOption = WatchDogDbDriverEnum.PostgreSql;
-});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -78,12 +69,5 @@ app.UseAuthorization();
 app.MapApiEndpoints(); // From WebAPI\Extensions\EndpointExtensions.cs
 
 app.MapHub<StreamHub>("/_stream");
-
-app.UseWatchDog(cfg =>
-{
-    cfg.WatchPageUsername = "admin";
-    cfg.WatchPagePassword = "admin";
-    ;
-});
 
 app.Run();

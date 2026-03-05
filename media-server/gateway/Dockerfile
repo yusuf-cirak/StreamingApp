@@ -8,7 +8,7 @@ COPY . .
 
 # Install app dependencies
 
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 
 FROM node:slim as build
