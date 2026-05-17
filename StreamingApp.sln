@@ -26,40 +26,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4AB980B5-CB4F-4002-88B1-FB577C95E4C0}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
+		docker-compose-dev.yml = docker-compose-dev.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{071A76B3-63B2-4654-B814-60622F012D7E}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "media-server", "media-server", "{785AC37C-AE99-4AEC-A4B2-C792292C84F9}"
-	ProjectSection(SolutionItems) = preProject
-		media-server\.dockerignore = media-server\.dockerignore
-		media-server\.gitignore = media-server\.gitignore
-		media-server\config.js = media-server\config.js
-		media-server\docker-compose.yml = media-server\docker-compose.yml
-		media-server\Dockerfile = media-server\Dockerfile
-		media-server\index.js = media-server\index.js
-		media-server\package.json = media-server\package.json
-		media-server\pnpm-lock.yaml = media-server\pnpm-lock.yaml
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "http", "http", "{64A7CBC7-0B0B-45B8-93CA-8A2CC3AFFF0F}"
-	ProjectSection(SolutionItems) = preProject
-		media-server\http\axios.js = media-server\http\axios.js
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "settings", "settings", "{7B41755D-E9CA-4BAF-8272-4ED1E750264E}"
-	ProjectSection(SolutionItems) = preProject
-		media-server\settings\app-settings.json = media-server\settings\app-settings.json
-		media-server\settings\secrets.json = media-server\settings\secrets.json
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "services", "services", "{1304B263-05EF-4F7E-84AB-5454B4218CB0}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "stream", "stream", "{40767337-6BCB-4A8B-8FEC-90D39F82639C}"
-	ProjectSection(SolutionItems) = preProject
-		media-server\services\stream\stream-proxy-service.js = media-server\services\stream\stream-proxy-service.js
-		media-server\services\stream\stream-service.js = media-server\services\stream\stream-service.js
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Contracts", "backend\src\Application.Contracts\Application.Contracts.csproj", "{7B3C1DED-EB42-434B-9520-7176F203F8D3}"
 EndProject
@@ -111,10 +81,6 @@ Global
 		{229389F1-20CD-48D0-A887-C0EED384898E} = {4E78F46D-FE3F-4624-AD83-17D2BDCA6C26}
 		{7FA72C71-699B-4D91-BE84-413F9EA3474D} = {4E78F46D-FE3F-4624-AD83-17D2BDCA6C26}
 		{071A76B3-63B2-4654-B814-60622F012D7E} = {0FA737DF-6D7C-4A7E-B274-FD8895266285}
-		{64A7CBC7-0B0B-45B8-93CA-8A2CC3AFFF0F} = {785AC37C-AE99-4AEC-A4B2-C792292C84F9}
-		{7B41755D-E9CA-4BAF-8272-4ED1E750264E} = {785AC37C-AE99-4AEC-A4B2-C792292C84F9}
-		{1304B263-05EF-4F7E-84AB-5454B4218CB0} = {785AC37C-AE99-4AEC-A4B2-C792292C84F9}
-		{40767337-6BCB-4A8B-8FEC-90D39F82639C} = {1304B263-05EF-4F7E-84AB-5454B4218CB0}
 		{7B3C1DED-EB42-434B-9520-7176F203F8D3} = {4E78F46D-FE3F-4624-AD83-17D2BDCA6C26}
 		{BA2BA557-19C6-48EC-8EC1-C30A9A3559E2} = {4E78F46D-FE3F-4624-AD83-17D2BDCA6C26}
 	EndGlobalSection
