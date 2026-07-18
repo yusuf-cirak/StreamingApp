@@ -29,35 +29,6 @@ services:
     depends_on:
       - gateway
 
-  database:
-    image: postgres:latest
-    container_name: streaming-app-postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: StreamingApp
-    ports:
-      - "5432:5432"
-    volumes:
-      - streaming-app-postgres-data:/var/lib/postgresql/data
-    networks:
-      - streaming-app
-
-  redis:
-    image: redis:latest
-    container_name: streaming-app-redis
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-    ports:
-      - "6379:6379"
-    networks:
-      - streaming-app
-
   backend:
     container_name: streaming-app-backend
     restart: unless-stopped
@@ -66,13 +37,9 @@ services:
       dockerfile: Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
-    # ports:
-    #   - "5117:8080"
-    depends_on:
-      - database
-      - redis
     networks:
       - streaming-app
+      - coolify
 
   frontend:
     container_name: streaming-app-frontend
@@ -85,14 +52,10 @@ services:
       - streaming-app
     depends_on:
       - backend
-    # ports:
-    #   - "4200:80"
 
 networks:
   streaming-app:
     driver: bridge
     name: streaming-app
-
-volumes:
-  streaming-app-postgres-data:
-    driver: local
+  coolify:
+    external: true
